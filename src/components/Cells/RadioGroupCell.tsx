@@ -48,6 +48,14 @@ const RadioGroupCell = (props: CustomCellProps) => {
         syntheticEvent: e.syntheticEvent,
         value: e.value ?? "",
       });
+
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: "rowstatus",
+        syntheticEvent: e.syntheticEvent,
+        value: dataItem["rowstatus"] == "N" ? "N" : "U",
+      });
     }
   };
 

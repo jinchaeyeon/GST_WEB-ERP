@@ -74,7 +74,13 @@ const ComboBoxCell = (props: CustomCellProps) => {
         syntheticEvent: e.syntheticEvent,
         value: e.target.value ? e.target.value[valueField] : "",
       });
-
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: "rowstatus",
+        syntheticEvent: e.syntheticEvent,
+        value: dataItem["rowstatus"] == "N" ? "N" : "U",
+      });
       if (page == "Approval") {
         onChange({
           dataIndex: 0,

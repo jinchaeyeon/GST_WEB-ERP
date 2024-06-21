@@ -394,7 +394,7 @@ const AC_B2000W: React.FC = () => {
     custcd: "",
     acntcd: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
@@ -403,7 +403,7 @@ const AC_B2000W: React.FC = () => {
     custcd: "",
     acntdt: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -622,7 +622,7 @@ const AC_B2000W: React.FC = () => {
   };
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -736,7 +736,7 @@ const AC_B2000W: React.FC = () => {
   };
 
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -843,7 +843,7 @@ const AC_B2000W: React.FC = () => {
   };
 
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -904,33 +904,48 @@ const AC_B2000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3, permissions]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -1312,7 +1327,10 @@ const AC_B2000W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="계정과목별">
+        <TabStripTab
+          title="계정과목별"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -1846,7 +1864,10 @@ const AC_B2000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="매출채권채무">
+        <TabStripTab
+          title="매출채권채무"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2376,7 +2397,10 @@ const AC_B2000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="예적금/차입금">
+        <TabStripTab
+          title="예적금/차입금"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2906,7 +2930,7 @@ const AC_B2000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="손익">
+        <TabStripTab title="손익" disabled={permissions.view ? false : true}>
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -3436,7 +3460,7 @@ const AC_B2000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="제조">
+        <TabStripTab title="제조" disabled={permissions.view ? false : true}>
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -3923,7 +3947,10 @@ const AC_B2000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="거래처별 매출">
+        <TabStripTab
+          title="거래처별 매출"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {

@@ -241,6 +241,7 @@ const AC_B5060W: React.FC = () => {
         reqdt: setDefaultDate(customOptionData, "reqdt"),
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -342,20 +343,20 @@ const AC_B5060W: React.FC = () => {
     reqdt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     worktype: "OUT_DETAIL",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3, setFilters3] = useState({
     pgSize: PAGE_SIZE,
     worktype: "OUT_ETC",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 리셋
@@ -544,7 +545,8 @@ const AC_B5060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -613,7 +615,8 @@ const AC_B5060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -671,7 +674,8 @@ const AC_B5060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -729,7 +733,8 @@ const AC_B5060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     let data2: any;
 
@@ -782,7 +787,8 @@ const AC_B5060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid5 = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     let data2: any;
 
@@ -836,7 +842,8 @@ const AC_B5060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid6 = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     let data2: any;
 
@@ -889,7 +896,8 @@ const AC_B5060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid7 = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     let data2: any;
 
@@ -942,7 +950,7 @@ const AC_B5060W: React.FC = () => {
   };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -952,11 +960,11 @@ const AC_B5060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -966,11 +974,11 @@ const AC_B5060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (filters3.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -980,7 +988,7 @@ const AC_B5060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, customOptionData]);
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
@@ -1244,7 +1252,10 @@ const AC_B5060W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="매출처별 세금계산서">
+        <TabStripTab
+          title="매출처별 세금계산서"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -1357,7 +1368,10 @@ const AC_B5060W: React.FC = () => {
                     onSelect={handleSelectTab2}
                     scrollable={isMobile}
                   >
-                    <TabStripTab title="전자세금계산서분">
+                    <TabStripTab
+                      title="전자세금계산서분"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer width="100%">
                         <ExcelExport
                           data={mainDataResult2.data}
@@ -1439,7 +1453,10 @@ const AC_B5060W: React.FC = () => {
                         </ExcelExport>
                       </GridContainer>
                     </TabStripTab>
-                    <TabStripTab title="전자세금계산서외">
+                    <TabStripTab
+                      title="전자세금계산서외"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer width="100%">
                         <ExcelExport
                           data={mainDataResult3.data}
@@ -1594,7 +1611,10 @@ const AC_B5060W: React.FC = () => {
                 onSelect={handleSelectTab2}
                 scrollable={isMobile}
               >
-                <TabStripTab title="전자세금계산서분">
+                <TabStripTab
+                  title="전자세금계산서분"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer width="100%">
                     <ExcelExport
                       data={mainDataResult2.data}
@@ -1669,7 +1689,10 @@ const AC_B5060W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="전자세금계산서외">
+                <TabStripTab
+                  title="전자세금계산서외"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer width="100%">
                     <ExcelExport
                       data={mainDataResult3.data}
@@ -1748,7 +1771,10 @@ const AC_B5060W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="매출처별세금계산서합계표">
+        <TabStripTab
+          title="매출처별세금계산서합계표"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer>
             <div
               style={{
@@ -1763,7 +1789,10 @@ const AC_B5060W: React.FC = () => {
             </div>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="매입처별 세금계산서">
+        <TabStripTab
+          title="매입처별 세금계산서"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -1876,7 +1905,10 @@ const AC_B5060W: React.FC = () => {
                     onSelect={handleSelectTab2}
                     scrollable={isMobile}
                   >
-                    <TabStripTab title="전자세금계산서분">
+                    <TabStripTab
+                      title="전자세금계산서분"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer width="100%">
                         <ExcelExport
                           data={mainDataResult2.data}
@@ -1958,7 +1990,10 @@ const AC_B5060W: React.FC = () => {
                         </ExcelExport>
                       </GridContainer>
                     </TabStripTab>
-                    <TabStripTab title="전자세금계산서외">
+                    <TabStripTab
+                      title="전자세금계산서외"
+                      disabled={permissions.view ? false : true}
+                    >
                       <GridContainer width="100%">
                         <ExcelExport
                           data={mainDataResult3.data}
@@ -2113,7 +2148,10 @@ const AC_B5060W: React.FC = () => {
                 onSelect={handleSelectTab2}
                 scrollable={isMobile}
               >
-                <TabStripTab title="전자세금계산서분">
+                <TabStripTab
+                  title="전자세금계산서분"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer width="100%">
                     <ExcelExport
                       data={mainDataResult2.data}
@@ -2188,7 +2226,10 @@ const AC_B5060W: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="전자세금계산서외">
+                <TabStripTab
+                  title="전자세금계산서외"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer width="100%">
                     <ExcelExport
                       data={mainDataResult3.data}
@@ -2267,7 +2308,10 @@ const AC_B5060W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="매입처별세금계산서합계표">
+        <TabStripTab
+          title="매입처별세금계산서합계표"
+          disabled={permissions.view ? false : true}
+        >
           <div
             style={{
               height: isMobile ? mobileheight8 : webheight8,
@@ -2276,7 +2320,10 @@ const AC_B5060W: React.FC = () => {
             {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
         </TabStripTab>
-        <TabStripTab title="신용카드등수취금액">
+        <TabStripTab
+          title="신용카드등수취금액"
+          disabled={permissions.view ? false : true}
+        >
           <div
             style={{
               height: isMobile ? mobileheight9 : webheight9,
@@ -2285,7 +2332,10 @@ const AC_B5060W: React.FC = () => {
             {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
         </TabStripTab>
-        <TabStripTab title="공제받지못할매입세액명세서">
+        <TabStripTab
+          title="공제받지못할매입세액명세서"
+          disabled={permissions.view ? false : true}
+        >
           <div
             style={{
               height: isMobile ? mobileheight10 : webheight10,

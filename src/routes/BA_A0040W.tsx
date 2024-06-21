@@ -260,6 +260,7 @@ const BA_A0040: React.FC = () => {
           ?.valueCode,
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -468,7 +469,7 @@ const BA_A0040: React.FC = () => {
     itemlvl3: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters, setsubFilters] = useState({
@@ -515,7 +516,7 @@ const BA_A0040: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     //조회조건 파라미터
@@ -890,7 +891,7 @@ const BA_A0040: React.FC = () => {
   };
 
   const fetchSubGrid = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const subparameters: Iparameters = {
@@ -1008,7 +1009,7 @@ const BA_A0040: React.FC = () => {
   };
 
   const fetchSubGrid2 = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const subparameters: Iparameters = {
@@ -1081,11 +1082,6 @@ const BA_A0040: React.FC = () => {
       isSearch: false,
     }));
     setLoading(false);
-  };
-
-  const onAttWndClick2 = () => {
-    const uploadInput = document.getElementById("uploadAttachment");
-    uploadInput!.click();
   };
 
   const gridData = [{ id: 1, image: imgBase64[0] }];
@@ -1180,10 +1176,10 @@ const BA_A0040: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -1192,10 +1188,15 @@ const BA_A0040: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (subfilters.isSearch) {
+    if (
+      subfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
 
@@ -1207,10 +1208,15 @@ const BA_A0040: React.FC = () => {
 
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters]);
+  }, [subfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (subfilters2.isSearch) {
+    if (
+      subfilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
 
@@ -1222,7 +1228,7 @@ const BA_A0040: React.FC = () => {
 
       fetchSubGrid2(deepCopiedFilters);
     }
-  }, [subfilters2]);
+  }, [subfilters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1854,6 +1860,7 @@ const BA_A0040: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -2051,10 +2058,11 @@ const BA_A0040: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = subData2Result.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2144,6 +2152,7 @@ const BA_A0040: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -2197,10 +2206,12 @@ const BA_A0040: React.FC = () => {
   };
 
   const onSaveClick2 = async () => {
+    if (!permissions.save) return;
     fetchSaved();
   };
 
   const fetchSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     let valid = true;
@@ -2252,6 +2263,7 @@ const BA_A0040: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2290,10 +2302,10 @@ const BA_A0040: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.itemcd != "") {
+    if (paraData.itemcd != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   //checkbox 유무
   const [yn, setyn] = useState(true);
@@ -2493,6 +2505,7 @@ const BA_A0040: React.FC = () => {
                       onClick={onAddClick2}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       신규
                     </Button>
@@ -2501,6 +2514,7 @@ const BA_A0040: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -2509,6 +2523,7 @@ const BA_A0040: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       저장
                     </Button>
@@ -2606,7 +2621,10 @@ const BA_A0040: React.FC = () => {
                 style={{ width: "100%" }}
                 scrollable={isMobile}
               >
-                <TabStripTab title="상세정보">
+                <TabStripTab
+                  title="상세정보"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <FormBoxWrap
                       style={{
@@ -2899,7 +2917,10 @@ const BA_A0040: React.FC = () => {
                     </FormBoxWrap>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="단가">
+                <TabStripTab
+                  title="단가"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <GridTitleContainer className="ButtonContainer2">
                       <ButtonContainer>
@@ -2908,6 +2929,7 @@ const BA_A0040: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick}
@@ -2915,6 +2937,7 @@ const BA_A0040: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick}
@@ -2922,6 +2945,7 @@ const BA_A0040: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -3029,7 +3053,10 @@ const BA_A0040: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="이미지">
+                <TabStripTab
+                  title="이미지"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <Grid
                       style={{
@@ -3195,6 +3222,7 @@ const BA_A0040: React.FC = () => {
                   onClick={onAddClick2}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   신규
                 </Button>
@@ -3203,6 +3231,7 @@ const BA_A0040: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="delete"
+                  disabled={permissions.save ? false : true}
                 >
                   삭제
                 </Button>
@@ -3211,6 +3240,7 @@ const BA_A0040: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
+                  disabled={permissions.save ? false : true}
                 >
                   저장
                 </Button>
@@ -3336,7 +3366,10 @@ const BA_A0040: React.FC = () => {
               style={{ width: "100%" }}
               scrollable={isMobile}
             >
-              <TabStripTab title="상세정보">
+              <TabStripTab
+                title="상세정보"
+                disabled={permissions.view ? false : true}
+              >
                 <GridContainer>
                   <FormBoxWrap className="FormBoxWrap">
                     <FormBox>
@@ -3623,7 +3656,10 @@ const BA_A0040: React.FC = () => {
                   </FormBoxWrap>
                 </GridContainer>
               </TabStripTab>
-              <TabStripTab title="단가">
+              <TabStripTab
+                title="단가"
+                disabled={permissions.view ? false : true}
+              >
                 <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>단가정보</GridTitle>
@@ -3633,6 +3669,7 @@ const BA_A0040: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick}
@@ -3640,6 +3677,7 @@ const BA_A0040: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick}
@@ -3647,6 +3685,7 @@ const BA_A0040: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -3783,6 +3822,11 @@ const BA_A0040: React.FC = () => {
           setData={getAttachmentsData}
           para={infomation.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {gridList.map((grid: TGrid) =>

@@ -115,6 +115,7 @@ const AC_B3000W: React.FC = () => {
         fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -174,6 +175,7 @@ const AC_B3000W: React.FC = () => {
     yyyy: new Date(),
     fxdiv: "",
     fxdepsts: "",
+    isSearch: false,
   });
 
   //조회조건 파라미터
@@ -192,7 +194,7 @@ const AC_B3000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -232,8 +234,10 @@ const AC_B3000W: React.FC = () => {
   }, [mainDataResult]);
 
   useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
+    if (permissions.view && customOptionData !== null) {
+      fetchMainGrid();
+    }
+  }, [mainPgNum, permissions, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -343,11 +347,6 @@ const AC_B3000W: React.FC = () => {
       alert(e);
     }
   };
-  const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
-  };
 
   const componentRef = useRef(null);
 
@@ -415,21 +414,19 @@ const AC_B3000W: React.FC = () => {
             />
           )}
 
-          {permissions && (
-            <ReactToPrint
-              trigger={() => (
-                <Button
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="print"
-                  disabled={permissions.print ? false : true}
-                >
-                  출력
-                </Button>
-              )}
-              content={() => componentRef.current}
-            />
-          )}
+          <ReactToPrint
+            trigger={() => (
+              <Button
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="print"
+                disabled={permissions.print ? false : true}
+              >
+                출력
+              </Button>
+            )}
+            content={() => componentRef.current}
+          />
         </ButtonContainer>
       </TitleContainer>
 

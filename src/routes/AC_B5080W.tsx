@@ -181,6 +181,7 @@ const AC_B5080W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -302,12 +303,12 @@ const AC_B5080W: React.FC = () => {
     todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -359,7 +360,7 @@ const AC_B5080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -411,7 +412,7 @@ const AC_B5080W: React.FC = () => {
   };
 
   const fetchMainGrid3 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters3: Iparameters = {
@@ -462,7 +463,7 @@ const AC_B5080W: React.FC = () => {
   };
 
   const fetchMainGrid4 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -514,7 +515,7 @@ const AC_B5080W: React.FC = () => {
   };
 
   const fetchMainGrid5 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters5: Iparameters = {
@@ -565,7 +566,7 @@ const AC_B5080W: React.FC = () => {
   };
 
   const fetchMainGrid6 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters6: Iparameters = {
@@ -616,7 +617,7 @@ const AC_B5080W: React.FC = () => {
   };
 
   const fetchMainGrid7 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters7: Iparameters = {
@@ -668,7 +669,12 @@ const AC_B5080W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -692,7 +698,7 @@ const AC_B5080W: React.FC = () => {
         fetchMainGrid7(deepCopiedFilters);
       }
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
   useEffect(() => {
@@ -1203,7 +1209,10 @@ const AC_B5080W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="TAX미발(매출)">
+        <TabStripTab
+          title="TAX미발(매출)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult.data}
@@ -1288,7 +1297,10 @@ const AC_B5080W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="전표미발(매출)">
+        <TabStripTab
+          title="전표미발(매출)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult2.data}
@@ -1382,7 +1394,10 @@ const AC_B5080W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="TAX오류(매출)">
+        <TabStripTab
+          title="TAX오류(매출)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult3.data}
@@ -1473,7 +1488,10 @@ const AC_B5080W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="TAX미발(매입)">
+        <TabStripTab
+          title="TAX미발(매입)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult4.data}
@@ -1570,7 +1588,10 @@ const AC_B5080W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="전표미발(매입)">
+        <TabStripTab
+          title="전표미발(매입)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult5.data}
@@ -1658,7 +1679,10 @@ const AC_B5080W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="TAX오류(매입)">
+        <TabStripTab
+          title="TAX오류(매입)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult6.data}
@@ -1755,7 +1779,10 @@ const AC_B5080W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="전표오류(전체)">
+        <TabStripTab
+          title="전표오류(전체)"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer width="100%">
             <ExcelExport
               data={mainDataResult7.data}

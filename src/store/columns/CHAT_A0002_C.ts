@@ -27,8 +27,7 @@ export const columns: TreeListColumnProps[] = [
     field: "question",
     title: "질문",
     width: "350px",
-    cell: NameTreeListCell,
-    className: "editable-new-only",
+    editCell: TreeListTextEditor,
   },
   {
     field: "answer",

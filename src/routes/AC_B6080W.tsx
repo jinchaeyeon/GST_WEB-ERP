@@ -66,11 +66,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import {
-  isFilterHideState,
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isFilterHideState, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B6080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -219,6 +215,7 @@ const AC_B6080W: React.FC = () => {
           ?.valueCode,
         worktype3: defaultOption.find((item: any) => item.id == "worktype3")
           ?.valueCode,
+        isSearch: true,
       }));
 
       const year = setDefaultDate(customOptionData, "yyyymm").getFullYear(); // 년
@@ -447,7 +444,7 @@ const AC_B6080W: React.FC = () => {
     companyCode: companyCode,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -456,7 +453,7 @@ const AC_B6080W: React.FC = () => {
     worktype: "SALESTAXBILL",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -466,12 +463,12 @@ const AC_B6080W: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -568,7 +565,7 @@ const AC_B6080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid = async (detailFilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -659,7 +656,7 @@ const AC_B6080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid2 = async (detailFilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -717,17 +714,21 @@ const AC_B6080W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters.isSearch && permissions !== null) {
+    if (
+      detailFilters.isSearch &&
+      permissions.view &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
@@ -737,11 +738,15 @@ const AC_B6080W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailFilters, permissions]);
+  }, [detailFilters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (detailFilters2.isSearch && permissions !== null) {
+    if (
+      detailFilters2.isSearch &&
+      permissions.view &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
       setDetailFilters2((prev) => ({
@@ -751,7 +756,7 @@ const AC_B6080W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
     }
-  }, [detailFilters2, permissions]);
+  }, [detailFilters2, permissions, customOptionData]);
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
@@ -1122,7 +1127,10 @@ const AC_B6080W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="매출TAX미처리">
+        <TabStripTab
+          title="매출TAX미처리"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -1789,7 +1797,10 @@ const AC_B6080W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="미수금내역">
+        <TabStripTab
+          title="미수금내역"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2436,7 +2447,10 @@ const AC_B6080W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="매입TAX미처리">
+        <TabStripTab
+          title="매입TAX미처리"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -3099,7 +3113,10 @@ const AC_B6080W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="미지급금내역">
+        <TabStripTab
+          title="미지급금내역"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>

@@ -4,10 +4,21 @@ import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { Iparameters } from "../../store/types";
-import { convertDateToStr, numberWithCommas } from "../CommonFunction";
+import { Iparameters, TPermissions } from "../../store/types";
+import {
+  UsePermissions,
+  convertDateToStr,
+  numberWithCommas,
+} from "../CommonFunction";
 
 const TaxReport = (filters: any) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -63,10 +74,10 @@ const TaxReport = (filters: any) => {
   };
 
   useEffect(() => {
-    if (mainDataResult.total == 0) {
+    if (mainDataResult.total == 0 && permissions.view) {
       fetchMainGrid();
     }
-  });
+  }, [permissions]);
 
   const componentRef = useRef(null);
 
@@ -76,7 +87,12 @@ const TaxReport = (filters: any) => {
         <></>
         <ReactToPrint
           trigger={() => (
-            <Button fillMode="outline" themeColor={"primary"} icon="print">
+            <Button
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="print"
+              disabled={permissions.print ? false : true}
+            >
               출력
             </Button>
           )}

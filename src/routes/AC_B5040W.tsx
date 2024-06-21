@@ -215,6 +215,7 @@ const AC_B5040W: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -302,7 +303,7 @@ const AC_B5040W: React.FC = () => {
     chktax: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -394,7 +395,7 @@ const AC_B5040W: React.FC = () => {
   }>({});
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -460,7 +461,12 @@ const AC_B5040W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -470,7 +476,7 @@ const AC_B5040W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
   const handleSelectTab = (e: any) => {
     if (isMobile) {
       setIsFilterHideStates(true);
@@ -721,6 +727,7 @@ const AC_B5040W: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
+    if (!permissions.save) return;
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
       return;
@@ -973,6 +980,7 @@ const AC_B5040W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1082,12 +1090,21 @@ const AC_B5040W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (
+      paraData.workType != "" &&
+      permissions.save &&
+      paraData.workType != "D"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (paraData.workType == "D" && permissions.delete) {
       fetchTodoGridSaved();
     }
   }, [paraData]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.delete && paraData.workType == "D") return;
+    if (!permissions.save && paraData.workType != "D") return;
     let data: any;
     setLoading(true);
     try {
@@ -1172,7 +1189,10 @@ const AC_B5040W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="국세청자료">
+        <TabStripTab
+          title="국세청자료"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -1271,12 +1291,7 @@ const AC_B5040W: React.FC = () => {
                             <td>
                               <ExcelUploadButton
                                 saveExcel={saveExcel}
-                                permissions={{
-                                  view: true,
-                                  save: true,
-                                  delete: true,
-                                  print: true,
-                                }}
+                                permissions={permissions}
                                 style={{}}
                               />
                             </td>
@@ -1307,6 +1322,7 @@ const AC_B5040W: React.FC = () => {
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="delete"
+                          disabled={permissions.delete ? false : true}
                         >
                           삭제
                         </Button>
@@ -1435,12 +1451,7 @@ const AC_B5040W: React.FC = () => {
                       <td>
                         <ExcelUploadButton
                           saveExcel={saveExcel}
-                          permissions={{
-                            view: true,
-                            save: true,
-                            delete: true,
-                            print: true,
-                          }}
+                          permissions={permissions}
                           style={{}}
                         />
                       </td>
@@ -1457,6 +1468,7 @@ const AC_B5040W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -1549,7 +1561,7 @@ const AC_B5040W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="매출">
+        <TabStripTab title="매출" disabled={permissions.view ? false : true}>
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -1687,7 +1699,7 @@ const AC_B5040W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="매입">
+        <TabStripTab title="매입" disabled={permissions.view ? false : true}>
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>

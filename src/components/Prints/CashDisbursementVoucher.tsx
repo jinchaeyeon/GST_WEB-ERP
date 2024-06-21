@@ -1,24 +1,33 @@
 import { useEffect, useState } from "react";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   numberWithCommas,
 } from "../../components/CommonFunction";
 import { useApi } from "../../hooks/api";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 
 const CashDisbursementVoucher = (data: any) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const [mainDataResult, setMainDataResult] = useState<any>(null);
   const [detailDataResult, setDetailDataResult] = useState<any>(null);
 
   useEffect(() => {
-    if (data.data !== null && data.data != undefined) {
+    if (data.data !== null && data.data != undefined && permissions.view) {
       fetchMainData(data.data);
     }
-  }, [data]);
+  }, [data, permissions]);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 데이터 조회
   const fetchMainData = async (para: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     const parameters: Iparameters = {

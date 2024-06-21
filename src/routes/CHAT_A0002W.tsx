@@ -105,7 +105,7 @@ const CHAT_BOT_MNG: React.FC = () => {
 
   const [state, setState] = React.useState<IAppState>({
     data: [],
-    expanded: [1, 2, 32],
+    expanded: [],
     editItem: undefined,
     editItemField: undefined,
     changes: false,
@@ -125,17 +125,8 @@ const CHAT_BOT_MNG: React.FC = () => {
           }
         : { ...item, questions: [] }
     );
-
-    const dataTree: any = createDataTree(
-      newData,
-      (i: any) => i["question"],
-      (i: any) => i["parent_question"],
-      SUB_ITEMS_FIELD
-    );
-
     setState({
       ...state,
-      //data: dataTree,
       editItem: { ...dataItem },
       editItemField: field,
     });
@@ -213,8 +204,8 @@ const CHAT_BOT_MNG: React.FC = () => {
       if (totalRowCnt > 0) {
         const dataTree: any = createDataTree(
           rows,
-          (i: any) => i["question"],
-          (i: any) => i["parent_question"],
+          (i: any) => i.question,
+          (i: any) => (i.parent_question == "" ? "1" : i.parent_question),
           SUB_ITEMS_FIELD
         );
 
@@ -243,7 +234,7 @@ const CHAT_BOT_MNG: React.FC = () => {
 
         //파라미터
         const paraSaved: Iparameters = {
-          procedureName: "P_CHAT_A0002_S",
+          procedureName: "P_CHAT_A0002W_S",
           pageNumber: 0,
           pageSize: 0,
           parameters: {
@@ -283,7 +274,7 @@ const CHAT_BOT_MNG: React.FC = () => {
 
         //파라미터
         const paraSaved: Iparameters = {
-          procedureName: "P_CHAT_A0002_S",
+          procedureName: "P_CHAT_A0002W_S",
           pageNumber: 0,
           pageSize: 0,
           parameters: {
@@ -366,8 +357,8 @@ const CHAT_BOT_MNG: React.FC = () => {
     // flat to tree
     const dataTree: any = createDataTree(
       newData,
-      (i: any) => i["question"],
-      (i: any) => i["parent_question"],
+      (i: any) => i.question,
+      (i: any) => (i.parent_question == "" ? "1" : i.parent_question),
       SUB_ITEMS_FIELD
     );
 
@@ -436,16 +427,16 @@ const CHAT_BOT_MNG: React.FC = () => {
 
     // 드래그 데이터의 parent_question를 드롭 대상 데이터의 question 값으로 수정
     flatData.forEach((item: IQnaData) => {
-      if (item["question"] == childQuestion) {
-        item["parent_question"] = parentQuestion;
+      if (item.question == childQuestion) {
+        item.parent_question = parentQuestion;
       }
     });
 
     // flat to tree
     const dataTree: any = createDataTree(
       flatData,
-      (i: any) => i["question"],
-      (i: any) => i["parent_question"],
+      (i: any) => i.question,
+      (i: any) => (i.parent_question == "" ? "1" : i.parent_question),
       SUB_ITEMS_FIELD
     );
 

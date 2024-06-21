@@ -176,6 +176,7 @@ const AC_B1260W: React.FC = () => {
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
           ?.valueCode,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -209,12 +210,12 @@ const AC_B1260W: React.FC = () => {
     amtunit: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchGrid = async (workType: string) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -327,7 +328,7 @@ const AC_B1260W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
 
       if (tabSelected == 0) {
@@ -347,7 +348,7 @@ const AC_B1260W: React.FC = () => {
         fetchGrid("CHART5");
       }
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   let _export: any;
   let _export2: any;
@@ -987,7 +988,10 @@ const AC_B1260W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="제조경비">
+        <TabStripTab
+          title="제조경비"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -1402,7 +1406,10 @@ const AC_B1260W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="판매관리비">
+        <TabStripTab
+          title="판매관리비"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -1816,7 +1823,7 @@ const AC_B1260W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="매출액">
+        <TabStripTab title="매출액" disabled={permissions.view ? false : true}>
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2230,7 +2237,10 @@ const AC_B1260W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="영업외손익">
+        <TabStripTab
+          title="영업외손익"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2644,7 +2654,10 @@ const AC_B1260W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="특별손익">
+        <TabStripTab
+          title="특별손익"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {

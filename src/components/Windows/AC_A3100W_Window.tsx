@@ -28,7 +28,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import MonthCalendar from "../Calendars/MonthCalendar";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
@@ -41,6 +41,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
@@ -156,6 +157,14 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -172,6 +181,14 @@ const CopyWindow = ({
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
   };
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA191, L_AC164, L_BA190, L_AC160, L_AC161, L_BA002, L_sysUserMaster_002, L_dptcd_001, L_AC054, L_AC053",
+    //공정, 관리항목리스트
+    setBizComponentData
+  );
+
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
@@ -294,6 +311,7 @@ const CopyWindow = ({
         fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           ?.valueCode,
+        isSearch: true,
       }));
 
       setFilters2((prev) => ({
@@ -303,6 +321,7 @@ const CopyWindow = ({
         fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           ?.valueCode,
+        isSearch: true,
       }));
 
       setFilters3((prev) => ({
@@ -310,6 +329,7 @@ const CopyWindow = ({
         fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -337,7 +357,7 @@ const CopyWindow = ({
     todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -355,7 +375,7 @@ const CopyWindow = ({
     todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3, setFilters3] = useState({
@@ -373,7 +393,7 @@ const CopyWindow = ({
     todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const filterInputChange = (e: any) => {
@@ -432,7 +452,7 @@ const CopyWindow = ({
   }>({});
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -487,7 +507,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -544,7 +564,7 @@ const CopyWindow = ({
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -600,7 +620,12 @@ const CopyWindow = ({
   };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -610,11 +635,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && customOptionData !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -624,11 +654,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && customOptionData !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -638,9 +673,10 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   const selectData = () => {
+    if (!permissions.save) return;
     if (tabSelected == 0) {
       setParaData((prev) => ({
         ...prev,
@@ -1114,12 +1150,13 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (paraData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1232,7 +1269,13 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setInformation((prev) => ({
         ...prev,
         acseq1: data.acseq1,
@@ -1303,7 +1346,7 @@ const CopyWindow = ({
         pgNum: 1,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   const [Information, setInformation] = useState<{ [name: string]: any }>({
     fxdiv: "",
@@ -1355,13 +1398,6 @@ const CopyWindow = ({
     fxtaxincost: 0,
     projectno: "",
   });
-
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA191, L_AC164, L_BA190, L_AC160, L_AC161, L_BA002, L_sysUserMaster_002, L_dptcd_001, L_AC054, L_AC053",
-    //공정, 관리항목리스트
-    setBizComponentData
-  );
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
@@ -2125,7 +2161,10 @@ const CopyWindow = ({
           onSelect={handleSelectTab}
           scrollable={isMobile}
         >
-          <TabStripTab title="기본정보">
+          <TabStripTab
+            title="기본정보"
+            disabled={permissions.view ? false : true}
+          >
             <FormBoxWrap
               border={true}
               style={{ height: isMobile ? mobileheight : webheight }}
@@ -2458,7 +2497,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="자산변동"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <GridContainer>
               <GridTitleContainer
@@ -2471,6 +2512,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.delete ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
@@ -2478,6 +2520,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.delete ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2560,7 +2603,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="월감가상각"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <WindowFilterContainer>
               <FilterBox>
@@ -2604,12 +2649,14 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="search"
                     title="검색"
+                    disabled={permissions.view ? false : true}
                   ></Button>
                   <Button
                     onClick={onAddClick2}
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick2}
@@ -2617,6 +2664,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2725,7 +2773,9 @@ const CopyWindow = ({
           </TabStripTab>
           <TabStripTab
             title="년감가상각"
-            disabled={workType == "N" ? true : false}
+            disabled={
+              permissions.view ? (workType == "N" ? true : false) : true
+            }
           >
             <GridContainer>
               <GridTitleContainer
@@ -2738,6 +2788,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick3}
@@ -2745,6 +2796,7 @@ const CopyWindow = ({
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2869,9 +2921,11 @@ const CopyWindow = ({
         </TabStrip>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              저장
-            </Button>
+            {permissions.save && (
+              <Button themeColor={"primary"} onClick={selectData}>
+                저장
+              </Button>
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}

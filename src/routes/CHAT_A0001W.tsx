@@ -209,7 +209,7 @@ const CHAT_BOT: React.FC = () => {
 
     //파라미터
     const paraSaved: Iparameters = {
-      procedureName: "P_CHAT_A0001_S",
+      procedureName: "P_CHAT_A0001W_S",
       pageNumber: 0,
       pageSize: 0,
       parameters: {
@@ -235,7 +235,7 @@ const CHAT_BOT: React.FC = () => {
     if (permissions.view) {
       fetchMain();
     }
-  }, []);
+  }, [permissions]);
 
   return (
     <div

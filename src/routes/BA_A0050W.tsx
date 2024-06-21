@@ -557,6 +557,11 @@ const BA_A0050: React.FC = () => {
           ?.valueCode,
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
           ?.valueCode,
+        isSearch: true,
+      }));
+      setsubFilters((prev) => ({
+        ...prev,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -671,6 +676,7 @@ const BA_A0050: React.FC = () => {
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -880,7 +886,7 @@ const BA_A0050: React.FC = () => {
     proccd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters, setsubFilters] = useState({
@@ -895,7 +901,7 @@ const BA_A0050: React.FC = () => {
     proccd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [subfilters2, setsubFilters2] = useState({
@@ -910,12 +916,12 @@ const BA_A0050: React.FC = () => {
     proccd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1016,6 +1022,7 @@ const BA_A0050: React.FC = () => {
   };
 
   const fetchSubGrid = async (subfilters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1104,7 +1111,7 @@ const BA_A0050: React.FC = () => {
   };
 
   const fetchSubGrid2 = async (subfilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1194,18 +1201,18 @@ const BA_A0050: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (subfilters.isSearch && permissions !== null) {
+    if (subfilters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setsubFilters((prev) => ({
@@ -1216,11 +1223,11 @@ const BA_A0050: React.FC = () => {
 
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters, permissions]);
+  }, [subfilters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (subfilters2.isSearch && permissions !== null) {
+    if (subfilters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters2);
       setsubFilters2((prev) => ({
@@ -1231,7 +1238,7 @@ const BA_A0050: React.FC = () => {
 
       fetchSubGrid2(deepCopiedFilters);
     }
-  }, [subfilters2, permissions]);
+  }, [subfilters2, permissions, customOptionData]);
 
   const search2 = () => {
     setPage2(initialPageState); // 페이지 초기화
@@ -1340,6 +1347,7 @@ const BA_A0050: React.FC = () => {
   };
 
   const onRowDoubleCliCK = async (props: any) => {
+    if (!permissions.view) return;
     let procseq = 1;
     let valid = true;
     let data: any;
@@ -1872,6 +1880,7 @@ const BA_A0050: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = subData2Result.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2006,6 +2015,7 @@ const BA_A0050: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2055,6 +2065,7 @@ const BA_A0050: React.FC = () => {
   };
 
   const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -2082,18 +2093,19 @@ const BA_A0050: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.prntitemcd != "") {
+    if (paraData.prntitemcd != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   useEffect(() => {
-    if (paraData2.itemcd_s != "") {
+    if (paraData2.itemcd_s != "" && permissions.save) {
       fetchTodoGridSaved2();
     }
-  }, [paraData2]);
+  }, [paraData2, permissions]);
 
   const reloadData = (data: any, itemcd: any) => {
+    if (!permissions.save) return;
     if (data.length == 0) return false;
     let dataArr: any = {
       itemcd_s: [],
@@ -2367,6 +2379,7 @@ const BA_A0050: React.FC = () => {
                             onClick={search2}
                             themeColor={"primary"}
                             style={{ marginLeft: "10px" }}
+                            disabled={permissions.view ? false : true}
                           >
                             조회
                           </Button>
@@ -2479,6 +2492,7 @@ const BA_A0050: React.FC = () => {
                           onClick={onCopyEditClick2}
                           themeColor={"primary"}
                           icon="save"
+                          disabled={permissions.save ? false : true}
                         >
                           패턴공정도 참조
                         </Button>
@@ -2487,6 +2501,7 @@ const BA_A0050: React.FC = () => {
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="save"
+                          disabled={permissions.save ? false : true}
                         >
                           BOM복사
                         </Button>
@@ -2496,6 +2511,7 @@ const BA_A0050: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         />
                         <Button
                           onClick={onSaveClick}
@@ -2503,6 +2519,7 @@ const BA_A0050: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="행 저장"
+                          disabled={permissions.save ? false : true}
                         />
                       </div>
                     </ButtonContainer>
@@ -2690,7 +2707,11 @@ const BA_A0050: React.FC = () => {
                           />
                         </td>
                         <th>
-                          <Button onClick={search2} themeColor={"primary"}>
+                          <Button
+                            onClick={search2}
+                            themeColor={"primary"}
+                            disabled={permissions.view ? false : true}
+                          >
                             조회
                           </Button>
                         </th>
@@ -2779,6 +2800,7 @@ const BA_A0050: React.FC = () => {
                       onClick={onCopyEditClick2}
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       패턴공정도 참조
                     </Button>
@@ -2787,6 +2809,7 @@ const BA_A0050: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       BOM복사
                     </Button>
@@ -2796,6 +2819,7 @@ const BA_A0050: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     />
                     <Button
                       onClick={onSaveClick}
@@ -2803,6 +2827,7 @@ const BA_A0050: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="행 저장"
+                      disabled={permissions.save ? false : true}
                     />
                   </ButtonContainer>
                 </GridTitleContainer>

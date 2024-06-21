@@ -151,6 +151,7 @@ const AC_B6060W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -239,7 +240,7 @@ const AC_B6060W: React.FC = () => {
     yyyymmdd: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [dates, setDates] = useState<string>(
@@ -378,7 +379,7 @@ const AC_B6060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -436,7 +437,7 @@ const AC_B6060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters2: Iparameters = {
@@ -491,7 +492,7 @@ const AC_B6060W: React.FC = () => {
   };
 
   const fetchMainGrid3 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters3: Iparameters = {
@@ -545,7 +546,7 @@ const AC_B6060W: React.FC = () => {
   };
 
   const fetchMainGrid4 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters4: Iparameters = {
@@ -601,7 +602,7 @@ const AC_B6060W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -1899,7 +1900,7 @@ const AC_B6060W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="기간별">
+        <TabStripTab title="기간별" disabled={permissions.view ? false : true}>
           <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <ExcelExport
               data={mainDataResult.data}
@@ -1965,7 +1966,7 @@ const AC_B6060W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="분기별">
+        <TabStripTab title="분기별" disabled={permissions.view ? false : true}>
           <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <ExcelExport
               data={mainDataResult2.data}
@@ -2025,7 +2026,7 @@ const AC_B6060W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="반기별">
+        <TabStripTab title="반기별" disabled={permissions.view ? false : true}>
           <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <ExcelExport
               data={mainDataResult3.data}
@@ -2088,7 +2089,7 @@ const AC_B6060W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="연간">
+        <TabStripTab title="연간" disabled={permissions.view ? false : true}>
           <GridContainer style={{ width: "100%", overflow: "auto" }}>
             <ExcelExport
               data={mainDataResult4.data}

@@ -61,10 +61,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommentsGrid from "../components/Grids/CommentsGrid";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import {
-  isFilterHideState,
-  isLoading
-} from "../store/atoms";
+import { isFilterHideState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0021W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -312,6 +309,7 @@ const BA_A0021W_603: React.FC = () => {
           ?.valueCode,
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -422,7 +420,7 @@ const BA_A0021W_603: React.FC = () => {
     itemlvl3: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -431,7 +429,7 @@ const BA_A0021W_603: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3, setFilters3] = useState({
@@ -440,7 +438,7 @@ const BA_A0021W_603: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters4, setFilters4] = useState({
@@ -449,7 +447,7 @@ const BA_A0021W_603: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -523,7 +521,7 @@ const BA_A0021W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -601,7 +599,7 @@ const BA_A0021W_603: React.FC = () => {
   };
 
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -657,7 +655,7 @@ const BA_A0021W_603: React.FC = () => {
   };
 
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -719,7 +717,7 @@ const BA_A0021W_603: React.FC = () => {
   };
 
   const fetchMainGrid4 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -781,7 +779,12 @@ const BA_A0021W_603: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
 
@@ -789,15 +792,15 @@ const BA_A0021W_603: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, customOptionData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters2.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
@@ -806,15 +809,15 @@ const BA_A0021W_603: React.FC = () => {
 
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions, customOptionData]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters3.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
@@ -823,15 +826,15 @@ const BA_A0021W_603: React.FC = () => {
 
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3, permissions, customOptionData]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters4.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
@@ -840,7 +843,7 @@ const BA_A0021W_603: React.FC = () => {
 
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4, permissions, customOptionData]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1273,7 +1276,10 @@ const BA_A0021W_603: React.FC = () => {
                 style={{ width: "100%" }}
                 scrollable={isMobile}
               >
-                <TabStripTab title="고객정보">
+                <TabStripTab
+                  title="고객정보"
+                  disabled={permissions.view ? false : true}
+                >
                   <Swiper
                     onSwiper={(swiper2) => {
                       setSwiper2(swiper2);
@@ -1578,7 +1584,10 @@ const BA_A0021W_603: React.FC = () => {
                     </SwiperSlide>
                   </Swiper>
                 </TabStripTab>
-                <TabStripTab title="상담일지">
+                <TabStripTab
+                  title="상담일지"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <ExcelExport
                       data={mainDataResult2.data}
@@ -1668,7 +1677,10 @@ const BA_A0021W_603: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="견적">
+                <TabStripTab
+                  title="견적"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <ExcelExport
                       data={mainDataResult3.data}
@@ -1754,7 +1766,10 @@ const BA_A0021W_603: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="계약">
+                <TabStripTab
+                  title="계약"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <ExcelExport
                       data={mainDataResult4.data}
@@ -1852,7 +1867,10 @@ const BA_A0021W_603: React.FC = () => {
             style={{ width: "100%" }}
             scrollable={isMobile}
           >
-            <TabStripTab title="조회">
+            <TabStripTab
+              title="조회"
+              disabled={permissions.view ? false : true}
+            >
               <FilterContainer>
                 <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
@@ -2008,7 +2026,13 @@ const BA_A0021W_603: React.FC = () => {
             </TabStripTab>
             <TabStripTab
               title="처리"
-              disabled={mainDataResult.total == 0 ? true : false}
+              disabled={
+                permissions.view
+                  ? mainDataResult.total == 0
+                    ? true
+                    : false
+                  : true
+              }
             >
               <TabStrip
                 selected={tabSelected2}
@@ -2016,7 +2040,10 @@ const BA_A0021W_603: React.FC = () => {
                 style={{ width: "100%" }}
                 scrollable={isMobile}
               >
-                <TabStripTab title="고객정보">
+                <TabStripTab
+                  title="고객정보"
+                  disabled={permissions.view ? false : true}
+                >
                   <FormBoxWrap border={true} className="FormBoxWrap">
                     <GridTitleContainer>
                       <GridTitle>고객 기본정보</GridTitle>
@@ -2278,7 +2305,10 @@ const BA_A0021W_603: React.FC = () => {
                     />
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="상담일지">
+                <TabStripTab
+                  title="상담일지"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <ExcelExport
                       data={mainDataResult2.data}
@@ -2368,7 +2398,10 @@ const BA_A0021W_603: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="견적">
+                <TabStripTab
+                  title="견적"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <ExcelExport
                       data={mainDataResult3.data}
@@ -2454,7 +2487,10 @@ const BA_A0021W_603: React.FC = () => {
                     </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
-                <TabStripTab title="계약">
+                <TabStripTab
+                  title="계약"
+                  disabled={permissions.view ? false : true}
+                >
                   <GridContainer>
                     <ExcelExport
                       data={mainDataResult4.data}

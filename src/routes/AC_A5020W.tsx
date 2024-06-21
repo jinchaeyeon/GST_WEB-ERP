@@ -183,7 +183,7 @@ const AC_A5020W: React.FC = () => {
     finyn: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -240,6 +240,7 @@ const AC_A5020W: React.FC = () => {
         inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           ?.valueCode,
         etax: defaultOption.find((item: any) => item.id == "etax")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -292,7 +293,7 @@ const AC_A5020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -378,7 +379,12 @@ const AC_A5020W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
 
@@ -610,6 +616,7 @@ const AC_A5020W: React.FC = () => {
   };
 
   const onCheckAll = () => {
+    if (!permissions.save) return;
     setParaData((prev) => ({
       ...prev,
       workType: "confirm_all",
@@ -626,6 +633,7 @@ const AC_A5020W: React.FC = () => {
   };
 
   const onSave = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -707,12 +715,13 @@ const AC_A5020W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (paraData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
   }, [paraData]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -886,6 +895,7 @@ const AC_A5020W: React.FC = () => {
               icon="check"
               fillMode="outline"
               themeColor={"primary"}
+              disabled={permissions.save ? false : true}
             >
               일괄확정
             </Button>
@@ -894,6 +904,7 @@ const AC_A5020W: React.FC = () => {
               icon="save"
               fillMode="outline"
               themeColor={"primary"}
+              disabled={permissions.save ? false : true}
             >
               세금계산서저장
             </Button>

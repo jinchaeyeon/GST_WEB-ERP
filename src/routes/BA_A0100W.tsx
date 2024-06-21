@@ -177,6 +177,7 @@ const BA_A0100W: React.FC = () => {
           ?.valueCode,
         testpart: defaultOption.find((item: any) => item.id == "testpart")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -254,7 +255,7 @@ const BA_A0100W: React.FC = () => {
     testpart: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -264,7 +265,7 @@ const BA_A0100W: React.FC = () => {
     roomcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const pageChange = (event: GridPageChangeEvent) => {
@@ -307,6 +308,7 @@ const BA_A0100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -400,7 +402,7 @@ const BA_A0100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -486,16 +488,16 @@ const BA_A0100W: React.FC = () => {
   };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       //SY_A0010W에만 if문사용
@@ -507,7 +509,7 @@ const BA_A0100W: React.FC = () => {
 
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, customOptionData]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -1055,6 +1057,7 @@ const BA_A0100W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1173,6 +1176,7 @@ const BA_A0100W: React.FC = () => {
   };
 
   const onSaveClick2 = async () => {
+    if (!permissions.save) return;
     const dataItem = subDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -1261,6 +1265,7 @@ const BA_A0100W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1366,10 +1371,10 @@ const BA_A0100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.rowstatus_s != "") {
+    if (paraData.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -1526,6 +1531,7 @@ const BA_A0100W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -1533,6 +1539,7 @@ const BA_A0100W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -1540,6 +1547,7 @@ const BA_A0100W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1662,6 +1670,7 @@ const BA_A0100W: React.FC = () => {
                       onClick={onAddClick3}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       일괄생성
                     </Button>
@@ -1670,6 +1679,7 @@ const BA_A0100W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick2}
@@ -1677,6 +1687,7 @@ const BA_A0100W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick2}
@@ -1684,6 +1695,7 @@ const BA_A0100W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </div>
                 </ButtonContainer>
@@ -1795,6 +1807,7 @@ const BA_A0100W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick}
@@ -1802,6 +1815,7 @@ const BA_A0100W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick}
@@ -1809,6 +1823,7 @@ const BA_A0100W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1914,6 +1929,7 @@ const BA_A0100W: React.FC = () => {
                     onClick={onAddClick3}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     일괄생성
                   </Button>
@@ -1922,6 +1938,7 @@ const BA_A0100W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick2}
@@ -1929,6 +1946,7 @@ const BA_A0100W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick2}
@@ -1936,6 +1954,7 @@ const BA_A0100W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>

@@ -391,31 +391,37 @@ const AC_B8000W: React.FC = () => {
         ...prev,
         gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
         chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
+        isSearch: true,
       }));
       setFilters2((prev) => ({
         ...prev,
         gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
         chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
+        isSearch: true,
       }));
       setFilters3((prev) => ({
         ...prev,
         gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
         chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
+        isSearch: true,
       }));
       setFilters4((prev) => ({
         ...prev,
         gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
         chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
+        isSearch: true,
       }));
       setFilters5((prev) => ({
         ...prev,
         gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
         chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
+        isSearch: true,
       }));
       setFilters6((prev) => ({
         ...prev,
         gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
         chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -460,7 +466,7 @@ const AC_B8000W: React.FC = () => {
     chasu: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -476,7 +482,7 @@ const AC_B8000W: React.FC = () => {
     chasu: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -492,7 +498,7 @@ const AC_B8000W: React.FC = () => {
     chasu: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   //조회조건 초기값
   const [filters4, setFilters4] = useState<{ [name: string]: any }>({
@@ -507,7 +513,7 @@ const AC_B8000W: React.FC = () => {
     chasu: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   //조회조건 초기값
   const [filters5, setFilters5] = useState<{ [name: string]: any }>({
@@ -522,7 +528,7 @@ const AC_B8000W: React.FC = () => {
     chasu: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   //조회조건 초기값
   const [filters6, setFilters6] = useState<{ [name: string]: any }>({
@@ -537,7 +543,7 @@ const AC_B8000W: React.FC = () => {
     chasu: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -657,7 +663,7 @@ const AC_B8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -716,7 +722,7 @@ const AC_B8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -775,7 +781,7 @@ const AC_B8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -834,7 +840,7 @@ const AC_B8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -893,7 +899,7 @@ const AC_B8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid5 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -952,7 +958,7 @@ const AC_B8000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid6 = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1011,7 +1017,12 @@ const AC_B8000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -1022,11 +1033,16 @@ const AC_B8000W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -1036,11 +1052,16 @@ const AC_B8000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -1050,11 +1071,16 @@ const AC_B8000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters4.isSearch && permissions !== null) {
+    if (
+      filters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
@@ -1065,11 +1091,16 @@ const AC_B8000W: React.FC = () => {
 
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters5.isSearch && permissions !== null) {
+    if (
+      filters5.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters5);
       setFilters5((prev) => ({
@@ -1080,11 +1111,16 @@ const AC_B8000W: React.FC = () => {
 
       fetchMainGrid5(deepCopiedFilters);
     }
-  }, [filters5]);
+  }, [filters5, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters6.isSearch && permissions !== null) {
+    if (
+      filters6.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters6);
       setFilters6((prev) => ({
@@ -1095,7 +1131,7 @@ const AC_B8000W: React.FC = () => {
 
       fetchMainGrid6(deepCopiedFilters);
     }
-  }, [filters6]);
+  }, [filters6, permissions, bizComponentData, customOptionData]);
 
   let _export: any;
   let _export2: any;
@@ -2438,7 +2474,10 @@ const AC_B8000W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="세금계산서 홈택스">
+        <TabStripTab
+          title="세금계산서 홈택스"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -3500,7 +3539,10 @@ const AC_B8000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="신용카드 홈택스">
+        <TabStripTab
+          title="신용카드 홈택스"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -4342,7 +4384,10 @@ const AC_B8000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="계산서 홈택스">
+        <TabStripTab
+          title="계산서 홈택스"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -5578,7 +5623,10 @@ const AC_B8000W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="수출실적 홈택스">
+        <TabStripTab
+          title="수출실적 홈택스"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>

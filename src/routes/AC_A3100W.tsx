@@ -125,6 +125,7 @@ const AC_A3100W: React.FC = () => {
         fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -222,14 +223,14 @@ const AC_A3100W: React.FC = () => {
     todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -313,7 +314,7 @@ const AC_A3100W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -323,7 +324,7 @@ const AC_A3100W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -416,6 +417,7 @@ const AC_A3100W: React.FC = () => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -518,6 +520,7 @@ const AC_A3100W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -565,8 +568,8 @@ const AC_A3100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   return (
     <>
@@ -662,7 +665,12 @@ const AC_A3100W: React.FC = () => {
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
-            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="file-add"
+              disabled={permissions.save ? false : true}
+            >
               고정자산생성
             </Button>
             <Button
@@ -670,6 +678,7 @@ const AC_A3100W: React.FC = () => {
               icon="delete"
               fillMode="outline"
               themeColor={"primary"}
+              disabled={permissions.delete ? false : true}
             >
               고정자산삭제
             </Button>

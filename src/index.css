@@ -199,6 +199,7 @@ input.readonly {
 .k-panelbar-item-text {
   white-space: nowrap !important;
   overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .k-panelbar-item-text>div {

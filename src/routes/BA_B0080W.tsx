@@ -43,10 +43,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 let list: any[] = [];
@@ -110,6 +107,7 @@ const BA_B0080W: React.FC = () => {
           ?.valueCode,
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -210,7 +208,7 @@ const BA_B0080W: React.FC = () => {
     find_row_value: "",
     scrollDirrection: "down",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgGap: 0,
   });
 
@@ -233,7 +231,7 @@ const BA_B0080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -392,15 +390,15 @@ const BA_B0080W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 

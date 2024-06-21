@@ -37,7 +37,7 @@ import {
   isLoading,
   loginResultState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -45,6 +45,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
@@ -89,6 +90,13 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const pc = UseGetValueFromSessionItem("pc");
 
   const setLoading = useSetRecoilState(isLoading);
@@ -106,6 +114,22 @@ const KendoWindow = ({
         "query"
       );
       setFilters((prev) => ({
+        ...prev,
+        raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
+          ?.valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
+          ?.valueCode,
+        isSearch: true,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
+          ?.valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
+          ?.valueCode,
+        isSearch: true,
+      }));
+      setFilters3((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
           ?.valueCode,
@@ -349,7 +373,7 @@ const KendoWindow = ({
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -362,7 +386,7 @@ const KendoWindow = ({
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3, setFilters3] = useState({
@@ -375,7 +399,7 @@ const KendoWindow = ({
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
@@ -392,6 +416,7 @@ const KendoWindow = ({
 
   //상세그리드 조회
   const fetchGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -490,6 +515,7 @@ const KendoWindow = ({
 
   //상세그리드 조회
   const fetchGrid2 = async (filters2: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -576,6 +602,7 @@ const KendoWindow = ({
   };
 
   const fetchGrid3 = async (filters3: any) => {
+    if (!permissions.view) return;
     let data: any;
     const parameters3: Iparameters = {
       procedureName: "P_BA_A0050W_Sub1_Q",
@@ -675,31 +702,46 @@ const KendoWindow = ({
   }, [detailDataResult3]);
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters3.isSearch) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -942,7 +984,12 @@ const KendoWindow = ({
       <TitleContainer className="WindowTitleContainer">
         <Title></Title>
         <ButtonContainer>
-          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
+          <Button
+            onClick={() => search()}
+            icon="search"
+            themeColor={"primary"}
+            disabled={permissions.view ? false : true}
+          >
             조회
           </Button>
         </ButtonContainer>
@@ -1292,9 +1339,11 @@ const KendoWindow = ({
               </Grid>
               <BottomContainer className="BottomContainer">
                 <ButtonContainer>
-                  <Button themeColor={"primary"} onClick={selectData}>
-                    저장
-                  </Button>
+                  {permissions.save && (
+                    <Button themeColor={"primary"} onClick={selectData}>
+                      저장
+                    </Button>
+                  )}
                   <Button
                     themeColor={"primary"}
                     fillMode={"outline"}
@@ -1526,9 +1575,11 @@ const KendoWindow = ({
           </GridContainer>
           <BottomContainer className="BottomContainer">
             <ButtonContainer>
-              <Button themeColor={"primary"} onClick={selectData}>
-                저장
-              </Button>
+              {permissions.save && (
+                <Button themeColor={"primary"} onClick={selectData}>
+                  저장
+                </Button>
+              )}
               <Button
                 themeColor={"primary"}
                 fillMode={"outline"}

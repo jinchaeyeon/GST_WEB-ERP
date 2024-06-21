@@ -51,9 +51,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
 import { IWindowPosition } from "../hooks/interfaces";
-import {
-  isLoading
-} from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B5000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -156,6 +154,7 @@ const AC_B5000W: React.FC = () => {
           ?.valueCode,
         prtyn: defaultOption.find((item: any) => item.id == "prtyn")?.valueCode,
         prdiv: defaultOption.find((item: any) => item.id == "prdiv")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -217,12 +216,12 @@ const AC_B5000W: React.FC = () => {
     taxtype: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -281,7 +280,7 @@ const AC_B5000W: React.FC = () => {
   };
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -291,7 +290,7 @@ const AC_B5000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -561,19 +560,17 @@ const AC_B5000W: React.FC = () => {
       <GridContainer>
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
-          {permissions && (
-            <ButtonContainer>
-              <Button
-                onClick={onPrintWndClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="print"
-                disabled={permissions.print ? false : true}
-              >
-                리스트 출력
-              </Button>
-            </ButtonContainer>
-          )}
+          <ButtonContainer>
+            <Button
+              onClick={onPrintWndClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="print"
+              disabled={permissions.print ? false : true}
+            >
+              리스트 출력
+            </Button>
+          </ButtonContainer>
         </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}

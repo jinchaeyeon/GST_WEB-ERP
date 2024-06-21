@@ -3,21 +3,33 @@ import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { Iparameters } from "../../store/types";
-import { convertDateToStr, numberWithCommas } from "../CommonFunction";
+import { Iparameters, TPermissions } from "../../store/types";
+import {
+  UsePermissions,
+  convertDateToStr,
+  numberWithCommas,
+} from "../CommonFunction";
 
 const WorkDailyReport = (data: any) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const processApi = useApi();
   const [mainDataResult, setMainDataResult] = useState<any>(null);
 
   useEffect(() => {
-    if (data !== null) {
+    if (data !== null && permissions.view) {
       fetchMainData(data.data);
     }
-  }, [data]);
+  }, [data, permissions]);
 
   //그리드 데이터 조회
   const fetchMainData = async (para: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     const parameters: Iparameters = {
@@ -67,7 +79,12 @@ const WorkDailyReport = (data: any) => {
         <></>
         <ReactToPrint
           trigger={() => (
-            <Button fillMode="outline" themeColor={"primary"} icon="print">
+            <Button
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="print"
+              disabled={permissions.print ? false : true}
+            >
               출력
             </Button>
           )}

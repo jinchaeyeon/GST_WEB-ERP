@@ -31,6 +31,14 @@ const NameTreeListCell = (props: TreeListCellProps) => {
         syntheticEvent: e.syntheticEvent,
         value: e.target.value ?? "",
       });
+
+      onChange({
+        dataItem: dataItem,
+        level: level,
+        field: "rowstatus",
+        syntheticEvent: e.syntheticEvent,
+        value:  dataItem["rowstatus"] == "N" ? "N" : "U",
+      });
     }
   };
 

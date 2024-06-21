@@ -170,7 +170,7 @@ const AC_B8080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     let data2: any;
 
@@ -229,7 +229,7 @@ const AC_B8080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     let data2: any;
 
@@ -284,10 +284,10 @@ const AC_B8080W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       fetchMainGrid();
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
@@ -423,7 +423,10 @@ const AC_B8080W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="수출실적 일괄제출명세서">
+        <TabStripTab
+          title="수출실적 일괄제출명세서"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer>
             <div
               style={{
@@ -438,7 +441,10 @@ const AC_B8080W: React.FC = () => {
             </div>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="수출실적명세서">
+        <TabStripTab
+          title="수출실적명세서"
+          disabled={permissions.view ? false : true}
+        >
           <GridContainer>
             <div
               style={{

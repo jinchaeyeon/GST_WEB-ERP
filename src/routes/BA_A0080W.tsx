@@ -442,6 +442,7 @@ const BA_A0080: React.FC = () => {
           ?.valueCode,
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -484,7 +485,7 @@ const BA_A0080: React.FC = () => {
             itemno: itemInfo.itemno,
             itemnm: itemInfo.itemnm,
             insiz: itemInfo.insiz,
-            itemacnt: itemInfo.itemacnt,
+            //itemacnt: itemInfo.itemacnt, 
             model: itemInfo.model,
             bnatur: itemInfo.bnatur,
             spec: itemInfo.spec,
@@ -600,7 +601,7 @@ const BA_A0080: React.FC = () => {
     amtunit: "KRW",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -610,7 +611,7 @@ const BA_A0080: React.FC = () => {
     itemacnt: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
@@ -618,7 +619,7 @@ const BA_A0080: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -726,7 +727,7 @@ const BA_A0080: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -830,6 +831,7 @@ const BA_A0080: React.FC = () => {
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
       const bytes = require("utf8-bytes");
@@ -985,19 +987,25 @@ const BA_A0080: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
       subfilters.isSearch &&
-      permissions !== null &&
+      permissions.view &&
+      bizComponentData !== null &&
       customOptionData !== null
     ) {
       const _ = require("lodash");
@@ -1010,7 +1018,7 @@ const BA_A0080: React.FC = () => {
 
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters, permissions]);
+  }, [subfilters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1477,7 +1485,7 @@ const BA_A0080: React.FC = () => {
   };
 
   const onSaveClick = async () => {
-    console.log("저장");
+    if (!permissions.save) return;
 
     let valid = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
@@ -1586,6 +1594,7 @@ const BA_A0080: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1632,10 +1641,10 @@ const BA_A0080: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData != undefined && paraData.itemcd != "") {
+    if (paraData != undefined && paraData.itemcd != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
@@ -1672,6 +1681,7 @@ const BA_A0080: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
+    if (!permissions.save) return;
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
     } else {
@@ -1851,6 +1861,7 @@ const BA_A0080: React.FC = () => {
                       onClick={onCopyWndClick2}
                       icon="copy"
                       title="단가복사"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1951,20 +1962,19 @@ const BA_A0080: React.FC = () => {
                         이전
                       </Button>
                       <div>
-                        {permissions && (
-                          <ExcelUploadButtons
-                            saveExcel={saveExcel}
-                            permissions={permissions}
-                            style={{ marginLeft: "15px" }}
-                            disabled={filters.itemacnt == "" ? true : false}
-                          />
-                        )}
+                        <ExcelUploadButtons
+                          saveExcel={saveExcel}
+                          permissions={permissions}
+                          style={{ marginLeft: "15px" }}
+                          disabled={filters.itemacnt == "" ? true : false}
+                        />
                         <Button
                           title="Export Excel"
                           onClick={onAttachmentsWndClick}
                           icon="file"
                           fillMode="outline"
                           themeColor={"primary"}
+                          disabled={permissions.view ? false : true}
                         >
                           엑셀양식
                         </Button>
@@ -1974,7 +1984,13 @@ const BA_A0080: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
-                          disabled={filters.itemacnt == "" ? true : false}
+                          disabled={
+                            permissions.save
+                              ? filters.itemacnt == ""
+                                ? true
+                                : false
+                              : true
+                          }
                         ></Button>
                         <Button
                           onClick={onDeleteClick}
@@ -1982,6 +1998,7 @@ const BA_A0080: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           themeColor={"primary"}
@@ -1989,7 +2006,13 @@ const BA_A0080: React.FC = () => {
                           onClick={onCopyWndClick}
                           icon="folder-open"
                           title="품목참조"
-                          disabled={filters.itemacnt == "" ? true : false}
+                          disabled={
+                            permissions.save
+                              ? filters.itemacnt == ""
+                                ? true
+                                : false
+                              : true
+                          }
                         ></Button>
                         <Button
                           onClick={onSaveClick}
@@ -1997,6 +2020,7 @@ const BA_A0080: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </div>
                     </ButtonContainer>
@@ -2137,6 +2161,7 @@ const BA_A0080: React.FC = () => {
                     onClick={onCopyWndClick2}
                     icon="copy"
                     title="단가복사"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2215,20 +2240,19 @@ const BA_A0080: React.FC = () => {
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>상세정보</GridTitle>
                   <ButtonContainer>
-                    {permissions && (
-                      <ExcelUploadButtons
-                        saveExcel={saveExcel}
-                        permissions={permissions}
-                        style={{ marginLeft: "15px" }}
-                        disabled={filters.itemacnt == "" ? true : false}
-                      />
-                    )}
+                    <ExcelUploadButtons
+                      saveExcel={saveExcel}
+                      permissions={permissions}
+                      style={{ marginLeft: "15px" }}
+                      disabled={filters.itemacnt == "" ? true : false}
+                    />
                     <Button
                       title="Export Excel"
                       onClick={onAttachmentsWndClick}
                       icon="file"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.view ? false : true}
                     >
                       엑셀양식
                     </Button>
@@ -2238,7 +2262,13 @@ const BA_A0080: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
-                      disabled={filters.itemacnt == "" ? true : false}
+                      disabled={
+                        permissions.save
+                          ? filters.itemacnt == ""
+                            ? true
+                            : false
+                          : true
+                      }
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -2246,6 +2276,7 @@ const BA_A0080: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       themeColor={"primary"}
@@ -2253,7 +2284,13 @@ const BA_A0080: React.FC = () => {
                       onClick={onCopyWndClick}
                       icon="folder-open"
                       title="품목참조"
-                      disabled={filters.itemacnt == "" ? true : false}
+                      disabled={
+                        permissions.save
+                          ? filters.itemacnt == ""
+                            ? true
+                            : false
+                          : true
+                      }
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -2261,6 +2298,7 @@ const BA_A0080: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -2427,6 +2465,11 @@ const BA_A0080: React.FC = () => {
           setVisible={setAttachmentsWindowVisible}
           para={"BA_A0080W"}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

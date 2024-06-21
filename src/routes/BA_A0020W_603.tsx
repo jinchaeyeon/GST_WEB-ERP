@@ -58,7 +58,7 @@ import {
   deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
@@ -185,7 +185,13 @@ const ColumnCommandCell = (props: GridCellProps) => {
   const { setAttdatnum, setFiles } = useContext(FormContext);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
 
@@ -230,7 +236,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: true, download: true, delete: true }}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
           modal={true}
         />
       )}
@@ -268,7 +278,7 @@ const BA_A0020W_603: React.FC = () => {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".ButtonContainer2");
       height3 = getHeight(".k-tabstrip-items-wrapper");
-      if(height4 == 0 && !isMobile) {
+      if (height4 == 0 && !isMobile) {
         setTabSelected(0);
         height4 = getHeight(".FormBoxWrap");
       }
@@ -557,6 +567,7 @@ const BA_A0020W_603: React.FC = () => {
         custdiv: "B",
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -759,7 +770,7 @@ const BA_A0020W_603: React.FC = () => {
     bizregnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -769,7 +780,7 @@ const BA_A0020W_603: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -779,7 +790,7 @@ const BA_A0020W_603: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -789,7 +800,7 @@ const BA_A0020W_603: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [information, setInformation] = useState<{ [name: string]: any }>({
@@ -833,7 +844,7 @@ const BA_A0020W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1049,7 +1060,7 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1117,7 +1128,7 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1173,7 +1184,7 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const fetchMainGrid4 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -1231,10 +1242,10 @@ const BA_A0020W_603: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -1243,15 +1254,15 @@ const BA_A0020W_603: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, customOptionData]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters2.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
@@ -1260,15 +1271,15 @@ const BA_A0020W_603: React.FC = () => {
 
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions, customOptionData]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters3.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
@@ -1277,15 +1288,15 @@ const BA_A0020W_603: React.FC = () => {
 
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3, permissions, customOptionData]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters4.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
@@ -1294,7 +1305,7 @@ const BA_A0020W_603: React.FC = () => {
 
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4, permissions, customOptionData]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   //엑셀 내보내기
   //엑셀 내보내기
@@ -2272,6 +2283,7 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     if (
       information.custdiv == "" ||
       information.inunpitem == "" ||
@@ -2470,12 +2482,21 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (
+      paraData.workType != "" &&
+      permissions.save &&
+      paraData.workType != "D"
+    ) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+    if (paraData.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved();
+    }
+  }, [paraData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save && paraData.workType != "D") return;
+    if (!permissions.delete && paraData.workType == "D") return;
     let data: any;
     setLoading(true);
     try {
@@ -2617,6 +2638,7 @@ const BA_A0020W_603: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -2635,6 +2657,7 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     let valid = true;
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
@@ -2747,6 +2770,7 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    if (!permissions.save) return;
     let valid = true;
     const dataItem = mainDataResult3.data.filter((item: any) => {
       return (
@@ -2839,6 +2863,7 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const onSaveClick4 = () => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult4.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -3067,6 +3092,7 @@ const BA_A0020W_603: React.FC = () => {
                     onClick={onAddClick}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     신규
                   </Button>
@@ -3075,6 +3101,7 @@ const BA_A0020W_603: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
+                    disabled={permissions.delete ? false : true}
                   >
                     삭제
                   </Button>
@@ -3173,13 +3200,17 @@ const BA_A0020W_603: React.FC = () => {
               style={{ width: "100%" }}
               scrollable={isMobile}
             >
-              <TabStripTab title="기본">
+              <TabStripTab
+                title="기본"
+                disabled={permissions.view ? false : true}
+              >
                 <ButtonContainer className="ButtonContainer3">
                   <Button
                     onClick={onSaveClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -3732,7 +3763,9 @@ const BA_A0020W_603: React.FC = () => {
               </TabStripTab>
               <TabStripTab
                 title="재무"
-                disabled={workType == "N" ? true : false}
+                disabled={
+                  permissions.view ? (workType == "N" ? true : false) : true
+                }
               >
                 <FormContext.Provider
                   value={{
@@ -3753,6 +3786,7 @@ const BA_A0020W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick2}
@@ -3760,6 +3794,7 @@ const BA_A0020W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick2}
@@ -3767,6 +3802,7 @@ const BA_A0020W_603: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -3863,7 +3899,9 @@ const BA_A0020W_603: React.FC = () => {
               </TabStripTab>
               <TabStripTab
                 title="투자"
-                disabled={workType == "N" ? true : false}
+                disabled={
+                  permissions.view ? (workType == "N" ? true : false) : true
+                }
               >
                 <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
@@ -3873,6 +3911,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick3}
@@ -3880,6 +3919,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick3}
@@ -3887,6 +3927,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -3978,7 +4019,9 @@ const BA_A0020W_603: React.FC = () => {
               </TabStripTab>
               <TabStripTab
                 title="담당자"
-                disabled={workType == "N" ? true : false}
+                disabled={
+                  permissions.view ? (workType == "N" ? true : false) : true
+                }
               >
                 <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
@@ -3988,6 +4031,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick4}
@@ -3995,6 +4039,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick4}
@@ -4002,6 +4047,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -4097,6 +4143,7 @@ const BA_A0020W_603: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   신규
                 </Button>
@@ -4105,6 +4152,7 @@ const BA_A0020W_603: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   삭제
                 </Button>
@@ -4199,7 +4247,10 @@ const BA_A0020W_603: React.FC = () => {
             style={{ width: "100%" }}
             scrollable={isMobile}
           >
-            <TabStripTab title="기본">
+            <TabStripTab
+              title="기본"
+              disabled={permissions.view ? false : true}
+            >
               <FormBoxWrap border={true} className="FormBoxWrap">
                 <GridTitleContainer>
                   <GridTitle></GridTitle>
@@ -4209,6 +4260,7 @@ const BA_A0020W_603: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       저장
                     </Button>
@@ -4753,7 +4805,12 @@ const BA_A0020W_603: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </TabStripTab>
-            <TabStripTab title="재무" disabled={workType == "N" ? true : false}>
+            <TabStripTab
+              title="재무"
+              disabled={
+                permissions.view ? (workType == "N" ? true : false) : true
+              }
+            >
               <FormContext.Provider
                 value={{
                   attdatnum,
@@ -4774,6 +4831,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick2}
@@ -4781,6 +4839,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick2}
@@ -4788,6 +4847,7 @@ const BA_A0020W_603: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -4880,7 +4940,12 @@ const BA_A0020W_603: React.FC = () => {
                 </GridContainer>
               </FormContext.Provider>
             </TabStripTab>
-            <TabStripTab title="투자" disabled={workType == "N" ? true : false}>
+            <TabStripTab
+              title="투자"
+              disabled={
+                permissions.view ? (workType == "N" ? true : false) : true
+              }
+            >
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle></GridTitle>
@@ -4890,6 +4955,7 @@ const BA_A0020W_603: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick3}
@@ -4897,6 +4963,7 @@ const BA_A0020W_603: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick3}
@@ -4904,6 +4971,7 @@ const BA_A0020W_603: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -4995,7 +5063,9 @@ const BA_A0020W_603: React.FC = () => {
             </TabStripTab>
             <TabStripTab
               title="담당자"
-              disabled={workType == "N" ? true : false}
+              disabled={
+                permissions.view ? (workType == "N" ? true : false) : true
+              }
             >
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer2">
@@ -5006,6 +5076,7 @@ const BA_A0020W_603: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick4}
@@ -5013,6 +5084,7 @@ const BA_A0020W_603: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick4}
@@ -5020,6 +5092,7 @@ const BA_A0020W_603: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -5119,6 +5192,11 @@ const BA_A0020W_603: React.FC = () => {
           setData={getAttachmentsData}
           para={information.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {gridList.map((grid: TGrid) =>
