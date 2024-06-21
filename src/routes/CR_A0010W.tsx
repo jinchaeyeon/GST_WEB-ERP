@@ -1498,48 +1498,46 @@ const CR_A0010W: React.FC = () => {
           <GridContainer style={{ width: "100%" }}>
             <GridTitleContainer className="ButtonContainer">
               <GridTitle>고객 리스트</GridTitle>
-              {permissions && (
-                <ButtonContainer>
-                  <ExcelUploadButtons
-                    saveExcel={saveExcel}
-                    permissions={permissions}
-                    style={{ marginLeft: "15px" }}
-                  />
-                  <Button
-                    title="Export Excel"
-                    onClick={onAttachmentsWndClick}
-                    icon="file"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    disabled={permissions.view ? false : true}
-                  >
-                    엑셀양식
-                  </Button>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    onClick={onRemoveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                </ButtonContainer>
-              )}
+              <ButtonContainer>
+                <ExcelUploadButtons
+                  saveExcel={saveExcel}
+                  permissions={permissions}
+                  style={{ marginLeft: "15px" }}
+                />
+                <Button
+                  title="Export Excel"
+                  onClick={onAttachmentsWndClick}
+                  icon="file"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  disabled={permissions.view ? false : true}
+                >
+                  엑셀양식
+                </Button>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onRemoveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="저장"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+              </ButtonContainer>
             </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}

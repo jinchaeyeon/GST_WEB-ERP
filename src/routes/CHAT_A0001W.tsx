@@ -6,10 +6,11 @@ import { bytesToBase64 } from "byte-base64";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   getDeviceHeight,
 } from "../components/CommonFunction";
 import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { Iparameters, TPermissions } from "../store/types";
 
 interface IData {
   id: string;
@@ -60,6 +61,14 @@ const initialMessages = [
 ];
 
 const CHAT_BOT: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
   const processApi = useApi();
   const [messages, setMessages] = useState(initialMessages);
   const [qnaData, setQnaData] = useState<IQnaData[]>([]);
@@ -144,7 +153,7 @@ const CHAT_BOT: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMain = async () => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     const queryStr = "SELECT * FROM chatBotManager";
@@ -195,7 +204,7 @@ const CHAT_BOT: React.FC = () => {
 
   // 로그 저장 처리
   const fetchLogSaved = async (id: string) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     //파라미터
@@ -223,7 +232,9 @@ const CHAT_BOT: React.FC = () => {
     }
   };
   useEffect(() => {
-    fetchMain();
+    if (permissions.view) {
+      fetchMain();
+    }
   }, []);
 
   return (

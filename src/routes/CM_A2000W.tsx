@@ -51,10 +51,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import DetailWindow from "../components/Windows/CM_A2000W_Window";
 import { useApi } from "../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -153,6 +150,7 @@ const CM_A2000W: React.FC = () => {
         endyn: defaultOption.find((item: any) => item.id == "endyn")?.valueCode,
         loadyn: defaultOption.find((item: any) => item.id == "loadyn")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -232,12 +230,12 @@ const CM_A2000W: React.FC = () => {
     datnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -324,7 +322,12 @@ const CM_A2000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -334,7 +337,7 @@ const CM_A2000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -427,6 +430,7 @@ const CM_A2000W: React.FC = () => {
 
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = async () => {
+      if (!permissions.view) return;
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.num]: true });
@@ -479,6 +483,7 @@ const CM_A2000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -505,10 +510,11 @@ const CM_A2000W: React.FC = () => {
   });
 
   useEffect(() => {
-    if (paraDataDeleted.recno != "") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.recno != "" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -701,7 +707,12 @@ const CM_A2000W: React.FC = () => {
       <GridTitleContainer className="ButtonContainer">
         <GridTitle>요약정보</GridTitle>
         <ButtonContainer>
-          <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+          <Button
+            onClick={onAddClick}
+            themeColor={"primary"}
+            icon="file-add"
+            disabled={permissions.save ? false : true}
+          >
             업무지시생성
           </Button>
           <Button
@@ -709,6 +720,7 @@ const CM_A2000W: React.FC = () => {
             icon="delete"
             fillMode="outline"
             themeColor={"primary"}
+            disabled={permissions.delete ? false : true}
           >
             업무지시삭제
           </Button>

@@ -67,9 +67,8 @@ import {
 import {
   EDIT_FIELD,
   GAP,
-  OLD_COMPANY,
   PAGE_SIZE,
-  SELECTED_FIELD,
+  SELECTED_FIELD
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
@@ -97,8 +96,6 @@ let temp = 0;
 let temp2 = 0;
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
-
-let ok = true;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -170,22 +167,17 @@ var height6 = 0;
 const CM_A1600W_603: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const [permissions, setPermissions] = useState<TPermissions | null>(
-    OLD_COMPANY.includes(companyCode)
-      ? {
-          view: true,
-          save: true,
-          delete: true,
-          print: true,
-        }
-      : null
-  );
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  if (!OLD_COMPANY.includes(companyCode)) {
-    UsePermissions(setPermissions);
-    UseCustomOption("CM_A1600W_603", setCustomOptionData);
-  }
+  UsePermissions(setPermissions);
+  UseCustomOption("CM_A1600W_603", setCustomOptionData);
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
@@ -429,7 +421,7 @@ const CM_A1600W_603: React.FC = () => {
     todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [schedulerFilter, setSchedulerFilter] = useState({
@@ -439,7 +431,7 @@ const CM_A1600W_603: React.FC = () => {
     dptcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [schedulerFilter2, setSchedulerFilter2] = useState({
@@ -454,7 +446,7 @@ const CM_A1600W_603: React.FC = () => {
     width: 250,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [userFilter, setUserFilter] = useState({
@@ -470,7 +462,7 @@ const CM_A1600W_603: React.FC = () => {
     custcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [number, setNumber] = useState(7);
@@ -481,6 +473,7 @@ const CM_A1600W_603: React.FC = () => {
   let gridRef2: any = useRef(null);
 
   const fetchTodoGrid = async (todoFilter: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const todoParameters: Iparameters = {
@@ -566,6 +559,7 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   const fetchUserGrid = async (userFilter: any) => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const todoParameters: Iparameters = {
@@ -651,6 +645,7 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   const fetchScheduler = async (schedulerFilter: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -713,6 +708,7 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   const fetchScheduler2 = async (schedulerFilter2: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -783,7 +779,12 @@ const CM_A1600W_603: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (todoFilter.isSearch == true && permissions !== null) {
+    if (
+      todoFilter.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(todoFilter);
       setTodoFilter((prev) => ({
@@ -793,11 +794,16 @@ const CM_A1600W_603: React.FC = () => {
       })); // 한번만 조회되도록
       fetchTodoGrid(deepCopiedFilters);
     }
-  }, [todoFilter, permissions]);
+  }, [todoFilter, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (userFilter.isSearch == true && permissions !== null) {
+    if (
+      userFilter.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(userFilter);
       setUserFilter((prev) => ({
@@ -807,10 +813,15 @@ const CM_A1600W_603: React.FC = () => {
       })); // 한번만 조회되도록
       fetchUserGrid(deepCopiedFilters);
     }
-  }, [userFilter, permissions]);
+  }, [userFilter, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (schedulerFilter.isSearch == true && permissions !== null) {
+    if (
+      schedulerFilter.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(schedulerFilter);
       setSchedulerFilter((prev) => ({
@@ -820,10 +831,15 @@ const CM_A1600W_603: React.FC = () => {
       })); // 한번만 조회되도록
       fetchScheduler(deepCopiedFilters);
     }
-  }, [schedulerFilter]);
+  }, [schedulerFilter, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (schedulerFilter2.isSearch == true && permissions !== null) {
+    if (
+      schedulerFilter2.isSearch == true &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(schedulerFilter2);
       setSchedulerFilter2((prev) => ({
@@ -833,7 +849,7 @@ const CM_A1600W_603: React.FC = () => {
       })); // 한번만 조회되도록
       fetchScheduler2(deepCopiedFilters);
     }
-  }, [schedulerFilter2]);
+  }, [schedulerFilter2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -925,6 +941,7 @@ const CM_A1600W_603: React.FC = () => {
     updated,
     deleted,
   }: SchedulerDataChangeEvent) => {
+    if (!permissions.save) return;
     if (schedulerFilter.person !== userId) {
       alert(findMessage(messagesData, "CM_A1600W_603_001"));
       return false;
@@ -1125,6 +1142,7 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   const fetchSchedulerSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -1134,7 +1152,6 @@ const CM_A1600W_603: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      ok = true;
       setSchedulerFilter((prev) => ({
         ...prev,
         isSearch: true,
@@ -1165,8 +1182,8 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchSchedulerSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchSchedulerSaved();
+  }, [paraData, permissions]);
 
   const sessionUserId = UseGetValueFromSessionItem("user_id");
 
@@ -1180,30 +1197,14 @@ const CM_A1600W_603: React.FC = () => {
 
       setSchedulerFilter((prev) => ({
         ...prev,
-        person:
-          defaultOption.find((item: any) => item.id == "person").useSession ==
-          true
-            ? defaultOption.find((item: any) => item.id == "person")
-                .sessionItem == "UserId"
-              ? sessionUserId
-              : defaultOption.find((item: any) => item.id == "person")
-                  ?.valueCode
-            : defaultOption.find((item: any) => item.id == "person")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
         rdoplandiv: defaultOption.find((item: any) => item.id == "rdoplandiv")
           ?.valueCode,
         isSearch: true,
       }));
       setSchedulerFilter2((prev) => ({
         ...prev,
-        person:
-          defaultOption.find((item: any) => item.id == "person").useSession ==
-          true
-            ? defaultOption.find((item: any) => item.id == "person")
-                .sessionItem == "UserId"
-              ? sessionUserId
-              : defaultOption.find((item: any) => item.id == "person")
-                  ?.valueCode
-            : defaultOption.find((item: any) => item.id == "person")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
         rdoplandiv2: defaultOption.find((item: any) => item.id == "rdoplandiv2")
           ?.valueCode,
         isSearch: true,
@@ -1594,6 +1595,7 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     const dataItem: { [name: string]: any } = todoDataResult.data.filter(
       (item: any) => {
         return (
@@ -1604,7 +1606,6 @@ const CM_A1600W_603: React.FC = () => {
     );
 
     if (dataItem.length == 0 && deletedTodoRows.length == 0) {
-      ok = true;
       return false;
     }
 
@@ -1623,7 +1624,6 @@ const CM_A1600W_603: React.FC = () => {
     } catch (e) {
       alert(e);
       valid = false;
-      ok = false;
     }
 
     if (!valid) return false;
@@ -1828,6 +1828,7 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -1837,7 +1838,6 @@ const CM_A1600W_603: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      ok = true;
       setTodoFilter((prev) => ({
         ...prev,
         find_row_value: data.returnString,
@@ -1859,8 +1859,9 @@ const CM_A1600W_603: React.FC = () => {
   };
 
   useEffect(() => {
-    if (todoParaDataSaved.work_type !== "") fetchTodoGridSaved();
-  }, [todoParaDataSaved]);
+    if (todoParaDataSaved.work_type !== "" && permissions.save)
+      fetchTodoGridSaved();
+  }, [todoParaDataSaved, permissions]);
 
   //엑셀 내보내기
   let _export: any;
@@ -1986,66 +1987,56 @@ const CM_A1600W_603: React.FC = () => {
     if (isMobile) {
       setIsFilterHideStates(true);
     }
-    if (tabSelected == 0) {
-      ok = true;
-      onSaveClick();
-    } else if (tabSelected == 2) {
-      ok = true;
-      onSaveClick2();
-    }
 
-    if (ok == true) {
-      if (e.selected == 0) {
-        setTodoFilter((prev) => ({
-          ...prev,
-          find_row_value: "",
-          pgNum: 1,
-          isSearch: true,
-        }));
-        setSchedulerFilter((prev) => ({
-          ...prev,
-          isSearch: true,
-        }));
-        setSchedulerFilter2((prev) => ({
-          ...prev,
-          isSearch: true,
-          number: number,
-          width: widths,
-          number2: number2,
-        }));
-      } else if (e.selected == 2) {
-        setUserFilter((prev) => ({
-          ...prev,
-          isSearch: true,
-          pgNum: 1,
-          find_row_value: "",
-        }));
-      } else {
-        setTodoFilter((prev) => ({
-          ...prev,
-          find_row_value: "",
-          pgNum: 1,
-          isSearch: true,
-        }));
-        setSchedulerFilter((prev) => ({
-          ...prev,
-          isSearch: true,
-        }));
-        setSchedulerFilter2((prev) => ({
-          ...prev,
-          number: number,
-          width: widths,
-          number2: number2,
-          isSearch: true,
-        }));
-      }
-      setTabSelected(e.selected);
+    if (e.selected == 0) {
+      setTodoFilter((prev) => ({
+        ...prev,
+        find_row_value: "",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setSchedulerFilter2((prev) => ({
+        ...prev,
+        isSearch: true,
+        number: number,
+        width: widths,
+        number2: number2,
+      }));
+    } else if (e.selected == 2) {
+      setUserFilter((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: "",
+      }));
     } else {
-      ok = true;
+      setTodoFilter((prev) => ({
+        ...prev,
+        find_row_value: "",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setSchedulerFilter2((prev) => ({
+        ...prev,
+        number: number,
+        width: widths,
+        number2: number2,
+        isSearch: true,
+      }));
     }
+    setTabSelected(e.selected);
   };
 
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     const dataItem = userDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -2055,7 +2046,6 @@ const CM_A1600W_603: React.FC = () => {
 
     if (userFilter.person !== userId) {
       alert(findMessage(messagesData, "CM_A1600W_603_001"));
-      ok = false;
       return false;
     }
 
@@ -2096,7 +2086,6 @@ const CM_A1600W_603: React.FC = () => {
       });
     } catch (e) {
       alert(e);
-      ok = false;
       valid = false;
     }
 
@@ -2104,7 +2093,6 @@ const CM_A1600W_603: React.FC = () => {
       (dataItem.length == 0 && deletedTodoRows2.length == 0) ||
       valid == false
     ) {
-      ok = true;
       return false;
     }
 
@@ -2276,7 +2264,10 @@ const CM_A1600W_603: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="스케줄러">
+        <TabStripTab
+          title="스케줄러"
+          disabled={permissions.view ? false : true}
+        >
           {isMobile ? (
             <Swiper
               onSwiper={(swiper) => {
@@ -2418,33 +2409,31 @@ const CM_A1600W_603: React.FC = () => {
                       >
                         이전
                       </Button>
-                      {permissions && (
-                        <ButtonContainer>
-                          <Button
-                            onClick={onAddClick}
-                            themeColor={"primary"}
-                            icon="plus"
-                            title="행 추가"
-                            disabled={permissions.save ? false : true}
-                          ></Button>
-                          <Button
-                            onClick={onRemoveClick}
-                            fillMode="outline"
-                            themeColor={"primary"}
-                            icon="minus"
-                            title="행 삭제"
-                            disabled={permissions.save ? false : true}
-                          ></Button>
-                          <Button
-                            onClick={onSaveClick}
-                            fillMode="outline"
-                            themeColor={"primary"}
-                            icon="save"
-                            title="저장"
-                            disabled={permissions.save ? false : true}
-                          ></Button>
-                        </ButtonContainer>
-                      )}
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                          disabled={permissions.save ? false : true}
+                        ></Button>
+                        <Button
+                          onClick={onRemoveClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                          disabled={permissions.save ? false : true}
+                        ></Button>
+                        <Button
+                          onClick={onSaveClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          title="저장"
+                          disabled={permissions.save ? false : true}
+                        ></Button>
+                      </ButtonContainer>
                     </ButtonContainer>
                   </GridTitleContainer>
                   <ExcelExport
@@ -2661,33 +2650,31 @@ const CM_A1600W_603: React.FC = () => {
                   </div>
                   <GridTitleContainer className="ButtonContainer2">
                     <GridTitle>To-do 리스트</GridTitle>
-                    {permissions && (
-                      <ButtonContainer>
-                        <Button
-                          onClick={onAddClick}
-                          themeColor={"primary"}
-                          icon="plus"
-                          title="행 추가"
-                          disabled={permissions.save ? false : true}
-                        ></Button>
-                        <Button
-                          onClick={onRemoveClick}
-                          fillMode="outline"
-                          themeColor={"primary"}
-                          icon="minus"
-                          title="행 삭제"
-                          disabled={permissions.save ? false : true}
-                        ></Button>
-                        <Button
-                          onClick={onSaveClick}
-                          fillMode="outline"
-                          themeColor={"primary"}
-                          icon="save"
-                          title="저장"
-                          disabled={permissions.save ? false : true}
-                        ></Button>
-                      </ButtonContainer>
-                    )}
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onRemoveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                    </ButtonContainer>
                   </GridTitleContainer>
                   <ExcelExport
                     data={todoDataResult.data}
@@ -2786,7 +2773,10 @@ const CM_A1600W_603: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="전체 스케줄러">
+        <TabStripTab
+          title="전체 스케줄러"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2928,7 +2918,10 @@ const CM_A1600W_603: React.FC = () => {
             )}
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="개인 스케줄(표)">
+        <TabStripTab
+          title="개인 스케줄(표)"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2998,33 +2991,31 @@ const CM_A1600W_603: React.FC = () => {
           <GridContainer width="100%">
             <GridTitleContainer className="ButtonContainer3">
               {isMobile ? "" : <GridTitle>개인 스케줄(표)</GridTitle>}
-              {permissions && (
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick2}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    onClick={onRemoveClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                </ButtonContainer>
-              )}
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick2}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onRemoveClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onSaveClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="저장"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+              </ButtonContainer>
             </GridTitleContainer>
             <ExcelExport
               data={userDataResult.data}

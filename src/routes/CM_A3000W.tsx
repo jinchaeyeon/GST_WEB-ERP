@@ -365,7 +365,7 @@ const CM_A3000W: React.FC = () => {
     datdt: "",
     itemlvl1: "%",
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
     pgNum: 1,
   });
 
@@ -376,13 +376,13 @@ const CM_A3000W: React.FC = () => {
     datnum: "",
     itemlvl1: "",
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
     pgNum: 1,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -495,7 +495,7 @@ const CM_A3000W: React.FC = () => {
   let gridRef: any = useRef(null);
 
   const fetchSubGrid = async (subfilters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
 
     setLoading(true);
@@ -657,11 +657,18 @@ const CM_A3000W: React.FC = () => {
   const [attachmentNumber, setAttachmentNumber] = useState<string>("");
 
   useEffect(() => {
-    fetchAttdatnumGrid();
-  }, [attachmentNumber]);
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      fetchAttdatnumGrid();
+    }
+  }, [attachmentNumber, permissions, bizComponentData, customOptionData]);
 
   //그리드 조회
   const fetchAttdatnumGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     if (attachmentNumber == "") return false;
     const parameters = {
@@ -718,6 +725,7 @@ const CM_A3000W: React.FC = () => {
   };
 
   const handleFileUpload = async (files: FileList | null) => {
+    if (!permissions.save) return;
     if (files == null) return false;
 
     let newAttachmentNumber = "";
@@ -754,6 +762,7 @@ const CM_A3000W: React.FC = () => {
   };
 
   const uploadFile = async (files: File, newAttachmentNumber?: string) => {
+    if (!permissions.save) return;
     let data: any;
 
     const filePara = {
@@ -783,7 +792,12 @@ const CM_A3000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -793,10 +807,15 @@ const CM_A3000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (subfilters.isSearch) {
+    if (
+      subfilters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setsubFilters((prev) => ({
@@ -806,7 +825,7 @@ const CM_A3000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
-  }, [subfilters]);
+  }, [subfilters, permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -1050,6 +1069,7 @@ const CM_A3000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1096,16 +1116,19 @@ const CM_A3000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (infomation.workType == "D") {
+    if (infomation.workType == "D" && permissions.delete) {
       fetchSaved();
     }
   }, [infomation]);
 
   const onSaveClick2 = async () => {
+    if (!permissions.save) return;
     fetchSaved();
   };
 
   const fetchSaved = async () => {
+    if (!permissions.delete && infomation.workType == "D") return;
+    if (!permissions.save && infomation.workType != "D") return;
     let data: any;
 
     let valid = true;
@@ -1165,8 +1188,10 @@ const CM_A3000W: React.FC = () => {
           setsubFilters((prev) => ({
             ...prev,
             find_row_value:
-              subDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
-                .datnum,
+              subDataResult.data.length > 1
+                ? subDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+                    .datnum
+                : "",
             pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
             isSearch: true,
           }));
@@ -1210,6 +1235,7 @@ const CM_A3000W: React.FC = () => {
   };
 
   const downloadFiles = async () => {
+    if (!permissions.view) return;
     // value 가 false인 속성 삭제
     const datas = attDataResult.data.filter((item) => item.chk == true);
     if (datas.length == 0) {
@@ -1278,6 +1304,7 @@ const CM_A3000W: React.FC = () => {
   };
 
   const deleteFiles = () => {
+    if (!permissions.save) return;
     const datas = attDataResult.data.filter((item) => item.chk == true);
 
     if (datas.length == 0) {
@@ -1660,6 +1687,7 @@ const CM_A3000W: React.FC = () => {
                       onClick={onAddClick2}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       신규
                     </Button>
@@ -1668,6 +1696,7 @@ const CM_A3000W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -1676,6 +1705,7 @@ const CM_A3000W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       저장
                     </Button>
@@ -1842,6 +1872,7 @@ const CM_A3000W: React.FC = () => {
                             onClick={upload}
                             themeColor={"primary"}
                             icon={"upload"}
+                            disabled={permissions.save ? false : true}
                           >
                             업로드
                             <input
@@ -1862,6 +1893,7 @@ const CM_A3000W: React.FC = () => {
                             themeColor={"primary"}
                             fillMode={"outline"}
                             icon={"download"}
+                            disabled={permissions.view ? false : true}
                           >
                             다운로드
                           </Button>
@@ -1870,6 +1902,7 @@ const CM_A3000W: React.FC = () => {
                             themeColor={"primary"}
                             fillMode={"outline"}
                             icon={"delete"}
+                            disabled={permissions.save ? false : true}
                           >
                             삭제
                           </Button>
@@ -2013,6 +2046,7 @@ const CM_A3000W: React.FC = () => {
                     onClick={onAddClick2}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     신규
                   </Button>
@@ -2021,6 +2055,7 @@ const CM_A3000W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
+                    disabled={permissions.delete ? false : true}
                   >
                     삭제
                   </Button>
@@ -2029,6 +2064,7 @@ const CM_A3000W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -2192,6 +2228,7 @@ const CM_A3000W: React.FC = () => {
                             onClick={upload}
                             themeColor={"primary"}
                             icon={"upload"}
+                            disabled={permissions.save ? false : true}
                           >
                             업로드
                             <input
@@ -2212,6 +2249,7 @@ const CM_A3000W: React.FC = () => {
                             themeColor={"primary"}
                             fillMode={"outline"}
                             icon={"download"}
+                            disabled={permissions.view ? false : true}
                           >
                             다운로드
                           </Button>
@@ -2220,6 +2258,7 @@ const CM_A3000W: React.FC = () => {
                             themeColor={"primary"}
                             fillMode={"outline"}
                             icon={"delete"}
+                            disabled={permissions.save ? false : true}
                           >
                             삭제
                           </Button>

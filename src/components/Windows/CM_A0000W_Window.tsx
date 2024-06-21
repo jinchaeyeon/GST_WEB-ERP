@@ -30,7 +30,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import { deletedNameState, unsavedNameState } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -40,6 +40,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   getBizCom,
@@ -94,11 +95,34 @@ const KendoWindow = ({
   modal = false,
   pathname,
 }: TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
   const userId = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_dptcd_001,L_HU005", setBizComponentData);
+  //공통코드 리스트 조회 ()
+  const [dptcdListData, setdptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
+  ]);
+  const [postcdListData, setpostcdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
+      setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
+    }
+  }, [bizComponentData]);
 
   const pc = UseGetValueFromSessionItem("pc");
   //커스텀 옵션 조회
@@ -156,10 +180,7 @@ const KendoWindow = ({
       getWindowDeviceHeight(false, position.height) - height - height2
     );
     setWebHeight2(
-      getWindowDeviceHeight(false, position.height) -
-        height -
-        height2 -
-        height4
+      getWindowDeviceHeight(false, position.height) - height - height2 - height4
     );
   };
 
@@ -245,7 +266,6 @@ const KendoWindow = ({
     user_name: "",
     pgNum: 1,
     find_row_value: "",
-    isSearch: true,
   });
 
   useEffect(() => {
@@ -276,14 +296,21 @@ const KendoWindow = ({
   }, [customOptionData]);
 
   useEffect(() => {
-    if (workType == "U") {
-      fetchMain(para);
+    if (
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      if (workType == "U") {
+        fetchMain(para);
+      }
+      fetchGrid(categories == undefined ? "" : categories);
     }
-    fetchGrid(categories == undefined ? "" : categories);
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   //요약정보 조회
   const fetchMain = async (parameters: any) => {
+    if (!permissions.view) return;
     let data: any;
 
     try {
@@ -350,6 +377,7 @@ const KendoWindow = ({
 
   //상세그리드 조회
   const fetchGrid = async (value: string) => {
+    if (!permissions.view) return;
     let data: any;
     const subparameters: Iparameters = {
       procedureName: "P_CM_A0000W_Q",
@@ -499,6 +527,7 @@ const KendoWindow = ({
   };
 
   const fetchGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -527,6 +556,7 @@ const KendoWindow = ({
   };
 
   const handleSubmit = () => {
+    if (!permissions.save) return;
     let detailArr: TDetailData = {
       person2: [],
       chooses: [],
@@ -571,7 +601,7 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchGridSaved();
+    if (paraData.work_type !== "" && permissions.save) fetchGridSaved();
   }, [paraData]);
 
   const onAttachmentsWndClick = () => {
@@ -592,23 +622,6 @@ const KendoWindow = ({
       };
     });
   };
-
-  const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_dptcd_001,L_HU005", setBizComponentData);
-  //공통코드 리스트 조회 ()
-  const [dptcdListData, setdptcdListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
-  const [postcdListData, setpostcdListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
-      setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
-    }
-  }, [bizComponentData]);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
@@ -966,9 +979,11 @@ const KendoWindow = ({
               </Grid>
               <BottomContainer className="BottomContainer">
                 <ButtonContainer>
-                  <Button themeColor={"primary"} onClick={handleSubmit}>
-                    저장
-                  </Button>
+                  {permissions.save && (
+                    <Button themeColor={"primary"} onClick={handleSubmit}>
+                      저장
+                    </Button>
+                  )}
                   <Button
                     themeColor={"primary"}
                     fillMode={"outline"}
@@ -1187,9 +1202,11 @@ const KendoWindow = ({
           </GridContainerWrap>
           <BottomContainer className="BottomContainer">
             <ButtonContainer>
-              <Button themeColor={"primary"} onClick={handleSubmit}>
-                저장
-              </Button>
+              {permissions.save && (
+                <Button themeColor={"primary"} onClick={handleSubmit}>
+                  저장
+                </Button>
+              )}
               <Button
                 themeColor={"primary"}
                 fillMode={"outline"}
@@ -1206,6 +1223,11 @@ const KendoWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </Window>

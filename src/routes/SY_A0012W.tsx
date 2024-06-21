@@ -1491,33 +1491,32 @@ const SY_A0120: React.FC = () => {
           <GridContainer>
             <GridTitleContainer className="ButtonContainer">
               {isMobile ? null : <GridTitle>사용자 리스트</GridTitle>}
-              {permissions && (
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    onClick={onRemoveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                </ButtonContainer>
-              )}
+
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onRemoveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="저장"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+              </ButtonContainer>
             </GridTitleContainer>
             <ExcelExport
               ref={(exporter) => (_export = exporter)}

@@ -25,7 +25,9 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
+import { TPermissions } from "../../../store/types";
 import {
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
@@ -63,6 +65,13 @@ const KendoWindow = ({
   modal = false,
 }: // para = { user_id: "", user_name: "" },
 TKendoWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   // 비즈니스 컴포넌트 조회
   const idGetter = getter(SUB_DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
@@ -191,6 +200,7 @@ TKendoWindow) => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -226,11 +236,11 @@ TKendoWindow) => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchMainGrid();
     }
-  }, [filters]);
+  }, [filters, permissions]);
 
   const resetAllGrid = () => {
     setDetailDataResult(process([], {}));
@@ -267,7 +277,12 @@ TKendoWindow) => {
       <TitleContainer className="WindowTitleContainer">
         <Title></Title>
         <ButtonContainer>
-          <Button onClick={search} icon="search" themeColor={"primary"}>
+          <Button
+            onClick={search}
+            icon="search"
+            themeColor={"primary"}
+            disabled={permissions.view ? false : true}
+          >
             조회
           </Button>
         </ButtonContainer>

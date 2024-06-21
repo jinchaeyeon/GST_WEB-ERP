@@ -807,7 +807,7 @@ const MA_A0010W: React.FC = () => {
       <GridContainer style={{ width: "100%" }}>
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>
-            {!isMobile && permissions && (
+            {!isMobile && (
               <>
                 <ExcelUploadButtons
                   saveExcel={saveExcel}
@@ -836,7 +836,7 @@ const MA_A0010W: React.FC = () => {
               justifyContent: "space-between",
             }}
           >
-            {isMobile && permissions && (
+            {isMobile && (
               <ButtonContainer>
                 <ExcelUploadButtons
                   saveExcel={saveExcel}

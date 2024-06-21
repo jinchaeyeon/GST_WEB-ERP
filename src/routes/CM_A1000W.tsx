@@ -184,10 +184,10 @@ const CM_A1000W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         kind1: defaultOption.find((item: any) => item.id == "kind1")?.valueCode,
-        person: defaultOption.find((item: any) => item.id == "person")
-          ?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
         planyn: defaultOption.find((item: any) => item.id == "planyn")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -422,7 +422,7 @@ const CM_A1000W: React.FC = () => {
     yyyymm: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [infomation, setInfomation] = useState({
@@ -466,7 +466,7 @@ const CM_A1000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -682,7 +682,7 @@ const CM_A1000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMemoGrid = async () => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const memoparameters: Iparameters = {
@@ -738,10 +738,10 @@ const CM_A1000W: React.FC = () => {
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -750,7 +750,7 @@ const CM_A1000W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -980,6 +980,7 @@ const CM_A1000W: React.FC = () => {
   });
 
   const onMemoSaveClick = (e: any) => {
+    if (!permissions.save) return;
     setMemoParaData((prev) => ({
       ...prev,
       workType: "monthly",
@@ -1073,6 +1074,7 @@ const CM_A1000W: React.FC = () => {
   };
 
   const fetchMemoTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1108,6 +1110,7 @@ const CM_A1000W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1167,16 +1170,16 @@ const CM_A1000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (paraData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   useEffect(() => {
-    if (memoparaData.workType != "") {
+    if (memoparaData.workType != "" && permissions.save) {
       fetchMemoTodoGridSaved();
     }
-  }, [memoparaData]);
+  }, [memoparaData, permissions]);
 
   const onAddClick = () => {
     setWorkType("N");
@@ -1243,6 +1246,7 @@ const CM_A1000W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     if (
       infomation.strhh.toString() == "" ||
       infomation.strmm.toString() == ""
@@ -1345,6 +1349,7 @@ const CM_A1000W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -1394,11 +1399,12 @@ const CM_A1000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -1415,6 +1421,7 @@ const CM_A1000W: React.FC = () => {
   };
 
   const onPrintWndClick = () => {
+    if (!permissions.print) return;
     if (mainDataResult.data.length == 0) {
       alert("조회된 자료가 없습니다");
     } else {
@@ -1552,6 +1559,7 @@ const CM_A1000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="print"
+                        disabled={permissions.print ? false : true}
                       >
                         미리보기
                       </Button>
@@ -1559,6 +1567,7 @@ const CM_A1000W: React.FC = () => {
                         onClick={onAddClick}
                         themeColor={"primary"}
                         icon="file-add"
+                        disabled={permissions.save ? false : true}
                       >
                         신규
                       </Button>
@@ -1567,6 +1576,7 @@ const CM_A1000W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="delete"
+                        disabled={permissions.delete ? false : true}
                       >
                         삭제
                       </Button>
@@ -1575,6 +1585,7 @@ const CM_A1000W: React.FC = () => {
                         themeColor={"primary"}
                         fillMode="outline"
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -1962,6 +1973,7 @@ const CM_A1000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1994,6 +2006,7 @@ const CM_A1000W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -2085,6 +2098,7 @@ const CM_A1000W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="print"
+                      disabled={permissions.print ? false : true}
                     >
                       미리보기
                     </Button>
@@ -2092,6 +2106,7 @@ const CM_A1000W: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       신규
                     </Button>
@@ -2100,6 +2115,7 @@ const CM_A1000W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -2108,6 +2124,7 @@ const CM_A1000W: React.FC = () => {
                       themeColor={"primary"}
                       fillMode="outline"
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       저장
                     </Button>
@@ -2454,6 +2471,11 @@ const CM_A1000W: React.FC = () => {
           setData={getAttachmentsData}
           para={infomation.attdatnum}
           modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {previewVisible && (

@@ -55,11 +55,7 @@ import {
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
 import { useApi } from "../hooks/api";
-import {
-  OSState,
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { OSState, isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 let temp = 0;
@@ -154,6 +150,7 @@ const CM_A3100W: React.FC = () => {
     updated,
     deleted,
   }: SchedulerDataChangeEvent) => {
+    if (!permissions.save) return;
     let valid = true;
     let valid2 = true;
 
@@ -319,6 +316,7 @@ const CM_A3100W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     try {
@@ -363,8 +361,8 @@ const CM_A3100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.work_type !== "") fetchTodoGridSaved();
-  }, [paraData]);
+    if (paraData.work_type !== "" && permissions.save) fetchTodoGridSaved();
+  }, [paraData, permissions]);
 
   const search = () => {
     setFilters((prev) => ({
@@ -458,7 +456,7 @@ const CM_A3100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -525,7 +523,7 @@ const CM_A3100W: React.FC = () => {
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
     temp = 0;
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -577,7 +575,7 @@ const CM_A3100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -625,7 +623,7 @@ const CM_A3100W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -635,11 +633,11 @@ const CM_A3100W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -649,10 +647,10 @@ const CM_A3100W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, customOptionData]);
 
   useEffect(() => {
-    if (filters3.isSearch) {
+    if (filters3.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -662,7 +660,7 @@ const CM_A3100W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, customOptionData]);
 
   return (
     <>
@@ -749,6 +747,7 @@ const CM_A3100W: React.FC = () => {
                                     <ListItem disablePadding>
                                       <ListItemButton
                                         onClick={() => {
+                                          if (!permissions.view) return;
                                           setFilters2((prev) => ({
                                             ...prev,
                                             isSearch: true,
@@ -803,6 +802,7 @@ const CM_A3100W: React.FC = () => {
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
+                        disabled={permissions.save ? false : true}
                       >
                         저장
                       </Button>
@@ -935,6 +935,7 @@ const CM_A3100W: React.FC = () => {
                                       <ListItem disablePadding>
                                         <ListItemButton
                                           onClick={() => {
+                                            if (!permissions.view) return;
                                             setFilters2((prev) => ({
                                               ...prev,
                                               isSearch: true,
@@ -977,6 +978,7 @@ const CM_A3100W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
+                      disabled={permissions.save ? false : true}
                     >
                       저장
                     </Button>

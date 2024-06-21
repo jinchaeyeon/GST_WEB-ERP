@@ -286,21 +286,19 @@ const CT_A0111W: React.FC = () => {
             />
           )}
 
-          {permissions && (
-            <ReactToPrint
-              trigger={() => (
-                <Button
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="print"
-                  disabled={permissions.print ? false : true}
-                >
-                  출력
-                </Button>
-              )}
-              content={() => componentRef.current}
-            />
-          )}
+          <ReactToPrint
+            trigger={() => (
+              <Button
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="print"
+                disabled={permissions.print ? false : true}
+              >
+                출력
+              </Button>
+            )}
+            content={() => componentRef.current}
+          />
         </ButtonContainer>
       </TitleContainer>
 

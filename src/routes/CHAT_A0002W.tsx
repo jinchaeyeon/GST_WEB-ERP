@@ -66,17 +66,6 @@ const editField = EDIT_FIELD;
 const DATA_ITEM_KEY = "idx";
 const idGetter = getter(DATA_ITEM_KEY);
 
-const headerSelectionValue = (dataState: any, selectedState: any) => {
-  let allSelected = true;
-
-  mapTree(dataState, SUB_ITEMS_FIELD, (item) => {
-    allSelected = allSelected && selectedState[idGetter(item)];
-    return item;
-  });
-
-  return allSelected;
-};
-
 let deletedMainRows: IQnaData[] = [];
 let height = 0;
 
@@ -188,14 +177,14 @@ const CHAT_BOT_MNG: React.FC = () => {
   const editItemId = editItem ? editItem[DATA_ITEM_KEY] : null;
 
   useEffect(() => {
-    if (permissions !== null) {
+    if (permissions.view) {
       fetchMainGrid();
     }
   }, [permissions]);
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
 
@@ -245,18 +234,8 @@ const CHAT_BOT_MNG: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     const flatData: any = treeToFlat(state.data, "question", SUB_ITEMS_FIELD);
-    // flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
-
-    // const dataItem = flatData.filter((item: any) => {
-    //   return (
-    //     (item.rowstatus == "N" || item.rowstatus == "U") &&
-    //     item.rowstatus !== undefined
-    //   );
-    // });
-
-    // if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
-
     try {
       let msg = "";
       for (const item of deletedMainRows) {

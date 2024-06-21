@@ -54,10 +54,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import DetailWindow2 from "../components/Windows/CM_A0000W_301_Window";
 import DetailWindow from "../components/Windows/CM_A0000W_Window";
 import { useApi } from "../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A0000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -162,6 +159,7 @@ const CM_A0000W: React.FC = () => {
         )?.valueCode,
         cbodtgb: defaultOption.find((item: any) => item.id == "cbodtgb")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -264,6 +262,7 @@ const CM_A0000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -345,7 +344,7 @@ const CM_A0000W: React.FC = () => {
     publish_start_date: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -355,7 +354,7 @@ const CM_A0000W: React.FC = () => {
     category: "",
     pgNum: 1,
     find_row_value: "",
-    isSearch: true,
+    isSearch: false,
   });
 
   const paraDeleted: Iparameters = {
@@ -407,7 +406,7 @@ const CM_A0000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -509,6 +508,7 @@ const CM_A0000W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -574,12 +574,17 @@ const CM_A0000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -589,7 +594,7 @@ const CM_A0000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -794,7 +799,12 @@ const CM_A0000W: React.FC = () => {
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
-            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="file-add"
+              disabled={permissions.save ? false : true}
+            >
               공지추가
             </Button>
             <Button
@@ -802,6 +812,7 @@ const CM_A0000W: React.FC = () => {
               icon="delete"
               fillMode="outline"
               themeColor={"primary"}
+              disabled={permissions.delete ? false : true}
             >
               공지삭제
             </Button>

@@ -1260,31 +1260,29 @@ const EA_A2000W: React.FC = () => {
                       fillMode={"flat"}
                     ></Button>
                   </ButtonContainer>
-                  {permissions && (
-                    <ButtonContainer>
-                      <Button
-                        onClick={() => {
-                          processApproval("APP");
-                        }}
-                        icon="check"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        승인
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          processApproval("RETURN");
-                        }}
-                        icon="x"
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        반려
-                      </Button>
-                    </ButtonContainer>
-                  )}
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        processApproval("APP");
+                      }}
+                      icon="check"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      승인
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        processApproval("RETURN");
+                      }}
+                      icon="x"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      반려
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
               ) : filters.appgb == "C" ? (
                 <GridTitleContainer className="ButtonContainer">
@@ -1301,21 +1299,19 @@ const EA_A2000W: React.FC = () => {
                       fillMode={"flat"}
                     ></Button>
                   </ButtonContainer>
-                  {permissions && (
-                    <ButtonContainer>
-                      <Button
-                        onClick={() => {
-                          processApproval("APPCANCEL");
-                        }}
-                        icon="x"
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        승인취소
-                      </Button>
-                    </ButtonContainer>
-                  )}
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        processApproval("APPCANCEL");
+                      }}
+                      icon="x"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      승인취소
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
               ) : filters.appgb == "A" ? (
                 <GridTitleContainer className="ButtonContainer">
@@ -1375,31 +1371,29 @@ const EA_A2000W: React.FC = () => {
                       fillMode={"flat"}
                     ></Button>
                   </ButtonContainer>
-                  {permissions && (
-                    <ButtonContainer>
-                      <Button
-                        onClick={() => {
-                          processApproval("APP");
-                        }}
-                        icon="check"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        승인
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          processApproval("RETURN");
-                        }}
-                        icon="x"
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        반려
-                      </Button>
-                    </ButtonContainer>
-                  )}
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        processApproval("APP");
+                      }}
+                      icon="check"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      승인
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        processApproval("RETURN");
+                      }}
+                      icon="x"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      반려
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
               )}
               <ExcelExport
@@ -1809,50 +1803,46 @@ const EA_A2000W: React.FC = () => {
                 {filters.appgb == "B" ? (
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>미결함</GridTitle>
-                    {permissions && (
-                      <ButtonContainer>
-                        <Button
-                          onClick={() => {
-                            processApproval("APP");
-                          }}
-                          icon="check"
-                          themeColor={"primary"}
-                          disabled={permissions.save ? false : true}
-                        >
-                          승인
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            processApproval("RETURN");
-                          }}
-                          icon="x"
-                          fillMode="outline"
-                          themeColor={"primary"}
-                          disabled={permissions.save ? false : true}
-                        >
-                          반려
-                        </Button>
-                      </ButtonContainer>
-                    )}
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          processApproval("APP");
+                        }}
+                        icon="check"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        승인
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          processApproval("RETURN");
+                        }}
+                        icon="x"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        반려
+                      </Button>
+                    </ButtonContainer>
                   </GridTitleContainer>
                 ) : filters.appgb == "C" ? (
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>기결함</GridTitle>
-                    {permissions && (
-                      <ButtonContainer>
-                        <Button
-                          onClick={() => {
-                            processApproval("APPCANCEL");
-                          }}
-                          icon="x"
-                          fillMode="outline"
-                          themeColor={"primary"}
-                          disabled={permissions.save ? false : true}
-                        >
-                          승인취소
-                        </Button>
-                      </ButtonContainer>
-                    )}
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          processApproval("APPCANCEL");
+                        }}
+                        icon="x"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        승인취소
+                      </Button>
+                    </ButtonContainer>
                   </GridTitleContainer>
                 ) : filters.appgb == "A" ? (
                   <GridTitleContainer className="ButtonContainer">
@@ -1876,31 +1866,29 @@ const EA_A2000W: React.FC = () => {
                 ) : (
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>미결함</GridTitle>
-                    {permissions && (
-                      <ButtonContainer>
-                        <Button
-                          onClick={() => {
-                            processApproval("APP");
-                          }}
-                          icon="check"
-                          themeColor={"primary"}
-                          disabled={permissions.save ? false : true}
-                        >
-                          승인
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            processApproval("RETURN");
-                          }}
-                          icon="x"
-                          fillMode="outline"
-                          themeColor={"primary"}
-                          disabled={permissions.save ? false : true}
-                        >
-                          반려
-                        </Button>
-                      </ButtonContainer>
-                    )}
+                    <ButtonContainer>
+                      <Button
+                        onClick={() => {
+                          processApproval("APP");
+                        }}
+                        icon="check"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        승인
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          processApproval("RETURN");
+                        }}
+                        icon="x"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.save ? false : true}
+                      >
+                        반려
+                      </Button>
+                    </ButtonContainer>
                   </GridTitleContainer>
                 )}
                 <ExcelExport

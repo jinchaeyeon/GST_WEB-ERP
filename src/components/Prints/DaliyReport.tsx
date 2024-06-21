@@ -6,14 +6,22 @@ import { useSetRecoilState } from "recoil";
 import { ButtonContainer, DeliyReportPrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { isLoading } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   numberWithCommas,
 } from "../CommonFunction";
 
 const DaliyReport = (filters: any) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -47,7 +55,7 @@ const DaliyReport = (filters: any) => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     try {
@@ -73,10 +81,10 @@ const DaliyReport = (filters: any) => {
   };
 
   useEffect(() => {
-    if (mainDataResult.total == 0) {
+    if (mainDataResult.total == 0 && permissions.view) {
       fetchMainGrid();
     }
-  });
+  }, [permissions]);
 
   const componentRef = useRef(null);
 
@@ -86,7 +94,12 @@ const DaliyReport = (filters: any) => {
         <></>
         <ReactToPrint
           trigger={() => (
-            <Button fillMode="outline" themeColor={"primary"} icon="print">
+            <Button
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="print"
+              disabled={permissions.print ? false : true}
+            >
               출력
             </Button>
           )}

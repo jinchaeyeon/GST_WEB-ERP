@@ -728,39 +728,37 @@ const CR_A0020W: React.FC = () => {
         >
           <GridTitleContainer className="ButtonContainer">
             <GridTitle>반려견 리스트</GridTitle>
-            {permissions && (
-              <ButtonContainer>
-                <ExcelUploadButton
-                  saveExcel={saveExcel}
-                  permissions={permissions}
-                  style={{ marginLeft: "15px" }}
-                />
-                <Button
-                  title="Export Excel"
-                  onClick={onAttachmentsWndClick}
-                  icon="file"
-                  fillMode="outline"
-                  themeColor={"primary"}
-                >
-                  엑셀양식
-                </Button>
-                <Button
-                  onClick={onClickNew}
-                  icon="file-add"
-                  themeColor={"primary"}
-                >
-                  신규
-                </Button>
-                <Button
-                  onClick={onClickDelete}
-                  icon="delete"
-                  themeColor={"primary"}
-                  fillMode={"outline"}
-                >
-                  삭제
-                </Button>
-              </ButtonContainer>
-            )}
+            <ButtonContainer>
+              <ExcelUploadButton
+                saveExcel={saveExcel}
+                permissions={permissions}
+                style={{ marginLeft: "15px" }}
+              />
+              <Button
+                title="Export Excel"
+                onClick={onAttachmentsWndClick}
+                icon="file"
+                fillMode="outline"
+                themeColor={"primary"}
+              >
+                엑셀양식
+              </Button>
+              <Button
+                onClick={onClickNew}
+                icon="file-add"
+                themeColor={"primary"}
+              >
+                신규
+              </Button>
+              <Button
+                onClick={onClickDelete}
+                icon="delete"
+                themeColor={"primary"}
+                fillMode={"outline"}
+              >
+                삭제
+              </Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

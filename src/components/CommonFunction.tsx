@@ -424,37 +424,48 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     // const queryOptionsData = data.menuCustomDefaultOptions.query;
 
-    const queryOptionsData = GetPropertyValueByName(
-      data.menuCustomDefaultOptions,
-      "QUERY"
-    );
+    // const queryOptionsData = GetPropertyValueByName(
+    //   data.menuCustomDefaultOptions,
+    //   "QUERY"
+    // );
 
-    const newOptionsData = GetPropertyValueByName(
-      data.menuCustomDefaultOptions,
-      "new"
-    );
+    // const newOptionsData = GetPropertyValueByName(
+    //   data.menuCustomDefaultOptions,
+    //   "new"
+    // );
 
     if (data !== null) {
       // sessionItem 데이터 있고 지정된 value 값이 없는 경우, 세션 값 참조하여 value 업데이트
-      if (newOptionsData) {
-        newOptionsData.forEach((optionsItem: any) => {
-          if (optionsItem.sessionItem !== "" && optionsItem.valueCode == "") {
+      if (data.menuCustomDefaultOptions.NEW) {
+        data.menuCustomDefaultOptions.NEW.forEach((optionsItem: any) => {
+          if (optionsItem.useSession == true && optionsItem.sessionItem != "") {
             optionsItem.valueCode = sessionItem.find(
-              (sessionItem) => sessionItem.code == optionsItem.sessionItem
+              (sessionItem) =>
+                sessionItem.code ==
+                (optionsItem.sessionItem == "UserId"
+                  ? "user_id"
+                  : optionsItem.sessionItem == "UserName"
+                  ? "user_name"
+                  : optionsItem.sessionItem)
             )?.value;
           }
         });
       }
-      if (queryOptionsData) {
-        queryOptionsData.forEach((optionsItem: any) => {
-          if (optionsItem.sessionItem !== "" && optionsItem.valueCode == "") {
+      if (data.menuCustomDefaultOptions.QUERY) {
+        data.menuCustomDefaultOptions.QUERY.forEach((optionsItem: any) => {
+          if (optionsItem.useSession == true && optionsItem.sessionItem != "") {
             optionsItem.valueCode = sessionItem.find(
-              (sessionItem) => sessionItem.code == optionsItem.sessionItem
+              (sessionItem) =>
+                sessionItem.code ==
+                (optionsItem.sessionItem == "UserId"
+                  ? "user_id"
+                  : optionsItem.sessionItem == "UserName"
+                  ? "user_name"
+                  : optionsItem.sessionItem)
             )?.value;
           }
         });
       }
-
       fetchBizComponentData(data);
     } else {
       console.log("[오류 발생]");
@@ -521,44 +532,53 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     if (data !== null) {
       data.map((item: any) => {
-        item.data.Rows = item.data.Rows.filter((items: any) => items.extra_field1 == undefined || items.extra_field1 != "Y");
-        item.data.RowCount = item.data.Rows.filter((items: any) => items.extra_field1 == undefined || items.extra_field1 != "Y").length
-      })
-      
-      //비즈니스 컴포넌트 조회 반환문 참조하여 쿼리 및 컬럼정보 추가
-      data.forEach((bcItem: any) => {
-        if (queryOptionsData) {
-          queryOptionsData.forEach((defaultItem: any) => {
-            if (bcItem.bizComponentId == defaultItem.bizComponentId) {
-              defaultItem["query"] = (
-                bcItem["querySelect"] +
-                " " +
-                bcItem["queryWhere"] +
-                " " +
-                bcItem["queryFooter"]
-              ).replace(/\r\n/gi, " ");
-              defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
-              defaultItem.Rows = bcItem.data.Rows;
-            }
-          });
-        }
-        if (newOptionsData) {
-          newOptionsData.forEach((defaultItem: any) => {
-            if (bcItem.bizComponentId == defaultItem.bizComponentId) {
-              defaultItem["query"] = (
-                bcItem["querySelect"] +
-                " " +
-                bcItem["queryWhere"] +
-                " " +
-                bcItem["queryFooter"]
-              ).replace(/\r\n/gi, " ");
-              defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
-              defaultItem.Rows = bcItem.data.Rows;
-            }
-          });
-        }
+        item.data.Rows = item.data.Rows.filter(
+          (items: any) =>
+            items.extra_field1 == undefined || items.extra_field1 != "Y"
+        );
+        item.data.RowCount = item.data.Rows.filter(
+          (items: any) =>
+            items.extra_field1 == undefined || items.extra_field1 != "Y"
+        ).length;
       });
 
+      //비즈니스 컴포넌트 조회 반환문 참조하여 쿼리 및 컬럼정보 추가
+      data.forEach((bcItem: any) => {
+        if (customOptionData.menuCustomDefaultOptions.QUERY) {
+          customOptionData.menuCustomDefaultOptions.QUERY.forEach(
+            (defaultItem: any) => {
+              if (bcItem.bizComponentId == defaultItem.bizComponentId) {
+                defaultItem["query"] = (
+                  bcItem["querySelect"] +
+                  " " +
+                  bcItem["queryWhere"] +
+                  " " +
+                  bcItem["queryFooter"]
+                ).replace(/\r\n/gi, " ");
+                defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
+                defaultItem.Rows = bcItem.data.Rows;
+              }
+            }
+          );
+        }
+        if (customOptionData.menuCustomDefaultOptions.NEW) {
+          customOptionData.menuCustomDefaultOptions.NEW.forEach(
+            (defaultItem: any) => {
+              if (bcItem.bizComponentId == defaultItem.bizComponentId) {
+                defaultItem["query"] = (
+                  bcItem["querySelect"] +
+                  " " +
+                  bcItem["queryWhere"] +
+                  " " +
+                  bcItem["queryFooter"]
+                ).replace(/\r\n/gi, " ");
+                defaultItem["bizComponentItems"] = bcItem["bizComponentItems"];
+                defaultItem.Rows = bcItem.data.Rows;
+              }
+            }
+          );
+        }
+      });
       setListData(customOptionData);
     }
   }, []);
@@ -662,9 +682,15 @@ export const UseBizComponent = (bizComponentId: string, setListData: any) => {
     if (data !== null) {
       //setListData((prev: any) => [...prev, ...data]);
       data.map((item: any) => {
-        item.data.Rows = item.data.Rows.filter((items: any) => items.extra_field1 == undefined || items.extra_field1 != "Y");
-        item.data.RowCount = item.data.Rows.filter((items: any) => items.extra_field1 == undefined || items.extra_field1 != "Y").length
-      })
+        item.data.Rows = item.data.Rows.filter(
+          (items: any) =>
+            items.extra_field1 == undefined || items.extra_field1 != "Y"
+        );
+        item.data.RowCount = item.data.Rows.filter(
+          (items: any) =>
+            items.extra_field1 == undefined || items.extra_field1 != "Y"
+        ).length;
+      });
 
       setListData([...data]);
     }

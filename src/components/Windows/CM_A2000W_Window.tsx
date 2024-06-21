@@ -37,7 +37,7 @@ import {
   loginResultState,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
@@ -48,6 +48,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   dateformat,
   findMessage,
@@ -131,6 +132,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -266,13 +274,14 @@ const CopyWindow = ({
         rcvperson: defaultOption.find((item: any) => item.id == "rcvperson")
           ?.valueCode,
         reqdt: setDefaultDate2(customOptionData, "reqdt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_dptcd_001,L_HU005,R_ENDYN3",
+    "L_dptcd_001,L_HU005,R_ENDYN3, L_sysUserMaster_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -402,14 +411,14 @@ const CopyWindow = ({
     reqdt: null,
     slnctns: "",
     title: "",
-    isSearch: true,
+    isSearch: false,
     pgNum: 1,
   });
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //참조
@@ -476,7 +485,12 @@ const CopyWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -485,10 +499,16 @@ const CopyWindow = ({
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (workType == "U" && data != undefined) {
+    if (
+      workType == "U" &&
+      data != undefined &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       setFilters((prev) => ({
         ...prev,
         attdatnum: data.attdatnum,
@@ -523,7 +543,7 @@ const CopyWindow = ({
         isSearch: true,
       }));
     }
-  }, []);
+  }, [permissions, bizComponentData, customOptionData]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -596,6 +616,7 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     try {
       if (
         convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
@@ -753,6 +774,7 @@ const CopyWindow = ({
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -804,12 +826,13 @@ const CopyWindow = ({
 
   useEffect(() => {
     if (
-      (ParaData.recno != "" && ParaData.workType == "U") ||
-      ParaData.workType == "N"
+      ((ParaData.recno != "" && ParaData.workType == "U") ||
+        ParaData.workType == "N") &&
+      permissions.save
     ) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
@@ -844,6 +867,7 @@ const CopyWindow = ({
       field == "chooses" ||
       (field == "loadok" && userId == dataItem.user_id)
     ) {
+      if (!permissions.view) return;
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
@@ -1378,9 +1402,11 @@ const CopyWindow = ({
                 </Grid>
                 <BottomContainer className="BottomContainer">
                   <ButtonContainer>
-                    <Button themeColor={"primary"} onClick={selectData}>
-                      저장
-                    </Button>
+                    {permissions.save && (
+                      <Button themeColor={"primary"} onClick={selectData}>
+                        저장
+                      </Button>
+                    )}
                     <Button
                       themeColor={"primary"}
                       fillMode={"outline"}
@@ -2006,9 +2032,11 @@ const CopyWindow = ({
             </GridContainer>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button themeColor={"primary"} onClick={selectData}>
-                  저장
-                </Button>
+                {permissions.save && (
+                  <Button themeColor={"primary"} onClick={selectData}>
+                    저장
+                  </Button>
+                )}
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}
@@ -2033,6 +2061,11 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
 

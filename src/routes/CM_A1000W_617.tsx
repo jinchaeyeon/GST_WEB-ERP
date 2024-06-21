@@ -129,6 +129,7 @@ const CM_A1000W_617: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         recdt: setDefaultDate(customOptionData, "recdt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -251,7 +252,7 @@ const CM_A1000W_617: React.FC = () => {
     title: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -275,7 +276,7 @@ const CM_A1000W_617: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
@@ -382,13 +383,13 @@ const CM_A1000W_617: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, customOptionData]);
 
   let gridRef: any = useRef(null);
 
@@ -533,6 +534,8 @@ const CM_A1000W_617: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save && paraData.workType != "D") return;
+    if (!permissions.delete && paraData.workType == "D") return;
     let data: any;
     setLoading(true);
     try {
@@ -570,7 +573,14 @@ const CM_A1000W_617: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.workType != "") {
+    if (
+      paraData.workType != "" &&
+      permissions.save &&
+      paraData.workType != "D"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (paraData.workType == "D" && permissions.delete) {
       fetchTodoGridSaved();
     }
   }, [paraData]);
@@ -578,6 +588,7 @@ const CM_A1000W_617: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -591,7 +602,7 @@ const CM_A1000W_617: React.FC = () => {
       alert("데이터가 없습니다.");
     }
   };
-  const [isVisibleDetail, setIsVisableDetail] = useState(false);
+
   return (
     <>
       {isMobile ? (
@@ -654,6 +665,7 @@ const CM_A1000W_617: React.FC = () => {
                       onClick={onAddClick}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       신규
                     </Button>
@@ -662,6 +674,7 @@ const CM_A1000W_617: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
                     </Button>
@@ -764,6 +777,7 @@ const CM_A1000W_617: React.FC = () => {
                     themeColor={"primary"}
                     fillMode="outline"
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -906,6 +920,7 @@ const CM_A1000W_617: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   신규
                 </Button>
@@ -914,6 +929,7 @@ const CM_A1000W_617: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   삭제
                 </Button>
@@ -922,6 +938,7 @@ const CM_A1000W_617: React.FC = () => {
                   themeColor={"primary"}
                   fillMode="outline"
                   icon="save"
+                  disabled={permissions.save ? false : true}
                 >
                   저장
                 </Button>

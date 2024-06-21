@@ -1618,42 +1618,39 @@ const PR_A9100W: React.FC = () => {
         <GridContainer>
           <GridTitleContainer className="ButtonContainer">
             <GridTitle>기본정보</GridTitle>
-
-            {permissions && (
-              <ButtonContainer>
-                <Button
-                  onClick={onItemMultiWndClick}
-                  icon="folder-open"
-                  themeColor={"primary"}
-                  disabled={permissions.save ? false : true}
-                >
-                  품목참조
-                </Button>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                  disabled={permissions.save ? false : true}
-                ></Button>
-                <Button
-                  onClick={onRemoveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                  disabled={permissions.save ? false : true}
-                ></Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                  disabled={permissions.save ? false : true}
-                ></Button>
-              </ButtonContainer>
-            )}
+            <ButtonContainer>
+              <Button
+                onClick={onItemMultiWndClick}
+                icon="folder-open"
+                themeColor={"primary"}
+                disabled={permissions.save ? false : true}
+              >
+                품목참조
+              </Button>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+                disabled={permissions.save ? false : true}
+              ></Button>
+              <Button
+                onClick={onRemoveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제"
+                disabled={permissions.save ? false : true}
+              ></Button>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+                disabled={permissions.save ? false : true}
+              ></Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}

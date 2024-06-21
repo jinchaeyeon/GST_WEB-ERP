@@ -1470,27 +1470,25 @@ const Page: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer">
-                  {permissions && (
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="file-add"
-                        disabled={permissions.save ? false : true}
-                      >
-                        생성
-                      </Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        icon="delete"
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.delete ? false : true}
-                      >
-                        삭제
-                      </Button>
-                    </ButtonContainer>
-                  )}
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                      disabled={permissions.save ? false : true}
+                    >
+                      생성
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      icon="delete"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
@@ -1708,28 +1706,25 @@ const Page: React.FC = () => {
             <GridContainer width={`30%`}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>사용자그룹 정보</GridTitle>
-
-                {permissions && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="file-add"
-                      disabled={permissions.save ? false : true}
-                    >
-                      생성
-                    </Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      icon="delete"
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      disabled={permissions.delete ? false : true}
-                    >
-                      삭제
-                    </Button>
-                  </ButtonContainer>
-                )}
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                    disabled={permissions.save ? false : true}
+                  >
+                    생성
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    icon="delete"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    disabled={permissions.delete ? false : true}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
