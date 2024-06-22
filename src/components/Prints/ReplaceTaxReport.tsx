@@ -4,15 +4,21 @@ import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
-  convertDateToStr,
-  numberWithCommas,
+  UsePermissions,
+  numberWithCommas
 } from "../CommonFunction";
-import { PAGE_SIZE } from "../CommonString";
 
 const ReplaceTaxReport = (data?: any) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -23,81 +29,9 @@ const ReplaceTaxReport = (data?: any) => {
 
   const processApi = useApi();
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const [filters, setFilters] = useState({
-    pgSize: PAGE_SIZE,
-    orgdiv: sessionOrgdiv,
-    location: "",
-    acntdt: new Date(),
-    position: "",
-    inoutdiv: "",
-    files: "",
-    attdatnum: "",
-    acseq1: 0,
-    ackey: "",
-    actdt: new Date(),
-    apperson: "",
-    approvaldt: "",
-    closeyn: "",
-    consultdt: "",
-    consultnum: 0,
-    custnm: "",
-    dptcd: "",
-    inputpath: "",
-    remark3: "",
-    slipdiv: "",
-    sumslipamt: 0,
-    sumslipamt_1: 0,
-    sumslipamt_2: 0,
-    bizregnum: "",
-    mngamt: 0,
-    rate: 0,
-    usedptcd: "",
-    propertykind: "",
-    evidentialkind: "",
-    creditcd: "",
-    reason_intax_deduction: "",
-  });
-
-  const parameters: Iparameters = {
-    procedureName: "P_AC_A1000W_Q",
-    pageNumber: 1,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_actdt": convertDateToStr(filters.acntdt),
-      "@p_acseq1": filters.acseq1,
-      "@p_acnum": "",
-      "@p_acseq2": 0,
-      "@p_acntcd": "",
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_location": filters.location,
-      "@p_person": "",
-      "@p_inputpath": "",
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_slipdiv": "",
-      "@p_remark3": "",
-      "@p_maxacseq2": 0,
-      "@p_framt": 0,
-      "@p_toamt": 0,
-      "@p_position": filters.position,
-      "@p_inoutdiv": filters.inoutdiv,
-      "@p_drcrdiv": "",
-      "@p_actdt_s": "",
-      "@p_acseq1_s": "",
-      "@p_printcnt_s": "",
-      "@p_rowstatus_s": "",
-      "@p_chk_s": "",
-      "@p_ackey_s": "",
-      "@p_acntnm": "",
-      "@p_find_row_value": "",
-    },
-  };
 
   useEffect(() => {
-    if (data.data != undefined) {
+    if (data.data != undefined && permissions.view) {
       data.data.map((item: any) => {
         const fetchMainGrid = async (items: any) => {
           let data: any;
@@ -161,7 +95,7 @@ const ReplaceTaxReport = (data?: any) => {
         fetchMainGrid(item);
       });
     }
-  }, []);
+  }, [permissions]);
 
   const componentRef = useRef(null);
 
@@ -171,7 +105,12 @@ const ReplaceTaxReport = (data?: any) => {
         <></>
         <ReactToPrint
           trigger={() => (
-            <Button fillMode="outline" themeColor={"primary"} icon="print">
+            <Button
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="print"
+              disabled={permissions.print ? false : true}
+            >
               출력
             </Button>
           )}

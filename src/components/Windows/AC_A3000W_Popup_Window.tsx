@@ -10,7 +10,7 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import MonthCalendar from "../Calendars/MonthCalendar";
 import YearCalendar from "../Calendars/YearCalendar";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -18,6 +18,7 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UsePermissions,
   convertDateToStr,
   getHeight,
   getWindowDeviceHeight,
@@ -45,6 +46,14 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -149,6 +158,7 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = async () => {
+    if (!permissions.save) return;
     let data: any;
     const para: Iparameters = {
       procedureName: "P_AC_A3000W_S",
@@ -263,9 +273,11 @@ const CopyWindow = ({
         </FormBoxWrap>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              확인
-            </Button>
+            {permissions.save && (
+              <Button themeColor={"primary"} onClick={selectData}>
+                확인
+              </Button>
+            )}
             <Button
               themeColor={"primary"}
               fillMode={"outline"}

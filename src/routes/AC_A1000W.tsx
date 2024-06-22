@@ -66,10 +66,7 @@ import DetailWindow from "../components/Windows/AC_A1000W_Window";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
@@ -158,6 +155,7 @@ const AC_A1000W: React.FC = () => {
           ?.valueCode,
         inputpath: defaultOption.find((item: any) => item.id == "inputpath")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -282,12 +280,12 @@ const AC_A1000W: React.FC = () => {
     inputpath: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -470,6 +468,7 @@ const AC_A1000W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -524,16 +523,16 @@ const AC_A1000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      customOptionData != null &&
       filters.isSearch &&
-      permissions !== null &&
-      bizComponentData !== null
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
     ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -542,7 +541,7 @@ const AC_A1000W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -782,6 +781,7 @@ const AC_A1000W: React.FC = () => {
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -813,6 +813,7 @@ const AC_A1000W: React.FC = () => {
   };
 
   const onPrint = () => {
+    if (!permissions.print) return;
     const datas = mainDataResult.data.filter((item: any) => item.chk == true);
 
     try {
@@ -1071,6 +1072,7 @@ const AC_A1000W: React.FC = () => {
               onClick={onReceive}
               themeColor={"primary"}
               icon="track-changes-accept"
+              disabled={permissions.save ? false : true}
             >
               받을어음
             </Button>
@@ -1078,6 +1080,7 @@ const AC_A1000W: React.FC = () => {
               onClick={onPayment}
               themeColor={"primary"}
               icon="track-changes-accept"
+              disabled={permissions.save ? false : true}
             >
               지급어음
             </Button>
@@ -1086,10 +1089,16 @@ const AC_A1000W: React.FC = () => {
               fillMode="outline"
               onClick={onPrint}
               icon="print"
+              disabled={permissions.print ? false : true}
             >
               출력
             </Button>
-            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="file-add"
+              disabled={permissions.save ? false : true}
+            >
               대체전표생성
             </Button>
             <Button
@@ -1097,6 +1106,7 @@ const AC_A1000W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="copy"
+              disabled={permissions.save ? false : true}
             >
               대체전표복사
             </Button>
@@ -1105,6 +1115,7 @@ const AC_A1000W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="delete"
+              disabled={permissions.delete ? false : true}
             >
               대체전표삭제
             </Button>

@@ -47,7 +47,7 @@ import {
   isLoading,
   unsavedNameState,
 } from "../../store/atoms";
-import { Iparameters } from "../../store/types";
+import { Iparameters, TPermissions } from "../../store/types";
 import NumberCell from "../Cells/NumberCell";
 import RadioGroupCell from "../Cells/RadioGroupCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -57,6 +57,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
+  UsePermissions,
   convertDateToStr,
   findMessage,
   getBizCom,
@@ -551,7 +552,13 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
   const { setAttdatnum, setFiles } = useContext(FormContext4);
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
-
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -608,7 +615,11 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
-          permission={{ upload: false, download: true, delete: false }}
+          permission={{
+            upload: false,
+            download: permissions.view,
+            delete: false,
+          }}
         />
       )}
     </>
@@ -629,6 +640,13 @@ const CopyWindow = ({
   modal = false,
   pathname,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -757,6 +775,7 @@ const CopyWindow = ({
         reason_intax_deduction: defaultOption.find(
           (item: any) => item.id == "reason_intax_deduction"
         )?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -1422,12 +1441,12 @@ const CopyWindow = ({
     find_row_value: "",
     printcnt: 0,
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
@@ -1548,13 +1567,19 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (worktype != "N" && filters.isSearch) {
+    if (
+      worktype != "N" &&
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if ((worktype == "A" || worktype == "C") && data != undefined) {
@@ -1964,6 +1989,7 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
+    if (!permissions.save) return;
     let valid = true;
     if (
       filters.location == undefined ||
@@ -1987,9 +2013,7 @@ const CopyWindow = ({
             return false;
           }
         } else if (item.controltype1 == "D") {
-          if (
-            parseInt(convertDateToStr(item.mngdata1).substring(0, 4)) < 2000
-          ) {
+          if (parseInt(item.mngdata1.substring(0, 4)) < 2000) {
             alert("관리항목값코드1을 입력해주세요.");
             valid = false;
             return false;
@@ -2009,9 +2033,7 @@ const CopyWindow = ({
             return false;
           }
         } else if (item.controltype2 == "D") {
-          if (
-            parseInt(convertDateToStr(item.mngdata2).substring(0, 4)) < 2000
-          ) {
+          if (parseInt(item.mngdata2.substring(0, 4)) < 2000) {
             alert("관리항목값코드2을 입력해주세요.");
             valid = false;
             return false;
@@ -2031,9 +2053,7 @@ const CopyWindow = ({
             return false;
           }
         } else if (item.controltype3 == "D") {
-          if (
-            parseInt(convertDateToStr(item.mngdata3).substring(0, 4)) < 2000
-          ) {
+          if (parseInt(item.mngdata3.substring(0, 4)) < 2000) {
             alert("관리항목값코드3을 입력해주세요.");
             valid = false;
             return false;
@@ -2053,9 +2073,7 @@ const CopyWindow = ({
             return false;
           }
         } else if (item.controltype4 == "D") {
-          if (
-            parseInt(convertDateToStr(item.mngdata4).substring(0, 4)) < 2000
-          ) {
+          if (parseInt(item.mngdata4.substring(0, 4)) < 2000) {
             alert("관리항목값코드4을 입력해주세요.");
             valid = false;
             return false;
@@ -2075,9 +2093,7 @@ const CopyWindow = ({
             return false;
           }
         } else if (item.controltype5 == "D") {
-          if (
-            parseInt(convertDateToStr(item.mngdata5).substring(0, 4)) < 2000
-          ) {
+          if (parseInt(item.mngdata5.substring(0, 4)) < 2000) {
             alert("관리항목값코드5을 입력해주세요.");
             valid = false;
             return false;
@@ -2097,9 +2113,7 @@ const CopyWindow = ({
             return false;
           }
         } else if (item.controltype6 == "D") {
-          if (
-            parseInt(convertDateToStr(item.mngdata6).substring(0, 4)) < 2000
-          ) {
+          if (parseInt(item.mngdata6.substring(0, 4)) < 2000) {
             alert("관리항목값코드6을 입력해주세요.");
             valid = false;
             return false;
@@ -2119,496 +2133,493 @@ const CopyWindow = ({
         if (mainDataResult.data.length == 0) {
           throw findMessage(messagesData, "AC_A1000W_001");
         } else {
-          if (valid == true) {
-            let valid = true;
-            const dataItem = mainDataResult.data.filter((item: any) => {
-              return (
-                (item.rowstatus == "N" || item.rowstatus == "U") &&
-                item.rowstatus !== undefined
+          const dataItem = mainDataResult.data.filter((item: any) => {
+            return (
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
+              item.rowstatus !== undefined
+            );
+          });
+
+          if (dataItem.length == 0 && deletedMainRows.length == 0) {
+            setParaData((prev) => ({
+              ...prev,
+              workType: worktype,
+              location: filters.location,
+              actdt: filters.actdt,
+              acseq1: filters.acseq1,
+              acntdt: filters.acntdt,
+              dptcd: filters.dptcd,
+              slipdiv: filters.slipdiv == undefined ? "" : filters.slipdiv,
+              consultdt: filters.consultdt,
+              consultnum: filters.consultnum,
+              inputpath: filters.inputpath,
+              closeyn: filters.closeyn,
+              approvaldt: filters.approvaldt,
+              apperson: filters.apperson,
+              remark3: filters.remark3,
+              printcnt: filters.printcnt == undefined ? 0 : filters.printcnt,
+              position: filters.position,
+              inoutdiv: filters.inoutdiv,
+              attdatnum: filters.attdatnum,
+            }));
+          } else {
+            let dataArr: TdataArr = {
+              rowstatus_s: [],
+              acseq2_s: [],
+              acntses_s: [],
+              drcrdiv_s: [],
+              acntcd_s: [],
+              acntchr_s: [],
+              alcchr_s: [],
+              acntbaldiv_s: [],
+              budgyn_s: [],
+              partacnt_s: [],
+              slipamt_s: [],
+              usedptcd_s: [],
+              mngdrcustyn_s: [],
+              mngcrcustyn_s: [],
+              mngsumcustyn_s: [],
+              mngdramtyn_s: [],
+              mngcramtyn_s: [],
+              mngdrrateyn_s: [],
+              mngcrrateyn_s: [],
+              custcd_s: [],
+              custnm_s: [],
+              mngamt_s: [],
+              rate_s: [],
+              mngitemcd1_s: [],
+              mngitemcd2_s: [],
+              mngitemcd3_s: [],
+              mngitemcd4_s: [],
+              mngitemcd5_s: [],
+              mngitemcd6_s: [],
+              mngdata1_s: [],
+              mngdata2_s: [],
+              mngdata3_s: [],
+              mngdata4_s: [],
+              mngdata5_s: [],
+              mngdata6_s: [],
+              mngdatanm1_s: [],
+              mngdatanm2_s: [],
+              mngdatanm3_s: [],
+              mngdatanm4_s: [],
+              mngdatanm5_s: [],
+              mngdatanm6_s: [],
+              budgcd_s: [],
+              stdrmkcd_s: [],
+              remark3_s: [],
+              evidentialkind_s: [],
+              autorecnum_s: [],
+              taxtype_s: [],
+              propertykind_s: [],
+              creditcd_s: [],
+              reason_intax_deduction_s: [],
+            };
+            dataItem.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                acseq2 = "",
+                acntses = "",
+                drcrdiv = "",
+                acntcd = "",
+                acntchr = "",
+                alcchr = "",
+                acntbaldiv = "",
+                budgyn = "",
+                partacnt = "",
+                slipamt_1 = "",
+                slipamt_2 = "",
+                usedptcd = "",
+                mngdrcustyn = "",
+                mngcrcustyn = "",
+                mngsumcustyn = "",
+                mngdramtyn = "",
+                mngcramtyn = "",
+                mngdrrateyn = "",
+                mngcrrateyn = "",
+                custcd = "",
+                custnm = "",
+                mngamt = "",
+                rate = "",
+                mngitemcd1 = "",
+                mngitemcd2 = "",
+                mngitemcd3 = "",
+                mngitemcd4 = "",
+                mngitemcd5 = "",
+                mngitemcd6 = "",
+                mngdata1 = "",
+                mngdata2 = "",
+                mngdata3 = "",
+                mngdata4 = "",
+                mngdata5 = "",
+                mngdata6 = "",
+                mngdatanm1 = "",
+                mngdatanm2 = "",
+                mngdatanm3 = "",
+                mngdatanm4 = "",
+                mngdatanm5 = "",
+                mngdatanm6 = "",
+                budgcd = "",
+                stdrmkcd = "",
+                remark3 = "",
+                evidentialkind = "",
+                autorecnum = "",
+                taxtype = "",
+                propertykind = "",
+                creditcd = "",
+                reason_intax_deduction = "",
+              } = item;
+              dataArr.rowstatus_s.push(rowstatus);
+              dataArr.acseq2_s.push(
+                acseq2 == undefined || acseq2 == "" ? 0 : acseq2
+              );
+              dataArr.acntses_s.push(acntses == undefined ? "" : acntses);
+              dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
+              dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
+              dataArr.acntchr_s.push(acntchr == undefined ? "" : acntchr);
+              dataArr.alcchr_s.push(alcchr == undefined ? "" : alcchr);
+              dataArr.acntbaldiv_s.push(
+                acntbaldiv == undefined ? "" : acntbaldiv
+              );
+              dataArr.budgyn_s.push(budgyn == undefined ? "" : budgyn);
+              dataArr.partacnt_s.push(partacnt == undefined ? "" : partacnt);
+              if (slipamt_1 != 0) {
+                dataArr.slipamt_s.push(slipamt_1);
+              } else if (slipamt_2 != 0) {
+                dataArr.slipamt_s.push(slipamt_2);
+              }
+              dataArr.usedptcd_s.push(usedptcd == undefined ? "" : usedptcd);
+              dataArr.mngdrcustyn_s.push(
+                mngdrcustyn == undefined ? "" : mngdrcustyn
+              );
+              dataArr.mngcrcustyn_s.push(
+                mngcrcustyn == undefined ? "" : mngcrcustyn
+              );
+              dataArr.mngsumcustyn_s.push(
+                mngsumcustyn == undefined ? "" : mngsumcustyn
+              );
+              dataArr.mngdramtyn_s.push(
+                mngdramtyn == undefined ? "" : mngdramtyn
+              );
+              dataArr.mngcramtyn_s.push(
+                mngcramtyn == undefined ? "" : mngcramtyn
+              );
+              dataArr.mngdrrateyn_s.push(
+                mngdrrateyn == undefined ? "" : mngdrrateyn
+              );
+              dataArr.mngcrrateyn_s.push(
+                mngcrrateyn == undefined ? "" : mngcrrateyn
+              );
+              dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+              dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+              dataArr.mngamt_s.push(mngamt == undefined ? 0 : mngamt);
+              dataArr.rate_s.push(rate == undefined ? 0 : rate);
+              dataArr.mngitemcd1_s.push(
+                mngitemcd1 == undefined ? "" : mngitemcd1
+              );
+              dataArr.mngitemcd2_s.push(
+                mngitemcd2 == undefined ? "" : mngitemcd2
+              );
+              dataArr.mngitemcd3_s.push(
+                mngitemcd3 == undefined ? "" : mngitemcd3
+              );
+              dataArr.mngitemcd4_s.push(
+                mngitemcd4 == undefined ? "" : mngitemcd4
+              );
+              dataArr.mngitemcd5_s.push(
+                mngitemcd5 == undefined ? "" : mngitemcd5
+              );
+              dataArr.mngitemcd6_s.push(
+                mngitemcd6 == undefined ? "" : mngitemcd6
+              );
+              dataArr.mngdata1_s.push(mngdata1 == undefined ? "" : mngdata1);
+              dataArr.mngdata2_s.push(mngdata2 == undefined ? "" : mngdata2);
+              dataArr.mngdata3_s.push(mngdata3 == undefined ? "" : mngdata3);
+              dataArr.mngdata4_s.push(mngdata4 == undefined ? "" : mngdata4);
+              dataArr.mngdata5_s.push(mngdata5 == undefined ? "" : mngdata5);
+              dataArr.mngdata6_s.push(mngdata6 == undefined ? "" : mngdata6);
+              dataArr.mngdatanm1_s.push(
+                mngdatanm1 == undefined ? "" : mngdatanm1
+              );
+              dataArr.mngdatanm2_s.push(
+                mngdatanm2 == undefined ? "" : mngdatanm2
+              );
+              dataArr.mngdatanm3_s.push(
+                mngdatanm3 == undefined ? "" : mngdatanm3
+              );
+              dataArr.mngdatanm4_s.push(
+                mngdatanm4 == undefined ? "" : mngdatanm4
+              );
+              dataArr.mngdatanm5_s.push(
+                mngdatanm5 == undefined ? "" : mngdatanm5
+              );
+              dataArr.mngdatanm6_s.push(
+                mngdatanm6 == undefined ? "" : mngdatanm6
+              );
+              dataArr.budgcd_s.push(budgcd == undefined ? "" : budgcd);
+              dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
+              dataArr.remark3_s.push(remark3 == undefined ? "" : remark3);
+              dataArr.evidentialkind_s.push(
+                evidentialkind == undefined ? "" : evidentialkind
+              );
+              dataArr.autorecnum_s.push(
+                autorecnum == undefined ? "" : autorecnum
+              );
+              dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
+              dataArr.propertykind_s.push(
+                propertykind == undefined ? "" : propertykind
+              );
+              dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
+              dataArr.reason_intax_deduction_s.push(
+                reason_intax_deduction == undefined
+                  ? ""
+                  : reason_intax_deduction
               );
             });
-
-            if (dataItem.length == 0 && deletedMainRows.length == 0) {
-              setParaData((prev) => ({
-                ...prev,
-                workType: worktype,
-                location: filters.location,
-                actdt: filters.actdt,
-                acseq1: filters.acseq1,
-                acntdt: filters.acntdt,
-                dptcd: filters.dptcd,
-                slipdiv: filters.slipdiv == undefined ? "" : filters.slipdiv,
-                consultdt: filters.consultdt,
-                consultnum: filters.consultnum,
-                inputpath: filters.inputpath,
-                closeyn: filters.closeyn,
-                approvaldt: filters.approvaldt,
-                apperson: filters.apperson,
-                remark3: filters.remark3,
-                printcnt: filters.printcnt == undefined ? 0 : filters.printcnt,
-                position: filters.position,
-                inoutdiv: filters.inoutdiv,
-                attdatnum: filters.attdatnum,
-              }));
-            } else {
-              let dataArr: TdataArr = {
-                rowstatus_s: [],
-                acseq2_s: [],
-                acntses_s: [],
-                drcrdiv_s: [],
-                acntcd_s: [],
-                acntchr_s: [],
-                alcchr_s: [],
-                acntbaldiv_s: [],
-                budgyn_s: [],
-                partacnt_s: [],
-                slipamt_s: [],
-                usedptcd_s: [],
-                mngdrcustyn_s: [],
-                mngcrcustyn_s: [],
-                mngsumcustyn_s: [],
-                mngdramtyn_s: [],
-                mngcramtyn_s: [],
-                mngdrrateyn_s: [],
-                mngcrrateyn_s: [],
-                custcd_s: [],
-                custnm_s: [],
-                mngamt_s: [],
-                rate_s: [],
-                mngitemcd1_s: [],
-                mngitemcd2_s: [],
-                mngitemcd3_s: [],
-                mngitemcd4_s: [],
-                mngitemcd5_s: [],
-                mngitemcd6_s: [],
-                mngdata1_s: [],
-                mngdata2_s: [],
-                mngdata3_s: [],
-                mngdata4_s: [],
-                mngdata5_s: [],
-                mngdata6_s: [],
-                mngdatanm1_s: [],
-                mngdatanm2_s: [],
-                mngdatanm3_s: [],
-                mngdatanm4_s: [],
-                mngdatanm5_s: [],
-                mngdatanm6_s: [],
-                budgcd_s: [],
-                stdrmkcd_s: [],
-                remark3_s: [],
-                evidentialkind_s: [],
-                autorecnum_s: [],
-                taxtype_s: [],
-                propertykind_s: [],
-                creditcd_s: [],
-                reason_intax_deduction_s: [],
-              };
-              dataItem.forEach((item: any, idx: number) => {
-                const {
-                  rowstatus = "",
-                  acseq2 = "",
-                  acntses = "",
-                  drcrdiv = "",
-                  acntcd = "",
-                  acntchr = "",
-                  alcchr = "",
-                  acntbaldiv = "",
-                  budgyn = "",
-                  partacnt = "",
-                  slipamt_1 = "",
-                  slipamt_2 = "",
-                  usedptcd = "",
-                  mngdrcustyn = "",
-                  mngcrcustyn = "",
-                  mngsumcustyn = "",
-                  mngdramtyn = "",
-                  mngcramtyn = "",
-                  mngdrrateyn = "",
-                  mngcrrateyn = "",
-                  custcd = "",
-                  custnm = "",
-                  mngamt = "",
-                  rate = "",
-                  mngitemcd1 = "",
-                  mngitemcd2 = "",
-                  mngitemcd3 = "",
-                  mngitemcd4 = "",
-                  mngitemcd5 = "",
-                  mngitemcd6 = "",
-                  mngdata1 = "",
-                  mngdata2 = "",
-                  mngdata3 = "",
-                  mngdata4 = "",
-                  mngdata5 = "",
-                  mngdata6 = "",
-                  mngdatanm1 = "",
-                  mngdatanm2 = "",
-                  mngdatanm3 = "",
-                  mngdatanm4 = "",
-                  mngdatanm5 = "",
-                  mngdatanm6 = "",
-                  budgcd = "",
-                  stdrmkcd = "",
-                  remark3 = "",
-                  evidentialkind = "",
-                  autorecnum = "",
-                  taxtype = "",
-                  propertykind = "",
-                  creditcd = "",
-                  reason_intax_deduction = "",
-                } = item;
-                dataArr.rowstatus_s.push(rowstatus);
-                dataArr.acseq2_s.push(
-                  acseq2 == undefined || acseq2 == "" ? 0 : acseq2
-                );
-                dataArr.acntses_s.push(acntses == undefined ? "" : acntses);
-                dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
-                dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
-                dataArr.acntchr_s.push(acntchr == undefined ? "" : acntchr);
-                dataArr.alcchr_s.push(alcchr == undefined ? "" : alcchr);
-                dataArr.acntbaldiv_s.push(
-                  acntbaldiv == undefined ? "" : acntbaldiv
-                );
-                dataArr.budgyn_s.push(budgyn == undefined ? "" : budgyn);
-                dataArr.partacnt_s.push(partacnt == undefined ? "" : partacnt);
-                if (slipamt_1 != 0) {
-                  dataArr.slipamt_s.push(slipamt_1);
-                } else if (slipamt_2 != 0) {
-                  dataArr.slipamt_s.push(slipamt_2);
-                }
-                dataArr.usedptcd_s.push(usedptcd == undefined ? "" : usedptcd);
-                dataArr.mngdrcustyn_s.push(
-                  mngdrcustyn == undefined ? "" : mngdrcustyn
-                );
-                dataArr.mngcrcustyn_s.push(
-                  mngcrcustyn == undefined ? "" : mngcrcustyn
-                );
-                dataArr.mngsumcustyn_s.push(
-                  mngsumcustyn == undefined ? "" : mngsumcustyn
-                );
-                dataArr.mngdramtyn_s.push(
-                  mngdramtyn == undefined ? "" : mngdramtyn
-                );
-                dataArr.mngcramtyn_s.push(
-                  mngcramtyn == undefined ? "" : mngcramtyn
-                );
-                dataArr.mngdrrateyn_s.push(
-                  mngdrrateyn == undefined ? "" : mngdrrateyn
-                );
-                dataArr.mngcrrateyn_s.push(
-                  mngcrrateyn == undefined ? "" : mngcrrateyn
-                );
-                dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
-                dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
-                dataArr.mngamt_s.push(mngamt == undefined ? 0 : mngamt);
-                dataArr.rate_s.push(rate == undefined ? 0 : rate);
-                dataArr.mngitemcd1_s.push(
-                  mngitemcd1 == undefined ? "" : mngitemcd1
-                );
-                dataArr.mngitemcd2_s.push(
-                  mngitemcd2 == undefined ? "" : mngitemcd2
-                );
-                dataArr.mngitemcd3_s.push(
-                  mngitemcd3 == undefined ? "" : mngitemcd3
-                );
-                dataArr.mngitemcd4_s.push(
-                  mngitemcd4 == undefined ? "" : mngitemcd4
-                );
-                dataArr.mngitemcd5_s.push(
-                  mngitemcd5 == undefined ? "" : mngitemcd5
-                );
-                dataArr.mngitemcd6_s.push(
-                  mngitemcd6 == undefined ? "" : mngitemcd6
-                );
-                dataArr.mngdata1_s.push(mngdata1 == undefined ? "" : mngdata1);
-                dataArr.mngdata2_s.push(mngdata2 == undefined ? "" : mngdata2);
-                dataArr.mngdata3_s.push(mngdata3 == undefined ? "" : mngdata3);
-                dataArr.mngdata4_s.push(mngdata4 == undefined ? "" : mngdata4);
-                dataArr.mngdata5_s.push(mngdata5 == undefined ? "" : mngdata5);
-                dataArr.mngdata6_s.push(mngdata6 == undefined ? "" : mngdata6);
-                dataArr.mngdatanm1_s.push(
-                  mngdatanm1 == undefined ? "" : mngdatanm1
-                );
-                dataArr.mngdatanm2_s.push(
-                  mngdatanm2 == undefined ? "" : mngdatanm2
-                );
-                dataArr.mngdatanm3_s.push(
-                  mngdatanm3 == undefined ? "" : mngdatanm3
-                );
-                dataArr.mngdatanm4_s.push(
-                  mngdatanm4 == undefined ? "" : mngdatanm4
-                );
-                dataArr.mngdatanm5_s.push(
-                  mngdatanm5 == undefined ? "" : mngdatanm5
-                );
-                dataArr.mngdatanm6_s.push(
-                  mngdatanm6 == undefined ? "" : mngdatanm6
-                );
-                dataArr.budgcd_s.push(budgcd == undefined ? "" : budgcd);
-                dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
-                dataArr.remark3_s.push(remark3 == undefined ? "" : remark3);
-                dataArr.evidentialkind_s.push(
-                  evidentialkind == undefined ? "" : evidentialkind
-                );
-                dataArr.autorecnum_s.push(
-                  autorecnum == undefined ? "" : autorecnum
-                );
-                dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
-                dataArr.propertykind_s.push(
-                  propertykind == undefined ? "" : propertykind
-                );
-                dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
-                dataArr.reason_intax_deduction_s.push(
-                  reason_intax_deduction == undefined
-                    ? ""
-                    : reason_intax_deduction
-                );
-              });
-              deletedMainRows.forEach((item: any, idx: number) => {
-                const {
-                  rowstatus = "",
-                  acseq2 = "",
-                  acntses = "",
-                  drcrdiv = "",
-                  acntcd = "",
-                  acntchr = "",
-                  alcchr = "",
-                  attdatnum = "",
-                  acntbaldiv = "",
-                  budgyn = "",
-                  partacnt = "",
-                  slipamt_1 = "",
-                  slipamt_2 = "",
-                  usedptcd = "",
-                  mngdrcustyn = "",
-                  mngcrcustyn = "",
-                  mngsumcustyn = "",
-                  mngdramtyn = "",
-                  mngcramtyn = "",
-                  mngdrrateyn = "",
-                  mngcrrateyn = "",
-                  custcd = "",
-                  custnm = "",
-                  mngamt = "",
-                  rate = "",
-                  mngitemcd1 = "",
-                  mngitemcd2 = "",
-                  mngitemcd3 = "",
-                  mngitemcd4 = "",
-                  mngitemcd5 = "",
-                  mngitemcd6 = "",
-                  mngdata1 = "",
-                  mngdata2 = "",
-                  mngdata3 = "",
-                  mngdata4 = "",
-                  mngdata5 = "",
-                  mngdata6 = "",
-                  mngdatanm1 = "",
-                  mngdatanm2 = "",
-                  mngdatanm3 = "",
-                  mngdatanm4 = "",
-                  mngdatanm5 = "",
-                  mngdatanm6 = "",
-                  budgcd = "",
-                  stdrmkcd = "",
-                  remark3 = "",
-                  evidentialkind = "",
-                  autorecnum = "",
-                  taxtype = "",
-                  propertykind = "",
-                  creditcd = "",
-                  reason_intax_deduction = "",
-                } = item;
-                dataArr.rowstatus_s.push(rowstatus);
-                dataArr.acseq2_s.push(
-                  acseq2 == undefined || acseq2 == "" ? 0 : acseq2
-                );
-                dataArr.acntses_s.push(acntses == undefined ? "" : acntses);
-                dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
-                dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
-                dataArr.acntchr_s.push(acntchr == undefined ? "" : acntchr);
-                dataArr.alcchr_s.push(alcchr == undefined ? "" : alcchr);
-                dataArr.acntbaldiv_s.push(
-                  acntbaldiv == undefined ? "" : acntbaldiv
-                );
-                dataArr.budgyn_s.push(budgyn == undefined ? "" : budgyn);
-                dataArr.partacnt_s.push(partacnt == undefined ? "" : partacnt);
-                if (slipamt_1 != 0) {
-                  dataArr.slipamt_s.push(slipamt_1);
-                } else if (slipamt_2 != 0) {
-                  dataArr.slipamt_s.push(slipamt_2);
-                }
-                dataArr.usedptcd_s.push(usedptcd == undefined ? "" : usedptcd);
-                dataArr.mngdrcustyn_s.push(
-                  mngdrcustyn == undefined || mngdrcustyn == ""
-                    ? "N"
-                    : mngdrcustyn
-                );
-                dataArr.mngcrcustyn_s.push(
-                  mngcrcustyn == undefined || mngcrcustyn == ""
-                    ? "N"
-                    : mngcrcustyn
-                );
-                dataArr.mngsumcustyn_s.push(
-                  mngsumcustyn == undefined || mngsumcustyn == ""
-                    ? "N"
-                    : mngsumcustyn
-                );
-                dataArr.mngdramtyn_s.push(
-                  mngdramtyn == undefined || mngdramtyn == "" ? "N" : mngdramtyn
-                );
-                dataArr.mngcramtyn_s.push(
-                  mngcramtyn == undefined || mngcramtyn == "" ? "N" : mngcramtyn
-                );
-                dataArr.mngdrrateyn_s.push(
-                  mngdrrateyn == undefined || mngdrrateyn == ""
-                    ? "N"
-                    : mngdrrateyn
-                );
-                dataArr.mngcrrateyn_s.push(
-                  mngcrrateyn == undefined || mngcrrateyn == ""
-                    ? "N"
-                    : mngcrrateyn
-                );
-                dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
-                dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
-                dataArr.mngamt_s.push(mngamt == undefined ? 0 : mngamt);
-                dataArr.rate_s.push(rate == undefined ? 0 : rate);
-                dataArr.mngitemcd1_s.push(
-                  mngitemcd1 == undefined ? "" : mngitemcd1
-                );
-                dataArr.mngitemcd2_s.push(
-                  mngitemcd2 == undefined ? "" : mngitemcd2
-                );
-                dataArr.mngitemcd3_s.push(
-                  mngitemcd3 == undefined ? "" : mngitemcd3
-                );
-                dataArr.mngitemcd4_s.push(
-                  mngitemcd4 == undefined ? "" : mngitemcd4
-                );
-                dataArr.mngitemcd5_s.push(
-                  mngitemcd5 == undefined ? "" : mngitemcd5
-                );
-                dataArr.mngitemcd6_s.push(
-                  mngitemcd6 == undefined ? "" : mngitemcd6
-                );
-                dataArr.mngdata1_s.push(mngdata1 == undefined ? "" : mngdata1);
-                dataArr.mngdata2_s.push(mngdata2 == undefined ? "" : mngdata2);
-                dataArr.mngdata3_s.push(mngdata3 == undefined ? "" : mngdata3);
-                dataArr.mngdata4_s.push(mngdata4 == undefined ? "" : mngdata4);
-                dataArr.mngdata5_s.push(mngdata5 == undefined ? "" : mngdata5);
-                dataArr.mngdata6_s.push(mngdata6 == undefined ? "" : mngdata6);
-                dataArr.mngdatanm1_s.push(
-                  mngdatanm1 == undefined ? "" : mngdatanm1
-                );
-                dataArr.mngdatanm2_s.push(
-                  mngdatanm2 == undefined ? "" : mngdatanm2
-                );
-                dataArr.mngdatanm3_s.push(
-                  mngdatanm3 == undefined ? "" : mngdatanm3
-                );
-                dataArr.mngdatanm4_s.push(
-                  mngdatanm4 == undefined ? "" : mngdatanm4
-                );
-                dataArr.mngdatanm5_s.push(
-                  mngdatanm5 == undefined ? "" : mngdatanm5
-                );
-                dataArr.mngdatanm6_s.push(
-                  mngdatanm6 == undefined ? "" : mngdatanm6
-                );
-                dataArr.budgcd_s.push(budgcd == undefined ? "" : budgcd);
-                dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
-                dataArr.remark3_s.push(remark3 == undefined ? "" : remark3);
-                dataArr.evidentialkind_s.push(
-                  evidentialkind == undefined ? "" : evidentialkind
-                );
-                dataArr.autorecnum_s.push(
-                  autorecnum == undefined ? "" : autorecnum
-                );
-                dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
-                dataArr.propertykind_s.push(
-                  propertykind == undefined ? "" : propertykind
-                );
-                dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
-                dataArr.reason_intax_deduction_s.push(
-                  reason_intax_deduction == undefined
-                    ? ""
-                    : reason_intax_deduction
-                );
-              });
-              setParaData((prev) => ({
-                ...prev,
-                workType: worktype,
-                location: filters.location,
-                actdt: filters.actdt,
-                acseq1: filters.acseq1,
-                acntdt: filters.acntdt,
-                dptcd: filters.dptcd,
-                slipdiv: filters.slipdiv == undefined ? "" : filters.slipdiv,
-                consultdt: filters.consultdt,
-                consultnum: filters.consultnum,
-                inputpath: filters.inputpath,
-                closeyn: filters.closeyn,
-                approvaldt: filters.approvaldt,
-                apperson: filters.apperson,
-                remark3: filters.remark3,
-                printcnt: filters.printcnt == undefined ? 0 : filters.printcnt,
-                position: filters.position,
-                inoutdiv: filters.inoutdiv,
-                attdatnum: filters.attdatnum,
-                rowstatus_s: dataArr.rowstatus_s.join("|"),
-                acseq2_s: dataArr.acseq2_s.join("|"),
-                acntses_s: dataArr.acntses_s.join("|"),
-                drcrdiv_s: dataArr.drcrdiv_s.join("|"),
-                acntcd_s: dataArr.acntcd_s.join("|"),
-                acntchr_s: dataArr.acntchr_s.join("|"),
-                alcchr_s: dataArr.alcchr_s.join("|"),
-                acntbaldiv_s: dataArr.acntbaldiv_s.join("|"),
-                budgyn_s: dataArr.budgyn_s.join("|"),
-                partacnt_s: dataArr.partacnt_s.join("|"),
-                slipamt_s: dataArr.slipamt_s.join("|"),
-                usedptcd_s: dataArr.usedptcd_s.join("|"),
-                mngdrcustyn_s: dataArr.mngdrcustyn_s.join("|"),
-                mngcrcustyn_s: dataArr.mngcrcustyn_s.join("|"),
-                mngsumcustyn_s: dataArr.mngsumcustyn_s.join("|"),
-                mngdramtyn_s: dataArr.mngdramtyn_s.join("|"),
-                mngcramtyn_s: dataArr.mngcramtyn_s.join("|"),
-                mngdrrateyn_s: dataArr.mngdrrateyn_s.join("|"),
-                mngcrrateyn_s: dataArr.mngcrrateyn_s.join("|"),
-                custcd_s: dataArr.custcd_s.join("|"),
-                custnm_s: dataArr.custnm_s.join("|"),
-                mngamt_s: dataArr.mngamt_s.join("|"),
-                rate_s: dataArr.rate_s.join("|"),
-                mngitemcd1_s: dataArr.mngitemcd1_s.join("|"),
-                mngitemcd2_s: dataArr.mngitemcd2_s.join("|"),
-                mngitemcd3_s: dataArr.mngitemcd3_s.join("|"),
-                mngitemcd4_s: dataArr.mngitemcd4_s.join("|"),
-                mngitemcd5_s: dataArr.mngitemcd5_s.join("|"),
-                mngitemcd6_s: dataArr.mngitemcd6_s.join("|"),
-                mngdata1_s: dataArr.mngdata1_s.join("|"),
-                mngdata2_s: dataArr.mngdata2_s.join("|"),
-                mngdata3_s: dataArr.mngdata3_s.join("|"),
-                mngdata4_s: dataArr.mngdata4_s.join("|"),
-                mngdata5_s: dataArr.mngdata5_s.join("|"),
-                mngdata6_s: dataArr.mngdata6_s.join("|"),
-                mngdatanm1_s: dataArr.mngdatanm1_s.join("|"),
-                mngdatanm2_s: dataArr.mngdatanm2_s.join("|"),
-                mngdatanm3_s: dataArr.mngdatanm3_s.join("|"),
-                mngdatanm4_s: dataArr.mngdatanm4_s.join("|"),
-                mngdatanm5_s: dataArr.mngdatanm5_s.join("|"),
-                mngdatanm6_s: dataArr.mngdatanm6_s.join("|"),
-                budgcd_s: dataArr.budgcd_s.join("|"),
-                stdrmkcd_s: dataArr.stdrmkcd_s.join("|"),
-                remark3_s: dataArr.remark3_s.join("|"),
-                evidentialkind_s: dataArr.evidentialkind_s.join("|"),
-                autorecnum_s: dataArr.autorecnum_s.join("|"),
-                taxtype_s: dataArr.taxtype_s.join("|"),
-                propertykind_s: dataArr.propertykind_s.join("|"),
-                creditcd_s: dataArr.creditcd_s.join("|"),
-                reason_intax_deduction_s:
-                  dataArr.reason_intax_deduction_s.join("|"),
-              }));
-            }
+            deletedMainRows.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                acseq2 = "",
+                acntses = "",
+                drcrdiv = "",
+                acntcd = "",
+                acntchr = "",
+                alcchr = "",
+                attdatnum = "",
+                acntbaldiv = "",
+                budgyn = "",
+                partacnt = "",
+                slipamt_1 = "",
+                slipamt_2 = "",
+                usedptcd = "",
+                mngdrcustyn = "",
+                mngcrcustyn = "",
+                mngsumcustyn = "",
+                mngdramtyn = "",
+                mngcramtyn = "",
+                mngdrrateyn = "",
+                mngcrrateyn = "",
+                custcd = "",
+                custnm = "",
+                mngamt = "",
+                rate = "",
+                mngitemcd1 = "",
+                mngitemcd2 = "",
+                mngitemcd3 = "",
+                mngitemcd4 = "",
+                mngitemcd5 = "",
+                mngitemcd6 = "",
+                mngdata1 = "",
+                mngdata2 = "",
+                mngdata3 = "",
+                mngdata4 = "",
+                mngdata5 = "",
+                mngdata6 = "",
+                mngdatanm1 = "",
+                mngdatanm2 = "",
+                mngdatanm3 = "",
+                mngdatanm4 = "",
+                mngdatanm5 = "",
+                mngdatanm6 = "",
+                budgcd = "",
+                stdrmkcd = "",
+                remark3 = "",
+                evidentialkind = "",
+                autorecnum = "",
+                taxtype = "",
+                propertykind = "",
+                creditcd = "",
+                reason_intax_deduction = "",
+              } = item;
+              dataArr.rowstatus_s.push(rowstatus);
+              dataArr.acseq2_s.push(
+                acseq2 == undefined || acseq2 == "" ? 0 : acseq2
+              );
+              dataArr.acntses_s.push(acntses == undefined ? "" : acntses);
+              dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
+              dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
+              dataArr.acntchr_s.push(acntchr == undefined ? "" : acntchr);
+              dataArr.alcchr_s.push(alcchr == undefined ? "" : alcchr);
+              dataArr.acntbaldiv_s.push(
+                acntbaldiv == undefined ? "" : acntbaldiv
+              );
+              dataArr.budgyn_s.push(budgyn == undefined ? "" : budgyn);
+              dataArr.partacnt_s.push(partacnt == undefined ? "" : partacnt);
+              if (slipamt_1 != 0) {
+                dataArr.slipamt_s.push(slipamt_1);
+              } else if (slipamt_2 != 0) {
+                dataArr.slipamt_s.push(slipamt_2);
+              }
+              dataArr.usedptcd_s.push(usedptcd == undefined ? "" : usedptcd);
+              dataArr.mngdrcustyn_s.push(
+                mngdrcustyn == undefined || mngdrcustyn == ""
+                  ? "N"
+                  : mngdrcustyn
+              );
+              dataArr.mngcrcustyn_s.push(
+                mngcrcustyn == undefined || mngcrcustyn == ""
+                  ? "N"
+                  : mngcrcustyn
+              );
+              dataArr.mngsumcustyn_s.push(
+                mngsumcustyn == undefined || mngsumcustyn == ""
+                  ? "N"
+                  : mngsumcustyn
+              );
+              dataArr.mngdramtyn_s.push(
+                mngdramtyn == undefined || mngdramtyn == "" ? "N" : mngdramtyn
+              );
+              dataArr.mngcramtyn_s.push(
+                mngcramtyn == undefined || mngcramtyn == "" ? "N" : mngcramtyn
+              );
+              dataArr.mngdrrateyn_s.push(
+                mngdrrateyn == undefined || mngdrrateyn == ""
+                  ? "N"
+                  : mngdrrateyn
+              );
+              dataArr.mngcrrateyn_s.push(
+                mngcrrateyn == undefined || mngcrrateyn == ""
+                  ? "N"
+                  : mngcrrateyn
+              );
+              dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+              dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+              dataArr.mngamt_s.push(mngamt == undefined ? 0 : mngamt);
+              dataArr.rate_s.push(rate == undefined ? 0 : rate);
+              dataArr.mngitemcd1_s.push(
+                mngitemcd1 == undefined ? "" : mngitemcd1
+              );
+              dataArr.mngitemcd2_s.push(
+                mngitemcd2 == undefined ? "" : mngitemcd2
+              );
+              dataArr.mngitemcd3_s.push(
+                mngitemcd3 == undefined ? "" : mngitemcd3
+              );
+              dataArr.mngitemcd4_s.push(
+                mngitemcd4 == undefined ? "" : mngitemcd4
+              );
+              dataArr.mngitemcd5_s.push(
+                mngitemcd5 == undefined ? "" : mngitemcd5
+              );
+              dataArr.mngitemcd6_s.push(
+                mngitemcd6 == undefined ? "" : mngitemcd6
+              );
+              dataArr.mngdata1_s.push(mngdata1 == undefined ? "" : mngdata1);
+              dataArr.mngdata2_s.push(mngdata2 == undefined ? "" : mngdata2);
+              dataArr.mngdata3_s.push(mngdata3 == undefined ? "" : mngdata3);
+              dataArr.mngdata4_s.push(mngdata4 == undefined ? "" : mngdata4);
+              dataArr.mngdata5_s.push(mngdata5 == undefined ? "" : mngdata5);
+              dataArr.mngdata6_s.push(mngdata6 == undefined ? "" : mngdata6);
+              dataArr.mngdatanm1_s.push(
+                mngdatanm1 == undefined ? "" : mngdatanm1
+              );
+              dataArr.mngdatanm2_s.push(
+                mngdatanm2 == undefined ? "" : mngdatanm2
+              );
+              dataArr.mngdatanm3_s.push(
+                mngdatanm3 == undefined ? "" : mngdatanm3
+              );
+              dataArr.mngdatanm4_s.push(
+                mngdatanm4 == undefined ? "" : mngdatanm4
+              );
+              dataArr.mngdatanm5_s.push(
+                mngdatanm5 == undefined ? "" : mngdatanm5
+              );
+              dataArr.mngdatanm6_s.push(
+                mngdatanm6 == undefined ? "" : mngdatanm6
+              );
+              dataArr.budgcd_s.push(budgcd == undefined ? "" : budgcd);
+              dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
+              dataArr.remark3_s.push(remark3 == undefined ? "" : remark3);
+              dataArr.evidentialkind_s.push(
+                evidentialkind == undefined ? "" : evidentialkind
+              );
+              dataArr.autorecnum_s.push(
+                autorecnum == undefined ? "" : autorecnum
+              );
+              dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
+              dataArr.propertykind_s.push(
+                propertykind == undefined ? "" : propertykind
+              );
+              dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
+              dataArr.reason_intax_deduction_s.push(
+                reason_intax_deduction == undefined
+                  ? ""
+                  : reason_intax_deduction
+              );
+            });
+            setParaData((prev) => ({
+              ...prev,
+              workType: worktype,
+              location: filters.location,
+              actdt: filters.actdt,
+              acseq1: filters.acseq1,
+              acntdt: filters.acntdt,
+              dptcd: filters.dptcd,
+              slipdiv: filters.slipdiv == undefined ? "" : filters.slipdiv,
+              consultdt: filters.consultdt,
+              consultnum: filters.consultnum,
+              inputpath: filters.inputpath,
+              closeyn: filters.closeyn,
+              approvaldt: filters.approvaldt,
+              apperson: filters.apperson,
+              remark3: filters.remark3,
+              printcnt: filters.printcnt == undefined ? 0 : filters.printcnt,
+              position: filters.position,
+              inoutdiv: filters.inoutdiv,
+              attdatnum: filters.attdatnum,
+              rowstatus_s: dataArr.rowstatus_s.join("|"),
+              acseq2_s: dataArr.acseq2_s.join("|"),
+              acntses_s: dataArr.acntses_s.join("|"),
+              drcrdiv_s: dataArr.drcrdiv_s.join("|"),
+              acntcd_s: dataArr.acntcd_s.join("|"),
+              acntchr_s: dataArr.acntchr_s.join("|"),
+              alcchr_s: dataArr.alcchr_s.join("|"),
+              acntbaldiv_s: dataArr.acntbaldiv_s.join("|"),
+              budgyn_s: dataArr.budgyn_s.join("|"),
+              partacnt_s: dataArr.partacnt_s.join("|"),
+              slipamt_s: dataArr.slipamt_s.join("|"),
+              usedptcd_s: dataArr.usedptcd_s.join("|"),
+              mngdrcustyn_s: dataArr.mngdrcustyn_s.join("|"),
+              mngcrcustyn_s: dataArr.mngcrcustyn_s.join("|"),
+              mngsumcustyn_s: dataArr.mngsumcustyn_s.join("|"),
+              mngdramtyn_s: dataArr.mngdramtyn_s.join("|"),
+              mngcramtyn_s: dataArr.mngcramtyn_s.join("|"),
+              mngdrrateyn_s: dataArr.mngdrrateyn_s.join("|"),
+              mngcrrateyn_s: dataArr.mngcrrateyn_s.join("|"),
+              custcd_s: dataArr.custcd_s.join("|"),
+              custnm_s: dataArr.custnm_s.join("|"),
+              mngamt_s: dataArr.mngamt_s.join("|"),
+              rate_s: dataArr.rate_s.join("|"),
+              mngitemcd1_s: dataArr.mngitemcd1_s.join("|"),
+              mngitemcd2_s: dataArr.mngitemcd2_s.join("|"),
+              mngitemcd3_s: dataArr.mngitemcd3_s.join("|"),
+              mngitemcd4_s: dataArr.mngitemcd4_s.join("|"),
+              mngitemcd5_s: dataArr.mngitemcd5_s.join("|"),
+              mngitemcd6_s: dataArr.mngitemcd6_s.join("|"),
+              mngdata1_s: dataArr.mngdata1_s.join("|"),
+              mngdata2_s: dataArr.mngdata2_s.join("|"),
+              mngdata3_s: dataArr.mngdata3_s.join("|"),
+              mngdata4_s: dataArr.mngdata4_s.join("|"),
+              mngdata5_s: dataArr.mngdata5_s.join("|"),
+              mngdata6_s: dataArr.mngdata6_s.join("|"),
+              mngdatanm1_s: dataArr.mngdatanm1_s.join("|"),
+              mngdatanm2_s: dataArr.mngdatanm2_s.join("|"),
+              mngdatanm3_s: dataArr.mngdatanm3_s.join("|"),
+              mngdatanm4_s: dataArr.mngdatanm4_s.join("|"),
+              mngdatanm5_s: dataArr.mngdatanm5_s.join("|"),
+              mngdatanm6_s: dataArr.mngdatanm6_s.join("|"),
+              budgcd_s: dataArr.budgcd_s.join("|"),
+              stdrmkcd_s: dataArr.stdrmkcd_s.join("|"),
+              remark3_s: dataArr.remark3_s.join("|"),
+              evidentialkind_s: dataArr.evidentialkind_s.join("|"),
+              autorecnum_s: dataArr.autorecnum_s.join("|"),
+              taxtype_s: dataArr.taxtype_s.join("|"),
+              propertykind_s: dataArr.propertykind_s.join("|"),
+              creditcd_s: dataArr.creditcd_s.join("|"),
+              reason_intax_deduction_s:
+                dataArr.reason_intax_deduction_s.join("|"),
+            }));
           }
         }
       } catch (e) {
@@ -2618,12 +2629,13 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.workType != "W") {
+    if (ParaData.workType != "W" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -3533,6 +3545,7 @@ const CopyWindow = ({
                                 themeColor={"primary"}
                                 icon="plus"
                                 title="행 추가"
+                                disabled={permissions.save ? false : true}
                               ></Button>
                               <Button
                                 onClick={onDeleteClick}
@@ -3540,6 +3553,7 @@ const CopyWindow = ({
                                 themeColor={"primary"}
                                 icon="minus"
                                 title="행 삭제"
+                                disabled={permissions.save ? false : true}
                               ></Button>
                               <Button
                                 onClick={() => {
@@ -5571,9 +5585,11 @@ const CopyWindow = ({
                 </FormBoxWrap>
                 <BottomContainer className="BottomContainer">
                   <ButtonContainer>
-                    <Button themeColor={"primary"} onClick={selectData}>
-                      저장
-                    </Button>
+                    {permissions.save && (
+                      <Button themeColor={"primary"} onClick={selectData}>
+                        저장
+                      </Button>
+                    )}
                     <Button
                       themeColor={"primary"}
                       fillMode={"outline"}
@@ -5717,6 +5733,7 @@ const CopyWindow = ({
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onDeleteClick}
@@ -5724,6 +5741,7 @@ const CopyWindow = ({
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -7610,9 +7628,11 @@ const CopyWindow = ({
             </FormBoxWrap>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
-                <Button themeColor={"primary"} onClick={selectData}>
-                  저장
-                </Button>
+                {permissions.save && (
+                  <Button themeColor={"primary"} onClick={selectData}>
+                    저장
+                  </Button>
+                )}
                 <Button
                   themeColor={"primary"}
                   fillMode={"outline"}
@@ -7657,6 +7677,11 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
     </>

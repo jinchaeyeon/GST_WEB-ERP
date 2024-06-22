@@ -68,10 +68,7 @@ import { CellRender } from "../components/Renderers/Renderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1080W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -206,6 +203,7 @@ const AC_A1080W: React.FC = () => {
           ?.valueCode,
         closeyn: defaultOption.find((item: any) => item.id == "closeyn")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -283,7 +281,7 @@ const AC_A1080W: React.FC = () => {
     closeyn: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -320,7 +318,7 @@ const AC_A1080W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -411,7 +409,12 @@ const AC_A1080W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -421,7 +424,7 @@ const AC_A1080W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
@@ -597,6 +600,7 @@ const AC_A1080W: React.FC = () => {
   }, [findstr]);
 
   const onSaveClick = async (e: any) => {
+    if (!permissions.save) return;
     const dataItem = mainDataResult.data.filter((item: any, index: number) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -660,6 +664,7 @@ const AC_A1080W: React.FC = () => {
   };
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -695,10 +700,10 @@ const AC_A1080W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.worktype != "") {
+    if (paraData.worktype != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [paraData]);
+  }, [paraData, permissions]);
 
   return (
     <>
@@ -878,6 +883,7 @@ const AC_A1080W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                disabled={permissions.save ? false : true}
               >
                 저장
               </Button>

@@ -23,10 +23,11 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2 } from "../../../store/atoms";
-import { Iparameters } from "../../../store/types";
+import { Iparameters, TPermissions } from "../../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
+  UsePermissions,
   getHeight,
   getWindowDeviceHeight,
 } from "../../CommonFunction";
@@ -62,6 +63,13 @@ const StandardWindow = ({
   index,
   modal = false,
 }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -73,6 +81,13 @@ const StandardWindow = ({
     width: isMobile == true ? deviceWidth : 800,
     height: isMobile == true ? deviceHeight : 800,
   });
+
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "R_USEYN",
+    //사용여부,
+    setBizComponentData
+  );
 
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
@@ -104,34 +119,29 @@ const StandardWindow = ({
   }>({});
 
   useEffect(() => {
-    let mng = "";
-    if (index == 1) {
-      mng = mngitemcd.mngitemcd1;
-    } else if (index == 2) {
-      mng = mngitemcd.mngitemcd2;
-    } else if (index == 3) {
-      mng = mngitemcd.mngitemcd3;
-    } else if (index == 4) {
-      mng = mngitemcd.mngitemcd4;
-    } else if (index == 5) {
-      mng = mngitemcd.mngitemcd5;
-    } else if (index == 6) {
-      mng = mngitemcd.mngitemcd6;
+    if (permissions.view && bizComponentData !== null) {
+      let mng = "";
+      if (index == 1) {
+        mng = mngitemcd.mngitemcd1;
+      } else if (index == 2) {
+        mng = mngitemcd.mngitemcd2;
+      } else if (index == 3) {
+        mng = mngitemcd.mngitemcd3;
+      } else if (index == 4) {
+        mng = mngitemcd.mngitemcd4;
+      } else if (index == 5) {
+        mng = mngitemcd.mngitemcd5;
+      } else if (index == 6) {
+        mng = mngitemcd.mngitemcd6;
+      }
+      setFilters((prev) => ({
+        ...prev,
+        mngitemcd: mng,
+        pgNum: 1,
+        isSearch: true,
+      }));
     }
-    setFilters((prev) => ({
-      ...prev,
-      mngitemcd: mng,
-      pgNum: 1,
-      isSearch: true,
-    }));
-  }, []);
-
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "R_USEYN",
-    //사용여부,
-    setBizComponentData
-  );
+  }, [permissions, bizComponentData]);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -186,16 +196,17 @@ const StandardWindow = ({
   });
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && permissions.view && bizComponentData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData]);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //그리드 조회
   const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -319,6 +330,7 @@ const StandardWindow = ({
             }}
             icon="search"
             themeColor={"primary"}
+            disabled={permissions.view ? false : true}
           >
             조회
           </Button>

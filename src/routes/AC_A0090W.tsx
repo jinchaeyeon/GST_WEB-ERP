@@ -266,6 +266,7 @@ const AC_A0090W: React.FC = () => {
         taxyy: setDefaultDate(customOptionData, "taxyy"),
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -315,7 +316,7 @@ const AC_A0090W: React.FC = () => {
     chasu: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   //조회조건 초기값
   const [filters2, setFilters2] = useState({
@@ -324,7 +325,7 @@ const AC_A0090W: React.FC = () => {
     chasu: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 리셋
@@ -524,7 +525,7 @@ const AC_A0090W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -624,7 +625,7 @@ const AC_A0090W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -677,7 +678,7 @@ const AC_A0090W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
 
@@ -685,11 +686,11 @@ const AC_A0090W: React.FC = () => {
 
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters2.isSearch && permissions !== null) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
 
@@ -697,7 +698,7 @@ const AC_A0090W: React.FC = () => {
 
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, permissions, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1104,6 +1105,7 @@ const AC_A0090W: React.FC = () => {
   );
 
   const onSaveClick = async () => {
+    if (!permissions.save) return;
     let valid = true;
 
     const dataItem = mainDataResult.data.filter((item: any) => {
@@ -1280,12 +1282,13 @@ const AC_A0090W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -1376,6 +1379,7 @@ const AC_A0090W: React.FC = () => {
   };
 
   const onCopyClick = () => {
+    if (!permissions.save) return;
     setParaData((prev) => ({
       ...prev,
       workType: "COPY",
@@ -1383,6 +1387,7 @@ const AC_A0090W: React.FC = () => {
   };
 
   const onSaveClick2 = async () => {
+    if (!permissions.save) return;
     let valid = true;
 
     const dataItem = mainDataResult2.data.filter((item: any) => {
@@ -1608,6 +1613,7 @@ const AC_A0090W: React.FC = () => {
                       icon="copy"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
                     >
                       이전년도 복사
                     </Button>
@@ -1616,6 +1622,7 @@ const AC_A0090W: React.FC = () => {
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onDeleteClick}
@@ -1623,6 +1630,7 @@ const AC_A0090W: React.FC = () => {
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                     <Button
                       onClick={onSaveClick}
@@ -1630,6 +1638,7 @@ const AC_A0090W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                       title="저장"
+                      disabled={permissions.save ? false : true}
                     ></Button>
                   </ButtonContainer>
                 </GridTitle>
@@ -1755,19 +1764,21 @@ const AC_A0090W: React.FC = () => {
                         icon="plus"
                         title="행 추가"
                         disabled={
-                          mainDataResult.data.filter(
-                            (item) =>
-                              item[DATA_ITEM_KEY] ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? true
-                            : mainDataResult.data.filter(
+                          permissions.save
+                            ? mainDataResult.data.filter(
                                 (item) =>
                                   item[DATA_ITEM_KEY] ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].rowstatus == "N"
-                            ? true
-                            : false
+                              )[0] == undefined
+                              ? true
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].rowstatus == "N"
+                              ? true
+                              : false
+                            : true
                         }
                       ></Button>
                       <Button
@@ -1777,19 +1788,21 @@ const AC_A0090W: React.FC = () => {
                         icon="minus"
                         title="행 삭제"
                         disabled={
-                          mainDataResult.data.filter(
-                            (item) =>
-                              item[DATA_ITEM_KEY] ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? true
-                            : mainDataResult.data.filter(
+                          permissions.save
+                            ? mainDataResult.data.filter(
                                 (item) =>
                                   item[DATA_ITEM_KEY] ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].rowstatus == "N"
-                            ? true
-                            : false
+                              )[0] == undefined
+                              ? true
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].rowstatus == "N"
+                              ? true
+                              : false
+                            : true
                         }
                       ></Button>
                       <Button
@@ -1799,19 +1812,21 @@ const AC_A0090W: React.FC = () => {
                         icon="save"
                         title="저장"
                         disabled={
-                          mainDataResult.data.filter(
-                            (item) =>
-                              item[DATA_ITEM_KEY] ==
-                              Object.getOwnPropertyNames(selectedState)[0]
-                          )[0] == undefined
-                            ? true
-                            : mainDataResult.data.filter(
+                          permissions.save
+                            ? mainDataResult.data.filter(
                                 (item) =>
                                   item[DATA_ITEM_KEY] ==
                                   Object.getOwnPropertyNames(selectedState)[0]
-                              )[0].rowstatus == "N"
-                            ? true
-                            : false
+                              )[0] == undefined
+                              ? true
+                              : mainDataResult.data.filter(
+                                  (item) =>
+                                    item[DATA_ITEM_KEY] ==
+                                    Object.getOwnPropertyNames(selectedState)[0]
+                                )[0].rowstatus == "N"
+                              ? true
+                              : false
+                            : true
                         }
                       ></Button>
                     </div>
@@ -1925,6 +1940,7 @@ const AC_A0090W: React.FC = () => {
                   icon="copy"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.save ? false : true}
                 >
                   이전년도 복사
                 </Button>
@@ -1933,6 +1949,7 @@ const AC_A0090W: React.FC = () => {
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
@@ -1940,6 +1957,7 @@ const AC_A0090W: React.FC = () => {
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onSaveClick}
@@ -1947,6 +1965,7 @@ const AC_A0090W: React.FC = () => {
                   themeColor={"primary"}
                   icon="save"
                   title="저장"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -2055,19 +2074,21 @@ const AC_A0090W: React.FC = () => {
                   icon="plus"
                   title="행 추가"
                   disabled={
-                    mainDataResult.data.filter(
-                      (item) =>
-                        item[DATA_ITEM_KEY] ==
-                        Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? true
-                      : mainDataResult.data.filter(
+                    permissions.save
+                      ? mainDataResult.data.filter(
                           (item) =>
                             item[DATA_ITEM_KEY] ==
                             Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].rowstatus == "N"
-                      ? true
-                      : false
+                        )[0] == undefined
+                        ? true
+                        : mainDataResult.data.filter(
+                            (item) =>
+                              item[DATA_ITEM_KEY] ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].rowstatus == "N"
+                        ? true
+                        : false
+                      : true
                   }
                 ></Button>
                 <Button
@@ -2077,19 +2098,21 @@ const AC_A0090W: React.FC = () => {
                   icon="minus"
                   title="행 삭제"
                   disabled={
-                    mainDataResult.data.filter(
-                      (item) =>
-                        item[DATA_ITEM_KEY] ==
-                        Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? true
-                      : mainDataResult.data.filter(
+                    permissions.save
+                      ? mainDataResult.data.filter(
                           (item) =>
                             item[DATA_ITEM_KEY] ==
                             Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].rowstatus == "N"
-                      ? true
-                      : false
+                        )[0] == undefined
+                        ? true
+                        : mainDataResult.data.filter(
+                            (item) =>
+                              item[DATA_ITEM_KEY] ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].rowstatus == "N"
+                        ? true
+                        : false
+                      : true
                   }
                 ></Button>
                 <Button
@@ -2099,19 +2122,21 @@ const AC_A0090W: React.FC = () => {
                   icon="save"
                   title="저장"
                   disabled={
-                    mainDataResult.data.filter(
-                      (item) =>
-                        item[DATA_ITEM_KEY] ==
-                        Object.getOwnPropertyNames(selectedState)[0]
-                    )[0] == undefined
-                      ? true
-                      : mainDataResult.data.filter(
+                    permissions.save
+                      ? mainDataResult.data.filter(
                           (item) =>
                             item[DATA_ITEM_KEY] ==
                             Object.getOwnPropertyNames(selectedState)[0]
-                        )[0].rowstatus == "N"
-                      ? true
-                      : false
+                        )[0] == undefined
+                        ? true
+                        : mainDataResult.data.filter(
+                            (item) =>
+                              item[DATA_ITEM_KEY] ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].rowstatus == "N"
+                        ? true
+                        : false
+                      : true
                   }
                 ></Button>
               </ButtonContainer>

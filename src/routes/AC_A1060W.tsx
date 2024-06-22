@@ -240,6 +240,7 @@ const AC_A1060W: React.FC = () => {
         dtgubun: defaultOption.find((item: any) => item.id == "dtgubun")
           ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -288,7 +289,7 @@ const AC_A1060W: React.FC = () => {
     finyn: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -297,7 +298,7 @@ const AC_A1060W: React.FC = () => {
     ref_key: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -306,7 +307,7 @@ const AC_A1060W: React.FC = () => {
     act_key: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -315,7 +316,7 @@ const AC_A1060W: React.FC = () => {
     ref_key: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
   let gridRef: any = useRef(null);
 
@@ -382,7 +383,8 @@ const AC_A1060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -509,7 +511,8 @@ const AC_A1060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -566,7 +569,8 @@ const AC_A1060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -623,7 +627,8 @@ const AC_A1060W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -680,7 +685,12 @@ const AC_A1060W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -690,11 +700,16 @@ const AC_A1060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && customOptionData !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -704,11 +719,16 @@ const AC_A1060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters3.isSearch && customOptionData !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters((prev) => ({
@@ -718,11 +738,16 @@ const AC_A1060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters4.isSearch && customOptionData !== null) {
+    if (
+      filters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
@@ -732,7 +757,7 @@ const AC_A1060W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
@@ -1303,6 +1328,7 @@ const AC_A1060W: React.FC = () => {
   const exitEdit4 = () => {};
 
   const onDeleteClick = () => {
+    if (!permissions.delete) return;
     if (mainDataResult.total > 0) {
       const datas = mainDataResult.data.filter((item) => item.chk == true);
       if (datas.length > 0) {
@@ -1343,6 +1369,7 @@ const AC_A1060W: React.FC = () => {
   };
 
   const onDeleteClick2 = () => {
+    if (!permissions.delete) return;
     if (mainDataResult.total > 0) {
       const datas = mainDataResult.data.filter((item) => item.chk == true);
       if (datas.length > 0) {
@@ -1383,6 +1410,7 @@ const AC_A1060W: React.FC = () => {
   };
 
   const onAddClick = () => {
+    if (!permissions.save) return;
     if (mainDataResult.total > 0) {
       const datas = mainDataResult.data.filter((item) => item.chk == true);
       if (datas.length > 0) {
@@ -1486,12 +1514,34 @@ const AC_A1060W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.workType != "") {
+    if (
+      ParaData.workType != "" &&
+      permissions.save &&
+      ParaData.workType != "COLDROP" &&
+      ParaData.workType != "DELETE"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (
+      (ParaData.workType == "DELETE" || ParaData.workType == "COLDROP") &&
+      permissions.delete
+    ) {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
 
   const fetchTodoGridSaved = async () => {
+    if (
+      !permissions.save &&
+      ParaData.workType != "COLDROP" &&
+      ParaData.workType != "DELETE"
+    )
+      return;
+    if (
+      !permissions.delete &&
+      (ParaData.workType == "COLDROP" || ParaData.workType == "DELETE")
+    )
+      return;
     let data: any;
     setLoading(true);
     try {
@@ -1682,6 +1732,7 @@ const AC_A1060W: React.FC = () => {
                     onClick={onAddClick}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     매출전표생성
                   </Button>
@@ -1690,6 +1741,7 @@ const AC_A1060W: React.FC = () => {
                     icon="delete"
                     fillMode="outline"
                     themeColor={"primary"}
+                    disabled={permissions.delete ? false : true}
                   >
                     매출전표해제
                   </Button>
@@ -1697,6 +1749,7 @@ const AC_A1060W: React.FC = () => {
                     onClick={onAddClick2}
                     themeColor={"primary"}
                     icon="file-add"
+                    disabled={permissions.save ? false : true}
                   >
                     수금전표생성
                   </Button>
@@ -1705,6 +1758,7 @@ const AC_A1060W: React.FC = () => {
                     icon="delete"
                     fillMode="outline"
                     themeColor={"primary"}
+                    disabled={permissions.delete ? false : true}
                   >
                     수금전표해제
                   </Button>
@@ -1841,7 +1895,10 @@ const AC_A1060W: React.FC = () => {
                 onSelect={handleSelectTab}
                 scrollable={isMobile}
               >
-                <TabStripTab title="판매자료">
+                <TabStripTab
+                  title="판매자료"
+                  disabled={permissions.view ? false : true}
+                >
                   <ExcelExport
                     data={mainDataResult2.data}
                     ref={(exporter) => {
@@ -1916,7 +1973,10 @@ const AC_A1060W: React.FC = () => {
                     </Grid>
                   </ExcelExport>
                 </TabStripTab>
-                <TabStripTab title="매출전표">
+                <TabStripTab
+                  title="매출전표"
+                  disabled={permissions.view ? false : true}
+                >
                   <ExcelExport
                     data={mainDataResult3.data}
                     ref={(exporter) => {
@@ -1996,7 +2056,10 @@ const AC_A1060W: React.FC = () => {
                     </Grid>
                   </ExcelExport>
                 </TabStripTab>
-                <TabStripTab title="수금전표">
+                <TabStripTab
+                  title="수금전표"
+                  disabled={permissions.view ? false : true}
+                >
                   <ExcelExport
                     data={mainDataResult4.data}
                     ref={(exporter) => {
@@ -2088,6 +2151,7 @@ const AC_A1060W: React.FC = () => {
                   onClick={onAddClick}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   매출전표생성
                 </Button>
@@ -2096,6 +2160,7 @@ const AC_A1060W: React.FC = () => {
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
                 >
                   매출전표해제
                 </Button>
@@ -2103,6 +2168,7 @@ const AC_A1060W: React.FC = () => {
                   onClick={onAddClick2}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   수금전표생성
                 </Button>
@@ -2111,6 +2177,7 @@ const AC_A1060W: React.FC = () => {
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
                 >
                   수금전표해제
                 </Button>
@@ -2220,7 +2287,10 @@ const AC_A1060W: React.FC = () => {
             onSelect={handleSelectTab}
             scrollable={isMobile}
           >
-            <TabStripTab title="판매자료">
+            <TabStripTab
+              title="판매자료"
+              disabled={permissions.view ? false : true}
+            >
               <ExcelExport
                 data={mainDataResult2.data}
                 ref={(exporter) => {
@@ -2295,7 +2365,10 @@ const AC_A1060W: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </TabStripTab>
-            <TabStripTab title="매출전표">
+            <TabStripTab
+              title="매출전표"
+              disabled={permissions.view ? false : true}
+            >
               <ExcelExport
                 data={mainDataResult3.data}
                 ref={(exporter) => {
@@ -2375,7 +2448,10 @@ const AC_A1060W: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </TabStripTab>
-            <TabStripTab title="수금전표">
+            <TabStripTab
+              title="수금전표"
+              disabled={permissions.view ? false : true}
+            >
               <ExcelExport
                 data={mainDataResult4.data}
                 ref={(exporter) => {

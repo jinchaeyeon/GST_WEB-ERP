@@ -5,7 +5,12 @@ import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { getHeight, getWindowDeviceHeight } from "../CommonFunction";
+import { TPermissions } from "../../store/types";
+import {
+  UsePermissions,
+  getHeight,
+  getWindowDeviceHeight,
+} from "../CommonFunction";
 import FileViewers from "../Viewer/FileViewers";
 import Window from "./WindowComponent/Window";
 
@@ -17,6 +22,13 @@ type IWindow = {
 var height = 0;
 var height2 = 0;
 const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -58,7 +70,8 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
+
     let data: any;
     setLoading(true);
 
@@ -94,11 +107,11 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch == false && para != undefined) {
+    if (isInitSearch == false && para != undefined && permissions.view) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [para]);
+  }, [para, permissions]);
 
   return (
     <>
@@ -115,7 +128,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
             height: isMobile ? mobileheight : webheight,
           }}
         >
-          {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile}/> : ""}
+          {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
         </div>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>

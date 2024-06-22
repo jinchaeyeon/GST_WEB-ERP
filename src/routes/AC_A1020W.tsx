@@ -60,7 +60,7 @@ import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
   isLoading,
-  loginResultState
+  loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -144,6 +144,7 @@ const AC_A1020W: React.FC = () => {
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         acntdiv: defaultOption.find((item: any) => item.id == "acntdiv")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -287,12 +288,12 @@ const AC_A1020W: React.FC = () => {
     acntdiv: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -382,7 +383,12 @@ const AC_A1020W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && customOptionData !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -392,7 +398,7 @@ const AC_A1020W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -495,6 +501,7 @@ const AC_A1020W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -568,6 +575,7 @@ const AC_A1020W: React.FC = () => {
   };
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -636,8 +644,8 @@ const AC_A1020W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
@@ -828,6 +836,7 @@ const AC_A1020W: React.FC = () => {
               themeColor={"primary"}
               icon="file"
               style={{ marginLeft: 15 }}
+              disabled={permissions.print ? false : true}
             >
               미리보기
             </Button>
@@ -837,10 +846,16 @@ const AC_A1020W: React.FC = () => {
               onClick={onCheckClick}
               themeColor={"primary"}
               icon="track-changes-accept"
+              disabled={permissions.save ? false : true}
             >
               지출결의서결재
             </Button>
-            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="file-add"
+              disabled={permissions.save ? false : true}
+            >
               지출결의서생성
             </Button>
             <Button
@@ -848,6 +863,7 @@ const AC_A1020W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="copy"
+              disabled={permissions.save ? false : true}
             >
               지출결의서복사
             </Button>
@@ -856,6 +872,7 @@ const AC_A1020W: React.FC = () => {
               icon="delete"
               fillMode="outline"
               themeColor={"primary"}
+              disabled={permissions.delete ? false : true}
             >
               지출결의서삭제
             </Button>
