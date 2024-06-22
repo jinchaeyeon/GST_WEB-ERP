@@ -837,7 +837,16 @@ const AC_A0020W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, tabSelected, webheight, webheight2, webheight3, webheight4, webheight5, webheight6]);
+  }, [
+    customOptionData,
+    tabSelected,
+    webheight,
+    webheight2,
+    webheight3,
+    webheight4,
+    webheight5,
+    webheight6,
+  ]);
 
   UsePermissions(setPermissions);
   const [acntcd, setAcntcd] = useState<string>("");
@@ -978,16 +987,26 @@ const AC_A0020W: React.FC = () => {
         "query"
       );
 
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+
       setFilters2((prev) => ({
         ...prev,
         acntses: defaultOption.find((item: any) => item.id == "acntses")
           ?.valueCode,
+        isSearch: true,
       }));
-
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
       setFilters4((prev) => ({
         ...prev,
         inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -1297,7 +1316,7 @@ const AC_A0020W: React.FC = () => {
     mngitemnm: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -1308,7 +1327,7 @@ const AC_A0020W: React.FC = () => {
     acntgrpcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters3, setFilters3] = useState({
@@ -1318,7 +1337,7 @@ const AC_A0020W: React.FC = () => {
     stdrmknm1: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters4, setFilters4] = useState({
@@ -1327,7 +1346,7 @@ const AC_A0020W: React.FC = () => {
     inoutdiv: "1",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters2, setDetailFilter2] = useState({
@@ -1335,7 +1354,7 @@ const AC_A0020W: React.FC = () => {
     reportgb: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [detailfilters2_1, setDetailFilter2_1] = useState({
@@ -1344,12 +1363,12 @@ const AC_A0020W: React.FC = () => {
     acntgrpcd: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1432,7 +1451,7 @@ const AC_A0020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters2: Iparameters = {
@@ -1526,7 +1545,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const fetchMainGrid3 = async (detailfilters2: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters3: Iparameters = {
@@ -1624,7 +1643,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const fetchMainGrid4 = async (detailfilters2_1: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters4: Iparameters = {
@@ -1706,7 +1725,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const fetchMainGrid5 = async (filters3: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters5: Iparameters = {
@@ -1789,7 +1808,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const fetchMainGrid6 = async (filters4: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     const parameters6: Iparameters = {
@@ -1875,25 +1894,40 @@ const AC_A0020W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions]);
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (detailfilters2.isSearch && permissions !== null) {
+    if (
+      detailfilters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters2);
       setDetailFilter2((prev) => ({
@@ -1903,10 +1937,15 @@ const AC_A0020W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [detailfilters2, permissions]);
+  }, [detailfilters2, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (detailfilters2_1.isSearch && permissions !== null) {
+    if (
+      detailfilters2_1.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(detailfilters2_1);
       setDetailFilter2_1((prev) => ({
@@ -1916,25 +1955,35 @@ const AC_A0020W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [detailfilters2_1, permissions]);
+  }, [detailfilters2_1, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters3.isSearch && permissions !== null) {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid5(deepCopiedFilters);
     }
-  }, [filters3, permissions]);
+  }, [filters3, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (filters4.isSearch && permissions !== null) {
+    if (
+      filters4.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid6(deepCopiedFilters);
     }
-  }, [filters4, permissions]);
+  }, [filters4, permissions, bizComponentData, customOptionData]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -3311,6 +3360,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onSaveClick = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       const dataItem = mainDataResult.data.filter((item: any) => {
@@ -3420,6 +3470,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       const dataItem = mainDataResult3.data.filter((item: any) => {
@@ -3655,6 +3706,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    if (!permissions.save) return;
     let valid = true;
     try {
       const dataItem = mainDataResult5.data.filter((item: any) => {
@@ -3750,6 +3802,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onSaveClick4 = () => {
+    if (!permissions.save) return;
     try {
       const dataItem = mainDataResult6.data.filter((item: any) => {
         return (
@@ -4011,34 +4064,36 @@ const AC_A0020W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s != "") {
+    if (ParaData.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved();
     }
-  }, [ParaData]);
+  }, [ParaData, permissions]);
 
   useEffect(() => {
     if (
-      ParaData2.rowstatus_s != "" ||
-      ParaData2.acntcd_s != "" ||
-      ParaData2.workType == "COPY"
+      (ParaData2.rowstatus_s != "" ||
+        ParaData2.acntcd_s != "" ||
+        ParaData2.workType == "COPY") &&
+      permissions.save
     ) {
       fetchTodoGridSaved2();
     }
-  }, [ParaData2]);
+  }, [ParaData2, permissions]);
 
   useEffect(() => {
-    if (ParaData3.rowstatus_s != "") {
+    if (ParaData3.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved3();
     }
-  }, [ParaData3]);
+  }, [ParaData3, permissions]);
 
   useEffect(() => {
-    if (ParaData4.rowstatus_s != "") {
+    if (ParaData4.rowstatus_s != "" && permissions.save) {
       fetchTodoGridSaved4();
     }
-  }, [ParaData4]);
+  }, [ParaData4, permissions]);
 
   const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -4101,6 +4156,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -4210,6 +4266,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const fetchTodoGridSaved3 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -4268,6 +4325,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const fetchTodoGridSaved4 = async () => {
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     try {
@@ -4331,6 +4389,7 @@ const AC_A0020W: React.FC = () => {
   };
 
   const onCopyClick = () => {
+    if (!permissions.save) return;
     if (!window.confirm("전월복사를 하시겠습니까?")) {
       return false;
     }
@@ -4429,6 +4488,7 @@ const AC_A0020W: React.FC = () => {
 
   const fetchAcntData = React.useCallback(
     async (acntcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
       const bytes = require("utf8-bytes");
@@ -4481,6 +4541,7 @@ const AC_A0020W: React.FC = () => {
   );
   const fetchAcntData2 = React.useCallback(
     async (acntcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
       const bytes = require("utf8-bytes");
@@ -4534,6 +4595,7 @@ const AC_A0020W: React.FC = () => {
 
   const fetchAcntData3 = React.useCallback(
     async (acntcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
       const bytes = require("utf8-bytes");
@@ -4587,6 +4649,7 @@ const AC_A0020W: React.FC = () => {
 
   const fetchAcntData4 = React.useCallback(
     async (acntcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
       const bytes = require("utf8-bytes");
@@ -4640,6 +4703,7 @@ const AC_A0020W: React.FC = () => {
 
   const fetchAcntData5 = React.useCallback(
     async (acntcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
       const bytes = require("utf8-bytes");
@@ -4693,6 +4757,7 @@ const AC_A0020W: React.FC = () => {
 
   const fetchAcntData6 = React.useCallback(
     async (acntcd: string) => {
+      if (!permissions.view) return;
       let data: any;
       const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
       const bytes = require("utf8-bytes");
@@ -4765,7 +4830,10 @@ const AC_A0020W: React.FC = () => {
         onSelect={handleSelectTab}
         scrollable={isMobile}
       >
-        <TabStripTab title="관리항목">
+        <TabStripTab
+          title="관리항목"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -4801,6 +4869,7 @@ const AC_A0020W: React.FC = () => {
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onDeleteClick}
@@ -4808,6 +4877,7 @@ const AC_A0020W: React.FC = () => {
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
+                  disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
                   onClick={onSaveClick}
@@ -4815,6 +4885,7 @@ const AC_A0020W: React.FC = () => {
                   themeColor={"primary"}
                   icon="save"
                   title="저장"
+                  disabled={permissions.save ? false : true}
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -4900,7 +4971,10 @@ const AC_A0020W: React.FC = () => {
             </ExcelExport>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="재무제표">
+        <TabStripTab
+          title="재무제표"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -5021,6 +5095,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick2}
@@ -5028,6 +5103,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick2}
@@ -5035,6 +5111,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -5159,6 +5236,7 @@ const AC_A0020W: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onDeleteClick3}
@@ -5166,6 +5244,7 @@ const AC_A0020W: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                           <Button
                             onClick={onSaveClick2}
@@ -5173,6 +5252,7 @@ const AC_A0020W: React.FC = () => {
                             themeColor={"primary"}
                             icon="save"
                             title="저장"
+                            disabled={permissions.save ? false : true}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -5333,6 +5413,7 @@ const AC_A0020W: React.FC = () => {
                         themeColor={"primary"}
                         icon="plus"
                         title="행 추가"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onDeleteClick2}
@@ -5340,6 +5421,7 @@ const AC_A0020W: React.FC = () => {
                         themeColor={"primary"}
                         icon="minus"
                         title="행 삭제"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                       <Button
                         onClick={onSaveClick2}
@@ -5347,6 +5429,7 @@ const AC_A0020W: React.FC = () => {
                         themeColor={"primary"}
                         icon="save"
                         title="저장"
+                        disabled={permissions.save ? false : true}
                       ></Button>
                     </ButtonContainer>
                   </GridTitleContainer>
@@ -5456,6 +5539,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick3}
@@ -5463,6 +5547,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick2}
@@ -5470,6 +5555,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -5559,7 +5645,10 @@ const AC_A0020W: React.FC = () => {
             </>
           )}
         </TabStripTab>
-        <TabStripTab title="단축코드">
+        <TabStripTab
+          title="단축코드"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -5606,6 +5695,7 @@ const AC_A0020W: React.FC = () => {
                     themeColor={"primary"}
                     icon="plus"
                     title="행 추가"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onDeleteClick4}
@@ -5613,6 +5703,7 @@ const AC_A0020W: React.FC = () => {
                     themeColor={"primary"}
                     icon="minus"
                     title="행 삭제"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                   <Button
                     onClick={onSaveClick3}
@@ -5620,6 +5711,7 @@ const AC_A0020W: React.FC = () => {
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
+                    disabled={permissions.save ? false : true}
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -5709,7 +5801,10 @@ const AC_A0020W: React.FC = () => {
             </GridContainer>
           </FormContext6.Provider>
         </TabStripTab>
-        <TabStripTab title="자동전표기준">
+        <TabStripTab
+          title="자동전표기준"
+          disabled={permissions.view ? false : true}
+        >
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -5783,6 +5878,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onDeleteClick5}
@@ -5790,6 +5886,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                         <Button
                           onClick={onSaveClick4}
@@ -5797,6 +5894,7 @@ const AC_A0020W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={permissions.save ? false : true}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>

@@ -141,6 +141,7 @@ const AC_A0000W: React.FC = () => {
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
           ?.valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -250,7 +251,7 @@ const AC_A0000W: React.FC = () => {
     location: sessionLocation,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);
@@ -272,7 +273,7 @@ const AC_A0000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -480,13 +481,18 @@ const AC_A0000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (
+      filters.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -663,6 +669,7 @@ const AC_A0000W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick2 = (e: any) => {
+    if (!permissions.delete) return;
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -774,10 +781,11 @@ const AC_A0000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type == "D") fetchToDelete();
-  }, [paraDataDeleted]);
+    if (paraDataDeleted.work_type == "D" && permissions.delete) fetchToDelete();
+  }, [paraDataDeleted, permissions]);
 
   const fetchToDelete = async () => {
+    if (!permissions.delete) return;
     let data: any;
 
     try {
@@ -870,10 +878,12 @@ const AC_A0000W: React.FC = () => {
   };
 
   const onSaveClick2 = async () => {
+    if (!permissions.save) return;
     fetchSaved();
   };
 
   const fetchSaved = async () => {
+    if (!permissions.save) return;
     let data: any;
 
     let valid = true;
@@ -992,6 +1002,7 @@ const AC_A0000W: React.FC = () => {
                       onClick={onAddClick2}
                       themeColor={"primary"}
                       icon="file-add"
+                      disabled={permissions.save ? false : true}
                     >
                       생성
                     </Button>
@@ -1000,16 +1011,9 @@ const AC_A0000W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
+                      disabled={permissions.delete ? false : true}
                     >
                       삭제
-                    </Button>
-                    <Button
-                      onClick={onSaveClick2}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                    >
-                      저장
                     </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -1108,6 +1112,7 @@ const AC_A0000W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
+                    disabled={permissions.save ? false : true}
                   >
                     저장
                   </Button>
@@ -1476,6 +1481,7 @@ const AC_A0000W: React.FC = () => {
                   onClick={onAddClick2}
                   themeColor={"primary"}
                   icon="file-add"
+                  disabled={permissions.save ? false : true}
                 >
                   생성
                 </Button>
@@ -1484,8 +1490,18 @@ const AC_A0000W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="delete"
+                  disabled={permissions.delete ? false : true}
                 >
                   삭제
+                </Button>
+                <Button
+                  onClick={onSaveClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  disabled={permissions.save ? false : true}
+                >
+                  저장
                 </Button>
               </ButtonContainer>
             </GridTitleContainer>

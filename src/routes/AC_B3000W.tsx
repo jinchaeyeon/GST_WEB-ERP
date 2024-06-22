@@ -283,11 +283,15 @@ const AC_B3000W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch == false && permissions !== null) {
+    if (
+      isInitSearch == false &&
+      permissions.view &&
+      customOptionData !== null
+    ) {
       fetchMainGrid();
       setIsInitSearch(true);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   const search = () => {
     try {
