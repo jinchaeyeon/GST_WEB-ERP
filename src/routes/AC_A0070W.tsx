@@ -371,7 +371,9 @@ const AC_A0070W: React.FC = () => {
   const [mainDataState2, setMainDataState2] = useState<State>({
     sort: [],
   });
-
+  const [tempState2, setTempState2] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -379,7 +381,9 @@ const AC_A0070W: React.FC = () => {
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
     process([], mainDataState2)
   );
-
+  const [tempResult2, setTempResult2] = useState<DataResult>(
+    process([], tempState2)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -934,26 +938,34 @@ const AC_A0070W: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus") {
-      const newData = mainDataResult2.data.map((item) => {
-        if (idGetter2(item) == idGetter2(dataItem)) {
-          beforeValue.current = item[field];
-
-          return {
-            ...item,
-            [EDIT_FIELD]: field,
-          };
-        } else {
-          return {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          };
-        }
+    if (field != "rowstatus" && field != "files") {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult2((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
       });
-
       setMainDataResult2((prev) => {
         return {
           data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult2((prev: { total: any }) => {
+        return {
+          data: mainDataResult2.data,
           total: prev.total,
         };
       });
@@ -961,38 +973,50 @@ const AC_A0070W: React.FC = () => {
   };
 
   const exitEdit = () => {
-    const newData = mainDataResult2.data.map((item) => {
-      if (!!item[EDIT_FIELD]) {
-        const field = item[EDIT_FIELD];
-
-        const changed = item[field] != beforeValue.current;
-
-        if (changed) {
-          return {
-            ...item,
-            rowstatus: item.rowstatus == "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          };
-        } else {
-          return {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          };
-        }
-      } else {
+    if (tempResult2.data != mainDataResult2.data) {
+      const newData = mainDataResult2.data.map(
+        (item: { [x: string]: string; rowstatus: string }) =>
+          item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+      );
+      setTempResult2((prev) => {
         return {
-          ...item,
-          [EDIT_FIELD]: undefined,
+          data: newData,
+          total: prev.total,
         };
-      }
-    });
-
-    setMainDataResult2((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult2.data.map((item: any) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult2((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const customCellRender = (td: any, props: any) => (
