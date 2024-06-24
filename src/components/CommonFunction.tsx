@@ -632,7 +632,8 @@ export const UsePermissions = (setListData: any) => {
   //커스텀 옵션 조회
   const fetchData = useCallback(async () => {
     let para = {
-      para: pathname + "/permissions?userId=" + userId,
+      para:
+        (pathname == "" ? "Home" : pathname) + "/permissions?userId=" + userId,
     };
 
     let data: any;

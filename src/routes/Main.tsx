@@ -621,7 +621,7 @@ const Main: React.FC = () => {
       fetchNoticeGrid();
       fetchWorkOrderGrid();
     }
-  }, [permissions, bizComponentData, customOptionData]);
+  }, [sessionItem, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     if (
