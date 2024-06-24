@@ -185,16 +185,18 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const [loginResult] = useRecoilState(loginResultState);
   const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   const defaultCulture = loginResult ? loginResult.defaultCulture : "";
+  const datas = window.location.href.split("?")[0];
+  const pathname = datas.split("/")[3];
   const menu = loginResult
-    ? loginResult.homeMenuWeb == "Home" && loginResult.companyCode == "2302BA03"
+    ? pathname == "Home" && loginResult.companyCode == "2302BA03"
       ? "MainBIO"
-      : loginResult.homeMenuWeb == "Home" &&
+      : pathname == "Home" &&
         (loginResult.companyCode == "2301A110" ||
           loginResult.companyCode == "2207A046")
       ? "Main"
-      : loginResult.homeMenuWeb == "Home"
+      : pathname == "Home"
       ? "MainNotApproval"
-      : loginResult.homeMenuWeb
+      : pathname
     : "";
 
   const [position, setPosition] = useState<IWindowPosition>({

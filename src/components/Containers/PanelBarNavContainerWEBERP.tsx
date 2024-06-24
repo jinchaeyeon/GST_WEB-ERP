@@ -241,10 +241,10 @@ const PanelBarNavContainer = (props: any) => {
 
   useEffect(() => {
     // if (token && menus == null) fetchMenus();
-    if (menus == null) {
+    if (menus == null && accessToken) {
       fetchMenus();
     }
-  }, [menus]);
+  }, [menus, accessToken]);
 
   // 첨부파일 삭제
   useEffect(() => {
@@ -488,7 +488,7 @@ const PanelBarNavContainer = (props: any) => {
 
   useEffect(() => {
     // if (token && ip !== null) {
-    if (ip !== null) {
+    if (ip !== null && accessToken) {
       const pathname = location.pathname.replace("/", "");
 
       // 폼 로그 처리
@@ -529,7 +529,7 @@ const PanelBarNavContainer = (props: any) => {
       // 이전 루트 저장
       setPreviousRoute(pathname);
     }
-  }, [location, ip]);
+  }, [location, ip, accessToken]);
 
   const fetchToLog = async (logParaVal: TLogParaVal) => {
     let data: any;
@@ -817,22 +817,22 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && accessToken) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters]);
+  }, [filters, accessToken]);
 
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (filters2.isSearch && accessToken) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2]);
+  }, [filters2, accessToken]);
 
   const [Id, setId] = useState<string | undefined>("");
   const [windowVisible, setWindowVisible] = useState<boolean>(false);

@@ -178,8 +178,10 @@ const PanelBarNavContainer = (props: any) => {
 
   useEffect(() => {
     // if (token && menus == null) fetchMenus();
-    if (menus == null) fetchMenus();
-  }, [menus]);
+    if (menus == null && accessToken) {
+      fetchMenus();
+    }
+  }, [menus, accessToken]);
 
   // 첨부파일 삭제
   useEffect(() => {
@@ -408,7 +410,7 @@ const PanelBarNavContainer = (props: any) => {
 
   useEffect(() => {
     // if (token && ip !== null) {
-    if (ip !== null) {
+    if (ip !== null && accessToken) {
       const pathname = location.pathname.replace("/", "");
 
       // 폼 로그 처리
@@ -449,7 +451,7 @@ const PanelBarNavContainer = (props: any) => {
       // 이전 루트 저장
       setPreviousRoute(pathname);
     }
-  }, [location, ip]);
+  }, [location, ip, accessToken]);
 
   const fetchToLog = async (logParaVal: TLogParaVal) => {
     let data: any;
