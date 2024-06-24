@@ -39,6 +39,7 @@ import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import PanelBarNavContainerDDGD from "./components/Containers/PanelBarNavContainerDDGD";
 import Loader from "./components/Loader";
 import { useApi } from "./hooks/api";
+import LoginCRM from "./routes/LoginCRM";
 import NotFound from "./routes/NotFound";
 import {
   OSState,
@@ -277,7 +278,6 @@ const Main = lazy(() => import("./routes/Main"));
 const MainBIO = lazy(() => import("./routes/MainBIO"));
 const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));
 const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
-const LoginCRM = lazy(() => import("./routes/LoginCRM"));
 
 load(
   likelySubtags,

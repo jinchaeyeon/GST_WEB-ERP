@@ -39,6 +39,7 @@ import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import { default as PanelBarNavContainerWEBERP } from "./components/Containers/PanelBarNavContainerWEBERP";
 import Loader from "./components/Loader";
 import { useApi } from "./hooks/api";
+import Login from "./routes/Login";
 import NotFound from "./routes/NotFound";
 import {
   OSState,
@@ -273,7 +274,6 @@ const SY_A0125W = lazy(() => import("./routes/SY_A0125W"));
 const SY_A0500W = lazy(() => import("./routes/SY_A0500W"));
 const SY_B0060W = lazy(() => import("./routes/SY_B0060W"));
 const TO_B0011W = lazy(() => import("./routes/TO_B0011W"));
-const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 const MainBIO = lazy(() => import("./routes/MainBIO"));
 const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));

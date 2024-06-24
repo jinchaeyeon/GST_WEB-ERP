@@ -12,21 +12,18 @@ function AuthRoute({ component, ...rest }: RouteProps) {
     const link = datas.split("/")[3].toUpperCase();
 
     //하단 링크 무조건 대문자로 표기
-    if (
-      link == "" ||
-      link == "HOME" 
-    ) {
+    if (link == "" || link == "HOME") {
       return false;
     } else {
       let valid = true;
-      if(menus != null && menus != undefined) {
+      if (menus != null && menus != undefined) {
         menus.map((item: any) => {
-          if(item.formId != "" && item.formId.toUpperCase() == link) {
+          if (item.formId != "" && item.formId.toUpperCase() == link) {
             valid = false;
           }
-        })
+        });
       }
-      if(valid != true) {
+      if (valid != true) {
         return false;
       } else {
         return true;
@@ -35,7 +32,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
   }
   return (
     <>
-      <Route sensitive={false} {...rest} component={component} />
+      {isLoggedIn && <Route {...rest} component={component} />}
       {!isLoggedIn && <Redirect to="/" />}
       {isLoggedIn && error() && <Redirect to="/Error" />}
     </>
