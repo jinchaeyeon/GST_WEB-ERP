@@ -260,11 +260,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
   const onItemWndClick2 = () => {
-    if (dataItem["rowstatus"] == "N") {
-      setItemWindowVisible2(true);
-    } else {
-      alert("품목코드와 품목명은 수정이 불가합니다.");
-    }
+    setItemWindowVisible2(true);
   };
   const setItemData2 = (data: IItemData) => {
     const {
@@ -350,7 +346,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit && dataItem.rowstatus == "N" ? (
+      {isInEdit ? (
         <Input value={value} onChange={handleChange} type="text" />
       ) : (
         value
@@ -2447,39 +2443,30 @@ const CopyWindow = ({
       field != "dlramt" &&
       field != "rowstatus"
     ) {
-      if (!(field == "itemcd" && dataItem.rowstatus != "N")) {
-        const newData = mainDataResult.data.map((item) =>
-          item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
-            ? {
-                ...item,
-                [EDIT_FIELD]: field,
-              }
-            : { ...item, [EDIT_FIELD]: undefined }
-        );
-        setEditIndex(dataItem[DATA_ITEM_KEY]);
-        if (field) {
-          setEditedField(field);
-        }
-        setTempResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      } else {
-        setTempResult((prev) => {
-          return {
-            data: mainDataResult.data,
-            total: prev.total,
-          };
-        });
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
       }
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     } else {
       setTempResult((prev) => {
         return {
