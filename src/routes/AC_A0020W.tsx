@@ -4490,7 +4490,7 @@ const AC_A0020W: React.FC = () => {
     async (acntcd: string) => {
       if (!permissions.view) return;
       let data: any;
-      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const queryStr = getAcntQuery(acntcd);
       const bytes = require("utf8-bytes");
       const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -4543,7 +4543,7 @@ const AC_A0020W: React.FC = () => {
     async (acntcd: string) => {
       if (!permissions.view) return;
       let data: any;
-      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const queryStr = getAcntQuery(acntcd);
       const bytes = require("utf8-bytes");
       const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -4597,7 +4597,7 @@ const AC_A0020W: React.FC = () => {
     async (acntcd: string) => {
       if (!permissions.view) return;
       let data: any;
-      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const queryStr = getAcntQuery(acntcd);
       const bytes = require("utf8-bytes");
       const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -4651,7 +4651,7 @@ const AC_A0020W: React.FC = () => {
     async (acntcd: string) => {
       if (!permissions.view) return;
       let data: any;
-      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const queryStr = getAcntQuery(acntcd);
       const bytes = require("utf8-bytes");
       const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -4705,7 +4705,7 @@ const AC_A0020W: React.FC = () => {
     async (acntcd: string) => {
       if (!permissions.view) return;
       let data: any;
-      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const queryStr = getAcntQuery(acntcd);
       const bytes = require("utf8-bytes");
       const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
@@ -4759,7 +4759,7 @@ const AC_A0020W: React.FC = () => {
     async (acntcd: string) => {
       if (!permissions.view) return;
       let data: any;
-      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const queryStr = getAcntQuery(acntcd);
       const bytes = require("utf8-bytes");
       const convertedQueryStr = bytesToBase64(bytes(queryStr));
 

@@ -17,6 +17,7 @@ import {
   InputChangeEvent,
   NumericTextBox,
 } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
   createContext,
@@ -61,6 +62,7 @@ import {
   convertDateToStr,
   findMessage,
   getBizCom,
+  getCustDataQuery,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
@@ -907,6 +909,40 @@ const CopyWindow = ({
       fetchDatas();
     }
   }, [acntcd, acntnm]);
+
+  const fetchCustInfo = async (custcd: string) => {
+    if (!permissions.view) return;
+    if (custcd == "") return;
+    let data: any;
+    let custInfo: any = null;
+
+    const queryStr = getCustDataQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        custInfo = {
+          custcd: rows[0].custcd,
+          custnm: rows[0].custnm,
+          bizregnum: rows[0].bizregnum,
+        };
+      }
+    }
+
+    return custInfo;
+  };
 
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
@@ -2807,6 +2843,7 @@ const CopyWindow = ({
       field == "custnm" ||
       field == "acseq2" ||
       field == "rowstatus" ||
+      field == "bizregnum" ||
       (dataItem.drcrdiv == "2" && field == "slipamt_1") ||
       (dataItem.drcrdiv == "1" && field == "slipamt_2")
     ) {
@@ -2851,7 +2888,11 @@ const CopyWindow = ({
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      if (editedField !== "acntcd" && editedField !== "stdrmkcd") {
+      if (
+        editedField !== "acntcd" &&
+        editedField !== "stdrmkcd" &&
+        editedField != "custcd"
+      ) {
         const newData = mainDataResult.data.map((item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
@@ -2892,11 +2933,53 @@ const CopyWindow = ({
                 Object.getOwnPropertyNames(selectedState)[0]
                   ? {
                       ...item,
+                      acntcd: "",
+                      acntnm: "",
+                      stdrmknm: "",
+                      mngitemnm1: "",
+                      mngitemnm2: "",
+                      mngitemnm3: "",
+                      mngitemnm4: "",
+                      mngitemnm5: "",
+                      mngitemnm6: "",
+                      acntbaldiv: "",
+                      acntchr: "",
+                      acntdiv: "",
+                      acntgrp: "",
+                      budgyn: "",
+                      controltype1: "",
+                      controltype2: "",
+                      controltype3: "",
+                      controltype4: "",
+                      controltype5: "",
+                      controltype6: "",
+                      diststd: "",
+                      makesha: "",
+                      mngcramtyn: "",
+                      mngcrcustyn: "",
+                      mngcrrateyn: "",
+                      mngdramtyn: "",
+                      mngdrcustyn: "",
+                      mngdrrateyn: "",
+                      mngitemcd1: "",
+                      mngitemcd2: "",
+                      mngitemcd3: "",
+                      mngitemcd4: "",
+                      mngitemcd5: "",
+                      mngitemcd6: "",
+                      prodyn: "",
+                      profitchr: "",
+                      profitsha: "",
+                      relacntcd: "",
+                      relacntgrp: "",
+                      show_collect_yn: "",
+                      show_payment_yn: "",
+                      sho_pur_sal_yn: "",
+                      slipentyn: "",
+                      soyn: "",
+                      system_yn: "",
+                      useyn: "",
                       rowstatus: item.rowstatus == "N" ? "N" : "U",
-                      stdrmkcd: item.stdrmkcd,
-                      stdrmknm: item.stdrmknm,
-                      acntcd: item.acntcd,
-                      acntnm: item.acntnm,
                       [EDIT_FIELD]: undefined,
                     }
                   : {
@@ -3046,14 +3129,152 @@ const CopyWindow = ({
                     total: prev.total,
                   };
                 });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        acntcd: "",
+                        acntnm: "",
+                        stdrmkcd: "",
+                        stdrmknm: "",
+                        mngitemnm1: "",
+                        mngitemnm2: "",
+                        mngitemnm3: "",
+                        mngitemnm4: "",
+                        mngitemnm5: "",
+                        mngitemnm6: "",
+                        acntbaldiv: "",
+                        acntchr: "",
+                        acntdiv: "",
+                        acntgrp: "",
+                        budgyn: "",
+                        controltype1: "",
+                        controltype2: "",
+                        controltype3: "",
+                        controltype4: "",
+                        controltype5: "",
+                        controltype6: "",
+                        diststd: "",
+                        makesha: "",
+                        mngcramtyn: "",
+                        mngcrcustyn: "",
+                        mngcrrateyn: "",
+                        mngdramtyn: "",
+                        mngdrcustyn: "",
+                        mngdrrateyn: "",
+                        mngitemcd1: "",
+                        mngitemcd2: "",
+                        mngitemcd3: "",
+                        mngitemcd4: "",
+                        mngitemcd5: "",
+                        mngitemcd6: "",
+                        prodyn: "",
+                        profitchr: "",
+                        profitsha: "",
+                        relacntcd: "",
+                        relacntgrp: "",
+                        show_collect_yn: "",
+                        show_payment_yn: "",
+                        sho_pur_sal_yn: "",
+                        slipentyn: "",
+                        soyn: "",
+                        system_yn: "",
+                        useyn: "",
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
+            }
+          }
+        });
+      } else if (editedField == "custcd") {
+        mainDataResult.data.map(async (item) => {
+          if (editIndex == item[DATA_ITEM_KEY]) {
+            const custcd = await fetchCustInfo(item.custcd);
+            if (custcd != null && custcd != undefined) {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      custcd: custcd.custcd,
+                      custnm: custcd.custnm,
+                      bizregnum: custcd.bizregnum,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            } else {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      custnm: "",
+                      bizregnum: "",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
             }
           }
         });
       } else {
         mainDataResult.data.map(async (item) => {
           if (editIndex == item.num) {
-            let acntcds = item.acntcds;
             const data = acntListData.find(
               (items: any) => items.acntcd == item.acntcd
             );
@@ -3064,14 +3285,13 @@ const CopyWindow = ({
                 parseInt(Object.getOwnPropertyNames(selectedState)[0])
                   ? {
                       ...item,
-                      acntcd: acntcds,
-                      acntnm: item.acntnm,
-                      mngitemnm1: item.mngitemnm1,
-                      mngitemnm2: item.mngitemnm2,
-                      mngitemnm3: item.mngitemnm3,
-                      mngitemnm4: item.mngitemnm4,
-                      mngitemnm5: item.mngitemnm5,
-                      mngitemnm6: item.mngitemnm6,
+                      acntnm: "",
+                      mngitemnm1: "",
+                      mngitemnm2: "",
+                      mngitemnm3: "",
+                      mngitemnm4: "",
+                      mngitemnm5: "",
+                      mngitemnm6: "",
                       rowstatus: item.rowstatus == "N" ? "N" : "U",
                       [EDIT_FIELD]: undefined,
                     }
@@ -3195,6 +3415,77 @@ const CopyWindow = ({
                         soyn: rows.soyn,
                         system_yn: rows.system_yn,
                         useyn: rows.useyn,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item.num ==
+                  parseInt(Object.getOwnPropertyNames(selectedState)[0])
+                    ? {
+                        ...item,
+                        acntcd: "",
+                        acntnm: "",
+                        mngitemnm1: "",
+                        mngitemnm2: "",
+                        mngitemnm3: "",
+                        mngitemnm4: "",
+                        mngitemnm5: "",
+                        mngitemnm6: "",
+                        acntbaldiv: "",
+                        acntchr: "",
+                        acntdiv: "",
+                        acntgrp: "",
+                        budgyn: "",
+                        controltype1: "",
+                        controltype2: "",
+                        controltype3: "",
+                        controltype4: "",
+                        controltype5: "",
+                        controltype6: "",
+                        diststd: "",
+                        makesha: "",
+                        mngcramtyn: "",
+                        mngcrcustyn: "",
+                        mngcrrateyn: "",
+                        mngdramtyn: "",
+                        mngdrcustyn: "",
+                        mngdrrateyn: "",
+                        mngitemcd1: "",
+                        mngitemcd2: "",
+                        mngitemcd3: "",
+                        mngitemcd4: "",
+                        mngitemcd5: "",
+                        mngitemcd6: "",
+                        prodyn: "",
+                        profitchr: "",
+                        profitsha: "",
+                        relacntcd: "",
+                        relacntgrp: "",
+                        show_collect_yn: "",
+                        show_payment_yn: "",
+                        sho_pur_sal_yn: "",
+                        slipentyn: "",
+                        soyn: "",
+                        system_yn: "",
+                        useyn: "",
                         rowstatus: item.rowstatus == "N" ? "N" : "U",
                         [EDIT_FIELD]: undefined,
                       }
@@ -4033,7 +4324,6 @@ const CopyWindow = ({
                                             )[0]
                                         )[0].mngdata1
                                   }
-                                  onChange={InputChange}
                                   className="required"
                                 />
                                 <ButtonInInput>
@@ -4067,7 +4357,6 @@ const CopyWindow = ({
                                             )[0]
                                         )[0].mngdata1
                                   }
-                                  onChange={InputChange}
                                   className="required"
                                 />
                                 <ButtonInInput>
@@ -4341,7 +4630,6 @@ const CopyWindow = ({
                                           )[0]
                                       )[0].mngdata2
                                 }
-                                onChange={InputChange}
                                 className="required"
                               />
                               <ButtonInInput>
@@ -4615,7 +4903,6 @@ const CopyWindow = ({
                                       )[0].mngdata3
                                 }
                                 className="required"
-                                onChange={InputChange}
                               />
                               <ButtonInInput>
                                 <Button
@@ -4887,7 +5174,6 @@ const CopyWindow = ({
                                           )[0]
                                       )[0].mngdata4
                                 }
-                                onChange={InputChange}
                                 className="required"
                               />
                               <ButtonInInput>
@@ -5160,7 +5446,6 @@ const CopyWindow = ({
                                           )[0]
                                       )[0].mngdata5
                                 }
-                                onChange={InputChange}
                                 className="required"
                               />
                               <ButtonInInput>
@@ -5433,7 +5718,6 @@ const CopyWindow = ({
                                           )[0]
                                       )[0].mngdata6
                                 }
-                                onChange={InputChange}
                                 className="required"
                               />
                               <ButtonInInput>
@@ -6166,7 +6450,6 @@ const CopyWindow = ({
                                         )[0]
                                     )[0].mngdata1
                               }
-                              onChange={InputChange}
                               className="required"
                             />
                             <ButtonInInput>
@@ -6198,7 +6481,6 @@ const CopyWindow = ({
                                         )[0]
                                     )[0].mngdata1
                               }
-                              onChange={InputChange}
                               className="required"
                             />
                             <ButtonInInput>
@@ -6456,7 +6738,6 @@ const CopyWindow = ({
                                       )[0]
                                   )[0].mngdata2
                             }
-                            onChange={InputChange}
                             className="required"
                           />
                           <ButtonInInput>
@@ -6714,7 +6995,6 @@ const CopyWindow = ({
                                   )[0].mngdata3
                             }
                             className="required"
-                            onChange={InputChange}
                           />
                           <ButtonInInput>
                             <Button
@@ -6970,7 +7250,6 @@ const CopyWindow = ({
                                       )[0]
                                   )[0].mngdata4
                             }
-                            onChange={InputChange}
                             className="required"
                           />
                           <ButtonInInput>
@@ -7227,7 +7506,6 @@ const CopyWindow = ({
                                       )[0]
                                   )[0].mngdata5
                             }
-                            onChange={InputChange}
                             className="required"
                           />
                           <ButtonInInput>
@@ -7484,7 +7762,6 @@ const CopyWindow = ({
                                       )[0]
                                   )[0].mngdata6
                             }
-                            onChange={InputChange}
                             className="required"
                           />
                           <ButtonInInput>

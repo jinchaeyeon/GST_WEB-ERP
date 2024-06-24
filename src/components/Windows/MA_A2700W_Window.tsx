@@ -11,7 +11,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
+import {
+  Input,
+  InputChangeEvent,
+  TextArea,
+} from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
@@ -309,6 +313,18 @@ const ColumnCommandCell = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
 
   const onItemWndClick2 = () => {
@@ -399,7 +415,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"

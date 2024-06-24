@@ -51,13 +51,17 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
+  getAcntQuery,
+  getAcntnumQuery,
   getGridItemChangedData,
   getHeight,
+  getStdramkQuery,
   getWindowDeviceHeight,
   numberWithCommas,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import AccountWindow from "./CommonWindows/AccountWindow";
 import CodeWindow from "./CommonWindows/CodeWindow";
 import DepositWindow from "./CommonWindows/DepositWindow";
 import Window from "./WindowComponent/Window";
@@ -95,6 +99,15 @@ type TdataArr = {
   saleamt_s: string[];
 };
 
+const FormContext = createContext<{
+  acntcd: string;
+  setAcntcd: (d: any) => void;
+  acntnm: string;
+  setAcntnm: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+}>({} as any);
+
 const FormContext3 = createContext<{
   stdrmakcd: string;
   setstdrmakcd: (d: any) => void;
@@ -129,6 +142,92 @@ interface IDepositData {
   acntsrtnum: string;
   bankacntnum: string;
 }
+
+interface IAccountData {
+  acntcd: string;
+  acntnm: string;
+}
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    acntcd,
+    acntnm,
+    setAcntcd,
+    setAcntnm,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext);
+  let isInEdit = field == dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [accountWindowVisible, setAccountWindowVisible] =
+    useState<boolean>(false);
+
+  const onAccountWndClick = () => {
+    setAccountWindowVisible(true);
+  };
+
+  const setAcntData = (data: IAccountData) => {
+    setAcntcd(data.acntcd);
+    setAcntnm(data.acntnm);
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInInput>
+        <Button
+          onClick={onAccountWndClick}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render == undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {accountWindowVisible && (
+        <AccountWindow
+          setVisible={setAccountWindowVisible}
+          setData={setAcntData}
+        />
+      )}
+    </>
+  );
+};
 
 const ColumnCommandCell3 = (props: GridCellProps) => {
   const {
@@ -337,6 +436,8 @@ const CopyWindow = ({
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   var index = 0;
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1600) / 2,
@@ -392,6 +493,33 @@ const CopyWindow = ({
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            acntcd: acntcd,
+            acntnm: acntnm,
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [acntcd, acntnm]);
 
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
@@ -867,8 +995,9 @@ const CopyWindow = ({
       field != "rowstatus" &&
       field != "custcd" &&
       field != "custnm" &&
-      field != "acntcd" &&
       field != "acntnm" &&
+      field != "acntnumnm" &&
+      field != "stdrmaknm" &&
       field != "salenum" &&
       valid == true
     ) {
@@ -880,7 +1009,10 @@ const CopyWindow = ({
             }
           : { ...item, [EDIT_FIELD]: undefined }
       );
-
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult((prev) => {
         return {
           data: newData,
@@ -905,32 +1037,233 @@ const CopyWindow = ({
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              amt_1: item.drcrdiv == "2" ? 0 : item.amt_1,
-              amt_2: item.drcrdiv == "1" ? 0 : item.amt_2,
-              [EDIT_FIELD]: undefined,
+      if (editedField == "acntcd") {
+        mainDataResult.data.map(
+          async (item: { [x: string]: any; acntcd: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY]) {
+              const acntcd = await fetchAcntData(item.acntcd);
+              if (acntcd != null && acntcd != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        acntcd: acntcd.acntcd,
+                        acntnm: acntcd.acntnm,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        acntnm: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
             }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
+          }
+        );
+      } else if (editedField == "stdrmakcd") {
+        mainDataResult.data.map(
+          async (item: { [x: string]: any; stdramkcd: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY]) {
+              const stdrmakcd = await fetchStdramkData(item.stdrmakcd);
+              if (stdrmakcd != null && stdrmakcd != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        acntcd: stdrmakcd.acntcd,
+                        acntnm: stdrmakcd.acntnm,
+                        stdrmakcd: stdrmakcd.stdramkcd,
+                        stdrmaknm: stdrmakcd.stdramknm,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        acntcd: "",
+                        acntnm: "",
+                        stdrmaknm: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
             }
-      );
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+          }
+        );
+      } else if (editedField == "acntnum") {
+        mainDataResult.data.map(
+          async (item: { [x: string]: any; acntnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY]) {
+              const acntnum = await fetchAcntnumData(item.acntnum);
+              if (acntnum != null && acntnum != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        acntnum: acntnum.acntnum,
+                        acntnumnm: acntnum.acntnumnm,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        acntnumnm: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                amt_1: item.drcrdiv == "2" ? 0 : item.amt_1,
+                amt_2: item.drcrdiv == "1" ? 0 : item.amt_2,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
@@ -949,6 +1282,107 @@ const CopyWindow = ({
         };
       });
     }
+  };
+
+  const fetchAcntData = async (acntcd: string) => {
+    if (!permissions.view) return;
+    if (acntcd == "") return;
+    let data: any;
+    let acntInfo: any = null;
+
+    const queryStr = getAcntQuery(acntcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        acntInfo = {
+          acntcd: rows[0].acntcd,
+          acntnm: rows[0].acntnm,
+        };
+      }
+    }
+
+    return acntInfo;
+  };
+
+  const fetchStdramkData = async (stdramkcd: string) => {
+    if (!permissions.view) return;
+    if (stdramkcd == "") return;
+    let data: any;
+    let stdramkcdInfo: any = null;
+
+    const queryStr = getStdramkQuery(stdramkcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        stdramkcdInfo = {
+          acntcd: rows[0].acntcd,
+          acntnm: rows[0].acntnm,
+          stdramkcd: rows[0].stdrmkcd,
+          stdramknm: rows[0].stdrmknm,
+        };
+      }
+    }
+
+    return stdramkcdInfo;
+  };
+
+  const fetchAcntnumData = async (acntnum: string) => {
+    if (!permissions.view) return;
+    if (acntnum == "") return;
+    let data: any;
+    let acntnumInfo: any = null;
+
+    const queryStr = getAcntnumQuery(acntnum);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        acntnumInfo = {
+          acntnum: rows[0].acntsrtnum,
+          acntnumnm: rows[0].acntsrtnm,
+        };
+      }
+    }
+
+    return acntnumInfo;
   };
 
   const selectData = (selectedData: any) => {
@@ -1338,225 +1772,251 @@ const CopyWindow = ({
             </SwiperSlide>
             <SwiperSlide key={1}>
               <GridContainer>
-                <FormContext3.Provider
+                <FormContext.Provider
                   value={{
-                    stdrmakcd,
-                    stdrmaknm,
                     acntcd,
                     acntnm,
                     setAcntcd,
                     setAcntnm,
-                    setstdrmakcd,
-                    setstdrmaknm,
                     mainDataState,
                     setMainDataState,
                     // fetchGrid,
                   }}
                 >
-                  <FormContext4.Provider
+                  <FormContext3.Provider
                     value={{
-                      acntnumnm,
-                      acntnum,
-                      setacntnumnm,
-                      setAcntnum,
+                      stdrmakcd,
+                      stdrmaknm,
+                      acntcd,
+                      acntnm,
+                      setAcntcd,
+                      setAcntnm,
+                      setstdrmakcd,
+                      setstdrmaknm,
                       mainDataState,
                       setMainDataState,
                       // fetchGrid,
                     }}
                   >
-                    <GridContainer>
-                      <GridTitleContainer className="WindowButtonContainer">
-                        <ButtonContainer
-                          style={{ justifyContent: "space-between" }}
+                    <FormContext4.Provider
+                      value={{
+                        acntnumnm,
+                        acntnum,
+                        setacntnumnm,
+                        setAcntnum,
+                        mainDataState,
+                        setMainDataState,
+                        // fetchGrid,
+                      }}
+                    >
+                      <GridContainer>
+                        <GridTitleContainer className="WindowButtonContainer">
+                          <ButtonContainer
+                            style={{ justifyContent: "space-between" }}
+                          >
+                            <Button
+                              onClick={() => {
+                                if (swiper && isMobile) {
+                                  swiper.slideTo(0);
+                                }
+                              }}
+                              icon="chevron-left"
+                              themeColor={"primary"}
+                              fillMode={"flat"}
+                            ></Button>
+                            <div>
+                              <Button
+                                onClick={onAddClick}
+                                themeColor={"primary"}
+                                icon="plus"
+                                title="행 추가"
+                                disabled={permissions.save ? false : true}
+                              ></Button>
+                              <Button
+                                onClick={onDeleteClick}
+                                fillMode="outline"
+                                themeColor={"primary"}
+                                icon="minus"
+                                title="행 삭제"
+                                disabled={permissions.save ? false : true}
+                              ></Button>
+                            </div>
+                          </ButtonContainer>
+                        </GridTitleContainer>
+                        <Grid
+                          style={{ height: mobileheight2 }}
+                          data={process(
+                            mainDataResult.data.map((row) => ({
+                              ...row,
+                              pubdt: row.pubdt
+                                ? new Date(dateformat(row.pubdt))
+                                : new Date(dateformat("99991231")),
+                              enddt: row.enddt
+                                ? new Date(dateformat(row.enddt))
+                                : new Date(dateformat("99991231")),
+                              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                            })),
+                            mainDataState
+                          )}
+                          onDataStateChange={onMainDataStateChange}
+                          {...mainDataState}
+                          //선택 subDataState
+                          dataItemKey={DATA_ITEM_KEY}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange}
+                          //스크롤 조회기능
+                          fixedScroll={true}
+                          total={mainDataResult.total}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                          onItemChange={onMainItemChange}
+                          cellRender={customCellRender}
+                          rowRender={customRowRender}
+                          editField={EDIT_FIELD}
                         >
-                          <Button
-                            onClick={() => {
-                              if (swiper && isMobile) {
-                                swiper.slideTo(0);
-                              }
-                            }}
-                            icon="chevron-left"
-                            themeColor={"primary"}
-                            fillMode={"flat"}
-                          ></Button>
-                          <div>
-                            <Button
-                              onClick={onAddClick}
-                              themeColor={"primary"}
-                              icon="plus"
-                              title="행 추가"
-                              disabled={permissions.save ? false : true}
-                            ></Button>
-                            <Button
-                              onClick={onDeleteClick}
-                              fillMode="outline"
-                              themeColor={"primary"}
-                              icon="minus"
-                              title="행 삭제"
-                              disabled={permissions.save ? false : true}
-                            ></Button>
-                          </div>
-                        </ButtonContainer>
-                      </GridTitleContainer>
-                      <Grid
-                        style={{ height: mobileheight2 }}
-                        data={process(
-                          mainDataResult.data.map((row) => ({
-                            ...row,
-                            pubdt: row.pubdt
-                              ? new Date(dateformat(row.pubdt))
-                              : new Date(dateformat("99991231")),
-                            enddt: row.enddt
-                              ? new Date(dateformat(row.enddt))
-                              : new Date(dateformat("99991231")),
-                            [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                          })),
-                          mainDataState
-                        )}
-                        onDataStateChange={onMainDataStateChange}
-                        {...mainDataState}
-                        //선택 subDataState
-                        dataItemKey={DATA_ITEM_KEY}
-                        selectedField={SELECTED_FIELD}
-                        selectable={{
-                          enabled: true,
-                          mode: "single",
-                        }}
-                        onSelectionChange={onSelectionChange}
-                        //스크롤 조회기능
-                        fixedScroll={true}
-                        total={mainDataResult.total}
-                        //정렬기능
-                        sortable={true}
-                        onSortChange={onMainSortChange}
-                        //컬럼순서조정
-                        reorderable={true}
-                        //컬럼너비조정
-                        resizable={true}
-                        onItemChange={onMainItemChange}
-                        cellRender={customCellRender}
-                        rowRender={customRowRender}
-                        editField={EDIT_FIELD}
-                      >
-                        <GridColumn field="rowstatus" title=" " width="50px" />
-                        <GridColumn
-                          field="custcd"
-                          title="업체코드"
-                          width="120px"
-                          footerCell={mainTotalFooterCell}
-                        />
-                        <GridColumn
-                          field="custnm"
-                          title="업체명"
-                          width="120px"
-                        />
-                        <GridColumn
-                          field="drcrdiv"
-                          title="차대구분"
-                          width="150px"
-                          cell={CustomRadioCell}
-                        />
-                        <GridColumn
-                          field="amt_1"
-                          title="차변금액"
-                          width="100px"
-                          cell={NumberCell}
-                          footerCell={editNumberFooterCell}
-                        />
-                        <GridColumn
-                          field="amt_2"
-                          title="대변금액"
-                          width="100px"
-                          cell={NumberCell}
-                          footerCell={editNumberFooterCell}
-                        />
-                        <GridColumn
-                          field="acntcd"
-                          title="계정과목코드"
-                          width="120px"
-                        />
-                        <GridColumn
-                          field="acntnm"
-                          title="계정명"
-                          width="120px"
-                        />
-                        <GridColumn field="remark" title="비고" width="200px" />
-                        <GridColumn
-                          field="remark1"
-                          title="비고(400)"
-                          width="400px"
-                        />
-                        <GridColumn
-                          field="salenum"
-                          title="판매번호"
-                          width="150px"
-                        />
-                        <GridColumn
-                          field="stdrmakcd"
-                          title="단축코드"
-                          width="150px"
-                          cell={ColumnCommandCell3}
-                        />
-                        <GridColumn
-                          field="acntnum"
-                          title="예적금코드"
-                          width="120px"
-                          cell={ColumnCommandCell4}
-                        />
-                        <GridColumn
-                          field="acntnumnm"
-                          title="예적금명"
-                          width="120px"
-                        />
-                        <GridColumn
-                          field="enddt"
-                          title="만기일자"
-                          width="120px"
-                          cell={DateCell}
-                        />
-                        <GridColumn
-                          field="pubbank"
-                          title="발행은행명"
-                          width="120px"
-                        />
-                        <GridColumn
-                          field="pubdt"
-                          title="발행일자"
-                          width="120px"
-                          cell={DateCell}
-                        />
-                        <GridColumn
-                          field="pubperson"
-                          title="발행인"
-                          width="120px"
-                        />
-                        <GridColumn
-                          field="fornamt"
-                          title="외화금액"
-                          width="100px"
-                          cell={NumberCell}
-                        />
-                        <GridColumn
-                          field="salerat"
-                          title="당시환율"
-                          width="100px"
-                          cell={NumberCell}
-                        />
-                        <GridColumn
-                          field="saleamt"
-                          title="관리금액"
-                          width="100px"
-                          cell={NumberCell}
-                        />
-                        <GridColumn
-                          field="notenum"
-                          title="어음번호"
-                          width="120px"
-                        />
-                      </Grid>
-                    </GridContainer>
-                  </FormContext4.Provider>
-                </FormContext3.Provider>
+                          <GridColumn
+                            field="rowstatus"
+                            title=" "
+                            width="50px"
+                          />
+                          <GridColumn
+                            field="custcd"
+                            title="업체코드"
+                            width="120px"
+                            footerCell={mainTotalFooterCell}
+                          />
+                          <GridColumn
+                            field="custnm"
+                            title="업체명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="drcrdiv"
+                            title="차대구분"
+                            width="150px"
+                            cell={CustomRadioCell}
+                          />
+                          <GridColumn
+                            field="amt_1"
+                            title="차변금액"
+                            width="100px"
+                            cell={NumberCell}
+                            footerCell={editNumberFooterCell}
+                          />
+                          <GridColumn
+                            field="amt_2"
+                            title="대변금액"
+                            width="100px"
+                            cell={NumberCell}
+                            footerCell={editNumberFooterCell}
+                          />
+                          <GridColumn
+                            field="acntcd"
+                            title="계정과목코드"
+                            width="120px"
+                            cell={ColumnCommandCell}
+                          />
+                          <GridColumn
+                            field="acntnm"
+                            title="계정명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="remark"
+                            title="비고"
+                            width="200px"
+                          />
+                          <GridColumn
+                            field="remark1"
+                            title="비고(400)"
+                            width="400px"
+                          />
+                          <GridColumn
+                            field="salenum"
+                            title="판매번호"
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="stdrmakcd"
+                            title="단축코드"
+                            width="150px"
+                            cell={ColumnCommandCell3}
+                          />
+                          <GridColumn
+                            field="stdrmaknm"
+                            title="단축코드명"
+                            width="150px"
+                          />
+                          <GridColumn
+                            field="acntnum"
+                            title="예적금코드"
+                            width="120px"
+                            cell={ColumnCommandCell4}
+                          />
+                          <GridColumn
+                            field="acntnumnm"
+                            title="예적금명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="enddt"
+                            title="만기일자"
+                            width="120px"
+                            cell={DateCell}
+                          />
+                          <GridColumn
+                            field="pubbank"
+                            title="발행은행명"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="pubdt"
+                            title="발행일자"
+                            width="120px"
+                            cell={DateCell}
+                          />
+                          <GridColumn
+                            field="pubperson"
+                            title="발행인"
+                            width="120px"
+                          />
+                          <GridColumn
+                            field="fornamt"
+                            title="외화금액"
+                            width="100px"
+                            cell={NumberCell}
+                          />
+                          <GridColumn
+                            field="salerat"
+                            title="당시환율"
+                            width="100px"
+                            cell={NumberCell}
+                          />
+                          <GridColumn
+                            field="saleamt"
+                            title="관리금액"
+                            width="100px"
+                            cell={NumberCell}
+                          />
+                          <GridColumn
+                            field="notenum"
+                            title="어음번호"
+                            width="120px"
+                          />
+                        </Grid>
+                      </GridContainer>
+                    </FormContext4.Provider>
+                  </FormContext3.Provider>
+                </FormContext.Provider>
                 <BottomContainer className="BottomContainer">
                   <ButtonContainer>
                     {permissions.save && (
@@ -1664,203 +2124,221 @@ const CopyWindow = ({
                 </tbody>
               </FormBox>
             </FormBoxWrap>
-            <FormContext3.Provider
+            <FormContext.Provider
               value={{
-                stdrmakcd,
-                stdrmaknm,
                 acntcd,
                 acntnm,
                 setAcntcd,
                 setAcntnm,
-                setstdrmakcd,
-                setstdrmaknm,
                 mainDataState,
                 setMainDataState,
                 // fetchGrid,
               }}
             >
-              <FormContext4.Provider
+              <FormContext3.Provider
                 value={{
-                  acntnumnm,
-                  acntnum,
-                  setacntnumnm,
-                  setAcntnum,
+                  stdrmakcd,
+                  stdrmaknm,
+                  acntcd,
+                  acntnm,
+                  setAcntcd,
+                  setAcntnm,
+                  setstdrmakcd,
+                  setstdrmaknm,
                   mainDataState,
                   setMainDataState,
                   // fetchGrid,
                 }}
               >
-                <GridContainer>
-                  <GridTitleContainer className="WindowButtonContainer">
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: webheight }}
-                    data={process(
-                      mainDataResult.data.map((row) => ({
-                        ...row,
-                        pubdt: row.pubdt
-                          ? new Date(dateformat(row.pubdt))
-                          : new Date(dateformat("99991231")),
-                        enddt: row.enddt
-                          ? new Date(dateformat(row.enddt))
-                          : new Date(dateformat("99991231")),
-                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                      })),
-                      mainDataState
-                    )}
-                    onDataStateChange={onMainDataStateChange}
-                    {...mainDataState}
-                    //선택 subDataState
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange}
-                    //스크롤 조회기능
-                    fixedScroll={true}
-                    total={mainDataResult.total}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onMainItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn field="rowstatus" title=" " width="50px" />
-                    <GridColumn
-                      field="custcd"
-                      title="업체코드"
-                      width="120px"
-                      footerCell={mainTotalFooterCell}
-                    />
-                    <GridColumn field="custnm" title="업체명" width="120px" />
-                    <GridColumn
-                      field="drcrdiv"
-                      title="차대구분"
-                      width="150px"
-                      cell={CustomRadioCell}
-                    />
-                    <GridColumn
-                      field="amt_1"
-                      title="차변금액"
-                      width="100px"
-                      cell={NumberCell}
-                      footerCell={editNumberFooterCell}
-                    />
-                    <GridColumn
-                      field="amt_2"
-                      title="대변금액"
-                      width="100px"
-                      cell={NumberCell}
-                      footerCell={editNumberFooterCell}
-                    />
-                    <GridColumn
-                      field="acntcd"
-                      title="계정과목코드"
-                      width="120px"
-                    />
-                    <GridColumn field="acntnm" title="계정명" width="120px" />
-                    <GridColumn field="remark" title="비고" width="200px" />
-                    <GridColumn
-                      field="remark1"
-                      title="비고(400)"
-                      width="400px"
-                    />
-                    <GridColumn
-                      field="salenum"
-                      title="판매번호"
-                      width="150px"
-                    />
-                    <GridColumn
-                      field="stdrmakcd"
-                      title="단축코드"
-                      width="150px"
-                      cell={ColumnCommandCell3}
-                    />
-                    <GridColumn
-                      field="acntnum"
-                      title="예적금코드"
-                      width="120px"
-                      cell={ColumnCommandCell4}
-                    />
-                    <GridColumn
-                      field="acntnumnm"
-                      title="예적금명"
-                      width="120px"
-                    />
-                    <GridColumn
-                      field="enddt"
-                      title="만기일자"
-                      width="120px"
-                      cell={DateCell}
-                    />
-                    <GridColumn
-                      field="pubbank"
-                      title="발행은행명"
-                      width="120px"
-                    />
-                    <GridColumn
-                      field="pubdt"
-                      title="발행일자"
-                      width="120px"
-                      cell={DateCell}
-                    />
-                    <GridColumn
-                      field="pubperson"
-                      title="발행인"
-                      width="120px"
-                    />
-                    <GridColumn
-                      field="fornamt"
-                      title="외화금액"
-                      width="100px"
-                      cell={NumberCell}
-                    />
-                    <GridColumn
-                      field="salerat"
-                      title="당시환율"
-                      width="100px"
-                      cell={NumberCell}
-                    />
-                    <GridColumn
-                      field="saleamt"
-                      title="관리금액"
-                      width="100px"
-                      cell={NumberCell}
-                    />
-                    <GridColumn
-                      field="notenum"
-                      title="어음번호"
-                      width="120px"
-                    />
-                  </Grid>
-                </GridContainer>
-              </FormContext4.Provider>
-            </FormContext3.Provider>
+                <FormContext4.Provider
+                  value={{
+                    acntnumnm,
+                    acntnum,
+                    setacntnumnm,
+                    setAcntnum,
+                    mainDataState,
+                    setMainDataState,
+                    // fetchGrid,
+                  }}
+                >
+                  <GridContainer>
+                    <GridTitleContainer className="WindowButtonContainer">
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                          disabled={permissions.save ? false : true}
+                        ></Button>
+                        <Button
+                          onClick={onDeleteClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                          disabled={permissions.save ? false : true}
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <Grid
+                      style={{ height: webheight }}
+                      data={process(
+                        mainDataResult.data.map((row) => ({
+                          ...row,
+                          pubdt: row.pubdt
+                            ? new Date(dateformat(row.pubdt))
+                            : new Date(dateformat("99991231")),
+                          enddt: row.enddt
+                            ? new Date(dateformat(row.enddt))
+                            : new Date(dateformat("99991231")),
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        mainDataState
+                      )}
+                      onDataStateChange={onMainDataStateChange}
+                      {...mainDataState}
+                      //선택 subDataState
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange}
+                      //스크롤 조회기능
+                      fixedScroll={true}
+                      total={mainDataResult.total}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={onMainItemChange}
+                      cellRender={customCellRender}
+                      rowRender={customRowRender}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      <GridColumn
+                        field="custcd"
+                        title="업체코드"
+                        width="120px"
+                        footerCell={mainTotalFooterCell}
+                      />
+                      <GridColumn field="custnm" title="업체명" width="120px" />
+                      <GridColumn
+                        field="drcrdiv"
+                        title="차대구분"
+                        width="150px"
+                        cell={CustomRadioCell}
+                      />
+                      <GridColumn
+                        field="amt_1"
+                        title="차변금액"
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={editNumberFooterCell}
+                      />
+                      <GridColumn
+                        field="amt_2"
+                        title="대변금액"
+                        width="100px"
+                        cell={NumberCell}
+                        footerCell={editNumberFooterCell}
+                      />
+                      <GridColumn
+                        field="acntcd"
+                        title="계정과목코드"
+                        width="120px"
+                        cell={ColumnCommandCell}
+                      />
+                      <GridColumn field="acntnm" title="계정명" width="120px" />
+                      <GridColumn field="remark" title="비고" width="200px" />
+                      <GridColumn
+                        field="remark1"
+                        title="비고(400)"
+                        width="400px"
+                      />
+                      <GridColumn
+                        field="salenum"
+                        title="판매번호"
+                        width="150px"
+                      />
+                      <GridColumn
+                        field="stdrmakcd"
+                        title="단축코드"
+                        width="150px"
+                        cell={ColumnCommandCell3}
+                      />
+                      <GridColumn
+                        field="stdrmaknm"
+                        title="단축코드명"
+                        width="150px"
+                      />
+                      <GridColumn
+                        field="acntnum"
+                        title="예적금코드"
+                        width="120px"
+                        cell={ColumnCommandCell4}
+                      />
+                      <GridColumn
+                        field="acntnumnm"
+                        title="예적금명"
+                        width="120px"
+                      />
+                      <GridColumn
+                        field="enddt"
+                        title="만기일자"
+                        width="120px"
+                        cell={DateCell}
+                      />
+                      <GridColumn
+                        field="pubbank"
+                        title="발행은행명"
+                        width="120px"
+                      />
+                      <GridColumn
+                        field="pubdt"
+                        title="발행일자"
+                        width="120px"
+                        cell={DateCell}
+                      />
+                      <GridColumn
+                        field="pubperson"
+                        title="발행인"
+                        width="120px"
+                      />
+                      <GridColumn
+                        field="fornamt"
+                        title="외화금액"
+                        width="100px"
+                        cell={NumberCell}
+                      />
+                      <GridColumn
+                        field="salerat"
+                        title="당시환율"
+                        width="100px"
+                        cell={NumberCell}
+                      />
+                      <GridColumn
+                        field="saleamt"
+                        title="관리금액"
+                        width="100px"
+                        cell={NumberCell}
+                      />
+                      <GridColumn
+                        field="notenum"
+                        title="어음번호"
+                        width="120px"
+                      />
+                    </Grid>
+                  </GridContainer>
+                </FormContext4.Provider>
+              </FormContext3.Provider>
+            </FormContext.Provider>
             <BottomContainer className="BottomContainer">
               <ButtonContainer>
                 {permissions.save && (

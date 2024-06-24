@@ -13,6 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
   createContext,
@@ -51,8 +52,12 @@ import {
   UseMessages,
   UsePermissions,
   convertDateToStr,
+  getAcntQuery,
+  getAcntnumQuery,
+  getCustDataQuery,
   getGridItemChangedData,
   getHeight,
+  getStdramkQuery,
   getWindowDeviceHeight,
   numberWithCommas,
   toDate,
@@ -548,7 +553,8 @@ const CopyWindow = ({
   const [webheight, setWebHeight] = useState(0);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -1374,6 +1380,10 @@ const CopyWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult((prev: { total: any }) => {
         return {
           data: newData,
@@ -1398,37 +1408,301 @@ const CopyWindow = ({
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                chk:
-                  typeof item.chk == "boolean"
-                    ? item.chk
-                    : item.chk == "Y"
-                    ? true
-                    : false,
-                [EDIT_FIELD]: undefined,
+      if (editedField == "stdrmkcd") {
+        mainDataResult.data.map(
+          async (item: { [x: string]: any; stdrmkcd: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY]) {
+              const stdrmakcd = await fetchStdramkData(item.stdrmkcd);
+              if (stdrmakcd != null && stdrmakcd != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        acntcd: stdrmakcd.acntcd,
+                        acntnm: stdrmakcd.acntnm,
+                        stdrmkcd: stdrmakcd.stdramkcd,
+                        stdrmknm: stdrmakcd.stdramknm,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        acntcd: "",
+                        acntnm: "",
+                        stdrmknm: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
+            }
+          }
+        );
+      } else if (editedField == "acntcd") {
+        mainDataResult.data.map(
+          async (item: { [x: string]: any; acntcd: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY]) {
+              const acntcd = await fetchAcntData(item.acntcd);
+              if (acntcd != null && acntcd != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        acntcd: acntcd.acntcd,
+                        acntnm: acntcd.acntnm,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        acntnm: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
-      );
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+            }
+          }
+        );
+      } else if (editedField == "custcd") {
+        mainDataResult.data.map(async (item) => {
+          if (editIndex == item[DATA_ITEM_KEY]) {
+            const custcd = await fetchCustInfo(item.custcd);
+            if (custcd != null && custcd != undefined) {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      custcd: custcd.custcd,
+                      custnm: custcd.custnm,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            } else {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      custnm: "",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            }
+          }
+        });
+      } else if (editedField == "acntnum") {
+        mainDataResult.data.map(
+          async (item: { [x: string]: any; acntnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY]) {
+              const acntnum = await fetchAcntnumData(item.acntnum);
+              if (acntnum != null && acntnum != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        acntnum: acntnum.acntnum,
+                        acntsrtnm: acntnum.acntnumnm,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        acntsrtnm: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  chk:
+                    typeof item.chk == "boolean"
+                      ? item.chk
+                      : item.chk == "Y"
+                      ? true
+                      : false,
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult.data.map((item: any) => ({
         ...item,
@@ -1447,6 +1721,140 @@ const CopyWindow = ({
         };
       });
     }
+  };
+
+  const fetchAcntData = async (acntcd: string) => {
+    if (!permissions.view) return;
+    if (acntcd == "") return;
+    let data: any;
+    let acntInfo: any = null;
+
+    const queryStr = getAcntQuery(acntcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        acntInfo = {
+          acntcd: rows[0].acntcd,
+          acntnm: rows[0].acntnm,
+        };
+      }
+    }
+
+    return acntInfo;
+  };
+
+  const fetchStdramkData = async (stdramkcd: string) => {
+    if (!permissions.view) return;
+    if (stdramkcd == "") return;
+    let data: any;
+    let stdramkcdInfo: any = null;
+
+    const queryStr = getStdramkQuery(stdramkcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        stdramkcdInfo = {
+          acntcd: rows[0].acntcd,
+          acntnm: rows[0].acntnm,
+          stdramkcd: rows[0].stdrmkcd,
+          stdramknm: rows[0].stdrmknm,
+        };
+      }
+    }
+
+    return stdramkcdInfo;
+  };
+
+  const fetchAcntnumData = async (acntnum: string) => {
+    if (!permissions.view) return;
+    if (acntnum == "") return;
+    let data: any;
+    let acntnumInfo: any = null;
+
+    const queryStr = getAcntnumQuery(acntnum);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        acntnumInfo = {
+          acntnum: rows[0].acntsrtnum,
+          acntnumnm: rows[0].acntsrtnm,
+        };
+      }
+    }
+
+    return acntnumInfo;
+  };
+
+  const fetchCustInfo = async (custcd: string) => {
+    if (!permissions.view) return;
+    if (custcd == "") return;
+    let data: any;
+    let custInfo: any = null;
+
+    const queryStr = getCustDataQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        custInfo = {
+          custcd: rows[0].custcd,
+          custnm: rows[0].custnm,
+        };
+      }
+    }
+
+    return custInfo;
   };
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };

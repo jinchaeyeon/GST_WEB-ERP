@@ -584,6 +584,7 @@ const KendoWindow = ({
               model: itemInfo.model,
               bnatur: itemInfo.bnatur,
               spec: itemInfo.spec,
+              itemacnt: itemInfo.itemacnt,
               //invunit
               qtyunit: itemInfo.invunit,
               invunitnm: itemInfo.invunitnm,
@@ -2421,6 +2422,7 @@ const KendoWindow = ({
     if (
       field != "totamt" &&
       field != "files" &&
+      field != "insiz" &&
       field != "rowstatus" &&
       field != "finyn" &&
       field != "out_qty" &&

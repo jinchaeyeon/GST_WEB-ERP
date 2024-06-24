@@ -10,9 +10,16 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input, NumericTextBox, TextArea } from "@progress/kendo-react-inputs";
+import {
+  Input,
+  InputChangeEvent,
+  NumericTextBox,
+  TextArea,
+} from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
@@ -48,6 +55,7 @@ import {
   getBizCom,
   getGridItemChangedData,
   getHeight,
+  getItemQuery,
   getWindowDeviceHeight,
   numberWithCommas,
 } from "../CommonFunction";
@@ -330,6 +338,18 @@ const ColumnCommandCell = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
 
   const onItemWndClick2 = () => {
@@ -421,7 +441,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
       style={{ position: "relative" }}
     >
       <>
-        {value}
+        {isInEdit ? (
+          <Input value={value} onChange={handleChange} type="text" />
+        ) : (
+          value
+        )}
         <ButtonInGridInput>
           <Button
             name="itemcd"
@@ -600,6 +624,7 @@ const CopyWindow = ({
               model: itemInfo.model,
               bnatur: itemInfo.bnatur,
               spec: itemInfo.spec,
+              itemacnt: itemInfo.itemacnt,
               //invunit
               qtyunit: itemInfo.invunit,
               invunitnm: itemInfo.invunitnm,
@@ -2455,7 +2480,6 @@ const CopyWindow = ({
     if (
       save == true &&
       field != "rowstatus" &&
-      field != "itemcd" &&
       field != "itemnm" &&
       field != "insiz" &&
       field != "rate"
@@ -2562,39 +2586,47 @@ const CopyWindow = ({
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              rate:
-                editedField == "experimentqty" || editedField == "spareqty"
-                  ? Math.round((item.spareqty / item.experimentqty) * 100)
-                  : item.rate,
-              qty:
-                editedField == "experimentqty" || editedField == "spareqty"
-                  ? item.spareqty + item.experimentqty
-                  : item.qty,
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+      if (editedField == "itemcd") {
+        mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
+          if (editIndex == item[DATA_ITEM_KEY]) {
+            fetchItemData(item.itemcd);
+          }
+        });
+      } else {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                rate:
+                  editedField == "experimentqty" || editedField == "spareqty"
+                    ? Math.round((item.spareqty / item.experimentqty) * 100)
+                    : item.rate,
+                qty:
+                  editedField == "experimentqty" || editedField == "spareqty"
+                    ? item.spareqty + item.experimentqty
+                    : item.qty,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
 
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
@@ -2707,6 +2739,164 @@ const CopyWindow = ({
       });
     }
   };
+
+  const fetchItemData = useCallback(
+    async (itemcd: string) => {
+      if (!permissions.view) return;
+      let data: any;
+      const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess == true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const {
+            itemcd,
+            itemno,
+            itemnm,
+            insiz,
+            model,
+            itemacnt,
+            itemacntnm,
+            bnatur,
+            spec,
+            invunit,
+            invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
+          } = rows[0];
+          setItemInfo({
+            itemcd,
+            itemno,
+            itemnm,
+            insiz,
+            model,
+            itemacnt,
+            itemacntnm,
+            bnatur,
+            spec,
+            invunit,
+            invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
+          });
+        } else {
+          const newData = mainDataResult.data.map((item: any) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+              ? {
+                  ...item,
+                  chlditemcd: item.itemcd,
+                  chlditemnm: "",
+                  itemcd: "",
+                  itemno: "",
+                  itemnm: "",
+                  insiz: "",
+                  model: "",
+                  itemacnt: "",
+                  itemacntnm: "",
+                  bnatur: "",
+                  spec: "",
+                  invunit: "",
+                  invunitnm: "",
+                  unitwgt: "",
+                  wgtunit: "",
+                  wgtunitnm: "",
+                  maker: "",
+                  dwgno: "",
+                  remark: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
+                  extra_field1: "",
+                  extra_field2: "",
+                  extra_field7: "",
+                  extra_field6: "",
+                  extra_field8: "",
+                  packingsiz: "",
+                  unitqty: "",
+                  color: "",
+                  gubun: "",
+                  qcyn: "",
+                  outside: "",
+                  itemthick: "",
+                  itemlvl4: "",
+                  itemlvl5: "",
+                  custitemnm: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult]
+  );
 
   return (
     <>

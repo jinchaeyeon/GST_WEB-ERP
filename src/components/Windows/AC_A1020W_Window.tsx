@@ -17,6 +17,7 @@ import {
   Input,
   InputChangeEvent,
 } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
   useContext,
@@ -66,6 +67,7 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
+  getCustDataQuery,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
@@ -254,6 +256,8 @@ const KendoWindow = ({
     delete: false,
   });
   UsePermissions(setPermissions);
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const idGetter = getter(DATA_ITEM_KEY);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
@@ -722,6 +726,10 @@ const KendoWindow = ({
           : { ...item, [EDIT_FIELD]: undefined }
       );
 
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult((prev) => {
         return {
           data: newData,
@@ -746,34 +754,100 @@ const KendoWindow = ({
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              taxamt: item.taxdiv == "1" ? ThreeNumberceil(item.amt * 0.1) : 0,
-              totamt:
-                item.amt +
-                (item.taxdiv == "1" ? ThreeNumberceil(item.amt * 0.1) : 0),
-              [EDIT_FIELD]: undefined,
+      if (editedField == "rcvcustcd") {
+        mainDataResult.data.map(async (item) => {
+          if (editIndex == item[DATA_ITEM_KEY]) {
+            const custcd = await fetchCustInfo(item.rcvcustcd);
+            if (custcd != null && custcd != undefined) {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      rcvcustcd: custcd.custcd,
+                      rcvcustnm: custcd.custnm,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            } else {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      rcvcustnm: "",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
             }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+          }
+        });
+      } else {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                taxamt:
+                  item.taxdiv == "1" ? ThreeNumberceil(item.amt * 0.1) : 0,
+                totamt:
+                  item.amt +
+                  (item.taxdiv == "1" ? ThreeNumberceil(item.amt * 0.1) : 0),
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
@@ -792,6 +866,39 @@ const KendoWindow = ({
         };
       });
     }
+  };
+
+  const fetchCustInfo = async (custcd: string) => {
+    if (!permissions.view) return;
+    if (custcd == "") return;
+    let data: any;
+    let custInfo: any = null;
+
+    const queryStr = getCustDataQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        custInfo = {
+          custcd: rows[0].custcd,
+          custnm: rows[0].custnm,
+        };
+      }
+    }
+
+    return custInfo;
   };
 
   useEffect(() => {

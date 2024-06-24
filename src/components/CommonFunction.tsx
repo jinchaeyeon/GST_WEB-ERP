@@ -769,12 +769,22 @@ export const getItemQuery = (para: any) => {
 };
 
 export const getAcntQuery = (para: any) => {
+  return "SELECT acntcd, acntnm FROM AC019T WHERE acntcd = '" + para + "'";
+};
+
+export const getStdramkQuery = (para: any) => {
   return (
-    "SELECT acntcd, acntnm FROM AC019T WHERE acntcd = '" +
-    para.acntcd +
-    "' AND acntnm LIKE '" +
-    para.acntnm +
-    "%'"
+    "SELECT stdrmkcd, stdrmknm1 as stdrmknm ,acntcd, acntnm FROM AC022T WHERE stdrmkcd = '" +
+    para +
+    "'"
+  );
+};
+
+export const getAcntnumQuery = (para: any) => {
+  return (
+    "SELECT acntsrtnum, acntsrtnm, bankacntnum FROM AC040T WHERE acntsrtnum = '" +
+    para +
+    "'"
   );
 };
 
@@ -944,7 +954,7 @@ export const getCustinfoQuery = (custcd: string) => {
 
 export const getCustDataQuery = (custcd: string) => {
   return `
-  SELECT custcd, address, phonenum, custnm 
+  SELECT custcd, address, phonenum, custnm, bizregnum
     FROM ba020t 
     WHERE BA020T.custcd =  '${custcd}'    
       `;
