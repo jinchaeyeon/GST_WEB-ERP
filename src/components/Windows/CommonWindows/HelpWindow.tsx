@@ -170,6 +170,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
+  const [url, setUrl] = useState("");
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -213,7 +214,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     height = getHeight(".k-window-titlebar");
     height2 = getHeight(".WindowTitleContainer"); //FormBox부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".ButtonContainer");
+    height4 = getHeight(".WindowButtonContainer");
     setMobileHeight(
       getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
     );
@@ -412,8 +413,6 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     }));
     setLoading(false);
   };
-
-  const [url, setUrl] = useState("");
 
   //그리드 데이터 조회
   const fetchmanualGrid = async () => {
@@ -1087,7 +1086,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
                 overflow: "auto",
               }}
             >
-              <GridTitleContainer className="ButtonContainer">
+              <GridTitleContainer className="WindowButtonContainer">
                 <GridTitle>코멘트</GridTitle>
                 <ButtonContainer>
                   <Button

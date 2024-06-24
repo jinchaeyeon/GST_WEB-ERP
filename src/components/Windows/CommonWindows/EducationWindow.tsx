@@ -93,7 +93,7 @@ TKendoWindow) => {
     height = getHeight(".k-window-titlebar");
     height2 = getHeight(".WindowTitleContainer"); //FormBox부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".ButtonContainer"); //그리드 title
+    height4 = getHeight(".WindowButtonContainer"); //그리드 title
     setMobileHeight(
       getWindowDeviceHeight(true, deviceHeight) -
         height -
@@ -319,7 +319,7 @@ TKendoWindow) => {
         }}
       >
         <GridContainer width="100%">
-          <GridTitleContainer className="ButtonContainer">
+          <GridTitleContainer className="WindowButtonContainer">
             <GridTitle>용어목록</GridTitle>
           </GridTitleContainer>
           <Grid
