@@ -373,7 +373,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
+      {isInEdit && dataItem.rowstatus == "N" ? (
         <Input value={value} onChange={handleChange} type="text" />
       ) : (
         value

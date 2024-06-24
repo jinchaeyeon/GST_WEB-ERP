@@ -1629,7 +1629,7 @@ const BA_A0050: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus") {
+    if (field != "rowstatus" && field != " itemnm") {
       const newData = subData2Result.data.map((item) =>
         item[SUB_DATA_ITEM_KEY2] == dataItem[SUB_DATA_ITEM_KEY2]
           ? {

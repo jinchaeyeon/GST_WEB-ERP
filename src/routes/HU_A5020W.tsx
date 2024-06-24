@@ -15,6 +15,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
   useContext,
@@ -54,6 +55,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getPrsnnumQuery,
   handleKeyPressSearch,
   numberWithCommas,
 } from "../components/CommonFunction";
@@ -189,7 +191,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
+      {isInEdit && dataItem.rowstatus == "N" ? (
         <Input value={value} onChange={handleChange} type="text" />
       ) : (
         value
@@ -314,6 +316,8 @@ const HU_A5020W: React.FC = () => {
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -719,6 +723,10 @@ const HU_A5020W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult((prev: { total: any }) => {
         return {
           data: newData,
@@ -743,31 +751,102 @@ const HU_A5020W: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
+      if (editedField == "prsnnum") {
+        mainDataResult.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult.data.map((item: any) => ({
         ...item,
@@ -786,6 +865,41 @@ const HU_A5020W: React.FC = () => {
         };
       });
     }
+  };
+
+  const fetchPrsnnumData = async (prsnnum: string) => {
+    if (!permissions.view) return;
+    if (prsnnum == "") return;
+    let data: any;
+    let prsnnumInfo: any = null;
+
+    const queryStr = getPrsnnumQuery(prsnnum);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        prsnnumInfo = {
+          prsnnum: rows[0].prsnnum,
+          prsnnm: rows[0].prsnnm,
+          postcd: rows[0].postcd,
+          dptcd: rows[0].dptcd,
+        };
+      }
+    }
+
+    return prsnnumInfo;
   };
 
   const onSaveClick = () => {

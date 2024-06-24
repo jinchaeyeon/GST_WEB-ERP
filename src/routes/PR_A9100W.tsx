@@ -225,7 +225,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     if (dataItem["rowstatus"] == "N") {
       setItemWindowVisible2(true);
     } else {
-      alert("품목코드와 품목명은 수정이 불가합니다.");
+      alert("품목코드는 수정이 불가합니다.");
     }
   };
   const setItemData2 = (data: IItemData) => {
@@ -312,7 +312,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
+      {isInEdit && dataItem.rowstatus == "N" ? (
         <Input value={value} onChange={handleChange} type="text" />
       ) : (
         value
@@ -638,6 +638,7 @@ const PR_A9100W: React.FC = () => {
               itemlvl4: itemInfo.itemlvl4,
               itemlvl5: itemInfo.itemlvl5,
               custitemnm: itemInfo.custitemnm,
+              itemacnt: itemInfo.itemacnt,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }

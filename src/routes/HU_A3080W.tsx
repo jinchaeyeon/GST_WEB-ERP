@@ -14,8 +14,13 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  Input,
+  InputChangeEvent,
+} from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
   useContext,
@@ -56,6 +61,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getPrsnnumQuery,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -266,6 +272,18 @@ const ColumnCommandCell = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
@@ -289,7 +307,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -340,6 +362,18 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
@@ -363,7 +397,11 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -414,6 +452,18 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
@@ -437,7 +487,11 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -488,6 +542,18 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
@@ -511,7 +577,11 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -562,6 +632,18 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
@@ -585,7 +667,11 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -691,7 +777,8 @@ const HU_A3080W: React.FC = () => {
     delete: false,
   });
   UsePermissions(setPermissions);
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A3080W", setMessagesData);
   const setLoading = useSetRecoilState(isLoading);
@@ -2385,6 +2472,10 @@ const HU_A3080W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult((prev: { total: any }) => {
         return {
           data: newData,
@@ -2434,6 +2525,10 @@ const HU_A3080W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY2]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult2((prev: { total: any }) => {
         return {
           data: newData,
@@ -2484,6 +2579,10 @@ const HU_A3080W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY3]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult3((prev: { total: any }) => {
         return {
           data: newData,
@@ -2533,6 +2632,10 @@ const HU_A3080W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY4]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult4((prev: { total: any }) => {
         return {
           data: newData,
@@ -2583,6 +2686,10 @@ const HU_A3080W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY5]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult5((prev: { total: any }) => {
         return {
           data: newData,
@@ -2607,31 +2714,102 @@ const HU_A3080W: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
+      if (editedField == "prsnnum") {
+        mainDataResult.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY] ==
+                  Object.getOwnPropertyNames(selectedState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult.data.map((item: any) => ({
         ...item,
@@ -2654,31 +2832,103 @@ const HU_A3080W: React.FC = () => {
 
   const exitEdit2 = () => {
     if (tempResult2.data != mainDataResult2.data) {
-      const newData = mainDataResult2.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
+      if (editedField == "prsnnum") {
+        mainDataResult2.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY2]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult2.data.map((item) =>
+                  item[DATA_ITEM_KEY2] ==
+                  Object.getOwnPropertyNames(selectedState2)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult2((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult2((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult2.data.map((item) =>
+                  item[DATA_ITEM_KEY2] ==
+                  Object.getOwnPropertyNames(selectedState2)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult2((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult2((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult2.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY2] ==
+            Object.getOwnPropertyNames(selectedState2)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult2((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult2((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult2.data.map((item: any) => ({
         ...item,
@@ -2701,31 +2951,103 @@ const HU_A3080W: React.FC = () => {
 
   const exitEdit3 = () => {
     if (tempResult3.data != mainDataResult3.data) {
-      const newData = mainDataResult3.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
+      if (editedField == "prsnnum") {
+        mainDataResult3.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY3]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult3.data.map((item) =>
+                  item[DATA_ITEM_KEY3] ==
+                  Object.getOwnPropertyNames(selectedState3)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult3((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult3((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult3.data.map((item) =>
+                  item[DATA_ITEM_KEY3] ==
+                  Object.getOwnPropertyNames(selectedState3)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult3((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult3((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult3((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult3((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult3.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY3] ==
+            Object.getOwnPropertyNames(selectedState3)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult3((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult3((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult3.data.map((item: any) => ({
         ...item,
@@ -2748,31 +3070,103 @@ const HU_A3080W: React.FC = () => {
 
   const exitEdit4 = () => {
     if (tempResult4.data != mainDataResult4.data) {
-      const newData = mainDataResult4.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
+      if (editedField == "prsnnum") {
+        mainDataResult4.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY4]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult4.data.map((item) =>
+                  item[DATA_ITEM_KEY4] ==
+                  Object.getOwnPropertyNames(selectedState4)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult4((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult4((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult4.data.map((item) =>
+                  item[DATA_ITEM_KEY4] ==
+                  Object.getOwnPropertyNames(selectedState4)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult4((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult4((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult4((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult4((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult4.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY4] ==
+            Object.getOwnPropertyNames(selectedState4)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult4((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult4((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult4.data.map((item: any) => ({
         ...item,
@@ -2795,31 +3189,103 @@ const HU_A3080W: React.FC = () => {
 
   const exitEdit5 = () => {
     if (tempResult5.data != mainDataResult5.data) {
-      const newData = mainDataResult5.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY5] == Object.getOwnPropertyNames(selectedState5)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
+      if (editedField == "prsnnum") {
+        mainDataResult5.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY5]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult5.data.map((item) =>
+                  item[DATA_ITEM_KEY5] ==
+                  Object.getOwnPropertyNames(selectedState5)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult5((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult5((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult5.data.map((item) =>
+                  item[DATA_ITEM_KEY5] ==
+                  Object.getOwnPropertyNames(selectedState5)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult5((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult5((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
               }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult5((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult5((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult5.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY5] ==
+            Object.getOwnPropertyNames(selectedState5)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult5((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult5((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult5.data.map((item: any) => ({
         ...item,
@@ -2838,6 +3304,41 @@ const HU_A3080W: React.FC = () => {
         };
       });
     }
+  };
+
+  const fetchPrsnnumData = async (prsnnum: string) => {
+    if (!permissions.view) return;
+    if (prsnnum == "") return;
+    let data: any;
+    let prsnnumInfo: any = null;
+
+    const queryStr = getPrsnnumQuery(prsnnum);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        prsnnumInfo = {
+          prsnnum: rows[0].prsnnum,
+          prsnnm: rows[0].prsnnm,
+          postcd: rows[0].postcd,
+          dptcd: rows[0].dptcd,
+        };
+      }
+    }
+
+    return prsnnumInfo;
   };
 
   const [values, setValues] = React.useState<boolean>(false);

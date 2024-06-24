@@ -14,8 +14,9 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
   useContext,
@@ -44,6 +45,7 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import CenterCell from "../components/Cells/CenterCell";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
@@ -54,13 +56,13 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
-  getBizCom,
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMasterUserQuery,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -87,6 +89,33 @@ const percentField = ["rat"];
 const contextField = ["person"];
 const requireField = ["person"];
 const centerField = ["name"];
+const customComboField = ["dptcd"];
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_dptcd_001", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal = field == "dptcd" ? "L_dptcd_001" : "";
+
+  const valueField = field == "dptcd" ? "dptcd" : undefined;
+  const textField = field == "dptcd" ? "dptnm" : undefined;
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId == bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      textField={textField}
+      valueField={valueField}
+      {...props}
+    />
+  ) : (
+    <td />
+  );
+};
 
 let deletedMainRows: object[] = [];
 let temp = 0;
@@ -125,6 +154,18 @@ const ColumnCommandCell = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
     useState<boolean>(false);
 
@@ -153,7 +194,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInInput>
         <Button
           onClick={onPrsnnumWndClick}
@@ -381,22 +426,6 @@ const SA_A6000W: React.FC = () => {
     tabSelected,
   ]);
 
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_dptcd_001",
-    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
-    setBizComponentData
-  );
-
-  const [dptcdListData, setdptcdListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
-    }
-  }, [bizComponentData]);
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -507,6 +536,8 @@ const SA_A6000W: React.FC = () => {
   const [selectedState4, setSelectedState4] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -867,12 +898,7 @@ const SA_A6000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters.isSearch &&
-      permissions.view &&
-      bizComponentData !== null &&
-      customOptionData !== null
-    ) {
+    if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -882,16 +908,11 @@ const SA_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, bizComponentData, customOptionData]);
+  }, [filters, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters2.isSearch &&
-      permissions.view &&
-      bizComponentData !== null &&
-      customOptionData !== null
-    ) {
+    if (filters2.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -901,16 +922,11 @@ const SA_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
     }
-  }, [filters2, permissions, bizComponentData, customOptionData]);
+  }, [filters2, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters3.isSearch &&
-      permissions.view &&
-      bizComponentData !== null &&
-      customOptionData !== null
-    ) {
+    if (filters3.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
@@ -920,16 +936,11 @@ const SA_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
     }
-  }, [filters3, permissions, bizComponentData, customOptionData]);
+  }, [filters3, permissions, customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters4.isSearch &&
-      permissions.view &&
-      bizComponentData !== null &&
-      customOptionData !== null
-    ) {
+    if (filters4.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
@@ -939,7 +950,7 @@ const SA_A6000W: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
     }
-  }, [filters4, permissions, bizComponentData, customOptionData]);
+  }, [filters4, permissions, customOptionData]);
   let gridRef: any = useRef(null);
 
   //그리드 리셋
@@ -1418,7 +1429,7 @@ const SA_A6000W: React.FC = () => {
   };
 
   const enterEdit2 = (dataItem: any, field: string) => {
-    if (field == "dptcd" && dataItem.rowstatus == "N") {
+    if (field == "dptcd" || field == "person") {
       const newData = mainDataResult3.data.map((item) =>
         item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
@@ -1427,6 +1438,10 @@ const SA_A6000W: React.FC = () => {
             }
           : { ...item, [EDIT_FIELD]: undefined }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY3]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult3((prev) => {
         return {
           data: newData,
@@ -1459,6 +1474,7 @@ const SA_A6000W: React.FC = () => {
             }
           : { ...item, [EDIT_FIELD]: undefined }
       );
+
       setTempResult4((prev) => {
         return {
           data: newData,
@@ -1676,31 +1692,100 @@ const SA_A6000W: React.FC = () => {
 
   const exitEdit2 = () => {
     if (tempResult3.data != mainDataResult3.data) {
-      const newData = mainDataResult3.data.map((item) =>
-        item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+      if (editedField == "person") {
+        mainDataResult3.data.map(
+          async (item: { [x: string]: any; person: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY3]) {
+              const person = await fetchUserData(item.person);
+              if (person != null && person != undefined) {
+                const newData = mainDataResult3.data.map((item) =>
+                  item[DATA_ITEM_KEY3] ==
+                  Object.getOwnPropertyNames(selectedState3)[0]
+                    ? {
+                        ...item,
+                        person: person.user_id,
+                        user_name: person.user_name,
+                        dptcd: person.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult3((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult3((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult3.data.map((item) =>
+                  item[DATA_ITEM_KEY3] ==
+                  Object.getOwnPropertyNames(selectedState3)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        user_name: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
 
-      setTempResult3((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult3((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+                setTempResult3((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult3((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult3.data.map((item) =>
+          item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult3((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult3((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult3.data.map((item) => ({
         ...item,
@@ -1809,6 +1894,40 @@ const SA_A6000W: React.FC = () => {
         };
       });
     }
+  };
+
+  const fetchUserData = async (person: string) => {
+    if (!permissions.view) return;
+    if (person == "") return;
+    let data: any;
+    let personInfo: any = null;
+
+    const queryStr = getMasterUserQuery(person);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        personInfo = {
+          user_id: rows[0].user_id,
+          user_name: rows[0].user_name,
+          dptcd: rows[0].dptcd,
+        };
+      }
+    }
+
+    return personInfo;
   };
 
   const onSave = () => {
@@ -2826,9 +2945,6 @@ const SA_A6000W: React.FC = () => {
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
-                            dptcd: dptcdListData.find(
-                              (item: any) => item.dptcd == row.dptcd
-                            )?.dptnm,
                             [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                           })),
                           mainDataState3
@@ -2886,6 +3002,10 @@ const SA_A6000W: React.FC = () => {
                                         ? CustomPercentCell
                                         : contextField.includes(item.fieldName)
                                         ? ColumnCommandCell
+                                        : customComboField.includes(
+                                            item.fieldName
+                                          )
+                                        ? CustomComboBoxCell
                                         : undefined
                                     }
                                     headerCell={
@@ -3071,9 +3191,6 @@ const SA_A6000W: React.FC = () => {
                         data={process(
                           mainDataResult3.data.map((row) => ({
                             ...row,
-                            dptcd: dptcdListData.find(
-                              (item: any) => item.dptcd == row.dptcd
-                            )?.dptnm,
                             [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                           })),
                           mainDataState3
@@ -3131,6 +3248,10 @@ const SA_A6000W: React.FC = () => {
                                         ? CustomPercentCell
                                         : contextField.includes(item.fieldName)
                                         ? ColumnCommandCell
+                                        : customComboField.includes(
+                                            item.fieldName
+                                          )
+                                        ? CustomComboBoxCell
                                         : undefined
                                     }
                                     headerCell={

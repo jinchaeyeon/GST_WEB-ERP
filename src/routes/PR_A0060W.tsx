@@ -1577,7 +1577,7 @@ const PR_A0060: React.FC = () => {
       valid = false;
     }
 
-    if (field != "rowstatus" && valid == true) {
+    if (field != "rowstatus" && valid == true && field != "custnm") {
       const newData = subDataResult.data.map((item) =>
         item[SUB_DATA_ITEM_KEY] == dataItem[SUB_DATA_ITEM_KEY]
           ? {

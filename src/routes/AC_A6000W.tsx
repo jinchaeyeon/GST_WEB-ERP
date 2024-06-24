@@ -23,6 +23,7 @@ import {
   SchedulerViewSlotProps,
 } from "@progress/kendo-react-scheduler";
 import { checkIcon } from "@progress/kendo-svg-icons";
+import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
   useContext,
@@ -64,6 +65,7 @@ import {
   dateformat,
   findMessage,
   getBizCom,
+  getCustDataQuery,
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
@@ -397,7 +399,8 @@ const AC_A6000W: React.FC = () => {
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages("AC_A6000W", setMessagesData);
@@ -1127,7 +1130,12 @@ const AC_A6000W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "findt" && field != "finperson") {
+    if (
+      field != "rowstatus" &&
+      field != "findt" &&
+      field != "finperson" &&
+      field != "custnm"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
@@ -1136,7 +1144,10 @@ const AC_A6000W: React.FC = () => {
             }
           : { ...item, [EDIT_FIELD]: undefined }
       );
-
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult((prev) => {
         return {
           data: newData,
@@ -1160,7 +1171,12 @@ const AC_A6000W: React.FC = () => {
   };
 
   const enterEdit2 = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "findt" && field != "finperson") {
+    if (
+      field != "rowstatus" &&
+      field != "findt" &&
+      field != "finperson" &&
+      field != "custnm"
+    ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -1169,7 +1185,10 @@ const AC_A6000W: React.FC = () => {
             }
           : { ...item, [EDIT_FIELD]: undefined }
       );
-
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult2((prev) => {
         return {
           data: newData,
@@ -1194,31 +1213,96 @@ const AC_A6000W: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+      if (editedField == "custcd") {
+        mainDataResult.data.map(async (item) => {
+          if (editIndex == item[DATA_ITEM_KEY]) {
+            const custcd = await fetchCustInfo(item.custcd);
+            if (custcd != null && custcd != undefined) {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      custcd: custcd.custcd,
+                      custnm: custcd.custnm,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            } else {
+              const newData = mainDataResult.data.map((item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+                  ? {
+                      ...item,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      custnm: "",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
 
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+              setTempResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            }
+          }
+        });
+      } else {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
@@ -1241,31 +1325,96 @@ const AC_A6000W: React.FC = () => {
 
   const exitEdit2 = () => {
     if (tempResult2.data != mainDataResult2.data) {
-      const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+      if (editedField == "custcd") {
+        mainDataResult2.data.map(async (item) => {
+          if (editIndex == item[DATA_ITEM_KEY2]) {
+            const custcd = await fetchCustInfo(item.custcd);
+            if (custcd != null && custcd != undefined) {
+              const newData = mainDataResult2.data.map((item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+                  ? {
+                      ...item,
+                      custcd: custcd.custcd,
+                      custnm: custcd.custnm,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
+              setTempResult2((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult2((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            } else {
+              const newData = mainDataResult2.data.map((item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+                  ? {
+                      ...item,
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
+                      custnm: "",
+                      [EDIT_FIELD]: undefined,
+                    }
+                  : {
+                      ...item,
+                      [EDIT_FIELD]: undefined,
+                    }
+              );
 
-      setTempResult2((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult2((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+              setTempResult2((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              setMainDataResult2((prev) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+            }
+          }
+        });
+      } else {
+        const newData = mainDataResult2.data.map((item) =>
+          item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult2((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult2((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
@@ -1284,6 +1433,39 @@ const AC_A6000W: React.FC = () => {
         };
       });
     }
+  };
+
+  const fetchCustInfo = async (custcd: string) => {
+    if (!permissions.view) return;
+    if (custcd == "") return;
+    let data: any;
+    let custInfo: any = null;
+
+    const queryStr = getCustDataQuery(custcd);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        custInfo = {
+          custcd: rows[0].custcd,
+          custnm: rows[0].custnm,
+        };
+      }
+    }
+
+    return custInfo;
   };
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };

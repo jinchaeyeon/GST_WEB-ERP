@@ -2643,7 +2643,7 @@ const AC_A0020W: React.FC = () => {
   );
 
   const enterEdit3 = (dataItem: any, field: string) => {
-    if (field != "rowstatus") {
+    if (field != "rowstatus" && field != "acntnm") {
       const newData = mainDataResult4.data.map((item) =>
         item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
           ? {
@@ -2765,7 +2765,7 @@ const AC_A0020W: React.FC = () => {
   );
 
   const enterEdit4 = (dataItem: any, field: string) => {
-    if (field != "rowstatus") {
+    if (field != "rowstatus" && field != "acntnm") {
       const newData = mainDataResult5.data.map((item) =>
         item[DATA_ITEM_KEY5] == dataItem[DATA_ITEM_KEY5]
           ? {

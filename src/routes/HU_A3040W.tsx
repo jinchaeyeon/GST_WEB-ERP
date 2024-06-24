@@ -12,7 +12,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { NumericTextBox } from "@progress/kendo-react-inputs";
+import {
+  Input,
+  InputChangeEvent,
+  NumericTextBox,
+} from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, {
@@ -53,6 +57,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getMonPayQuery,
+  getPrsnnumQuery,
   numberWithCommas,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -153,6 +158,18 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
@@ -175,7 +192,11 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -226,6 +247,18 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
@@ -248,7 +281,11 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -299,6 +336,18 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
   let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
@@ -322,7 +371,11 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {value}
+      {isInEdit && dataItem.rowstatus == "N" ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -513,6 +566,7 @@ const HU_A3040W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -643,6 +697,7 @@ const HU_A3040W: React.FC = () => {
       empinsurancerat: 0,
       pnsprvrat: 0,
       medprvrat: 0,
+      hircomprat: 0,
     });
   };
 
@@ -655,6 +710,7 @@ const HU_A3040W: React.FC = () => {
     empinsurancerat: 0,
     pnsprvrat: 0,
     medprvrat: 0,
+    hircomprat: 0,
   });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -1008,9 +1064,7 @@ const HU_A3040W: React.FC = () => {
   };
 
   const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [editIndex2, setEditIndex2] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  const [editedField2, setEditedField2] = useState("");
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -1237,6 +1291,7 @@ const HU_A3040W: React.FC = () => {
           empinsurancerat: rows[0].empinsurancerat,
           pnsprvrat: rows[0].pnsprvrat,
           medprvrat: rows[0].medprvrat,
+          hircomprat: rows[0].hircomprat,
         });
       } else {
         setInformation({
@@ -1248,6 +1303,7 @@ const HU_A3040W: React.FC = () => {
           empinsurancerat: 0,
           pnsprvrat: 0,
           medprvrat: 0,
+          hircomprat: 0,
         });
       }
     } else {
@@ -1369,6 +1425,7 @@ const HU_A3040W: React.FC = () => {
           empinsurancerat: 0,
           pnsprvrat: 0,
           medprvrat: 0,
+          hircomprat: 0,
         });
       }
     } else {
@@ -1544,6 +1601,7 @@ const HU_A3040W: React.FC = () => {
           empinsurancerat: 0,
           pnsprvrat: 0,
           medprvrat: 0,
+          hircomprat: 0,
         });
       }
     } else {
@@ -1719,6 +1777,7 @@ const HU_A3040W: React.FC = () => {
           empinsurancerat: 0,
           pnsprvrat: 0,
           medprvrat: 0,
+          hircomprat: 0,
         });
       }
     } else {
@@ -2160,9 +2219,9 @@ const HU_A3040W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
-      setEditIndex2(dataItem[DATA_ITEM_KEY4]);
+      setEditIndex(dataItem[DATA_ITEM_KEY4]);
       if (field) {
-        setEditedField2(field);
+        setEditedField(field);
       }
       setTempResult4((prev) => {
         return {
@@ -2187,7 +2246,17 @@ const HU_A3040W: React.FC = () => {
   };
 
   const enterEdit6 = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "prsnnm" && field != "dptcd") {
+    if (
+      field != "rowstatus" &&
+      field != "prsnnm" &&
+      field != "dptcd" &&
+      field != "empinsurancerat" &&
+      field != "insuamt" &&
+      field != "prsamt" &&
+      field != "prsratamt" &&
+      field != "prstothiramt" &&
+      field != "prstotamt"
+    ) {
       const newData = mainDataResult6.data.map((item) =>
         item[DATA_ITEM_KEY6] == dataItem[DATA_ITEM_KEY6]
           ? {
@@ -2199,6 +2268,10 @@ const HU_A3040W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY6]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult6((prev) => {
         return {
           data: newData,
@@ -2263,6 +2336,75 @@ const HU_A3040W: React.FC = () => {
             total: prev.total,
           };
         });
+      } else if (editedField == "prsnnum") {
+        mainDataResult2.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY2]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult2.data.map((item) =>
+                  item[DATA_ITEM_KEY2] ==
+                  Object.getOwnPropertyNames(selectedState2)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult2((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult2((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult2.data.map((item) =>
+                  item[DATA_ITEM_KEY2] ==
+                  Object.getOwnPropertyNames(selectedState2)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult2((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult2((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
+            }
+          }
+        );
       } else {
         const newData = mainDataResult2.data.map((item) =>
           item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
@@ -2312,7 +2454,7 @@ const HU_A3040W: React.FC = () => {
 
   const exitEdit4 = () => {
     if (tempResult4.data != mainDataResult4.data) {
-      if (editedField2 == "stdamt") {
+      if (editedField == "stdamt") {
         const newData = mainDataResult4.data.map((item) =>
           item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
             ? {
@@ -2401,6 +2543,75 @@ const HU_A3040W: React.FC = () => {
             total: prev.total,
           };
         });
+      } else if (editedField == "prsnnum") {
+        mainDataResult4.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY4]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult4.data.map((item) =>
+                  item[DATA_ITEM_KEY4] ==
+                  Object.getOwnPropertyNames(selectedState4)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult4((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult4((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult4.data.map((item) =>
+                  item[DATA_ITEM_KEY4] ==
+                  Object.getOwnPropertyNames(selectedState4)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult4((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult4((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
+            }
+          }
+        );
       } else {
         const newData = mainDataResult4.data.map((item) =>
           item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
@@ -2450,31 +2661,138 @@ const HU_A3040W: React.FC = () => {
 
   const exitEdit6 = () => {
     if (tempResult6.data != mainDataResult6.data) {
-      const newData = mainDataResult6.data.map((item) =>
-        item[DATA_ITEM_KEY6] == Object.getOwnPropertyNames(selectedState6)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+      if (editedField == "stdamt") {
+        const newData = mainDataResult6.data.map((item) =>
+          item[DATA_ITEM_KEY6] == Object.getOwnPropertyNames(selectedState6)[0]
+            ? {
+                ...item,
+                empinsurancerat: Information.empinsurancerat,
+                insuamt: (item.stdamt * Information.empinsurancerat) / 100,
+                prsamt: (item.stdamt * Information.empinsurancerat) / 100,
+                prsratamt: (item.stdamt * Information.hircomprat) / 100,
+                prstothiramt:
+                  (item.stdamt * Information.empinsurancerat) / 100 +
+                  (item.stdamt * Information.hircomprat) / 100,
+                prstotamt:
+                  (item.stdamt * Information.empinsurancerat) / 100 +
+                  (item.stdamt * Information.empinsurancerat) / 100 +
+                  (item.stdamt * Information.hircomprat) / 100,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult6((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult6((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (editedField == "prsnnum") {
+        mainDataResult6.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY6]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = mainDataResult6.data.map((item) =>
+                  item[DATA_ITEM_KEY6] ==
+                  Object.getOwnPropertyNames(selectedState6)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult6((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult6((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = mainDataResult6.data.map((item) =>
+                  item[DATA_ITEM_KEY6] ==
+                  Object.getOwnPropertyNames(selectedState6)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
 
-      setTempResult6((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult6((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+                setTempResult6((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setMainDataResult6((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
+            }
+          }
+        );
+      } else {
+        const newData = mainDataResult6.data.map((item) =>
+          item[DATA_ITEM_KEY6] == Object.getOwnPropertyNames(selectedState6)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult6((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult6((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult6.data.map((item) => ({
         ...item,
@@ -2493,6 +2811,41 @@ const HU_A3040W: React.FC = () => {
         };
       });
     }
+  };
+
+  const fetchPrsnnumData = async (prsnnum: string) => {
+    if (!permissions.view) return;
+    if (prsnnum == "") return;
+    let data: any;
+    let prsnnumInfo: any = null;
+
+    const queryStr = getPrsnnumQuery(prsnnum);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        prsnnumInfo = {
+          prsnnum: rows[0].prsnnum,
+          prsnnm: rows[0].prsnnm,
+          postcd: rows[0].postcd,
+          dptcd: rows[0].dptcd,
+        };
+      }
+    }
+
+    return prsnnumInfo;
   };
 
   //FormContext로 받아온 데이터 set
@@ -4456,7 +4809,13 @@ const HU_A3040W: React.FC = () => {
             </TabStripTab>
             <TabStripTab
               title="고용보험"
-              disabled={permissions.view ? false : true}
+              disabled={
+                permissions.view
+                  ? companyCode == "2301A110"
+                    ? false
+                    : true
+                  : true
+              }
             >
               <Swiper
                 onSwiper={(swiper) => {
@@ -5210,7 +5569,13 @@ const HU_A3040W: React.FC = () => {
             </TabStripTab>
             <TabStripTab
               title="고용보험"
-              disabled={permissions.view ? false : true}
+              disabled={
+                permissions.view
+                  ? companyCode == "2301A110"
+                    ? false
+                    : true
+                  : true
+              }
             >
               <GridContainerWrap>
                 <GridContainer width="15%">

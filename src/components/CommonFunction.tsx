@@ -788,6 +788,30 @@ export const getAcntnumQuery = (para: any) => {
   );
 };
 
+export const getPrsnnumQuery = (para: any) => {
+  return (
+    "SELECT prsnnum, prsnnm, dptcd, postcd FROM HU250T WHERE prsnnum = '" +
+    para +
+    "'"
+  );
+};
+
+export const getPrsnnum2Query = (para: any) => {
+  return (
+    "SELECT (CASE WHEN a.workerdiv = 'D' THEN '일용' ELSE '기타' END) as workerdiv,	a.prsnnum, a.prsnnm,ISNULL(b.dptnm,'') as dptnm,ISNULL(c.code_name,'') as abilnm,ISNULL(d.code_name,'') as postnm,CASE WHEN a.regorgdt = '' THEN '' ELSE FORMAT(CONVERT(DATETIME, a.regorgdt), 'yyyy-MM-dd') END as regorgdtFormat,CASE WHEN a.rtrdt = '' THEN '' ELSE FORMAT(CONVERT(DATETIME, a.rtrdt), 'yyyy-MM-dd') END as rtrdtFormat,CASE WHEN a.rtrdt  = ''  OR a.rtrdt > CONVERT(VARCHAR(8),GETDATE(),112) THEN '재직' ELSE '퇴직' END as rtryn,a.regorgdt,a.rtrdt,a.dptcd,a.abilcd,a.postcd,a.paycd,a.anlslry,a.payprovyn,a.overtimepay,a.hirinsuyn,	a.pnsdiv,		a.meddiv,		a.pnsamt,		a.medamt,	a.medrat2,		ISNULL(e.daytaxstd, 0) as daytaxstd,ISNULL(e.dayinctax, 0) as dayinctax,ISNULL(e.daylocatax, 0) as daylocatax,	ISNULL(e.dayhirinsurat, 0) as dayhirinsurat FROM hu600t a	LEFT OUTER JOIN ba040t b ON a.dptcd = b.dptcd LEFT OUTER JOIN comCodeMaster c ON c.group_code = 'HU006'AND a.abilcd = c.sub_code LEFT OUTER JOIN comCodeMaster d ON d.group_code = 'HU005'AND a.postcd = d.sub_code LEFT OUTER JOIN (SELECT A.orgdiv,A.daytaxstd,A.dayinctax	  ,A.daylocatax		  ,A.dayhirinsurat FROM hu160T A INNER JOIN (SELECT orgdiv, max(payyrmm) as payyrmm FROM hu160T GROUP BY orgdiv) B ON A.orgdiv = B.orgdiv AND A.payyrmm = B.payyrmm) as e ON e.orgdiv = a.orgdiv WHERE prsnnum = '" +
+    para +
+    "'"
+  );
+};
+
+export const getMasterUserQuery = (para: any) => {
+  return (
+    "SELECT a.user_id, a.user_name + (CASE WHEN a.rtrchk = 'Y' THEN '-퇴' ELSE '' END) as user_name, a.dptcd FROM sysUserMaster a WHERE a.user_id = '" +
+    para +
+    "'"
+  );
+};
+
 //선택된 드롭다운리스트 값 (ex. {sub_code: "test", code_name:"test"} )을 인자로 받아서 빈 값(ex. {sub_code: "", code_name: ""} )인지 체크
 //=> 빈 값인 경우 false 반환
 export const checkIsDDLValid = (value: object) => {

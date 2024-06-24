@@ -21,6 +21,7 @@ import {
   TabStrip,
   TabStripTab,
 } from "@progress/kendo-react-layout";
+import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
   useContext,
@@ -67,6 +68,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getPrsnnumQuery,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -171,10 +173,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   const onUserWndClick = () => {
-    if (dataItem["rowstatus"] == "N") {
+    if (dataItem.rowstatus == "N") {
       setuserWindowVisible(true);
     } else {
-      alert("사번은 수정이 불가합니다.");
+      alert("신규행만 수정가능합니다.");
     }
   };
 
@@ -189,7 +191,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
+      {isInEdit && dataItem.rowstatus == "N" ? (
         <Input value={value} onChange={handleChange} type="text" />
       ) : (
         value
@@ -246,7 +248,8 @@ const HU_B4000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HU_B4000W", setCustomOptionData);
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const [tabSelected, setTabSelected] = React.useState(0);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
@@ -1804,7 +1807,7 @@ const HU_B4000W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (
       field == "yyyy" ||
-      (field == "prsnnum" && dataItem.rowstatus == "N") ||
+      field == "prsnnum" ||
       field == "adjdiv" ||
       field == "qty" ||
       field == "remark" ||
@@ -1821,6 +1824,10 @@ const HU_B4000W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY_ADJ]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult((prev) => {
         return {
           data: newData,
@@ -1845,31 +1852,102 @@ const HU_B4000W: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != adjDataResult.data) {
-      const newData = adjDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY_ADJ] ==
-        Object.getOwnPropertyNames(selectedAdjState)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              [EDIT_FIELD]: undefined,
+      if (editedField == "prsnnum") {
+        adjDataResult.data.map(
+          async (item: { [x: string]: any; prsnnum: any }) => {
+            if (editIndex == item[DATA_ITEM_KEY_ADJ]) {
+              const prsnnum = await fetchPrsnnumData(item.prsnnum);
+              if (prsnnum != null && prsnnum != undefined) {
+                const newData = adjDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY_ADJ] ==
+                  Object.getOwnPropertyNames(selectedAdjState)[0]
+                    ? {
+                        ...item,
+                        prsnnum: prsnnum.prsnnum,
+                        prsnm: prsnnum.prsnnm,
+                        postcd: prsnnum.postcd,
+                        dptcd: prsnnum.dptcd,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setAdjDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              } else {
+                const newData = adjDataResult.data.map((item) =>
+                  item[DATA_ITEM_KEY_ADJ] ==
+                  Object.getOwnPropertyNames(selectedAdjState)[0]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        prsnm: "",
+                        postcd: "",
+                        dptcd: "",
+                        [EDIT_FIELD]: undefined,
+                      }
+                    : {
+                        ...item,
+                        [EDIT_FIELD]: undefined,
+                      }
+                );
+
+                setTempResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+                setAdjDataResult((prev) => {
+                  return {
+                    data: newData,
+                    total: prev.total,
+                  };
+                });
+              }
             }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setAdjDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+          }
+        );
+      } else {
+        const newData = adjDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY_ADJ] ==
+          Object.getOwnPropertyNames(selectedAdjState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setAdjDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = adjDataResult.data.map((item) => ({
         ...item,
@@ -1888,6 +1966,41 @@ const HU_B4000W: React.FC = () => {
         };
       });
     }
+  };
+
+  const fetchPrsnnumData = async (prsnnum: string) => {
+    if (!permissions.view) return;
+    if (prsnnum == "") return;
+    let data: any;
+    let prsnnumInfo: any = null;
+
+    const queryStr = getPrsnnumQuery(prsnnum);
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      if (rows.length > 0) {
+        prsnnumInfo = {
+          prsnnum: rows[0].prsnnum,
+          prsnnm: rows[0].prsnnm,
+          postcd: rows[0].postcd,
+          dptcd: rows[0].dptcd,
+        };
+      }
+    }
+
+    return prsnnumInfo;
   };
 
   const customCellRender = (td: any, props: any) => (
