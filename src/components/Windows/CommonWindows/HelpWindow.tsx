@@ -894,7 +894,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       data = null;
     }
 
-    fetchmanualGrid();
+    setUrl("");
     if (swiper && isMobile) {
       swiper.slideTo(0);
     }
