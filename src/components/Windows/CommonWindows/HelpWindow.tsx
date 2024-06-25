@@ -198,6 +198,8 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       ? "Main"
       : loginResult.homeMenuWeb == "Home" || loginResult.homeMenuWeb == ""
       ? "MainNotApproval"
+      : pathname == "Home"
+      ? loginResult.homeMenuWeb
       : pathname
     : "";
 
