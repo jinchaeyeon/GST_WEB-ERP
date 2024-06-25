@@ -50,7 +50,6 @@ import {
   sessionItemState,
 } from "./store/atoms";
 import { Iparameters } from "./store/types";
-
 const AC_A0000W = lazy(() => import("./routes/AC_A0000W"));
 const AC_A0020W = lazy(() => import("./routes/AC_A0020W"));
 const AC_A0030W = lazy(() => import("./routes/AC_A0030W"));
@@ -115,6 +114,7 @@ const CM_A3100W = lazy(() => import("./routes/CM_A3100W"));
 const CM_A4100W = lazy(() => import("./routes/CM_A4100W"));
 const CM_A5000W = lazy(() => import("./routes/CM_A5000W"));
 const CM_A7000W = lazy(() => import("./routes/CM_A7000W"));
+const CM_A7010W = lazy(() => import("./routes/CM_A7010W"));
 const CM_A8000W = lazy(() => import("./routes/CM_A8000W"));
 const CM_A8210W = lazy(() => import("./routes/CM_A8210W"));
 const CM_A8250W = lazy(() => import("./routes/CM_A8250W"));
@@ -178,6 +178,7 @@ const MA_A3400W = lazy(() => import("./routes/MA_A3400W"));
 const MA_A3400W_606 = lazy(() => import("./routes/MA_A3400W_606"));
 const MA_A3500W = lazy(() => import("./routes/MA_A3500W"));
 const MA_A3500W_615 = lazy(() => import("./routes/MA_A3500W_615"));
+
 const MA_A7000W = lazy(() => import("./routes/MA_A7000W"));
 const MA_A8000W = lazy(() => import("./routes/MA_A8000W"));
 const MA_A9001W = lazy(() => import("./routes/MA_A9001W"));
@@ -273,7 +274,6 @@ const SY_A0125W = lazy(() => import("./routes/SY_A0125W"));
 const SY_A0500W = lazy(() => import("./routes/SY_A0500W"));
 const SY_B0060W = lazy(() => import("./routes/SY_B0060W"));
 const TO_B0011W = lazy(() => import("./routes/TO_B0011W"));
-const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 const MainBIO = lazy(() => import("./routes/MainBIO"));
 const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));
@@ -589,9 +589,22 @@ const AppInner: React.FC = () => {
 
   function link(str: any) {
     if (str == "Home" || str == "") {
-      return MainAdminCRM;
+      if (currentTheme == "yellow") {
+        return MainAdminCRM;
+      } else if (loginResult.companyCode == "2302BA03") {
+        return MainBIO;
+      } else if (
+        loginResult.companyCode == "2301A110" ||
+        loginResult.companyCode == "2207A046"
+      ) {
+        return Main;
+      } else {
+        return MainNotApproval;
+      }
     } else if (str == "AC_A0000W") {
       return AC_A0000W;
+    } else if (str == "AC_B1260W") {
+      return AC_B1260W;
     } else if (str == "BA_A0020W") {
       return BA_A0020W;
     } else if (str == "BA_A0040W") {
@@ -610,10 +623,14 @@ const AppInner: React.FC = () => {
       return BA_B0080W;
     } else if (str == "CM_B8100W") {
       return CM_B8100W;
+    } else if (str == "SY_A0060W") {
+      return SY_A0060W;
     } else if (str == "SY_A0125W") {
       return SY_A0125W;
     } else if (str == "SY_A0500W") {
       return SY_A0500W;
+    } else if (str == "SY_B0060W") {
+      return SY_B0060W;
     } else if (str == "PS_A0060W_301") {
       return PS_A0060W_301;
     } else if (str == "MA_A0010W") {
@@ -626,6 +643,8 @@ const AppInner: React.FC = () => {
       return MA_A2300W;
     } else if (str == "MA_A2310W_606") {
       return MA_A2310W_606;
+    } else if (str == "MA_A2300W_615") {
+      return MA_A2300W_615;
     } else if (str == "MA_A2400W") {
       return MA_A2400W;
     } else if (str == "MA_A2410W") {
@@ -636,14 +655,20 @@ const AppInner: React.FC = () => {
       return MA_A2700W;
     } else if (str == "MA_A3000W") {
       return MA_A3000W;
+    } else if (str == "MA_A3400W_606") {
+      return MA_A3400W_606;
     } else if (str == "MA_A7000W") {
       return MA_A7000W;
+    } else if (str == "MA_A8000W") {
+      return MA_A8000W;
     } else if (str == "MA_A3300W") {
       return MA_A3300W;
     } else if (str == "MA_A3400W") {
       return MA_A3400W;
     } else if (str == "MA_A3500W") {
       return MA_A3500W;
+    } else if (str == "MA_A3500W_615") {
+      return MA_A3500W_615;
     } else if (str == "MA_A9001W") {
       return MA_A9001W;
     } else if (str == "MA_B2000W") {
@@ -662,6 +687,8 @@ const AppInner: React.FC = () => {
       return MA_B3100W;
     } else if (str == "MA_B7000W") {
       return MA_B7000W;
+    } else if (str == "MA_B7000W_606") {
+      return MA_B7000W_606;
     } else if (str == "MA_B7200W") {
       return MA_B7200W;
     } else if (str == "MA_B7201W") {
@@ -678,16 +705,32 @@ const AppInner: React.FC = () => {
       return SA_A3000W;
     } else if (str == "SA_A5000W") {
       return SA_A5000W;
+    } else if (str == "SA_A5000W_615") {
+      return SA_A5000W_615;
     } else if (str == "SA_A5001W") {
       return SA_A5001W;
     } else if (str == "SA_A5010W") {
       return SA_A5010W;
+    } else if (str == "SA_A6000W") {
+      return SA_A6000W;
+    } else if (str == "SA_A8000W") {
+      return SA_A8000W;
     } else if (str == "SA_B2200W") {
       return SA_B2200W;
+    } else if (str == "SA_B2200W_603") {
+      return SA_B2200W_603;
+    } else if (str == "SA_B2201W_603") {
+      return SA_B2201W_603;
     } else if (str == "SA_B2211W") {
       return SA_B2211W;
+    } else if (str == "SA_B2211W_603") {
+      return SA_B2211W_603;
     } else if (str == "SA_B2221W") {
       return SA_B2221W;
+    } else if (str == "SA_B2221W_603") {
+      return SA_B2221W_603;
+    } else if (str == "SA_B2227W") {
+      return SA_B2227W;
     } else if (str == "SA_B2410W") {
       return SA_B2410W;
     } else if (str == "SA_B2410W_290") {
@@ -698,6 +741,8 @@ const AppInner: React.FC = () => {
       return SA_B3100W;
     } else if (str == "SA_B3101W") {
       return SA_B3101W;
+    } else if (str == "PR_A2200W") {
+      return PR_A2200W;
     } else if (str == "PR_A0030W") {
       return PR_A0030W;
     } else if (str == "PR_A0040W") {
@@ -748,12 +793,16 @@ const AppInner: React.FC = () => {
       return QC_B0040W;
     } else if (str == "QC_B0030W") {
       return QC_B0030W;
+    } else if (str == "QC_B9020W_615") {
+      return QC_B9020W_615;
     } else if (str == "SY_A0120W") {
       return SY_A0120W;
     } else if (str == "SY_A0110W") {
       return SY_A0110W;
     } else if (str == "SY_A0010W") {
       return SY_A0010W;
+    } else if (str == "SY_A0009W") {
+      return SY_A0009W;
     } else if (str == "SY_A0010W_301") {
       return SY_A0010W_301;
     } else if (str == "SY_A0012W") {
@@ -770,20 +819,28 @@ const AppInner: React.FC = () => {
       return CM_A0000W;
     } else if (str == "CM_A1000W") {
       return CM_A1000W;
+    } else if (str == "CM_A1000W_617") {
+      return CM_A1000W_617;
     } else if (str == "CM_A1600W") {
       return CM_A1600W;
+    } else if (str == "CM_A1600W_603") {
+      return CM_A1600W_603;
     } else if (str == "CM_A1710W") {
       return CM_A1710W;
     } else if (str == "CM_A2000W") {
       return CM_A2000W;
     } else if (str == "CM_A3000W") {
       return CM_A3000W;
+    } else if (str == "CM_A3100W") {
+      return CM_A3100W;
     } else if (str == "CM_A4100W") {
       return CM_A4100W;
     } else if (str == "CM_A5000W") {
       return CM_A5000W;
     } else if (str == "CM_A7000W") {
       return CM_A7000W;
+    } else if (str == "CM_A7010W") {
+      return CM_A7010W;
     } else if (str == "CM_A8000W") {
       return CM_A8000W;
     } else if (str == "CM_A8210W") {
@@ -798,10 +855,16 @@ const AppInner: React.FC = () => {
       return EA_A1000W;
     } else if (str == "EA_A2000W") {
       return EA_A2000W;
+    } else if (str == "EA_A3000W") {
+      return EA_A3000W;
     } else if (str == "CT_A0111W") {
       return CT_A0111W;
     } else if (str == "HU_A1000W") {
       return HU_A1000W;
+    } else if (str == "HU_A1060W") {
+      return HU_A1060W;
+    } else if (str == "HU_A2000W") {
+      return HU_A2000W;
     } else if (str == "HU_A2070W") {
       return HU_A2070W;
     } else if (str == "HU_A2100W") {
@@ -810,10 +873,26 @@ const AppInner: React.FC = () => {
       return HU_A2140W;
     } else if (str == "HU_A3020W") {
       return HU_A3020W;
+    } else if (str == "HU_A3040W") {
+      return HU_A3040W;
+    } else if (str == "HU_A3060W") {
+      return HU_A3060W;
+    } else if (str == "HU_A3080W") {
+      return HU_A3080W;
+    } else if (str == "HU_A3200W") {
+      return HU_A3200W;
+    } else if (str == "HU_A4000W") {
+      return HU_A4000W;
     } else if (str == "HU_A4100W") {
       return HU_A4100W;
+    } else if (str == "HU_A4110W") {
+      return HU_A4110W;
     } else if (str == "HU_A5020W") {
       return HU_A5020W;
+    } else if (str == "HU_A6000W") {
+      return HU_A6000W;
+    } else if (str == "HU_A6020W") {
+      return HU_A6020W;
     } else if (str == "HU_B1020W") {
       return HU_B1020W;
     } else if (str == "HU_B1040W") {
@@ -824,12 +903,14 @@ const AppInner: React.FC = () => {
       return HU_B2120W;
     } else if (str == "HU_B2140W") {
       return HU_B2140W;
+    } else if (str == "HU_B3120W") {
+      return HU_B3120W;
     } else if (str == "HU_B3140W") {
       return HU_B3140W;
     } else if (str == "HU_B3160W") {
-      return HU_B3140W;
+      return HU_B3160W;
     } else if (str == "HU_B3180W") {
-      return HU_B3140W;
+      return HU_B3180W;
     } else if (str == "HU_B3220W") {
       return HU_B3220W;
     } else if (str == "HU_B4001W") {
@@ -844,8 +925,34 @@ const AppInner: React.FC = () => {
       return AC_A0030W;
     } else if (str == "AC_A0070W") {
       return AC_A0070W;
+    } else if (str == "AC_A0090W") {
+      return AC_A0090W;
     } else if (str == "AC_A1000W") {
       return AC_A1000W;
+    } else if (str == "AC_A1020W") {
+      return AC_A1020W;
+    } else if (str == "AC_A1040W") {
+      return AC_A1040W;
+    } else if (str == "AC_A1060W") {
+      return AC_A1060W;
+    } else if (str == "AC_A1070W") {
+      return AC_A1070W;
+    } else if (str == "AC_A1080W") {
+      return AC_A1080W;
+    } else if (str == "AC_A1100W") {
+      return AC_A1100W;
+    } else if (str == "AC_A1120W") {
+      return AC_A1120W;
+    } else if (str == "AC_A3000W") {
+      return AC_A3000W;
+    } else if (str == "AC_A3001W") {
+      return AC_A3001W;
+    } else if (str == "AC_A3100W") {
+      return AC_A3100W;
+    } else if (str == "AC_A5020W") {
+      return AC_A5020W;
+    } else if (str == "AC_A6000W") {
+      return AC_A6000W;
     } else if (str == "AC_B1100W") {
       return AC_B1100W;
     } else if (str == "AC_B1240W") {
@@ -856,16 +963,24 @@ const AppInner: React.FC = () => {
       return AC_B1300W;
     } else if (str == "AC_B1340W") {
       return AC_B1340W;
+    } else if (str == "AC_B2000W") {
+      return AC_B2000W;
     } else if (str == "AC_B2080W") {
       return AC_B2080W;
     } else if (str == "AC_B3000W") {
       return AC_B3000W;
     } else if (str == "AC_B5000W") {
       return AC_B5000W;
+    } else if (str == "AC_B5040W") {
+      return AC_B5040W;
+    } else if (str == "AC_B5060W") {
+      return AC_B5060W;
     } else if (str == "AC_B5080W") {
       return AC_B5080W;
     } else if (str == "AC_B6020W") {
       return AC_B6020W;
+    } else if (str == "AC_B6040W") {
+      return AC_B6040W;
     } else if (str == "AC_B6060W") {
       return AC_B6060W;
     } else if (str == "AC_B6080W") {
@@ -876,6 +991,8 @@ const AppInner: React.FC = () => {
       return AC_B8040W;
     } else if (str == "AC_B8080W") {
       return AC_B8080W;
+    } else if (str == "AC_B8000W") {
+      return AC_B8000W;
     } else if (str == "AC_B8100W") {
       return AC_B8100W;
     } else if (str == "TO_B0011W") {
@@ -894,6 +1011,8 @@ const AppInner: React.FC = () => {
       return PR_B1104W;
     } else if (str == "BA_A0020W_603") {
       return BA_A0020W_603;
+    } else if (str == "BA_A0021W_603") {
+      return BA_A0021W_603;
     } else if (str == "CR_A0010W") {
       return CR_A0010W;
     } else if (str == "CR_A0020W") {
@@ -914,16 +1033,33 @@ const AppInner: React.FC = () => {
       return SA_A1001W_603;
     } else if (str == "SA_A1100W_603") {
       return SA_A1100W_603;
+    } else if (str == "SA_A1200W_603") {
+      return SA_A1200W_603;
+    } else if (str == "SA_B1002W_603") {
+      return SA_B1002W_603;
+    } else if (str == "SA_B1101W_603") {
+      return SA_B1101W_603;
     } else if (str == "SA_B2216W") {
       return SA_B2216W;
+    } else if (str == "SA_B2220W") {
+      return SA_B2220W;
     } else if (str == "SA_B2226W") {
       return SA_B2226W;
     } else if (str == "CR_A0000W") {
       return CR_A0000W;
     } else {
-      return MainAdminCRM;
+      if (currentTheme == "yellow") {
+        return MainAdminCRM;
+      } else if (loginResult.companyCode == "2302BA03") {
+        return MainBIO;
+      } else if (loginResult.companyCode == "2301A110") {
+        return Main;
+      } else {
+        return MainNotApproval;
+      }
     }
   }
+
   return (
     <>
       <LocalizationProvider

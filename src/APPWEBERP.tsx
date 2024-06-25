@@ -277,6 +277,7 @@ const TO_B0011W = lazy(() => import("./routes/TO_B0011W"));
 const Main = lazy(() => import("./routes/Main"));
 const MainBIO = lazy(() => import("./routes/MainBIO"));
 const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));
+const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
 
 load(
   likelySubtags,
@@ -588,7 +589,9 @@ const AppInner: React.FC = () => {
 
   function link(str: any) {
     if (str == "Home" || str == "") {
-      if (loginResult.companyCode == "2302BA03") {
+      if (currentTheme == "yellow") {
+        return MainAdminCRM;
+      } else if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
       } else if (
         loginResult.companyCode == "2301A110" ||
@@ -1045,7 +1048,9 @@ const AppInner: React.FC = () => {
     } else if (str == "CR_A0000W") {
       return CR_A0000W;
     } else {
-      if (loginResult.companyCode == "2302BA03") {
+      if (currentTheme == "yellow") {
+        return MainAdminCRM;
+      } else if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
       } else if (loginResult.companyCode == "2301A110") {
         return Main;
