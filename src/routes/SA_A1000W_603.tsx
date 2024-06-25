@@ -4043,6 +4043,7 @@ const SA_A1000W_603: React.FC = () => {
       ) {
         alert("처리되었습니다.");
       }
+      setValues2(false);
       setUnsavedName([]);
       setFilters((prev) => ({
         ...prev,
