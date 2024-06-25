@@ -882,15 +882,17 @@ const PanelBarNavContainer = (props: any) => {
   const [webheight, setWebHeight] = useState(0);
 
   useLayoutEffect(() => {
-    const handleWindowResize = () => {
-      setWebHeight(getHeight(".Bars"));
-    };
-    handleWindowResize();
-    window.addEventListener("resize", handleWindowResize);
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-    };
-  }, [isMenuOpend, isMobileMenuOpend]);
+    if(paths.length > 0) {
+      const handleWindowResize = () => {
+        setWebHeight(getHeight(".Bars"));
+      };
+      handleWindowResize();
+      window.addEventListener("resize", handleWindowResize);
+      return () => {
+        window.removeEventListener("resize", handleWindowResize);
+      };
+    }
+  }, [isMenuOpend, isMobileMenuOpend, paths]);
 
   return (
     <>
