@@ -9,7 +9,7 @@ import {
   PanelBarItem,
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import cookie from "react-cookies";
 import { useHistory, useLocation, withRouter } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -19,6 +19,7 @@ import {
   Content,
   Footer,
   Gnv,
+  GnvPanel,
   Logo,
   MenuSearchBox,
   Modal,
@@ -43,7 +44,12 @@ import {
   unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
-import { UseGetIp, getBrowser, resetLocalStorage } from "../CommonFunction";
+import {
+  UseGetIp,
+  getBrowser,
+  getHeight,
+  resetLocalStorage,
+} from "../CommonFunction";
 import Loading from "../Loading";
 import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
 import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
@@ -602,98 +608,114 @@ const PanelBarNavContainer = (props: any) => {
   };
   const path = window.location.href;
 
+  const [webheight, setWebHeight] = useState(0);
+
+  useLayoutEffect(() => {
+    const handleWindowResize = () => {
+      setWebHeight(getHeight(".Bars"));
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, [isMenuOpend, isMobileMenuOpend]);
+
   return (
     <>
       <Wrapper isMobileMenuOpend={isMobileMenuOpend} className="DDGD">
         <Modal isMobileMenuOpend={isMobileMenuOpend} onClick={onMenuBtnClick} />
         {isMenuOpend ? (
           <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#f5b901"}>
-            <AppName theme={"#f5b901"} onClick={() => setIsMenuOpend(false)}>
-              <Logo size="32px" name={"CRM_DDGD"} />
-              {loginResult.webTitle}
-            </AppName>
-            {prgMenus && (
-              <MenuSearchBox>
-                {searchedMenu == "" && (
-                  <span className="k-icon k-i-search"></span>
-                )}
-                <AutoComplete
-                  style={{ width: "100%" }}
-                  data={prgMenus}
-                  textField="text"
-                  value={searchedMenu}
-                  onChange={(e) => setSearchedMenu(e.value)}
-                  onBlur={(e) => setSearchedMenu("")}
-                  onClose={openSelctedMenu}
-                  size="small"
-                  placeholder="Search menu.."
-                />
-              </MenuSearchBox>
-            )}
-            {paths.length > 0 && (
-              <PanelBar
-                selected={selected}
-                expandMode={"single"}
-                onSelect={onSelect}
-              >
-                {panelBars.map((path: TPath, idx: number) => {
-                  return singleMenus.includes(path.path) ? (
-                    <PanelBarItem
-                      key={idx}
-                      title={path.menuName}
-                      route={path.path}
-                    />
-                  ) : (
-                    <PanelBarItem
-                      key={idx}
-                      title={path.menuName}
-                      icon={
-                        path.menuId == "fav"
-                          ? "star"
-                          : path.menuId == "setting"
-                          ? "gear"
-                          : undefined
-                      }
-                      className={path.menuId == "fav" ? "fav-menu" : ""}
-                    >
-                      {paths
-                        .filter(
-                          (childPath: TPath) =>
-                            childPath.menuCategory == "WEB" &&
-                            childPath.parentMenuId == path.menuId
-                        )
-                        .map((childPath: TPath, childIdx: number) => (
-                          <PanelBarItem
-                            key={childIdx}
-                            title={
-                              <Tooltip
-                                title={childPath.menuName}
-                                placement="right"
-                              >
-                                <>
-                                  <span title={childPath.menuName}>
-                                    {childPath.menuName}
-                                  </span>
-                                </>
-                              </Tooltip>
-                            }
-                            route={
-                              path.menuId == "setting"
-                                ? undefined
-                                : childPath.path
-                            }
-                            className={childPath.menuId}
-                            icon={childPath.isFavorite ? "circle" : "circle"}
-                          ></PanelBarItem>
-                        ))}
-                    </PanelBarItem>
-                  );
-                })}
-              </PanelBar>
-            )}
+            <div className="Bars">
+              <AppName theme={"#f5b901"} onClick={() => setIsMenuOpend(false)}>
+                <Logo size="32px" name={"CRM_DDGD"} />
+                {loginResult.webTitle}
+              </AppName>
+              {prgMenus && (
+                <MenuSearchBox>
+                  {searchedMenu == "" && (
+                    <span className="k-icon k-i-search"></span>
+                  )}
+                  <AutoComplete
+                    style={{ width: "100%" }}
+                    data={prgMenus}
+                    textField="text"
+                    value={searchedMenu}
+                    onChange={(e) => setSearchedMenu(e.value)}
+                    onBlur={(e) => setSearchedMenu("")}
+                    onClose={openSelctedMenu}
+                    size="small"
+                    placeholder="Search menu.."
+                  />
+                </MenuSearchBox>
+              )}
+            </div>
+            <GnvPanel height={`calc(100vh - ${webheight}px)`}>
+              {paths.length > 0 && (
+                <PanelBar
+                  selected={selected}
+                  expandMode={"single"}
+                  onSelect={onSelect}
+                >
+                  {panelBars.map((path: TPath, idx: number) => {
+                    return singleMenus.includes(path.path) ? (
+                      <PanelBarItem
+                        key={idx}
+                        title={path.menuName}
+                        route={path.path}
+                      />
+                    ) : (
+                      <PanelBarItem
+                        key={idx}
+                        title={path.menuName}
+                        icon={
+                          path.menuId == "fav"
+                            ? "star"
+                            : path.menuId == "setting"
+                            ? "gear"
+                            : undefined
+                        }
+                        className={path.menuId == "fav" ? "fav-menu" : ""}
+                      >
+                        {paths
+                          .filter(
+                            (childPath: TPath) =>
+                              childPath.menuCategory == "WEB" &&
+                              childPath.parentMenuId == path.menuId
+                          )
+                          .map((childPath: TPath, childIdx: number) => (
+                            <PanelBarItem
+                              key={childIdx}
+                              title={
+                                <Tooltip
+                                  title={childPath.menuName}
+                                  placement="right"
+                                >
+                                  <>
+                                    <span title={childPath.menuName}>
+                                      {childPath.menuName}
+                                    </span>
+                                  </>
+                                </Tooltip>
+                              }
+                              route={
+                                path.menuId == "setting"
+                                  ? undefined
+                                  : childPath.path
+                              }
+                              className={childPath.menuId}
+                              icon={childPath.isFavorite ? "circle" : "circle"}
+                            ></PanelBarItem>
+                          ))}
+                      </PanelBarItem>
+                    );
+                  })}
+                </PanelBar>
+              )}
 
-            {/* GST */}
-            {/* {companyCode == "2207C612" && (
+              {/* GST */}
+              {/* {companyCode == "2207C612" && (
         <PanelBar
           selected={selected}
           expandMode={"single"}
@@ -710,38 +732,39 @@ const PanelBarNavContainer = (props: any) => {
         </PanelBar>
       )} */}
 
-            <ButtonContainer
-              flexDirection={"column"}
-              style={{ marginTop: "10px", gap: "5px", marginBottom: "30px" }}
-            >
-              <Button
-                onClick={onClickChatbot}
-                icon={"hyperlink-open-sm"}
-                fillMode={"solid"}
-                themeColor={"secondary"}
-                rounded={"full"}
-                size="small"
+              <ButtonContainer
+                flexDirection={"column"}
+                style={{ marginTop: "10px", gap: "5px", marginBottom: "30px" }}
               >
-                Chatbot
-              </Button>
-              {isAdmin && (
                 <Button
-                  onClick={() => setUserOptionsWindowVisible(true)}
+                  onClick={onClickChatbot}
+                  icon={"hyperlink-open-sm"}
+                  fillMode={"solid"}
+                  themeColor={"secondary"}
+                  rounded={"full"}
+                  size="small"
+                >
+                  Chatbot
+                </Button>
+                {isAdmin && (
+                  <Button
+                    onClick={() => setUserOptionsWindowVisible(true)}
+                    fillMode={"flat"}
+                    themeColor={"secondary"}
+                  >
+                    사용자 옵션
+                  </Button>
+                )}
+                <Button
+                  onClick={logout}
+                  icon={"logout"}
                   fillMode={"flat"}
                   themeColor={"secondary"}
                 >
-                  사용자 옵션
+                  로그아웃
                 </Button>
-              )}
-              <Button
-                onClick={logout}
-                icon={"logout"}
-                fillMode={"flat"}
-                themeColor={"secondary"}
-              >
-                로그아웃
-              </Button>
-            </ButtonContainer>
+              </ButtonContainer>
+            </GnvPanel>
           </Gnv>
         ) : (
           <div

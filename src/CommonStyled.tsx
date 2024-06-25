@@ -211,8 +211,8 @@ export const ButtonContainer = styled.div<TButtonContainer>`
   flex-direction: ${(props) =>
     props.flexDirection ? props.flexDirection : "row"};
   align-items: center;
-  padding : 5px 0px;
-  
+  padding: 5px 0px;
+
   input,
   button {
     margin-left: 5px;
@@ -339,7 +339,7 @@ export const FilterBox = styled.table`
 
 type TFormBoxWrap = {
   border?: boolean;
-  className? : string;
+  className?: string;
 };
 export const FormBoxWrap = styled.div<TFormBoxWrap>`
   width: 100%;
@@ -486,7 +486,7 @@ export const GridContainer = styled.div<TGridContainer>`
   .k-grid {
     padding: 0px;
   }
-  
+
   .k-scheduler {
     padding: 5px 0;
   }
@@ -604,7 +604,7 @@ export const GridTitleContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 0px; 
+  padding: 5px 0px;
 
   @media (max-width: 1200px) {
     display: inline-block;
@@ -866,6 +866,20 @@ export const Wrapper = styled.div<TWrapper>`
   //overflow: ${(props) => (props.isMobileMenuOpend ? "hidden" : "auto")};
 `;
 
+type TGnvPanel = {
+  height: string;
+};
+
+export const GnvPanel = styled.div<TGnvPanel>`
+  overflow: scroll;
+  position: fixed;
+  width: ${GNV_WIDTH}px;
+  height: ${(props) => props.height};
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
 type TGnv = TWrapper;
 export const Gnv = styled.div<TGnv>`
   width: ${GNV_WIDTH}px;
@@ -873,13 +887,7 @@ export const Gnv = styled.div<TGnv>`
 
   border-right: 1px solid rgb(235, 235, 235);
   background-color: #fff;
-  /* 메뉴 고정 추가 */
-  height: 100vh;
-  position: fixed;
-  overflow: scroll;
-  ::-webkit-scrollbar {
-    display: none;
-  }
+
   .logout span {
     color: #656565;
   }
