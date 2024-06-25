@@ -23,6 +23,7 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridHeaderCellProps,
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridRowDoubleClickEvent,
@@ -67,6 +68,7 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
@@ -1620,10 +1622,10 @@ const SA_A1000W_603: React.FC = () => {
   };
   const onPrint = () => {
     if (!permissions.print) return;
-    if(mainDataResult2.total > 0) {
+    if (mainDataResult2.total > 0) {
       setPrintWindowVisible(true);
     } else {
-      alert("의뢰품목이 없습니다.")
+      alert("의뢰품목이 없습니다.");
     }
   };
   const getAttachmentsData = (data: IAttachmentData) => {
@@ -4432,13 +4434,32 @@ const SA_A1000W_603: React.FC = () => {
     if (Information.quosts == "2") {
       alert("이미 진행단계가 [계획요청] 상태입니다.");
     } else {
-      setParaData((prev) => ({
-        ...prev,
-        workType: "DesTran",
-        orgdiv: sessionOrgdiv,
-        quonum: Information.quonum,
-        quorev: Information.quorev,
-      }));
+      let array: any[] = [];
+      let noarray: any[] = [];
+      const dataItem = mainDataResult2.data.filter(
+        (item: any) => item.chk == true
+      );
+
+      dataItem.map((item: any) => {
+        if (item.quosts != "1") {
+          noarray.push("NO." + item.quoseq);
+        } else {
+          array.push(item.quoseq);
+        }
+      });
+
+      if (noarray.length > 0) {
+        alert(noarray.join(",") + "은 [진행단계]가 의뢰가 아닙니다.");
+      } else {
+        setParaData((prev) => ({
+          ...prev,
+          workType: "DesTran",
+          orgdiv: sessionOrgdiv,
+          quonum: Information.quonum,
+          quorev: Information.quorev,
+          quoseq_s: array.join("|"),
+        }));
+      }
     }
   };
 
@@ -4447,14 +4468,58 @@ const SA_A1000W_603: React.FC = () => {
     if (Information.quosts != "2") {
       alert("진행단계가 [계획요청] 상태만 취소 가능합니다.");
     } else {
-      setParaData((prev) => ({
-        ...prev,
-        workType: "DesTran_d",
-        orgdiv: sessionOrgdiv,
-        quonum: Information.quonum,
-        quorev: Information.quorev,
-      }));
+      let array: any[] = [];
+      let noarray: any[] = [];
+      const dataItem = mainDataResult2.data.filter(
+        (item: any) => item.chk == true
+      );
+
+      dataItem.map((item: any) => {
+        if (item.quosts == "2") {
+          array.push(item.quoseq);
+        } else {
+          noarray.push("NO." + item.quoseq);
+        }
+      });
+
+      if (noarray.length > 0) {
+        alert(noarray.join(",") + "은 [진행단계]가 계획요청이 아닙니다.");
+      } else {
+        setParaData((prev) => ({
+          ...prev,
+          workType: "DesTran_d",
+          orgdiv: sessionOrgdiv,
+          quonum: Information.quonum,
+          quorev: Information.quorev,
+          quoseq_s: array.join("|"),
+        }));
+      }
     }
+  };
+
+  const [values2, setValues2] = React.useState<boolean>(false);
+  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
+        chk: !values2,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues2(!values2);
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+      </div>
+    );
   };
 
   return (
@@ -6076,6 +6141,13 @@ const SA_A1000W_603: React.FC = () => {
                             title=" "
                             width="50px"
                           />
+                          <GridColumn
+                            field="chk"
+                            title=" "
+                            width="45px"
+                            headerCell={CustomCheckBoxCell2}
+                            cell={CheckBoxCell}
+                          />
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions["grdList2"]
                               ?.sort(
@@ -7275,6 +7347,13 @@ const SA_A1000W_603: React.FC = () => {
                         editField={EDIT_FIELD}
                       >
                         <GridColumn field="rowstatus" title=" " width="50px" />
+                        <GridColumn
+                          field="chk"
+                          title=" "
+                          width="45px"
+                          headerCell={CustomCheckBoxCell2}
+                          cell={CheckBoxCell}
+                        />
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions["grdList2"]
                             ?.sort(
