@@ -189,17 +189,18 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const datas = window.location.href.split("?")[0];
   const pathname = datas.split("/")[3];
   const menu = loginResult
-    ? (loginResult.homeMenuWeb == "Home" || loginResult.homeMenuWeb == "") &&
-      loginResult.companyCode == "2302BA03"
-      ? "MainBIO"
-      : (loginResult.homeMenuWeb == "Home" || loginResult.homeMenuWeb == "") &&
-        (loginResult.companyCode == "2301A110" ||
-          loginResult.companyCode == "2207A046")
-      ? "Main"
-      : loginResult.homeMenuWeb == "Home" || loginResult.homeMenuWeb == ""
-      ? "MainNotApproval"
-      : pathname == "Home"
-      ? loginResult.homeMenuWeb
+    ? pathname == "Home"
+      ? (loginResult.homeMenuWeb == "Home" || loginResult.homeMenuWeb == "") &&
+        loginResult.companyCode == "2302BA03"
+        ? "MainBIO"
+        : (loginResult.homeMenuWeb == "Home" ||
+            loginResult.homeMenuWeb == "") &&
+          (loginResult.companyCode == "2301A110" ||
+            loginResult.companyCode == "2207A046")
+        ? "Main"
+        : loginResult.homeMenuWeb == "Home" || loginResult.homeMenuWeb == ""
+        ? "MainNotApproval"
+        : loginResult.homeMenuWeb
       : pathname
     : "";
 
