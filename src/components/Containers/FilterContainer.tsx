@@ -38,13 +38,7 @@ const FilterContainer = ({ children }: TChildren) => {
           toggleFilterHide={toggleFilterHide}
         />
       </div>
-      {!isMobile ? (
-        <div className="filterBox">
-          <FilterBoxWrap>{children}</FilterBoxWrap>
-        </div>
-      ) : isFilterHideState ? (
-        ""
-      ) : (
+      {(!isFilterHideStates || !isMobile) && (
         <div className="filterBox">
           <FilterBoxWrap>{children}</FilterBoxWrap>
         </div>
