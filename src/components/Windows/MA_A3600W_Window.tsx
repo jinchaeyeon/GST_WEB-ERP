@@ -506,7 +506,6 @@ const CopyWindow = ({
       selectRowList.map((selectRow) => {
         const newDataItem = {
           ...selectRow,
-          now_qty: 0,
           chk: false,
         };
         setSubSelectedState({ [newDataItem[DATA_ITEM_KEY2]]: true });
