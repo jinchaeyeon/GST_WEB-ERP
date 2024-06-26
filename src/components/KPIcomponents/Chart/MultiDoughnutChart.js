@@ -89,7 +89,7 @@ export default function MultiDoughnutChart(props) {
             formatter: function (value, context) {
               return sum == 0
                 ? 0 + "%"
-                : numberWithCommas3(value / sum) * 100 + "%";
+                : (numberWithCommas3(value / sum) * 100).toFixed(2) + "%";
             },
           },
         },
