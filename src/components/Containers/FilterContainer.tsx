@@ -1,10 +1,7 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { FilterBoxWrap } from "../../CommonStyled";
-import {
-  isFilterHideState,
-  isFilterheightstate
-} from "../../store/atoms";
+import { isFilterHideState, isFilterheightstate } from "../../store/atoms";
 import FilterHideToggleButton from "../Buttons/FilterHideToggleButton";
 
 type TChildren = {
@@ -41,7 +38,13 @@ const FilterContainer = ({ children }: TChildren) => {
           toggleFilterHide={toggleFilterHide}
         />
       </div>
-      {(!isFilterHideStates || !isMobile) && (
+      {!isMobile ? (
+        <div className="filterBox">
+          <FilterBoxWrap>{children}</FilterBoxWrap>
+        </div>
+      ) : isFilterHideState ? (
+        ""
+      ) : (
         <div className="filterBox">
           <FilterBoxWrap>{children}</FilterBoxWrap>
         </div>

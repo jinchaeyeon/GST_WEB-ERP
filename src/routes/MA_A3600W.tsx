@@ -3,6 +3,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
@@ -12,6 +13,9 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -24,6 +28,8 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -34,20 +40,30 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
+  getBizCom,
   getDeviceHeight,
   getHeight,
   handleKeyPressSearch,
+  numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
-import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import MA_A3600W_Window from "../components/Windows/MA_A3600W_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
-import { Iparameters, TPermissions } from "../store/types";
+import { gridList } from "../store/columns/MA_A3600W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
+let deletedMainRows: object[] = [];
 let targetRowIndex: null | number = null;
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -56,6 +72,9 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
+var index = 0;
+const dateField = ["outdt", "indt"];
+const numberField = ["qty", "cnt"];
 
 const MA_A3600W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -88,7 +107,7 @@ const MA_A3600W: React.FC = () => {
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
   const [webheight3, setWebHeight3] = useState(0);
-
+  const [swiper, setSwiper] = useState<SwiperCore>();
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");
@@ -140,10 +159,16 @@ const MA_A3600W: React.FC = () => {
   }, [customOptionData]);
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
+  const [MA_A3600W_WindowVisible, setMA_A3600W_WindowVisible] =
+    useState<boolean>(false);
+
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
 
+  const onAddClick = () => {
+    setMA_A3600W_WindowVisible(true);
+  };
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
       ...prev,
@@ -248,10 +273,47 @@ const MA_A3600W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "",
+    "L_BA015, L_BA061, L_BA171, L_BA172, L_BA173, L_sysUserMaster_001,L_BA116_280, L_LOADPLACE",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
+
+  const [itemacntListData, setItemacntListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl1ListData, setItemlvl1ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl2ListData, setItemlvl2ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemlvl3ListData, setItemlvl3ListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [personListData, setPersonListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
+  const [itemtypeListData, setItemtypeListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [loadplaceListData, setLoadPlaceListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [qtyunitListData, setQtyunitListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setItemlvl1ListData(getBizCom(bizComponentData, "L_BA171"));
+      setItemlvl2ListData(getBizCom(bizComponentData, "L_BA172"));
+      setItemlvl3ListData(getBizCom(bizComponentData, "L_BA173"));
+      setPersonListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+      setItemtypeListData(getBizCom(bizComponentData, "L_BA116_280"));
+      setLoadPlaceListData(getBizCom(bizComponentData, "L_LOADPLACE"));
+      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
+    }
+  }, [bizComponentData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -546,6 +608,9 @@ const MA_A3600W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if (swiper && isMobile) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -621,6 +686,7 @@ const MA_A3600W: React.FC = () => {
       return <td></td>;
     }
   };
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
@@ -661,6 +727,26 @@ const MA_A3600W: React.FC = () => {
       return <td></td>;
     }
   };
+
+  const editNumberFooterCell3 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult3.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -679,6 +765,21 @@ const MA_A3600W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    setFilters2((prev) => ({
+      ...prev,
+      isSearch: true,
+      pgNum: 1,
+      recdt: selectedRowData.recdt,
+      seq1: selectedRowData.seq1,
+      seq2: selectedRowData.seq2,
+    }));
+    if (swiper && isMobile) {
+      swiper.slideTo(2);
+    }
   };
 
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -689,6 +790,7 @@ const MA_A3600W: React.FC = () => {
     });
     setSelectedState2(newSelectedState);
   };
+
   const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -698,6 +800,90 @@ const MA_A3600W: React.FC = () => {
     setSelectedState3(newSelectedState);
   };
 
+  const createColumn = () => {
+    const array = [];
+    array.push(
+      <GridColumn
+        field="itemcd"
+        title="품목코드"
+        width="120px"
+        footerCell={mainTotalFooterCell3}
+      />
+    );
+    array.push(<GridColumn field="itemnm" title="품목명" width="150px" />);
+    array.push(<GridColumn field="itemacnt" title="품목계정" width="120px" />);
+    array.push(<GridColumn field="insiz" title="규격" width="150px" />);
+    array.push(<GridColumn field="lotnum" title="LOT NO" width="150px" />);
+    array.push(<GridColumn field="load_place" title="창고명" width="120px" />);
+    array.push(
+      <GridColumn
+        field="now_qty"
+        title="현재고"
+        width="100px"
+        cell={NumberCell}
+        footerCell={gridSumQtyFooterCell3}
+      />
+    );
+    array.push(<GridColumn field="qtyunit" title="단위" width="120px" />);
+    return array;
+  };
+
+  const createColumn2 = () => {
+    const array = [];
+    array.push(<GridColumn field="itemcd_af" title="품목코드" width="120px" />);
+    array.push(<GridColumn field="itemnm_af" title="품목명" width="150px" />);
+    array.push(
+      <GridColumn field="itemacnt_af" title="품목계정" width="120px" />
+    );
+    array.push(
+      <GridColumn
+        field="doqty"
+        title="처리량"
+        width="100px"
+        cell={NumberCell}
+        footerCell={editNumberFooterCell3}
+      />
+    );
+    array.push(<GridColumn field="qtyunit_af" title="단위" width="120px" />);
+    array.push(<GridColumn field="remark" title="비고" width="200px" />);
+    return array;
+  };
+
+  const onDeleteClick = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult3.data.forEach((item: any, index: number) => {
+      if (!selectedState3[item[DATA_ITEM_KEY3]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedMainRows.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult3.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult3.data[Math.min(...Object) - 1];
+    }
+    setMainDataResult3((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState3({
+        [data != undefined ? data[DATA_ITEM_KEY3] : newData[0]]: true,
+      });
+    }
+  };
+
+  const onSaveClick = () => {};
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -828,15 +1014,351 @@ const MA_A3600W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       {isMobile ? (
-        <></>
+        <>
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>처리영역</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="folder-open"
+                      disabled={permissions.save ? false : true}
+                    >
+                      재고참조팝업
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    >
+                      저장
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult3.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="전용처리"
+                >
+                  <Grid
+                    style={{ height: mobileheight }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        itemacnt: itemacntListData.find(
+                          (item: any) => item.sub_code == row.itemacnt
+                        )?.code_name,
+                        load_place: loadplaceListData.find(
+                          (item: any) => item.sub_code == row.load_place
+                        )?.code_name,
+                        qtyunit: qtyunitListData.find(
+                          (items: any) => items.sub_code == row.qtyunit
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn title="변경전">{createColumn()}</GridColumn>
+                    <GridColumn title="변경후">{createColumn2()}</GridColumn>
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>출고상세자료</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(2);
+                        }
+                      }}
+                      icon="chevron-right"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
+                  }}
+                  fileName="전용처리"
+                >
+                  <Grid
+                    style={{ height: mobileheight2 }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        itemacnt: itemacntListData.find(
+                          (item: any) => item.sub_code == row.itemacnt
+                        )?.code_name,
+                        itemlvl1: itemlvl1ListData.find(
+                          (item: any) => item.sub_code == row.itemlvl1
+                        )?.code_name,
+                        itemlvl2: itemlvl2ListData.find(
+                          (item: any) => item.sub_code == row.itemlvl2
+                        )?.code_name,
+                        itemlvl3: itemlvl3ListData.find(
+                          (item: any) => item.sub_code == row.itemlvl3
+                        )?.code_name,
+                        person: personListData.find(
+                          (item: any) => item.user_id == row.person
+                        )?.user_name,
+                        itemtype: itemtypeListData.find(
+                          (item: any) => item.sub_code == row.itemtype
+                        )?.code_name,
+                        load_place: loadplaceListData.find(
+                          (item: any) => item.sub_code == row.load_place
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer3">
+                  <GridTitle>입고상세자료</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="chevron-left"
+                      themeColor={"primary"}
+                      fillMode={"flat"}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export3 = exporter;
+                  }}
+                  fileName="전용처리"
+                >
+                  <Grid
+                    style={{ height: mobileheight3 }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        itemacnt: itemacntListData.find(
+                          (item: any) => item.sub_code == row.itemacnt
+                        )?.code_name,
+                        itemlvl1: itemlvl1ListData.find(
+                          (item: any) => item.sub_code == row.itemlvl1
+                        )?.code_name,
+                        itemlvl2: itemlvl2ListData.find(
+                          (item: any) => item.sub_code == row.itemlvl2
+                        )?.code_name,
+                        itemlvl3: itemlvl3ListData.find(
+                          (item: any) => item.sub_code == row.itemlvl3
+                        )?.code_name,
+                        itemtype: itemtypeListData.find(
+                          (item: any) => item.sub_code == row.itemtype
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell2
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell2
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </>
       ) : (
         <>
           <GridContainer>
             <GridTitleContainer className="ButtonContainer">
-              <GridTitle>요약정보</GridTitle>
+              <GridTitle>처리영역</GridTitle>
               <ButtonContainer>
                 <Button
-                  //onClick={onAddClick}
+                  onClick={onAddClick}
                   themeColor={"primary"}
                   icon="folder-open"
                   disabled={permissions.save ? false : true}
@@ -844,13 +1366,22 @@ const MA_A3600W: React.FC = () => {
                   재고참조팝업
                 </Button>
                 <Button
-                  //onClick={onDeleteClick}
+                  onClick={onDeleteClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
                   title="행 삭제"
                   disabled={permissions.save ? false : true}
                 ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  disabled={permissions.save ? false : true}
+                >
+                  저장
+                </Button>
               </ButtonContainer>
             </GridTitleContainer>
             <ExcelExport
@@ -865,6 +1396,15 @@ const MA_A3600W: React.FC = () => {
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
+                    itemacnt: itemacntListData.find(
+                      (item: any) => item.sub_code == row.itemacnt
+                    )?.code_name,
+                    load_place: loadplaceListData.find(
+                      (item: any) => item.sub_code == row.load_place
+                    )?.code_name,
+                    qtyunit: qtyunitListData.find(
+                      (items: any) => items.sub_code == row.qtyunit
+                    )?.code_name,
                     [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                   })),
                   mainDataState3
@@ -893,7 +1433,10 @@ const MA_A3600W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-              ></Grid>
+              >
+                <GridColumn title="변경전">{createColumn()}</GridColumn>
+                <GridColumn title="변경후">{createColumn2()}</GridColumn>
+              </Grid>
             </ExcelExport>
           </GridContainer>
           <GridContainerWrap>
@@ -913,6 +1456,27 @@ const MA_A3600W: React.FC = () => {
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
+                      itemacnt: itemacntListData.find(
+                        (item: any) => item.sub_code == row.itemacnt
+                      )?.code_name,
+                      itemlvl1: itemlvl1ListData.find(
+                        (item: any) => item.sub_code == row.itemlvl1
+                      )?.code_name,
+                      itemlvl2: itemlvl2ListData.find(
+                        (item: any) => item.sub_code == row.itemlvl2
+                      )?.code_name,
+                      itemlvl3: itemlvl3ListData.find(
+                        (item: any) => item.sub_code == row.itemlvl3
+                      )?.code_name,
+                      person: personListData.find(
+                        (item: any) => item.user_id == row.person
+                      )?.user_name,
+                      itemtype: itemtypeListData.find(
+                        (item: any) => item.sub_code == row.itemtype
+                      )?.code_name,
+                      load_place: loadplaceListData.find(
+                        (item: any) => item.sub_code == row.load_place
+                      )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
                     mainDataState
@@ -941,7 +1505,37 @@ const MA_A3600W: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                ></Grid>
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
               </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
@@ -960,6 +1554,21 @@ const MA_A3600W: React.FC = () => {
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
+                      itemacnt: itemacntListData.find(
+                        (item: any) => item.sub_code == row.itemacnt
+                      )?.code_name,
+                      itemlvl1: itemlvl1ListData.find(
+                        (item: any) => item.sub_code == row.itemlvl1
+                      )?.code_name,
+                      itemlvl2: itemlvl2ListData.find(
+                        (item: any) => item.sub_code == row.itemlvl2
+                      )?.code_name,
+                      itemlvl3: itemlvl3ListData.find(
+                        (item: any) => item.sub_code == row.itemlvl3
+                      )?.code_name,
+                      itemtype: itemtypeListData.find(
+                        (item: any) => item.sub_code == row.itemtype
+                      )?.code_name,
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                     })),
                     mainDataState2
@@ -988,7 +1597,37 @@ const MA_A3600W: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                ></Grid>
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell2
+                                  : numberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
               </ExcelExport>
             </GridContainer>
           </GridContainerWrap>
@@ -1001,6 +1640,27 @@ const MA_A3600W: React.FC = () => {
           setData={setItemData}
           modal={true}
         />
+      )}
+      {MA_A3600W_WindowVisible && (
+        <MA_A3600W_Window
+          setVisible={setMA_A3600W_WindowVisible}
+          setData={() => console.log("Dd")}
+          modal={true}
+          pathname="MA_A3600W"
+        />
+      )}
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );

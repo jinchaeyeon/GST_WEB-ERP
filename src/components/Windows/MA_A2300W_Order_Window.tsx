@@ -566,20 +566,6 @@ const CopyWindow = ({
     setSelectedState(newSelectedState);
   };
 
-  const onHeaderSelectionChange = React.useCallback(
-    (event: GridHeaderSelectionChangeEvent) => {
-      const checkboxElement: any = event.syntheticEvent.target;
-      const checked = checkboxElement.checked;
-      const newSelectedState: any = {};
-
-      event.dataItems.forEach((item: any) => {
-        newSelectedState[idGetter(item)] = checked;
-      });
-      setSelectedState(newSelectedState);
-    },
-    []
-  );
-
   const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
