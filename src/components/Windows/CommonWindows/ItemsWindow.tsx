@@ -24,6 +24,7 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import { TPermissions } from "../../../store/types";
+import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
   UsePermissions,
@@ -69,9 +70,9 @@ const ItemsWindow = ({
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [position, setPosition] = useState<IWindowPosition>({
-    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    left: isMobile == true ? 0 : (deviceWidth - 1500) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
-    width: isMobile == true ? deviceWidth : 1200,
+    width: isMobile == true ? deviceWidth : 1500,
     height: isMobile == true ? deviceHeight : 800,
   });
   const [isFilterHideStates2, setisFilterHideStates2] =
@@ -105,7 +106,7 @@ const ItemsWindow = ({
   const setLoading = useSetRecoilState(isLoading);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "R_USEYN",
+    "R_USEYN, L_BA061",
     //사용여부,
     setBizComponentData
   );
@@ -122,6 +123,15 @@ const ItemsWindow = ({
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterComboChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -214,6 +224,7 @@ const ItemsWindow = ({
       itemcd: filters.itemcd,
       itemnm: filters.itemnm,
       insiz: filters.insiz,
+      itemacnt: filters.itemacnt,
       useyn:
         filters.useyn == "Y" ? "사용" : filters.useyn == "N" ? "미사용" : "",
     };
@@ -376,6 +387,18 @@ const ItemsWindow = ({
                   value={filters.insiz}
                   onChange={filterInputChange}
                 />
+              </td>
+              <th>품목계정</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="itemacnt"
+                    value={filters.itemacnt}
+                    bizComponentId="L_BA061"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboChange}
+                  />
+                )}
               </td>
               <th>사용여부</th>
               <td>

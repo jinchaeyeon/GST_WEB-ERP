@@ -178,7 +178,7 @@ const MA_A3400W = lazy(() => import("./routes/MA_A3400W"));
 const MA_A3400W_606 = lazy(() => import("./routes/MA_A3400W_606"));
 const MA_A3500W = lazy(() => import("./routes/MA_A3500W"));
 const MA_A3500W_615 = lazy(() => import("./routes/MA_A3500W_615"));
-
+const MA_A3600W = lazy(() => import("./routes/MA_A3600W"));
 const MA_A7000W = lazy(() => import("./routes/MA_A7000W"));
 const MA_A8000W = lazy(() => import("./routes/MA_A8000W"));
 const MA_A9001W = lazy(() => import("./routes/MA_A9001W"));
@@ -1047,6 +1047,8 @@ const AppInner: React.FC = () => {
       return SA_B2226W;
     } else if (str == "CR_A0000W") {
       return CR_A0000W;
+    } else if (str == "MA_A3600W") {
+      return MA_A3600W;
     } else {
       if (currentTheme == "yellow") {
         return MainAdminCRM;
@@ -1138,6 +1140,7 @@ const AppInner: React.FC = () => {
                       component={MA_A3400W_606}
                       exact
                     />
+                    <AuthRoute path="/MA_A3600W" component={MA_A3600W} exact />
                     <AuthRoute path="/MA_A7000W" component={MA_A7000W} exact />
                     <AuthRoute path="/MA_A8000W" component={MA_A8000W} exact />
                     <AuthRoute path="/MA_A3300W" component={MA_A3300W} exact />
