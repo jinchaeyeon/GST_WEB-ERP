@@ -153,7 +153,7 @@ const Main: React.FC = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(false) - height);
-        setMobileHeight2(getDeviceHeight(false) - height - height2);
+        setMobileHeight2(getDeviceHeight(false) - height);
         setMobileHeight4((getDeviceHeight(false) - height3) / 2 - height4);
         setMobileHeight5((getDeviceHeight(false) - height3) / 2 - height5);
         setWebHeight(getDeviceHeight(false) - height - height6);
@@ -923,19 +923,6 @@ const Main: React.FC = () => {
                     </div>
                   ) : (
                     <>
-                      <GridTitleContainer className="ButtonContainer2">
-                        <GridTitle></GridTitle>
-                        {customOptionData !== null && (
-                          <div>
-                            <CustomOptionComboBox
-                              name="cboSchedulerType"
-                              value={schedulerFilter.cboSchedulerType}
-                              customOptionData={customOptionData}
-                              changeData={schedulerFilterChange}
-                            />
-                          </div>
-                        )}
-                      </GridTitleContainer>
                       <Scheduler
                         height={mobileheight2}
                         data={schedulerDataResult}
