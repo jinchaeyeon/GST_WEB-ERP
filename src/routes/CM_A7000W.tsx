@@ -1670,11 +1670,7 @@ const CM_A7000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>
-          {loginResult.companyCode == "2302BA03"
-            ? "고객상담일지"
-            : "회의록관리"}
-        </Title>
+        <Title>고객상담일지</Title>
         <ButtonContainer>
           {tabSelected == 1 ? (
             <Button
