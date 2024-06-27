@@ -2,7 +2,7 @@
   "compileOnSave": true,
   "compilerOptions": {
     "module": "esnext",
-    "target": "es6",
+    "target": "es2015",
     "outDir": "./",
     "jsx": "react-jsx",
     "noImplicitAny": true,

@@ -2,6 +2,9 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const { EsbuildPlugin } = require("esbuild-loader");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -34,28 +37,18 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        loader: "ts-loader",
-        exclude: /node_modules/,
+        test: /\.(js|jsx|tsx)$/i,
+        loader: "esbuild-loader",
         options: {
-          allowTsInNodeModules: true,
-          compilerOptions: { noEmit: false },
+          loader: "tsx",
+          target: "es2015",
         },
       },
       {
-        test: /\.js?/,
-        loader: "babel-loader",
-        options: {
-          presets: ["@babel/preset-env", "@babel/preset-react"],
-          plugins: ["@babel/plugin-proposal-class-properties"],
-        },
-      },
-      {
-        test: /\.jsx?$/,
-        loader: "babel-loader",
-        options: {
-          presets: ["@babel/preset-env", "@babel/preset-react"],
-          plugins: ["@babel/plugin-proposal-class-properties"],
+        test: /\.ts$/, // .ts 에 한하여 ts-loader를 이용하여 transpiling
+        exclude: /node_module/,
+        use: {
+          loader: "ts-loader",
         },
       },
       {
@@ -95,7 +88,16 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "esbuild-loader",
+            options: {
+              minify: true,
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpg|jpeg|ttf|woff|svg)$/,
@@ -110,9 +112,20 @@ module.exports = {
       },
     ],
   },
+  optimization: {
+    minimizer: [
+      new EsbuildPlugin({
+        target: "es2015", // Syntax to transpile to (see options below for possible values)
+        css: true,
+      }),
+    ],
+  },
 
   // 번들링된 JS 코드를 html 파일과 매핑 및 주입시키기 위한 플러그인 설정.
   plugins: [
+    new ReactRefreshWebpackPlugin({
+      overlay: false,
+    }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
     }),
@@ -126,6 +139,7 @@ module.exports = {
         },
       ],
     }),
+    new ForkTsCheckerWebpackPlugin(),
     new webpack.ProvidePlugin({ React: "react" }),
   ],
   resolve: {
@@ -133,7 +147,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "build"),
-    filename: '[name].[contenthash:8].js',
-    clean: true
+    filename: "[name].[contenthash:8].js",
+    clean: true,
   },
 };
