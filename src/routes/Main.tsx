@@ -132,7 +132,6 @@ const Main: React.FC = () => {
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
-  const [mobileheight3, setMobileHeight3] = useState(0);
   const [mobileheight4, setMobileHeight4] = useState(0);
   const [mobileheight5, setMobileHeight5] = useState(0);
   const [webheight, setWebHeight] = useState(0);
@@ -153,9 +152,8 @@ const Main: React.FC = () => {
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
-        setMobileHeight(getDeviceHeight(false) - height - height6);
-        setMobileHeight2(getDeviceHeight(false) - height - height6 - height2);
-        setMobileHeight3(getDeviceHeight(false) - height - height6);
+        setMobileHeight(getDeviceHeight(false) - height);
+        setMobileHeight2(getDeviceHeight(false) - height - height2);
         setMobileHeight4((getDeviceHeight(false) - height3) / 2 - height4);
         setMobileHeight5((getDeviceHeight(false) - height3) / 2 - height5);
         setWebHeight(getDeviceHeight(false) - height - height6);
@@ -909,79 +907,48 @@ const Main: React.FC = () => {
                 </ApprovalBox>
               </MainTopContainer>
               <GridContainer style={{ width: "100%" }}>
-                <TabStrip
-                  style={{ width: "100%" }}
-                  selected={tabSelected}
-                  onSelect={handleSelectTab}
-                  scrollable={isMobile}
-                >
-                  <TabStripTab title="업무 달력">
-                    <GridContainer>
-                      {osstate == true ? (
-                        <div
-                          style={{
-                            backgroundColor: "#ccc",
-                            height: mobileheight,
-                            width: "100%",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          현재 OS에서는 지원이 불가능합니다.
-                        </div>
-                      ) : (
-                        <>
-                          <GridTitleContainer className="ButtonContainer2">
-                            <GridTitle></GridTitle>
-                            {customOptionData !== null && (
-                              <div>
-                                <CustomOptionComboBox
-                                  name="cboSchedulerType"
-                                  value={schedulerFilter.cboSchedulerType}
-                                  customOptionData={customOptionData}
-                                  changeData={schedulerFilterChange}
-                                />
-                              </div>
-                            )}
-                          </GridTitleContainer>
-                          <Scheduler
-                            height={mobileheight2}
-                            data={schedulerDataResult}
-                            defaultDate={displayDate}
-                            item={CustomItem}
-                          >
-                            <MonthView />
-                            <DayView />
-                            <WeekView />
-                          </Scheduler>
-                        </>
-                      )}
-                    </GridContainer>
-                  </TabStripTab>
-                  <TabStripTab
-                    title="프로세스 레이아웃"
-                    disabled={
-                      permissions.view
-                        ? mainDataResult.total == 0
-                          ? true
-                          : false
-                        : true
-                    }
-                  >
-                    <TabStrip
+                <GridContainer>
+                  {osstate == true ? (
+                    <div
                       style={{
+                        backgroundColor: "#ccc",
+                        height: mobileheight,
                         width: "100%",
-                        height: mobileheight3,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
-                      selected={tabSelected2}
-                      onSelect={handleSelectTab2}
-                      scrollable={isMobile}
                     >
-                      {layoutTab}
-                    </TabStrip>
-                  </TabStripTab>
-                </TabStrip>
+                      현재 OS에서는 지원이 불가능합니다.
+                    </div>
+                  ) : (
+                    <>
+                      <GridTitleContainer className="ButtonContainer2">
+                        <GridTitle></GridTitle>
+                        {customOptionData !== null && (
+                          <div>
+                            <CustomOptionComboBox
+                              name="cboSchedulerType"
+                              value={schedulerFilter.cboSchedulerType}
+                              customOptionData={customOptionData}
+                              changeData={schedulerFilterChange}
+                            />
+                          </div>
+                        )}
+                      </GridTitleContainer>
+                      <Scheduler
+                        height={mobileheight2}
+                        data={schedulerDataResult}
+                        defaultDate={displayDate}
+                        item={CustomItem}
+                      >
+                        <MonthView />
+                        <DayView />
+                        <WeekView />
+                      </Scheduler>
+                    </>
+                  )}
+                </GridContainer>
               </GridContainer>
             </GridContainer>
           </SwiperSlide>

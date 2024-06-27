@@ -1606,8 +1606,6 @@ const SA_A1100W_603: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (
       field == "amt" ||
-      field == "wonamt" ||
-      field == "taxamt" ||
       field == "remark"
     ) {
       const newData = mainDataResult2.data.map((item) =>
