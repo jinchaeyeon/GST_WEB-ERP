@@ -17,7 +17,6 @@ import {
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
-import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import ClusterMap from "../components/Map/ClusterMap";
 import { useApi } from "../hooks/api";
@@ -356,7 +355,6 @@ const SA_B2227W: React.FC = () => {
               </Grid>
             </GridContainer>
           </GridContainerWrap>
-          <SpecialDial />
         </ThemeProvider>
       </div>
     </>

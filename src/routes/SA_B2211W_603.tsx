@@ -27,7 +27,6 @@ import {
 import { PAGE_SIZE } from "../components/CommonString";
 import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
-import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import ScrollTable from "../components/KPIcomponents/Table/ScrollTable";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
@@ -726,7 +725,6 @@ const SA_B2211W_603: React.FC = () => {
               </Grid>
             </Grid>
           </Grid>
-          <SpecialDial />
         </ThemeProvider>
       </div>
     </>

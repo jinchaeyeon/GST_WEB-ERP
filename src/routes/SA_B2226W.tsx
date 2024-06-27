@@ -32,7 +32,6 @@ import { PAGE_SIZE } from "../components/CommonString";
 import DoubleChart from "../components/KPIcomponents/Chart/DoubleChart";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
-import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
@@ -628,7 +627,6 @@ const SA_B2226W: React.FC = () => {
               />
             </Grid>
           </Grid>
-          <SpecialDial />
         </ThemeProvider>
       </div>
     </>
