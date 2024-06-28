@@ -1,7 +1,9 @@
+import { Input, TextArea } from "@progress/kendo-react-inputs";
 import moment from "moment";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import ColorRadio from "./ColorRadio";
 import { ColorThemeContext } from "./ColorThemeContext";
 import styles from "./TodoAddModal.module.css";
@@ -12,29 +14,55 @@ export default function TodoAddModal({
   closeModal,
   schedule,
   addSchedule,
+  colorList,
 }) {
   const { colorTheme } = useContext(ColorThemeContext);
+  const [colorData, setColorData] = useState([]);
 
-  const [color, setColor] = useState("blue");
-  const [title, setTitle] = useState("");
-  const [description, setDescrpition] = useState("");
-  const [time, setTime] = useState("09:00");
+  const [filters, setFilters] = useState({
+    id: 0,
+    title: "",
+    start: new Date(),
+    end: new Date(),
+    colorID: { sub_code: 0, code_name: "없음", color: "" },
+    dptcd: { text: "", value: "" },
+    person: { text: "", value: "" },
+    contents: "",
+  });
+
+  const filterInputChange = (e) => {
+    const { value, name } = e.target;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterComboChange = (e) => {
+    setFilters((prev) => ({
+      ...prev,
+      colorID: e,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (title === "") {
+    if (filters.title === "") {
+      alert("제목을 입력해주세요");
       return;
     }
 
-    const month = date.getMonth() + "월";
+    const month = filters.start.getMonth() + "월";
     const newTodo = {
       id: `${uuidv4()}`,
-      date: `${moment(date).format("YYYY년 MM월 DD일")}`,
-      color: `${color}`,
-      title: `${title}`,
-      description: `${description}`,
-      time: `${time}`,
+      start: `${moment(filters.start).format("YYYY년 MM월 DD일")}`,
+      end: `${moment(filters.end).format("YYYY년 MM월 DD일")}`,
+      colorID: `${filters.colorID}`,
+      title: `${filters.title}`,
+      contents: `${filters.contents}`,
+      person: `${filters.person}`,
       idx: 1,
     };
 
@@ -52,12 +80,23 @@ export default function TodoAddModal({
       }));
     }
 
-    setColor("blue");
-    setTitle("");
-    setDescrpition("");
-    setTime("09:00");
+    setFilters({
+      id: 0,
+      title: "",
+      start: new Date(),
+      end: new Date(),
+      colorID: { sub_code: 0, code_name: "없음", color: "" },
+      dptcd: { text: "", value: "" },
+      person: { text: "", value: "" },
+      contents: "",
+    });
     closeModal();
   };
+
+  useEffect(() => {
+    //초기 props셋팅
+    setColorData(colorList);
+  }, [colorList]);
 
   return (
     <div
@@ -68,27 +107,39 @@ export default function TodoAddModal({
           <h2 className={styles.info}>일정 등록하기</h2>
           <AiOutlineClose className={styles.closeBtn} onClick={closeModal} />
         </div>
-        <ColorRadio color={color} handleColor={setColor} />
-        <input
+        <ColorRadio
+          code={filters.colorID}
+          handleCode={filterComboChange}
+          colorData={colorData}
+        />
+        <p>제목</p>
+        <Input
+          name="title"
           type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className={styles.title}
-          placeholder="title"
+          value={filters.title}
+          onChange={filterInputChange}
         />
-        <textarea
-          className={styles.description}
-          rows="5"
-          cols="33"
-          placeholder="description"
-          value={description}
-          onChange={(e) => setDescrpition(e.target.value)}
+        <p>시간</p>
+        <CommonDateRangePicker
+          value={{
+            start: filters.start,
+            end: filters.end,
+          }}
+          onChange={(e) =>
+            setFilters((prev) => ({
+              ...prev,
+              start: e.value.start,
+              end: e.value.end,
+            }))
+          }
         />
-        <input
-          type="time"
-          className={styles.time}
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
+        <p>내용</p>
+        <TextArea
+          name="contents"
+          type="text"
+          value={filters.contents}
+          onChange={filterInputChange}
+          rows={5}
         />
         <button type="submit" className={styles.addBtn}>
           SUBMIT

@@ -13,8 +13,10 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
+  UseBizComponent,
   UseCustomOption,
   UsePermissions,
+  getBizCom,
   getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
@@ -92,6 +94,16 @@ const CM_A1610W: React.FC = () => {
     }));
   };
 
+  const [colorData, setColorData] = useState<any[]>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setColorData(getBizCom(bizComponentData, "L_APPOINTMENT_COLOR"));
+    }
+  }, [bizComponentData]);
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -160,7 +172,7 @@ const CM_A1610W: React.FC = () => {
       )}
       <GridContainer style={{ height: isMobile ? mobileheight : webheight }}>
         <ColorThemeProvider>
-          <Calendar />
+          <Calendar colorData={colorData} />
         </ColorThemeProvider>
       </GridContainer>
     </>
