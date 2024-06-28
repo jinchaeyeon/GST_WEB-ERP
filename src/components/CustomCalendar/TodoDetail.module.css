@@ -31,8 +31,8 @@
  .description {
   margin: 0;
   padding: 8px;
-  border-top: 1px solid var(--color-light-pink);
-  border-bottom: 1px solid var(--color-light-pink);
+  border-top: 1px solid var(--color-light-blue);
+  border-bottom: 1px solid var(--color-light-blue);
   height: 280px;
   font-family: 'Noto Sans KR', sans-serif;
   font-weight: var(--weight-light);
@@ -41,7 +41,7 @@
  .btnBox {
   display: flex;
   justify-content: space-between;
-  color: var(--color-pink);
+  color: var(--color-blue);
 }
 
 .itemBtnBox {
@@ -63,30 +63,6 @@
   margin-left: 8px;
   font-size: var(--font-regular);
   cursor: pointer;
-}
-
-/* yellow theme */
- .yellow {
-  .description {
-    border-top: 1px solid var(--color-yellow);
-    border-bottom: 1px solid var(--color-yellow);
-  }
-
-  .btnBox {
-    color: var(--color-dark-yellow);
-  }
-}
-
-/* green theme */
- .green {
-  .description {
-    border-top: 1px solid var(--color-light-green);
-    border-bottom: 1px solid var(--color-light-green);
-  }
-
-  .btnBox {
-    color: var(--color-green);
-  }
 }
 
 @media (max-width: 1200px) {

@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { BsFillPencilFill, BsFillTrashFill } from 'react-icons/bs';
-import styles from './TodoItem.module.css';
+import { useContext } from "react";
+import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
 import { ColorThemeContext } from "./ColorThemeContext";
+import styles from "./TodoItem.module.css";
 
 export default function TodoItem({
   todo,
@@ -13,11 +13,11 @@ export default function TodoItem({
   const { colorTheme } = useContext(ColorThemeContext);
 
   const selectedColor =
-    todo.color === 'pink'
-      ? '#ff8f8f'
-      : todo.color === 'yellow'
-      ? '#fbde7e'
-      : '#8cbc59';
+    todo.color === "blue"
+      ? "#ff8f8f"
+      : todo.color === "yellow"
+      ? "#fbde7e"
+      : "#8cbc59";
   return (
     <div className={styles.todoBox} data-testid="todoItem">
       <div
@@ -32,15 +32,7 @@ export default function TodoItem({
         ></div>
         <p className={styles.title}>{todo.title}</p>
       </div>
-      <div
-        className={`${styles.btnBox} ${
-          colorTheme === 'pink'
-            ? styles.pink
-            : colorTheme === 'yellow'
-            ? styles.yellow
-            : styles.green
-        }`}
-      >
+      <div className={`${styles.btnBox} ${"blue"}`}>
         <BsFillPencilFill
           className={styles.edit}
           onClick={() => {

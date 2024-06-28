@@ -1,14 +1,14 @@
  .container {
   width: 30%;
   background-color: var(--color-white);
-  border-left: 1px solid var(--color-light-pink);
+  border-left: 1px solid var(--color-light-blue);
   padding: 16px;
 }
 
  .header {
   margin-top: 8px;
   background-color: var(--color-white);
-  color: var(--color-pink);
+  color: var(--color-blue);
 }
 
  .title {
@@ -29,7 +29,7 @@
   margin: 0;
   font-family: 'Noto Sans KR', sans-serif;
   font-size: var(--font-small);
-  background-color: var(--color-pink);
+  background-color: var(--color-blue);
   color: var(--color-white);
   border-radius: 8px;
   padding: 2px 8px;
@@ -41,59 +41,16 @@
   cursor: pointer;
   font-size: 16px;
   padding: 0;
-  color: var(--color-pink);
-}
-
-/* yellow theme */
- .yellow {
-  border-left: 1px solid var(--color-yellow);
-
-  .header {
-    color: var(--color-dark-yellow);
-  }
-
-  .date {
-    background-color: var(--color-dark-yellow);
-  }
-
-  .addBtn {
-    color: var(--color-dark-yellow);
-  }
-}
-
-/* green theme */
- .green {
-  border-left: 1px solid var(--color-light-green);
-
-  .header {
-    color: var(--color-green);
-  }
-
-  .date {
-    background-color: var(--color-green);
-  }
-
-  .addBtn {
-    color: var(--color-green);
-  }
+  color: var(--color-blue);
 }
 
 @media (max-width: 1200px) {
-   .container {
+  .container {
     width: 100%;
     height: 35%;
     padding: 8px;
     border-left: none;
-    border-top: 1px solid var(--color-light-pink);
-
+    border-top: 1px solid var(--color-light-blue);
     overflow: scroll;
-  }
-
-   .yellow {
-    border-top: 1px solid var(--color-yellow);
-  }
-
-   .green {
-    border-top: 1px solid var(--color-light-green);
   }
 }

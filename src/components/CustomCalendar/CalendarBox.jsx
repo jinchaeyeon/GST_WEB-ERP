@@ -1,8 +1,8 @@
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import './CalendarBox.css';
-import moment from 'moment';
-import { useContext } from 'react';
+import moment from "moment";
+import { useContext } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import "./CalendarBox.css";
 import { ColorThemeContext } from "./ColorThemeContext";
 
 export default function CalendarBox({
@@ -14,15 +14,15 @@ export default function CalendarBox({
   const { colorTheme } = useContext(ColorThemeContext);
 
   const show = ({ date, view }) => {
-    if (view === 'month') {
-      const month = date.getMonth() + '월';
+    if (view === "month") {
+      const month = date.getMonth() + "월";
       let html = [];
       const scheduleList = Object.keys(schedule).includes(
         `${date.getMonth()}월`
       )
         ? schedule[month]
             .filter(
-              (todo) => todo.date === moment(date).format('YYYY년 MM월 DD일')
+              (todo) => todo.date === moment(date).format("YYYY년 MM월 DD일")
             )
             .sort((a, b) => a.idx - b.idx)
         : [];
@@ -31,11 +31,11 @@ export default function CalendarBox({
       for (let i = 0; i < scheduleList.length; i++) {
         if (i === 2) break;
         const selectedColor =
-          scheduleList[i].color === 'pink'
-            ? '#ff8f8f'
-            : scheduleList[i].color === 'yellow'
-            ? '#fbde7e'
-            : '#8cbc59';
+          scheduleList[i].color === "blue"
+            ? "#ff8f8f"
+            : scheduleList[i].color === "yellow"
+            ? "#fbde7e"
+            : "#8cbc59";
         html.push(
           <div
             key={scheduleList[i].id}
@@ -43,10 +43,10 @@ export default function CalendarBox({
           >
             {korean.test(scheduleList[i].title)
               ? scheduleList[i].title.length > 4
-                ? scheduleList[i].title.substring(0, 4) + '..'
+                ? scheduleList[i].title.substring(0, 4) + ".."
                 : scheduleList[i].title
               : scheduleList[i].title.length > 5
-              ? scheduleList[i].title.substring(0, 5) + '..'
+              ? scheduleList[i].title.substring(0, 5) + ".."
               : scheduleList[i].title}
           </div>
         );
@@ -60,19 +60,13 @@ export default function CalendarBox({
         onChange={handleDate}
         value={selectedDate}
         formatDay={(locale, date) =>
-          date.toLocaleString('en', { day: 'numeric' })
+          date.toLocaleString("en", { day: "numeric" })
         }
         next2Label={null}
         prev2Label={null}
         tileContent={show}
         onClickDay={closeDetail}
-        className={`${
-          colorTheme === 'pink'
-            ? 'pink'
-            : colorTheme === 'yellow'
-            ? 'yellow'
-            : 'green'
-        }`}
+        className={`${"blue"}`}
       />
     </div>
   );

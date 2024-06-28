@@ -17,18 +17,9 @@
   margin-top: 8px;
 }
 
- .pink {
-  background-color: var(--color-pink);
+ .blue {
+  background-color: var(--color-blue);
   margin-right: 8px;
-}
-
- .yellow {
-  background-color: var(--color-yellow);
-  margin-right: 8px;
-}
-
- .green {
-  background-color: var(--color-green);
 }
 
  .selected {

@@ -4,22 +4,10 @@ export default function ColorRadio({ color, handleColor, isTheme }) {
   return (
     <div className={`${styles.box} ${isTheme && styles.theme}`}>
       <div
-        className={`${styles.pink} ${styles.color} ${
-          color === 'pink' ? styles.selected : ''
+        className={`${styles.blue} ${styles.color} ${
+          color === 'blue' ? styles.selected : ''
         } ${isTheme && styles.themeColor}`}
-        onClick={() => handleColor('pink')}
-      ></div>
-      <div
-        className={`${styles.yellow} ${styles.color} ${
-          color === 'yellow' ? styles.selected : ''
-        } ${isTheme && styles.themeColor}`}
-        onClick={() => handleColor('yellow')}
-      ></div>
-      <div
-        className={`${styles.green} ${styles.color} ${
-          color === 'green' ? styles.selected : ''
-        } ${isTheme && styles.themeColor}`}
-        onClick={() => handleColor('green')}
+        onClick={() => handleColor('blue')}
       ></div>
     </div>
   );

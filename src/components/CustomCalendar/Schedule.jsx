@@ -1,11 +1,11 @@
-import React, { useContext, useState } from 'react';
-import moment from 'moment';
-import { AiOutlinePlus } from 'react-icons/ai';
-import styles from './Schedule.module.css';
-import TodoItem from './TodoItem';
-import TodoDetail from './TodoDetail';
-import TodoEdit from './TodoEdit';
+import moment from "moment";
+import { useContext, useState } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
 import { ColorThemeContext } from "./ColorThemeContext";
+import styles from "./Schedule.module.css";
+import TodoDetail from "./TodoDetail";
+import TodoEdit from "./TodoEdit";
+import TodoItem from "./TodoItem";
 
 export default function Schedule({
   date,
@@ -28,28 +28,20 @@ export default function Schedule({
     setIsEdit(false);
   };
   // 해당 날짜의 일정 리스트 만들기
-  const month = date.getMonth() + '월';
+  const month = date.getMonth() + "월";
   const scheduleList = Object.keys(schedule).includes(`${date.getMonth()}월`)
     ? schedule[month]
-        .filter((todo) => todo.date === moment(date).format('YYYY년 MM월 DD일'))
+        .filter((todo) => todo.date === moment(date).format("YYYY년 MM월 DD일"))
         .sort((a, b) => a.idx - b.idx)
     : [];
 
   return (
-    <div
-      className={`${styles.container} ${
-        colorTheme === 'pink'
-          ? styles.pink
-          : colorTheme === 'yellow'
-          ? styles.yellow
-          : styles.green
-      }`}
-    >
+    <div className={`${styles.container} ${"blue"}`}>
       <div className={styles.header}>
         <p className={styles.title}>Schedule</p>
         <div className={styles.dateBox}>
           <p className={styles.date}>
-            {moment(date).format('YYYY년 MM월 DD일')}
+            {moment(date).format("YYYY년 MM월 DD일")}
           </p>
           <button
             className={styles.addBtn}

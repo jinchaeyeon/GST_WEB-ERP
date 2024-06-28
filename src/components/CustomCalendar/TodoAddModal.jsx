@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react';
-import moment from 'moment';
-import styles from "./TodoAddModal.module.css";
-import ColorRadio from './ColorRadio';
-import { AiOutlineClose } from 'react-icons/ai';
-import { v4 as uuidv4 } from 'uuid';
+import moment from "moment";
+import { useContext, useState } from "react";
+import { AiOutlineClose } from "react-icons/ai";
+import { v4 as uuidv4 } from "uuid";
+import ColorRadio from "./ColorRadio";
 import { ColorThemeContext } from "./ColorThemeContext";
+import styles from "./TodoAddModal.module.css";
 
 export default function TodoAddModal({
   date,
@@ -15,22 +15,22 @@ export default function TodoAddModal({
 }) {
   const { colorTheme } = useContext(ColorThemeContext);
 
-  const [color, setColor] = useState('pink');
-  const [title, setTitle] = useState('');
-  const [description, setDescrpition] = useState('');
-  const [time, setTime] = useState('09:00');
+  const [color, setColor] = useState("blue");
+  const [title, setTitle] = useState("");
+  const [description, setDescrpition] = useState("");
+  const [time, setTime] = useState("09:00");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (title === '') {
+    if (title === "") {
       return;
     }
 
-    const month = date.getMonth() + '월';
+    const month = date.getMonth() + "월";
     const newTodo = {
       id: `${uuidv4()}`,
-      date: `${moment(date).format('YYYY년 MM월 DD일')}`,
+      date: `${moment(date).format("YYYY년 MM월 DD일")}`,
       color: `${color}`,
       title: `${title}`,
       description: `${description}`,
@@ -52,10 +52,10 @@ export default function TodoAddModal({
       }));
     }
 
-    setColor('pink');
-    setTitle('');
-    setDescrpition('');
-    setTime('09:00');
+    setColor("blue");
+    setTitle("");
+    setDescrpition("");
+    setTime("09:00");
     closeModal();
   };
 
@@ -63,16 +63,7 @@ export default function TodoAddModal({
     <div
       className={open ? `${styles.modal} ${styles.openModal}` : styles.modal}
     >
-      <form
-        onSubmit={handleSubmit}
-        className={`${styles.form} ${
-          colorTheme === 'pink'
-            ? styles.pink
-            : colorTheme === 'yellow'
-            ? styles.yellow
-            : styles.green
-        }`}
-      >
+      <form onSubmit={handleSubmit} className={`${styles.form} ${"blue"}`}>
         <div className={styles.infoBox}>
           <h2 className={styles.info}>일정 등록하기</h2>
           <AiOutlineClose className={styles.closeBtn} onClick={closeModal} />

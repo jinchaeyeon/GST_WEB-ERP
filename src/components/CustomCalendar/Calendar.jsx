@@ -41,7 +41,7 @@ export default function Calendar() {
     }));
   };
 
-  const [color, setColor] = useState("pink");
+  const [color, setColor] = useState("blue");
   const { colorTheme, changeColorTheme } = useContext(ColorThemeContext);
   useEffect(() => {
     changeColorTheme(color);

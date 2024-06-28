@@ -40,7 +40,7 @@
 
 .react-calendar__month-view__days__day {
   position: relative;
-  border: 1px solid var(--color-light-pink);
+  border: 1px solid var(--color-light-blue);
   padding-top: 0;
   padding-bottom: 0;
   display: flex;
@@ -66,7 +66,7 @@ abbr {
   font-family: 'Noto Sans KR', sans-serif;
   font-weight: var(--weight-bold);
   font-size: var(--font-regular);
-  color: var(--color-pink);
+  color: var(--color-blue);
 }
 
 /* 요일 */
@@ -74,13 +74,13 @@ abbr {
   font-family: 'Noto Sans KR', sans-serif;
   font-weight: var(--weight-bold);
   text-decoration: none;
-  color: var(--color-pink);
+  color: var(--color-blue);
 }
 
 /* navigation */
 .react-calendar__navigation button:enabled:hover,
 .react-calendar__navigation button:enabled:focus {
-  background-color: var(--color-light-pink);
+  background-color: var(--color-light-blue);
   border-radius: 8px;
   color: var(--color-white);
 }
@@ -94,13 +94,13 @@ abbr {
 .react-calendar__navigation__arrow {
   font-size: var(--font-regular);
   font-weight: var(--weight-bold);
-  color: var(--color-pink);
+  color: var(--color-blue);
 }
 
 /* day tile */
 .react-calendar__tile:enabled:hover abbr,
 .react-calendar__tile:enabled:focus abbr {
-  background-color: var(--color-light-pink);
+  background-color: var(--color-light-blue);
   border-radius: 50%;
   color: var(--color-white);
 }
@@ -111,7 +111,7 @@ abbr {
 }
 
 .react-calendar__tile--active abbr {
-  background-color: var(--color-light-pink);
+  background-color: var(--color-light-blue);
   color: var(--color-white);
   border-radius: 50%;
 }
@@ -122,7 +122,7 @@ abbr {
 
 /* today */
 .react-calendar__tile--now abbr {
-  background: var(--color-pink);
+  background: var(--color-blue);
   color: var(--color-white);
   border-radius: 50%;
 }
@@ -150,95 +150,11 @@ abbr {
 
 .react-calendar__century-view__decades__decade:hover,
 .react-calendar__decade-view__years__year:hover {
-  color: var(--color-pink);
+  color: var(--color-blue);
 }
 
 .react-calendar__tile--hasActive {
-  color: var(--color-pink);
-}
-
-/* yellow theme */
-.yellow {
-  .react-calendar__navigation__label>span {
-    color: var(--color-dark-yellow);
-  }
-
-  .react-calendar__month-view__weekdays abbr {
-    color: var(--color-dark-yellow);
-  }
-
-  .react-calendar__navigation button:enabled:hover,
-  .react-calendar__navigation button:enabled:focus {
-    background-color: var(--color-yellow);
-  }
-
-  .react-calendar__navigation__arrow {
-    color: var(--color-dark-yellow);
-  }
-
-  .react-calendar__tile:enabled:hover abbr,
-  .react-calendar__tile:enabled:focus abbr {
-    background-color: var(--color-yellow);
-  }
-
-  .react-calendar__tile--active abbr {
-    background-color: var(--color-yellow);
-  }
-
-  .react-calendar__tile--now abbr {
-    background: var(--color-dark-yellow);
-  }
-
-  .react-calendar__century-view__decades__decade:hover,
-  .react-calendar__decade-view__years__year:hover {
-    color: var(--color-dark-yellow);
-  }
-
-  .react-calendar__tile--hasActive {
-    color: var(--color-dark-yellow);
-  }
-}
-
-/* green theme */
-.green {
-  .react-calendar__navigation__label>span {
-    color: var(--color-green);
-  }
-
-  .react-calendar__month-view__weekdays abbr {
-    color: var(--color-green);
-  }
-
-  .react-calendar__navigation button:enabled:hover,
-  .react-calendar__navigation button:enabled:focus {
-    background-color: var(--color-light-green);
-  }
-
-  .react-calendar__navigation__arrow {
-    color: var(--color-green);
-  }
-
-  .react-calendar__tile:enabled:hover abbr,
-  .react-calendar__tile:enabled:focus abbr {
-    background-color: var(--color-light-green);
-  }
-
-  .react-calendar__tile--active abbr {
-    background-color: var(--color-green);
-  }
-
-  .react-calendar__tile--now abbr {
-    background: var(--color-green);
-  }
-
-  .react-calendar__century-view__decades__decade:hover,
-  .react-calendar__decade-view__years__year:hover {
-    color: var(--color-green);
-  }
-
-  .react-calendar__tile--hasActive {
-    color: var(--color-green);
-  }
+  color: var(--color-blue);
 }
 
 @media (max-width: 1200px) {

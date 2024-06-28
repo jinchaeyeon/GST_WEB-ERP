@@ -75,22 +75,8 @@
   cursor: pointer;
   height: 30px;
   border: none;
-  background-color: var(--color-pink);
+  background-color: var(--color-blue);
   color: var(--color-white);
-}
-
-/* yellow theme */
- .yellow {
-  .addBtn {
-    background-color: var(--color-dark-yellow);
-  }
-}
-
-/* green theme */
- .green {
-  .addBtn {
-    background-color: var(--color-green);
-  }
 }
 
 @media (max-width: 1200px) {
