@@ -98,6 +98,24 @@ abbr {
 }
 
 /* day tile */
+
+.react-calendar__tile {
+  display: flex;
+  align-items: center;
+}
+
+.scheduleBox {
+  width: 100%;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.scheduleBox div {
+  border-radius: 4px;
+  font-size: var(--font-micro);
+  color: var(--color-black);
+}
+
 .react-calendar__tile:enabled:hover abbr,
 .react-calendar__tile:enabled:focus abbr {
   background-color: var(--color-light-blue);
@@ -112,12 +130,16 @@ abbr {
 
 .react-calendar__tile--active abbr {
   background-color: var(--color-light-blue);
-  color: var(--color-white);
   border-radius: 50%;
 }
 
 .react-calendar__tile--active {
   background-color: transparent;
+}
+
+.react-calendar__tile--active > .scheduleBox{
+  background-color: transparent;
+  color: var(--color-black);
 }
 
 /* today */
@@ -133,18 +155,6 @@ abbr {
 
 .react-calendar__tile--now:enabled:hover,
 .react-calendar__tile--now:enabled:focus {
-  color: var(--color-white);
-}
-
-.scheduleBox {
-  width: 100%;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-.scheduleBox div {
-  border-radius: 4px;
-  font-size: var(--font-micro);
   color: var(--color-white);
 }
 

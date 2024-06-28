@@ -1,7 +1,6 @@
 import moment from "moment";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { ColorThemeContext } from "./ColorThemeContext";
 import styles from "./Schedule.module.css";
 import TodoDetail from "./TodoDetail";
 import TodoEdit from "./TodoEdit";
@@ -17,9 +16,8 @@ export default function Schedule({
   handleTodo,
   closeDetail,
   updateTodoItem,
+  colorList,
 }) {
-  const { colorTheme } = useContext(ColorThemeContext);
-
   const [isEdit, setIsEdit] = useState(false);
   const handleEditTrue = () => {
     setIsEdit(true);
@@ -31,7 +29,9 @@ export default function Schedule({
   const month = date.getMonth() + "월";
   const scheduleList = Object.keys(schedule).includes(`${date.getMonth()}월`)
     ? schedule[month]
-        .filter((todo) => todo.date === moment(date).format("YYYY년 MM월 DD일"))
+        .filter(
+          (todo) => todo.start === moment(date).format("YYYY년 MM월 DD일")
+        )
         .sort((a, b) => a.idx - b.idx)
     : [];
 
@@ -63,6 +63,7 @@ export default function Schedule({
               deleteTodoItem={deleteTodoItem}
               handleTodo={handleTodo}
               handleEditTrue={handleEditTrue}
+              colorList={colorList}
             />
           ))}
         {!isList && !isEdit && (

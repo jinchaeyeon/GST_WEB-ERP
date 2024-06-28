@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Calendar.module.css";
 import CalendarBox from "./CalendarBox";
-import { ColorThemeContext } from "./ColorThemeContext";
 import Schedule from "./Schedule";
 import TodoAddModal from "./TodoAddModal";
 
@@ -42,17 +41,11 @@ export default function Calendar(props) {
     }));
   };
 
-  const [color, setColor] = useState("blue");
-  const { colorTheme, changeColorTheme } = useContext(ColorThemeContext);
-  useEffect(() => {
-    changeColorTheme(color);
-  }, [color, changeColorTheme]);
-  
   useEffect(() => {
     //초기 props셋팅
     setColorList(props.colorData);
   }, [props]);
-  
+
   return (
     <div className={styles.box}>
       <CalendarBox
@@ -60,6 +53,7 @@ export default function Calendar(props) {
         handleDate={setDate}
         schedule={schedule}
         closeDetail={closeDetail}
+        colorList={colorList}
       />
       <Schedule
         date={date}
@@ -71,6 +65,7 @@ export default function Calendar(props) {
         handleTodo={handleTodo}
         closeDetail={closeDetail}
         updateTodoItem={updateTodoItem}
+        colorList={colorList}
       />
       <TodoAddModal
         open={modal}

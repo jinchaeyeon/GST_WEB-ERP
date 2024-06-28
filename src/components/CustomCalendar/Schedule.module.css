@@ -29,10 +29,11 @@
   margin: 0;
   font-family: 'Noto Sans KR', sans-serif;
   font-size: var(--font-small);
+  font-weight: bold;
   background-color: var(--color-blue);
   color: var(--color-white);
-  border-radius: 8px;
-  padding: 2px 8px;
+  border-radius: 5px;
+  padding: 4px 8px;
 }
 
  .addBtn {

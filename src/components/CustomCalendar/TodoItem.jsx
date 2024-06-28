@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
-import { ColorThemeContext } from "./ColorThemeContext";
 import styles from "./TodoItem.module.css";
 
 export default function TodoItem({
@@ -9,15 +7,8 @@ export default function TodoItem({
   deleteTodoItem,
   handleTodo,
   handleEditTrue,
+  colorList,
 }) {
-  const { colorTheme } = useContext(ColorThemeContext);
-
-  const selectedColor =
-    todo.color === "blue"
-      ? "#ff8f8f"
-      : todo.color === "yellow"
-      ? "#fbde7e"
-      : "#8cbc59";
   return (
     <div className={styles.todoBox} data-testid="todoItem">
       <div
@@ -28,7 +19,11 @@ export default function TodoItem({
       >
         <div
           className={styles.color}
-          style={{ backgroundColor: selectedColor }}
+          style={{
+            backgroundColor: colorList.filter(
+              (item) => item.sub_code == parseInt(todo.colorID)
+            )[0]?.color,
+          }}
         ></div>
         <p className={styles.title}>{todo.title}</p>
       </div>

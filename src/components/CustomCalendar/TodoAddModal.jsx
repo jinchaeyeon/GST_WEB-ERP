@@ -1,11 +1,11 @@
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import moment from "moment";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
+import { UseGetValueFromSessionItem } from "../CommonFunction";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import ColorRadio from "./ColorRadio";
-import { ColorThemeContext } from "./ColorThemeContext";
 import styles from "./TodoAddModal.module.css";
 
 export default function TodoAddModal({
@@ -16,9 +16,9 @@ export default function TodoAddModal({
   addSchedule,
   colorList,
 }) {
-  const { colorTheme } = useContext(ColorThemeContext);
-  const [colorData, setColorData] = useState([]);
-
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth < 1200;
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [filters, setFilters] = useState({
     id: 0,
     title: "",
@@ -26,7 +26,7 @@ export default function TodoAddModal({
     end: new Date(),
     colorID: { sub_code: 0, code_name: "없음", color: "" },
     dptcd: { text: "", value: "" },
-    person: { text: "", value: "" },
+    person: sessionUserId,
     contents: "",
   });
 
@@ -59,10 +59,10 @@ export default function TodoAddModal({
       id: `${uuidv4()}`,
       start: `${moment(filters.start).format("YYYY년 MM월 DD일")}`,
       end: `${moment(filters.end).format("YYYY년 MM월 DD일")}`,
-      colorID: `${filters.colorID}`,
+      colorID: `${filters.colorID.sub_code}`,
       title: `${filters.title}`,
       contents: `${filters.contents}`,
-      person: `${filters.person}`,
+      person: `${sessionUserId}`,
       idx: 1,
     };
 
@@ -93,11 +93,6 @@ export default function TodoAddModal({
     closeModal();
   };
 
-  useEffect(() => {
-    //초기 props셋팅
-    setColorData(colorList);
-  }, [colorList]);
-
   return (
     <div
       className={open ? `${styles.modal} ${styles.openModal}` : styles.modal}
@@ -110,7 +105,7 @@ export default function TodoAddModal({
         <ColorRadio
           code={filters.colorID}
           handleCode={filterComboChange}
-          colorData={colorData}
+          colorData={colorList}
         />
         <p>제목</p>
         <Input
@@ -139,7 +134,7 @@ export default function TodoAddModal({
           type="text"
           value={filters.contents}
           onChange={filterInputChange}
-          rows={5}
+          rows={isMobile ? 20 : 5}
         />
         <button type="submit" className={styles.addBtn}>
           SUBMIT

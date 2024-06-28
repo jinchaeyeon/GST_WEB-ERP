@@ -41,7 +41,7 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
                   display: "flex",
                   alignItems: "center",
                   fontFamily: "Noto Sans KR",
-                  fontWeight: 700,
+                  fontWeight: 700
                 }}
               >
                 {item.code_name}
@@ -74,7 +74,7 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
           display: "flex",
           alignItems: "center",
           fontFamily: "Noto Sans KR",
-          fontWeight: 700,
+          fontWeight: 700
         }}
       >
         그 외

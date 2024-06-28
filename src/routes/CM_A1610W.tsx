@@ -22,7 +22,6 @@ import {
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import Calendar from "../components/CustomCalendar/Calendar";
-import { ColorThemeProvider } from "../components/CustomCalendar/ColorThemeContext";
 import { TPermissions } from "../store/types";
 
 var height = 0;
@@ -171,9 +170,7 @@ const CM_A1610W: React.FC = () => {
         </>
       )}
       <GridContainer style={{ height: isMobile ? mobileheight : webheight }}>
-        <ColorThemeProvider>
-          <Calendar colorData={colorData} />
-        </ColorThemeProvider>
+        <Calendar colorData={colorData} />
       </GridContainer>
     </>
   );

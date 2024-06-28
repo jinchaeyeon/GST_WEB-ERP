@@ -1,7 +1,6 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import ColorRadio from "./ColorRadio";
-import { ColorThemeContext } from "./ColorThemeContext";
 import styles from "./TodoEdit.module.css";
 
 export default function TodoEdit({
@@ -12,8 +11,6 @@ export default function TodoEdit({
   handleEditFalse,
   handleTodo,
 }) {
-  const { colorTheme } = useContext(ColorThemeContext);
-
   const [color, setColor] = useState(todo.color);
   const [title, setTitle] = useState(todo.title);
   const [description, setDescrpition] = useState(todo.description);

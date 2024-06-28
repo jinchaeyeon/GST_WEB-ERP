@@ -1,7 +1,5 @@
-import { useContext } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
-import { ColorThemeContext } from "./ColorThemeContext";
 import styles from "./TodoDetail.module.css";
 
 export default function TodoDetail({
@@ -11,8 +9,6 @@ export default function TodoDetail({
   deleteTodoItem,
   handleEditTrue,
 }) {
-  const { colorTheme } = useContext(ColorThemeContext);
-
   const selectedColor =
     todo.color === "blue"
       ? "#ff8f8f"
