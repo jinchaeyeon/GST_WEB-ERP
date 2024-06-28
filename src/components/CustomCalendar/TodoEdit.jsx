@@ -1,5 +1,8 @@
+import { DateTimePicker } from "@progress/kendo-react-dateinputs";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
+import { UseGetValueFromSessionItem } from "../CommonFunction";
 import ColorRadio from "./ColorRadio";
 import styles from "./TodoEdit.module.css";
 
@@ -10,26 +13,50 @@ export default function TodoEdit({
   schedule,
   handleEditFalse,
   handleTodo,
+  colorList,
 }) {
-  const [color, setColor] = useState(todo.color);
-  const [title, setTitle] = useState(todo.title);
-  const [description, setDescrpition] = useState(todo.description);
-  const [time, setTime] = useState(todo.time);
+  console.log(todo);
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth < 1200;
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  const [filters, setFilters] = useState({
+    ...todo,
+    start: new Date(todo.start),
+    end: new Date(todo.end)
+  });
+
+  const filterInputChange = (e) => {
+    const { value, name } = e.target;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterComboChange = (e) => {
+    setFilters((prev) => ({
+      ...prev,
+      colorID: e,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (title === "") {
+    if (filters.title === "") {
+      alert("제목을 입력해주세요");
       return;
     }
 
     const newTodo = {
-      id: todo.id,
-      date: todo.date,
-      color: `${color}`,
-      title: `${title}`,
-      description: `${description}`,
-      time: `${time}`,
-      idx: todo.idx,
+      id: filters.id,
+      start: `${filters.start}`,
+      end: `${filters.end}`,
+      colorID: `${filters.colorID}`,
+      title: `${filters.title}`,
+      contents: `${filters.contents}`,
+      person: `${sessionUserId}`,
+      idx: filters.idx,
     };
 
     updateTodoItem(month, newTodo);
@@ -39,28 +66,46 @@ export default function TodoEdit({
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <ColorRadio color={color} handleColor={setColor} />
-      <div className={styles.header}>
-        <input
-          type="text"
-          className={styles.title}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="title edit"
+      <ColorRadio
+        code={filters.colorID}
+        handleCode={filterComboChange}
+        colorData={colorList}
+      />
+      <p>제목</p>
+      <Input
+        name="title"
+        type="text"
+        value={filters.title}
+        onChange={filterInputChange}
+      />
+      <p>시간</p>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <DateTimePicker
+          value={filters.start}
+          onChange={(e) =>
+            setFilters((prev) => ({
+              ...prev,
+              start: e.value,
+            }))
+          }
         />
-        <input
-          type="time"
-          className={styles.time}
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
+        <DateTimePicker
+          value={filters.end}
+          onChange={(e) =>
+            setFilters((prev) => ({
+              ...prev,
+              end: e.value,
+            }))
+          }
         />
       </div>
-      <textarea
-        className={styles.description}
-        rows="5"
-        placeholder="description"
-        value={description}
-        onChange={(e) => setDescrpition(e.target.value)}
+      <p>내용</p>
+      <TextArea
+        name="contents"
+        type="text"
+        value={filters.contents}
+        onChange={filterInputChange}
+        rows={isMobile ? 20 : 5}
       />
       <div className={`${styles.btnBox} ${"blue"}`}>
         <AiOutlineClose className={styles.close} onClick={handleEditFalse} />

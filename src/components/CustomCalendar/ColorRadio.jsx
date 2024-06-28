@@ -11,7 +11,7 @@ const newColumn = [
 
 export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
   const onChange = (event) => {
-    handleCode(event.value);
+    handleCode(event.value.sub_code);
   };
   const textField = "code_name";
   return (
@@ -30,10 +30,10 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
             <>
               <div
                 className={`${styles.color} ${
-                  code.sub_code == item.sub_code ? styles.selected : ""
+                  code == item.sub_code ? styles.selected : ""
                 }`}
                 style={{ marginRight: "8px", backgroundColor: item.color }}
-                onClick={() => handleCode(item)}
+                onClick={() => handleCode(item.sub_code)}
               />
               <p
                 style={{
@@ -41,7 +41,7 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
                   display: "flex",
                   alignItems: "center",
                   fontFamily: "Noto Sans KR",
-                  fontWeight: 700
+                  fontWeight: 700,
                 }}
               >
                 {item.code_name}
@@ -51,22 +51,16 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
         })}
       <div
         className={`${styles.color} ${
-          code.sub_code != "0" &&
-          code.sub_code != "1" &&
-          code.sub_code != "2" &&
-          code.sub_code != "3" &&
-          code.sub_code != "4"
+          code != "0" &&
+          code != "1" &&
+          code != "2" &&
+          code != "3" &&
+          code != "4"
             ? styles.selected
             : ""
         }`}
         style={{ marginRight: "8px", backgroundColor: "gray" }}
-        onClick={() =>
-          handleCode({
-            code_name: "참여 필수",
-            color: "#FFF4CE93",
-            sub_code: 5,
-          })
-        }
+        onClick={() => handleCode(5)}
       />
       <p
         style={{
@@ -74,16 +68,16 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
           display: "flex",
           alignItems: "center",
           fontFamily: "Noto Sans KR",
-          fontWeight: 700
+          fontWeight: 700,
         }}
       >
         그 외
       </p>
-      {code.sub_code != "0" &&
-      code.sub_code != "1" &&
-      code.sub_code != "2" &&
-      code.sub_code != "3" &&
-      code.sub_code != "4" ? (
+      {code != "0" &&
+      code != "1" &&
+      code != "2" &&
+      code != "3" &&
+      code != "4" ? (
         <MultiColumnComboBox
           data={colorData.filter(
             (item) =>
@@ -93,7 +87,7 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
               item.sub_code != "3" &&
               item.sub_code != "4"
           )}
-          value={code == undefined || code == null ? "" : code}
+          value={code}
           columns={newColumn}
           onChange={onChange}
           textField={textField}

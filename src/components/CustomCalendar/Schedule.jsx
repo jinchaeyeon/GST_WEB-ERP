@@ -85,6 +85,7 @@ export default function Schedule({
             schedule={schedule}
             handleEditFalse={handleEditFalse}
             handleTodo={handleTodo}
+            colorList={colorList}
           />
         )}
       </div>

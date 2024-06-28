@@ -1,7 +1,6 @@
 import { DateTimePicker } from "@progress/kendo-react-dateinputs";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
 import { UseGetValueFromSessionItem } from "../CommonFunction";
@@ -24,11 +23,21 @@ export default function TodoAddModal({
     title: "",
     start: new Date(),
     end: new Date(),
-    colorID: { sub_code: 0, code_name: "없음", color: "" },
-    dptcd: { text: "", value: "" },
+    colorID: 0,
     person: sessionUserId,
     contents: "",
   });
+
+  useEffect(
+    (prev) => {
+      setFilters((prev) => ({
+        ...prev,
+        start: new Date(date),
+        end: new Date(date),
+      }));
+    },
+    [date]
+  );
 
   const filterInputChange = (e) => {
     const { value, name } = e.target;
@@ -59,7 +68,7 @@ export default function TodoAddModal({
       id: `${uuidv4()}`,
       start: `${filters.start}`,
       end: `${filters.end}`,
-      colorID: `${filters.colorID.sub_code}`,
+      colorID: `${filters.colorID}`,
       title: `${filters.title}`,
       contents: `${filters.contents}`,
       person: `${sessionUserId}`,
@@ -83,11 +92,10 @@ export default function TodoAddModal({
     setFilters({
       id: 0,
       title: "",
-      start: new Date(),
-      end: new Date(),
-      colorID: { sub_code: 0, code_name: "없음", color: "" },
-      dptcd: { text: "", value: "" },
-      person: { text: "", value: "" },
+      start: new Date(date),
+      end: new Date(date),
+      colorID: 0,
+      person: sessionUserId,
       contents: "",
     });
     closeModal();

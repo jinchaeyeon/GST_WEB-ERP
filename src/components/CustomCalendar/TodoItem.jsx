@@ -9,6 +9,7 @@ export default function TodoItem({
   handleEditTrue,
   colorList,
 }) {
+  console.log(todo)
   return (
     <div className={styles.todoBox} data-testid="todoItem">
       <div
