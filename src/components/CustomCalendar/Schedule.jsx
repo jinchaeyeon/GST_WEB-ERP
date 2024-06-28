@@ -30,7 +30,9 @@ export default function Schedule({
   const scheduleList = Object.keys(schedule).includes(`${date.getMonth()}월`)
     ? schedule[month]
         .filter(
-          (todo) => todo.start === moment(date).format("YYYY년 MM월 DD일")
+          (todo) =>
+            moment(todo.start).format("YYYY년 MM월 DD일") ===
+            moment(date).format("YYYY년 MM월 DD일")
         )
         .sort((a, b) => a.idx - b.idx)
     : [];

@@ -1,10 +1,10 @@
+import { DateTimePicker } from "@progress/kendo-react-dateinputs";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import moment from "moment";
 import { useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
 import { UseGetValueFromSessionItem } from "../CommonFunction";
-import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import ColorRadio from "./ColorRadio";
 import styles from "./TodoAddModal.module.css";
 
@@ -57,8 +57,8 @@ export default function TodoAddModal({
     const month = filters.start.getMonth() + "월";
     const newTodo = {
       id: `${uuidv4()}`,
-      start: `${moment(filters.start).format("YYYY년 MM월 DD일")}`,
-      end: `${moment(filters.end).format("YYYY년 MM월 DD일")}`,
+      start: `${filters.start}`,
+      end: `${filters.end}`,
       colorID: `${filters.colorID.sub_code}`,
       title: `${filters.title}`,
       contents: `${filters.contents}`,
@@ -115,19 +115,26 @@ export default function TodoAddModal({
           onChange={filterInputChange}
         />
         <p>시간</p>
-        <CommonDateRangePicker
-          value={{
-            start: filters.start,
-            end: filters.end,
-          }}
-          onChange={(e) =>
-            setFilters((prev) => ({
-              ...prev,
-              start: e.value.start,
-              end: e.value.end,
-            }))
-          }
-        />
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <DateTimePicker
+            value={filters.start}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                start: e.value,
+              }))
+            }
+          />
+          <DateTimePicker
+            value={filters.end}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                end: e.value,
+              }))
+            }
+          />
+        </div>
         <p>내용</p>
         <TextArea
           name="contents"

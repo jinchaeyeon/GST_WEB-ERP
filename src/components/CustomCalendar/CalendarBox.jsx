@@ -20,7 +20,9 @@ export default function CalendarBox({
       )
         ? schedule[month]
             .filter(
-              (todo) => todo.start === moment(date).format("YYYY년 MM월 DD일")
+              (todo) =>
+                moment(todo.start).format("YYYY년 MM월 DD일") ===
+                moment(date).format("YYYY년 MM월 DD일")
             )
             .sort((a, b) => a.idx - b.idx)
         : [];
@@ -40,8 +42,8 @@ export default function CalendarBox({
               ...
             </div>
           );
-          break
-        };
+          break;
+        }
 
         html.push(
           <div
