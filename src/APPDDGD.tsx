@@ -107,6 +107,7 @@ const CM_A1000W = lazy(() => import("./routes/CM_A1000W"));
 const CM_A1000W_617 = lazy(() => import("./routes/CM_A1000W_617"));
 const CM_A1600W = lazy(() => import("./routes/CM_A1600W"));
 const CM_A1600W_603 = lazy(() => import("./routes/CM_A1600W_603"));
+const CM_A1610W = lazy(() => import("./routes/CM_A1610W"));
 const CM_A1710W = lazy(() => import("./routes/CM_A1710W"));
 const CM_A2000W = lazy(() => import("./routes/CM_A2000W"));
 const CM_A3000W = lazy(() => import("./routes/CM_A3000W"));
@@ -825,6 +826,8 @@ const AppInner: React.FC = () => {
       return CM_A1600W;
     } else if (str == "CM_A1600W_603") {
       return CM_A1600W_603;
+    } else if (str == "CM_A1610W") {
+      return CM_A1610W;
     } else if (str == "CM_A1710W") {
       return CM_A1710W;
     } else if (str == "CM_A2000W") {

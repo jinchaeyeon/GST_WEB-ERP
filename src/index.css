@@ -11,6 +11,37 @@ body {
   min-height: -webkit-fill-available !important;
 }
 
+:root {
+  --color-light-pink: #ffbfbf;
+  --color-pink: #ff8f8f;
+  --color-orange: #ff9f51;
+  --color-light-yellow: #fffacd;
+  --color-yellow: #fbde7e;
+  --color-dark-yellow: #ffbe3b;
+  --color-light-green: #bede91;
+  --color-green: #8cbc59;
+  --color-blue: #83b2e0;
+  --color-dark-blue: #2d4074;
+  --color-purple: #b47fb6;
+
+  --color-white: #ffffff;
+  --color-light-gray: #f3f3f3;
+  --color-gray: #cfcfcf;
+  --color-dark-gray: #585858;
+
+  --weight-bold: 700;
+  --weight-semi-bold: 600;
+  --weight-medium: 500;
+  --weight-regular: 400;
+  --weight-light: 300;
+
+  --font-large: 40px;
+  --font-medium: 28px;
+  --font-regular: 18px;
+  --font-small: 14px;
+  --font-micro: 10px;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -349,12 +380,12 @@ input.readonly {
 }
 
 /*DDGD 전용 css */
-.react-calendar {
+.DDGDCalendar {
   height: 100% !important;
 }
 
 @media (max-width: 1200px) {
-  .react-calendar {
+  .DDGDCalendar {
     height: 80% !important;
   }
 }

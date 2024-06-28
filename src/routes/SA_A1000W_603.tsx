@@ -202,12 +202,7 @@ const CustomColorCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field = "" } = props;
 
   const styles =
-    props.dataItem.status == "의뢰"
-      ? {
-          backgroundColor: "#ffc000",
-          color: "white",
-        }
-      : props.dataItem.status == "견적"
+    props.dataItem.status == "견적"
       ? {
           backgroundColor: "#70ad47",
           color: "white",
@@ -1877,7 +1872,7 @@ const SA_A1000W_603: React.FC = () => {
 
     const status =
       filters.status.length == 0
-        ? "2|3|4"
+        ? "|3|4"
         : filters.status.length == 1
         ? filters.status[0].sub_code
         : getName(filters.status);
@@ -4689,22 +4684,6 @@ const SA_A1000W_603: React.FC = () => {
               <GridTitle>
                 <ButtonContainer style={{ justifyContent: "flex-start" }}>
                   {!isMobile && <div>요약정보</div>}
-                  <div
-                    style={{
-                      width: "80px",
-                      borderRadius: "2px",
-                      backgroundColor: "#ffc000",
-                      color: "white",
-                      padding: "5px 10px",
-                      textAlign: "center",
-                      marginLeft: "5px",
-                      marginRight: "5px",
-                      fontWeight: 700,
-                      fontSize: "15px",
-                    }}
-                  >
-                    의뢰
-                  </div>
                   <div
                     style={{
                       width: "80px",

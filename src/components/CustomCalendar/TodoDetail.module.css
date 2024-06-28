@@ -1,0 +1,100 @@
+ .todoBox {
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 36px;
+}
+
+ .header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+ .title {
+  width: 100%;
+  margin: 0;
+  font-weight: var(--weight-bold);
+  font-size: var(--font-regular);
+  color: var(--color-white);
+  border-radius: 8px;
+  padding-left: 8px;
+}
+
+ .time {
+  margin-top: 4px;
+  font-size: var(--font-small);
+  color: var(--color-dark-gray);
+}
+
+ .description {
+  margin: 0;
+  padding: 8px;
+  border-top: 1px solid var(--color-light-pink);
+  border-bottom: 1px solid var(--color-light-pink);
+  height: 280px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: var(--weight-light);
+}
+
+ .btnBox {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-pink);
+}
+
+.itemBtnBox {
+  display: flex;
+  justify-content: flex-end;
+}
+
+ .close {
+  font-size: var(--font-regular);
+  cursor: pointer;
+}
+
+ .edit {
+  font-size: var(--font-regular);
+  cursor: pointer;
+}
+
+ .delete {
+  margin-left: 8px;
+  font-size: var(--font-regular);
+  cursor: pointer;
+}
+
+/* yellow theme */
+ .yellow {
+  .description {
+    border-top: 1px solid var(--color-yellow);
+    border-bottom: 1px solid var(--color-yellow);
+  }
+
+  .btnBox {
+    color: var(--color-dark-yellow);
+  }
+}
+
+/* green theme */
+ .green {
+  .description {
+    border-top: 1px solid var(--color-light-green);
+    border-bottom: 1px solid var(--color-light-green);
+  }
+
+  .btnBox {
+    color: var(--color-green);
+  }
+}
+
+@media (max-width: 1200px) {
+   .todoBox {
+    height: 270px;
+  }
+
+   .description {
+    height: 150px;
+  }
+}

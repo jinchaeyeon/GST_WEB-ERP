@@ -267,6 +267,7 @@ function App(props) {
       )}
 
       <Calendar
+        className={"DDGDCalendar"}
         calendarType="US"
         locale="ko-KO"
         selected={value}
