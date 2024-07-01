@@ -121,9 +121,10 @@ export default function TodoAddModal({
           type="text"
           value={filters.title}
           onChange={filterInputChange}
+          style={{ height: "40px" }}
         />
         <p>시간</p>
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div style={{ display: "flex", flexDirection: "row", height: "40px" }}>
           <DateTimePicker
             value={filters.start}
             onChange={(e) =>
@@ -132,6 +133,10 @@ export default function TodoAddModal({
                 start: e.value,
               }))
             }
+            steps={{
+              hour: 1,
+              minute: 5
+            }}
           />
           <DateTimePicker
             value={filters.end}
@@ -141,6 +146,10 @@ export default function TodoAddModal({
                 end: e.value,
               }))
             }
+            steps={{
+              hour: 1,
+              minute: 5
+            }}
           />
         </div>
         <p>내용</p>

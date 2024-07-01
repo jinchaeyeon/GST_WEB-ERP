@@ -78,13 +78,18 @@ export default function TodoEdit({
           type="text"
           value={filters.title}
           onChange={filterInputChange}
-          style={{ marginTop: "5px" }}
+          style={{ marginTop: "5px", height: "40px" }}
         />
       </div>
       <div style={{ marginTop: "5px" }}>
         <p>시간</p>
         <div
-          style={{ display: "flex", flexDirection: "row", marginTop: "5px" }}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            marginTop: "5px",
+            height: "40px",
+          }}
         >
           <DateTimePicker
             value={filters.start}
@@ -94,6 +99,10 @@ export default function TodoEdit({
                 start: e.value,
               }))
             }
+            steps={{
+              hour: 1,
+              minute: 5,
+            }}
           />
           <DateTimePicker
             value={filters.end}
@@ -103,6 +112,10 @@ export default function TodoEdit({
                 end: e.value,
               }))
             }
+            steps={{
+              hour: 1,
+              minute: 5,
+            }}
           />
         </div>
       </div>
@@ -118,7 +131,10 @@ export default function TodoEdit({
           type="text"
           value={filters.contents}
           onChange={filterInputChange}
-          style={{ marginTop: "5px", height: `180px` }}
+          style={{
+            marginTop: "5px",
+            height: isMobile ? "170px" : `calc(100% - 30px)`,
+          }}
         />
       </div>
       <div className={`${styles.btnBox} ${"blue"}`}>
