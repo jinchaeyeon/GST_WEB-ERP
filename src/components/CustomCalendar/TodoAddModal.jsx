@@ -23,7 +23,7 @@ export default function TodoAddModal({
     title: "",
     start: new Date(),
     end: new Date(),
-    colorID: 0,
+    colorID: {sub_code: 0, code_name: "없음", color: "white"},
     person: sessionUserId,
     contents: "",
   });
@@ -68,7 +68,7 @@ export default function TodoAddModal({
       id: `${uuidv4()}`,
       start: `${filters.start}`,
       end: `${filters.end}`,
-      colorID: `${filters.colorID}`,
+      colorID: `${filters.colorID.sub_code}`,
       title: `${filters.title}`,
       contents: `${filters.contents}`,
       person: `${sessionUserId}`,
@@ -94,7 +94,7 @@ export default function TodoAddModal({
       title: "",
       start: new Date(date),
       end: new Date(date),
-      colorID: 0,
+      colorID: {sub_code: 0, code_name: "없음", color: "white"},
       person: sessionUserId,
       contents: "",
     });

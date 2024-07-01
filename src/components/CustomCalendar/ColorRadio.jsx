@@ -11,7 +11,7 @@ const newColumn = [
 
 export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
   const onChange = (event) => {
-    handleCode(event.value.sub_code);
+    handleCode(event.value);
   };
   const textField = "code_name";
   return (
@@ -30,10 +30,10 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
             <>
               <div
                 className={`${styles.color} ${
-                  code == item.sub_code ? styles.selected : ""
+                  code.sub_code == item.sub_code ? styles.selected : ""
                 }`}
                 style={{ marginRight: "8px", backgroundColor: item.color }}
-                onClick={() => handleCode(item.sub_code)}
+                onClick={() => handleCode(item)}
               />
               <p
                 style={{
@@ -51,16 +51,18 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
         })}
       <div
         className={`${styles.color} ${
-          code != "0" &&
-          code != "1" &&
-          code != "2" &&
-          code != "3" &&
-          code != "4"
+          code.sub_code != "0" &&
+          code.sub_code != "1" &&
+          code.sub_code != "2" &&
+          code.sub_code != "3" &&
+          code.sub_code != "4"
             ? styles.selected
             : ""
         }`}
         style={{ marginRight: "8px", backgroundColor: "gray" }}
-        onClick={() => handleCode(5)}
+        onClick={() =>
+          handleCode(colorData.filter((item) => item.sub_code == "5")[0])
+        }
       />
       <p
         style={{
@@ -73,19 +75,19 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
       >
         그 외
       </p>
-      {code != "0" &&
-      code != "1" &&
-      code != "2" &&
-      code != "3" &&
-      code != "4" ? (
+      {code.sub_code != "0" &&
+      code.sub_code != "1" &&
+      code.sub_code != "2" &&
+      code.sub_code != "3" &&
+      code.sub_code != "4" ? (
         <MultiColumnComboBox
           data={colorData.filter(
             (item) =>
-              item.sub_code != "0" &&
-              item.sub_code != "1" &&
-              item.sub_code != "2" &&
-              item.sub_code != "3" &&
-              item.sub_code != "4"
+              item.sub_code != 0 &&
+              item.sub_code != 1 &&
+              item.sub_code != 2 &&
+              item.sub_code != 3 &&
+              item.sub_code != 4
           )}
           value={code}
           columns={newColumn}

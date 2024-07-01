@@ -45,13 +45,15 @@ export default function Schedule({
           <p className={styles.date}>
             {moment(date).format("YYYY년 MM월 DD일")}
           </p>
-          <button
-            className={styles.addBtn}
-            onClick={openModal}
-            aria-label="addBtn"
-          >
-            <AiOutlinePlus />
-          </button>
+          {isList && (
+            <button
+              className={styles.addBtn}
+              onClick={openModal}
+              aria-label="addBtn"
+            >
+              <AiOutlinePlus />
+            </button>
+          )}
         </div>
       </div>
       <div className={styles.scheduleBox}>
@@ -68,6 +70,7 @@ export default function Schedule({
               colorList={colorList}
             />
           ))}
+
         {!isList && !isEdit && (
           <TodoDetail
             todo={selectedTodo}
@@ -75,6 +78,7 @@ export default function Schedule({
             closeDetail={closeDetail}
             deleteTodoItem={deleteTodoItem}
             handleEditTrue={handleEditTrue}
+            colorList={colorList}
           />
         )}
         {!isList && isEdit && (

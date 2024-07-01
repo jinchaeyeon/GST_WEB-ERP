@@ -15,14 +15,14 @@ export default function TodoEdit({
   handleTodo,
   colorList,
 }) {
-  console.log(todo);
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth < 1200;
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [filters, setFilters] = useState({
     ...todo,
+    colorID: colorList.filter((item) => item.sub_code == todo.colorID)[0],
     start: new Date(todo.start),
-    end: new Date(todo.end)
+    end: new Date(todo.end),
   });
 
   const filterInputChange = (e) => {
@@ -52,7 +52,7 @@ export default function TodoEdit({
       id: filters.id,
       start: `${filters.start}`,
       end: `${filters.end}`,
-      colorID: `${filters.colorID}`,
+      colorID: `${filters.colorID.sub_code}`,
       title: `${filters.title}`,
       contents: `${filters.contents}`,
       person: `${sessionUserId}`,
@@ -71,42 +71,49 @@ export default function TodoEdit({
         handleCode={filterComboChange}
         colorData={colorList}
       />
-      <p>제목</p>
-      <Input
-        name="title"
-        type="text"
-        value={filters.title}
-        onChange={filterInputChange}
-      />
-      <p>시간</p>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <DateTimePicker
-          value={filters.start}
-          onChange={(e) =>
-            setFilters((prev) => ({
-              ...prev,
-              start: e.value,
-            }))
-          }
-        />
-        <DateTimePicker
-          value={filters.end}
-          onChange={(e) =>
-            setFilters((prev) => ({
-              ...prev,
-              end: e.value,
-            }))
-          }
+      <div style={{ marginTop: "5px" }}>
+        <p>제목</p>
+        <Input
+          name="title"
+          type="text"
+          value={filters.title}
+          onChange={filterInputChange}
+          style={{ marginTop: "5px" }}
         />
       </div>
-      <p>내용</p>
-      <TextArea
-        name="contents"
-        type="text"
-        value={filters.contents}
-        onChange={filterInputChange}
-        rows={isMobile ? 20 : 5}
-      />
+      <div style={{ marginTop: "5px" }}>
+        <p>시간</p>
+        <div style={{ display: "flex", flexDirection: "row", marginTop:"5px" }}>
+          <DateTimePicker
+            value={filters.start}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                start: e.value,
+              }))
+            }
+          />
+          <DateTimePicker
+            value={filters.end}
+            onChange={(e) =>
+              setFilters((prev) => ({
+                ...prev,
+                end: e.value,
+              }))
+            }
+          />
+        </div>
+      </div>
+      <div style={{ marginTop: "5px", height: `calc(100% - 210px)`}}>
+        <p>내용</p>
+        <TextArea
+          name="contents"
+          type="text"
+          value={filters.contents}
+          onChange={filterInputChange}
+          style={{ marginTop: "5px", height: `calc(100% - 20px)`}}
+        />
+      </div>
       <div className={`${styles.btnBox} ${"blue"}`}>
         <AiOutlineClose className={styles.close} onClick={handleEditFalse} />
         <button type="submit" className={styles.finishBtn}>

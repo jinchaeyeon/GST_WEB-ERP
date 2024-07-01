@@ -11,6 +11,10 @@
   color: var(--color-blue);
 }
 
+.scheduleBox {
+  height: calc(100% - 80px);
+}
+
  .title {
   margin: 0;
   font-weight: var(--weight-bold);
