@@ -69,6 +69,7 @@ export default function Schedule({
               handleTodo={handleTodo}
               handleEditTrue={handleEditTrue}
               colorList={colorList}
+              permissions={permissions}
             />
           ))}
 
@@ -79,6 +80,7 @@ export default function Schedule({
             deleteTodoItem={deleteTodoItem}
             handleEditTrue={handleEditTrue}
             colorList={colorList}
+            permissions={permissions}
           />
         )}
         {!isList && isEdit && (
@@ -89,6 +91,7 @@ export default function Schedule({
             handleEditFalse={handleEditFalse}
             handleTodo={handleTodo}
             colorList={colorList}
+            permissions={permissions}
           />
         )}
       </div>

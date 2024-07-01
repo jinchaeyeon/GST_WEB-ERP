@@ -1,4 +1,4 @@
-import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
+import { Button } from "@progress/kendo-react-buttons";
 import { convertDateToStrWithTime3 } from "../CommonFunction";
 import styles from "./TodoItem.module.css";
 
@@ -8,6 +8,7 @@ export default function TodoItem({
   handleTodo,
   handleEditTrue,
   colorList,
+  permissions
 }) {
   return (
     <div className={styles.todoBox} data-testid="todoItem">
@@ -38,16 +39,17 @@ export default function TodoItem({
         </p>
       </div>
       <div className={`${styles.btnBox} ${"blue"}`}>
-        <BsFillPencilFill
-          className={styles.edit}
+        <Button
           onClick={() => {
             handleTodo(todo);
             handleEditTrue();
           }}
-          data-testid="modify"
-        />
-        <BsFillTrashFill
-          className={styles.delete}
+          themeColor={"primary"}
+          fillMode="outline"
+          icon="edit"
+          disabled={permissions.save ? false : true}
+        ></Button>
+        <Button
           onClick={() => {
             if (
               !window.confirm(
@@ -59,7 +61,11 @@ export default function TodoItem({
 
             deleteTodoItem(todo.id);
           }}
-        />
+          themeColor={"primary"}
+          fillMode="outline"
+          icon="delete"
+          disabled={permissions.save ? false : true}
+        ></Button>
       </div>
     </div>
   );

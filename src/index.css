@@ -112,7 +112,7 @@ iframe#webpack-dev-server-client-overlay {
 }
 
 .k-grid tr.k-alt {
-  background-color: #0000000a !important;
+  background-color: #0000000a;
 }
 
 .p-inputtext {

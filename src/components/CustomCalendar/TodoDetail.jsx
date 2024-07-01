@@ -1,6 +1,5 @@
+import { Button } from "@progress/kendo-react-buttons";
 import { useState } from "react";
-import { AiOutlineClose } from "react-icons/ai";
-import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
 import { convertDateToStrWithTime2 } from "../CommonFunction";
 import styles from "./TodoDetail.module.css";
 
@@ -10,6 +9,7 @@ export default function TodoDetail({
   deleteTodoItem,
   handleEditTrue,
   colorList,
+  permissions,
 }) {
   const [filters, setFilters] = useState({
     ...todo,
@@ -37,28 +37,40 @@ export default function TodoDetail({
       </div>
       <p className={styles.description}>{filters.contents}</p>
       <div className={styles.btnBox}>
-        <AiOutlineClose
-          className={styles.close}
+        <Button
           onClick={closeDetail}
-          data-testid="closeDetail"
-        />
+          themeColor={"primary"}
+          fillMode="outline"
+          icon="close"
+        ></Button>
         <div className={styles.itemBtnBox}>
-          <BsFillPencilFill
-            className={styles.edit}
+          <Button
             onClick={() => {
               handleEditTrue();
             }}
-          />
-          <BsFillTrashFill
-            className={styles.delete}
+            themeColor={"primary"}
+            fillMode="outline"
+            icon="edit"
+            disabled={permissions.save ? false : true}
+          ></Button>
+          <Button
             onClick={() => {
-              if (!window.confirm("일정계획을 삭제 하시겠습니까? (확인 후 우측 상단의 저장 버튼을 클릭해주세요.)")) {
+              if (
+                !window.confirm(
+                  "일정계획을 삭제 하시겠습니까? (확인 후 우측 상단의 저장 버튼을 클릭해주세요.)"
+                )
+              ) {
                 return false;
               }
+
               deleteTodoItem(todo.id);
               closeDetail();
             }}
-          />
+            themeColor={"primary"}
+            fillMode="outline"
+            icon="delete"
+            disabled={permissions.save ? false : true}
+          ></Button>
         </div>
       </div>
     </div>
