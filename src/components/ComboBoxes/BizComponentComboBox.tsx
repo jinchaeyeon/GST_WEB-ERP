@@ -114,6 +114,7 @@ const CommonComboBox = ({
       required={required}
       className={className}
       disabled={disabled}
+      style={{maxHeight: "300px", overflow: "auto"}}
     />
   );
 };
