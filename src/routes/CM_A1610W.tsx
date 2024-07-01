@@ -303,6 +303,7 @@ const CM_A1610W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       work_type: "N",
+      planyn_s: "Y",
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       datnum_s: dataArr.datnum_s.join("|"),
       contents_s: dataArr.contents_s.join("|"),
