@@ -72,12 +72,3 @@
   background-color: var(--color-blue);
   color: var(--color-white);
 }
-
-@media (max-width: 1200px) {
-  .form {
-    height: 270px;
-  }
-  .description {
-    height: 150px;
-  }
-}

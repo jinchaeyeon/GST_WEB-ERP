@@ -83,7 +83,9 @@ export default function TodoEdit({
       </div>
       <div style={{ marginTop: "5px" }}>
         <p>시간</p>
-        <div style={{ display: "flex", flexDirection: "row", marginTop:"5px" }}>
+        <div
+          style={{ display: "flex", flexDirection: "row", marginTop: "5px" }}
+        >
           <DateTimePicker
             value={filters.start}
             onChange={(e) =>
@@ -104,14 +106,19 @@ export default function TodoEdit({
           />
         </div>
       </div>
-      <div style={{ marginTop: "5px", height: `calc(100% - 210px)`}}>
+      <div
+        style={{
+          marginTop: "5px",
+          height: isMobile ? "200px" : `calc(100% - 210px)`,
+        }}
+      >
         <p>내용</p>
         <TextArea
           name="contents"
           type="text"
           value={filters.contents}
           onChange={filterInputChange}
-          style={{ marginTop: "5px", height: `calc(100% - 20px)`}}
+          style={{ marginTop: "5px", height: `180px` }}
         />
       </div>
       <div className={`${styles.btnBox} ${"blue"}`}>

@@ -199,6 +199,7 @@ abbr {
 
   .react-calendar__tile {
     font-size: var(--font-micro);
+    align-items: flex-end;
   }
 
   .scheduleBox {
