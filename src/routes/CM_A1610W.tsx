@@ -441,7 +441,7 @@ const CM_A1610W: React.FC = () => {
   useEffect(() => {
     if (paraData.work_type !== "" && permissions.save) fetchSchedulerSaved();
   }, [paraData, permissions]);
-  
+   
   return (
     <>
       <TitleContainer className="TitleContainer">
