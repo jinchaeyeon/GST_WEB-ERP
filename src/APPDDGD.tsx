@@ -211,6 +211,7 @@ const PR_A9100W = lazy(() => import("./routes/PR_A9100W"));
 const PR_B0020W = lazy(() => import("./routes/PR_B0020W"));
 const PR_B1103W = lazy(() => import("./routes/PR_B1103W"));
 const PR_B1104W = lazy(() => import("./routes/PR_B1104W"));
+const PR_B1500W = lazy(() => import("./routes/PR_B1500W"));
 const PR_B3000W = lazy(() => import("./routes/PR_B3000W"));
 const PS_A0060W_301 = lazy(() => import("./routes/PS_A0060W_301"));
 const QC_A0060W = lazy(() => import("./routes/QC_A0060W"));
@@ -1012,6 +1013,8 @@ const AppInner: React.FC = () => {
       return QC_B0100W;
     } else if (str == "PR_B1104W") {
       return PR_B1104W;
+    } else if (str == "PR_B1500W") {
+      return PR_B1500W;
     } else if (str == "BA_A0020W_603") {
       return BA_A0020W_603;
     } else if (str == "BA_A0021W_603") {
@@ -1191,6 +1194,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/PR_A6000W" component={PR_A6000W} exact />
                     <AuthRoute path="/PR_A7000W" component={PR_A7000W} exact />
                     <AuthRoute path="/PR_A9000W" component={PR_A9000W} exact />
+                    <AuthRoute path="/PR_B1500W" component={PR_B1500W} exact />
                     {/* 품질관리 */}
                     <AuthRoute path="/QC_A0060W" component={QC_A0060W} exact />
                     <AuthRoute path="/QC_A0120W" component={QC_A0120W} exact />

@@ -13,7 +13,7 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -32,6 +32,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -55,7 +56,7 @@ import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
 import { IItemData, IWindowPosition } from "../hooks/interfaces";
-import { isLoading, sessionItemState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -192,7 +193,6 @@ const PR_B3000W: React.FC = () => {
     }
   }, [bizComponentData]);
 
-  const [sessionItem] = useRecoilState(sessionItemState);
   const setLoading = useSetRecoilState(isLoading);
 
   //그리드 데이터 스테이트
@@ -255,15 +255,14 @@ const PR_B3000W: React.FC = () => {
       [name]: value,
     }));
   };
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionLocation = UseGetValueFromSessionItem("location");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Q",
-    orgdiv: sessionItem.find((sessionItem) => sessionItem.code == "orgdiv")
-      ?.value,
-    location: sessionItem.find((sessionItem) => sessionItem.code == "location")
-      ?.value,
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
     ymdFrdt: new Date(),
     ymdTodt: new Date(),
     itemcd: "",
