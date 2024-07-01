@@ -210,7 +210,6 @@ const CM_A1610W: React.FC = () => {
 
   const onSaveClick = () => {
     if (!permissions.save) return;
-    if (!permissions.save) return;
     if (filters.person !== user_id) {
       alert(findMessage(messagesData, "CM_A1610W_001"));
       return false;

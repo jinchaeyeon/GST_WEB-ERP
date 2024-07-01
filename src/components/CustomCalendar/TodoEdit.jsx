@@ -47,14 +47,9 @@ export default function TodoEdit({
     }
 
     const newTodo = {
-      id: filters.id,
-      start: filters.start,
-      end: filters.end,
+      ...filters,
       colorID: filters.colorID.sub_code,
-      title: filters.title,
-      contents: filters.contents,
       person: sessionUserId,
-      idx: filters.idx,
     };
 
     updateTodoItem(newTodo);

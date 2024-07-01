@@ -22,11 +22,10 @@ export const getDateRange = (startDate: any, endDate: any) => {
   const result = [];
 
   while (start <= end) {
-    result.push(
-      start.toISOString().split("T")[0].replace("-", "").replace("-", "")
-    );
+    result.push(convertDateToStr(start));
     start.setDate(start.getDate() + 1);
   }
+
   return result;
 };
 

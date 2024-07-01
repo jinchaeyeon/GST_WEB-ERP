@@ -36,7 +36,7 @@ export default function Schedule({
       )
     )
     .sort((a, b) => a.idx - b.idx);
-
+    
   return (
     <div className={`${styles.container} ${"blue"}`}>
       <div className={styles.header}>
