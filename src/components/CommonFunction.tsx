@@ -15,6 +15,21 @@ import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
+export const getDateRange = (startDate: any, endDate: any) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  const result = [];
+
+  while (start <= end) {
+    result.push(
+      start.toISOString().split("T")[0].replace("-", "").replace("-", "")
+    );
+    start.setDate(start.getDate() + 1);
+  }
+  return result;
+};
+
 export const getDeviceHeight = (bool: boolean) => {
   //라우터
   let height = getHeight(".visible-mobile-only"); //필터 모바일

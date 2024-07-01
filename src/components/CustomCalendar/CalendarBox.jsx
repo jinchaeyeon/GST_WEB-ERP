@@ -1,7 +1,7 @@
 import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { convertDateToStr } from "../CommonFunction";
+import { getDateRange } from "../CommonFunction";
 import "./CalendarBox.css";
 
 export default function CalendarBox({
@@ -18,11 +18,13 @@ export default function CalendarBox({
     if (view === "month") {
       let html = [];
       const scheduleList = schedule
-        .filter(
-          (todo) =>
-            convertDateToStr(todo.start) == moment(date).format("YYYYMMDD")
+        .filter((todo) =>
+          getDateRange(todo.start, todo.end).includes(
+            moment(date).format("YYYYMMDD")
+          )
         )
         .sort((a, b) => a.idx - b.idx);
+
       const korean = /[ㄱ-ㅎ|ㅏ-ㅣ-가-힣]/;
 
       for (let i = 0; i < scheduleList.length; i++) {

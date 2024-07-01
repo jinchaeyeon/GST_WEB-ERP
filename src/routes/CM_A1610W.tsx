@@ -262,6 +262,7 @@ const CM_A1610W: React.FC = () => {
         contents = "",
         title = "",
         isAllDay,
+        id,
         colorID,
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
@@ -303,7 +304,6 @@ const CM_A1610W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       work_type: "N",
-      planyn_s: "Y",
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       datnum_s: dataArr.datnum_s.join("|"),
       contents_s: dataArr.contents_s.join("|"),
@@ -425,6 +425,7 @@ const CM_A1610W: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
+      deletedMainRows = [];
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -441,7 +442,7 @@ const CM_A1610W: React.FC = () => {
   useEffect(() => {
     if (paraData.work_type !== "" && permissions.save) fetchSchedulerSaved();
   }, [paraData, permissions]);
-   
+
   return (
     <>
       <TitleContainer className="TitleContainer">

@@ -1,7 +1,7 @@
 import { Button } from "@progress/kendo-react-buttons";
 import moment from "moment";
 import { useState } from "react";
-import { convertDateToStr } from "../CommonFunction";
+import { getDateRange } from "../CommonFunction";
 import styles from "./Schedule.module.css";
 import TodoDetail from "./TodoDetail";
 import TodoEdit from "./TodoEdit";
@@ -18,7 +18,7 @@ export default function Schedule({
   closeDetail,
   updateTodoItem,
   colorList,
-  permissions
+  permissions,
 }) {
   const [isEdit, setIsEdit] = useState(false);
   const handleEditTrue = () => {
@@ -27,10 +27,13 @@ export default function Schedule({
   const handleEditFalse = () => {
     setIsEdit(false);
   };
+
   // 해당 날짜의 일정 리스트 만들기
   const scheduleList = schedule
-    .filter(
-      (todo) => convertDateToStr(todo.start) == moment(date).format("YYYYMMDD")
+    .filter((todo) =>
+      getDateRange(todo.start, todo.end).includes(
+        moment(date).format("YYYYMMDD")
+      )
     )
     .sort((a, b) => a.idx - b.idx);
 

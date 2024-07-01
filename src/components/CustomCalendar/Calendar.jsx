@@ -33,9 +33,10 @@ export default function Calendar(props) {
     props.reload(deletedRow, newList);
   };
   const updateTodoItem = (newTodo) => {
+    const items = schedule.filter((todo) => todo.id == newTodo.id);
     const newList = schedule.filter((todo) => todo.id !== newTodo.id).concat({
       ...newTodo,
-      rowstatus: "U"
+      rowstatus: items[0].rowstatus == "N" ? "N" : "U"
     });
     setSchedule(newList);
     props.reload(deletedRow, newList);
@@ -53,7 +54,8 @@ export default function Calendar(props) {
   useEffect(() => {
     //초기 props셋팅
     setColorList(props.colorData);
-    setSchedule(props.schedulerDataResult)
+    setSchedule(props.schedulerDataResult);
+    setIsList(true);
   }, [props]);
 
   return (
