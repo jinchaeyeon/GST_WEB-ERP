@@ -10,6 +10,9 @@ export default function CalendarBox({
   closeDetail,
   colorList,
 }) {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth < 1200;
+
   const show = ({ date, view }) => {
     if (view === "month") {
       const month = date.getMonth() + "월";
@@ -28,6 +31,7 @@ export default function CalendarBox({
         : [];
 
       const korean = /[ㄱ-ㅎ|ㅏ-ㅣ-가-힣]/;
+
       for (let i = 0; i < scheduleList.length; i++) {
         if (i === 2) {
           html.push(
@@ -64,7 +68,21 @@ export default function CalendarBox({
           </div>
         );
       }
-      return <div className="scheduleBox">{html}</div>;
+  
+      return (
+        <div className="scheduleBox">
+          {isMobile && scheduleList.length > 0 ? (
+            <div
+              key={scheduleList[0].id}
+              style={{
+                backgroundColor: "gray",
+              }}
+            />
+          ) : (
+            html
+          )}
+        </div>
+      );
     }
   };
   return (
