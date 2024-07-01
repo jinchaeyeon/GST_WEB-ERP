@@ -4,6 +4,8 @@ import CalendarBox from "./CalendarBox";
 import Schedule from "./Schedule";
 import TodoAddModal from "./TodoAddModal";
 
+let deletedRow = [];
+
 export default function Calendar(props) {
   const [colorList, setColorList] = useState([]);
   const [date, setDate] = useState(new Date());
@@ -24,26 +26,34 @@ export default function Calendar(props) {
   const closeModal = () => {
     setModal(false);
   };
-  const deleteTodoItem = (month, id) => {
-    const newList = schedule[month].filter((todo) => todo.id !== id);
-    setSchedule((prev) => ({
-      ...prev,
-      [month]: newList,
-    }));
+  const deleteTodoItem = (id) => {
+    deletedRow.push(schedule.filter((todo) => todo.id == id)[0]);
+    const newList = schedule.filter((todo) => todo.id !== id);
+    setSchedule(newList);
+    props.reload(deletedRow, newList);
   };
-  const updateTodoItem = (month, newTodo) => {
-    const newList = schedule[month]
-      .filter((todo) => todo.id !== newTodo.id)
-      .concat(newTodo);
-    setSchedule((prev) => ({
-      ...prev,
-      [month]: newList,
-    }));
+  const updateTodoItem = (newTodo) => {
+    const newList = schedule.filter((todo) => todo.id !== newTodo.id).concat({
+      ...newTodo,
+      rowstatus: "U"
+    });
+    setSchedule(newList);
+    props.reload(deletedRow, newList);
+  };
+
+  const addTodoItem = (newTodo) => {
+    const newList = schedule.concat({
+      ...newTodo,
+      rowstatus: "N"
+    });
+    setSchedule(newList);
+    props.reload(deletedRow, newList);
   };
 
   useEffect(() => {
     //초기 props셋팅
     setColorList(props.colorData);
+    setSchedule(props.schedulerDataResult)
   }, [props]);
 
   return (
@@ -66,14 +76,17 @@ export default function Calendar(props) {
         closeDetail={closeDetail}
         updateTodoItem={updateTodoItem}
         colorList={colorList}
+        permissions={props.permissions}
       />
       <TodoAddModal
         open={modal}
         date={date}
         closeModal={closeModal}
         schedule={schedule}
-        addSchedule={setSchedule}
+        addSchedule={addTodoItem}
         colorList={colorList}
+        permissions={props.permissions}
+        person={props.person}
       />
     </div>
   );

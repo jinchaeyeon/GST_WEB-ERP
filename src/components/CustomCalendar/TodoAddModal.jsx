@@ -1,3 +1,4 @@
+import { Button } from "@progress/kendo-react-buttons";
 import { DateTimePicker } from "@progress/kendo-react-dateinputs";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
@@ -14,6 +15,8 @@ export default function TodoAddModal({
   schedule,
   addSchedule,
   colorList,
+  permissions,
+  person,
 }) {
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth < 1200;
@@ -23,7 +26,7 @@ export default function TodoAddModal({
     title: "",
     start: new Date(),
     end: new Date(),
-    colorID: {sub_code: 0, code_name: "없음", color: "white"},
+    colorID: { sub_code: 0, code_name: "없음", color: "white" },
     person: sessionUserId,
     contents: "",
   });
@@ -32,8 +35,8 @@ export default function TodoAddModal({
     (prev) => {
       setFilters((prev) => ({
         ...prev,
-        start: new Date(date),
-        end: new Date(date),
+        start: new Date(date.setHours(0, 0, 0, 0)),
+        end: new Date(date.setHours(0, 0, 0, 0))
       }));
     },
     [date]
@@ -57,44 +60,37 @@ export default function TodoAddModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!permissions.save) return;
+    if (person !== sessionUserId) {
+      alert("본인만 수정가능합니다.");
+      return;
+    }
 
     if (filters.title === "") {
       alert("제목을 입력해주세요");
       return;
     }
 
-    const month = filters.start.getMonth() + "월";
     const newTodo = {
-      id: `${uuidv4()}`,
-      start: `${filters.start}`,
-      end: `${filters.end}`,
-      colorID: `${filters.colorID.sub_code}`,
-      title: `${filters.title}`,
-      contents: `${filters.contents}`,
-      person: `${sessionUserId}`,
+      id: uuidv4(),
+      start: filters.start,
+      end: filters.end,
+      colorID: filters.colorID.sub_code,
+      title: filters.title,
+      contents: filters.contents,
+      person: sessionUserId,
       idx: 1,
+      rowstatus: "N",
     };
 
-    if (Object.keys(schedule).includes(`${date.getMonth()}월`)) {
-      newTodo.idx = schedule[month].length + 1;
-      const monthSchedule = schedule[month].concat(newTodo);
-      addSchedule((prev) => ({
-        ...prev,
-        [month]: monthSchedule,
-      }));
-    } else {
-      addSchedule((prev) => ({
-        ...prev,
-        [month]: [newTodo],
-      }));
-    }
+    addSchedule(newTodo);
 
     setFilters({
       id: 0,
       title: "",
       start: new Date(date),
       end: new Date(date),
-      colorID: {sub_code: 0, code_name: "없음", color: "white"},
+      colorID: { sub_code: 0, code_name: "없음", color: "white" },
       person: sessionUserId,
       contents: "",
     });
@@ -135,7 +131,7 @@ export default function TodoAddModal({
             }
             steps={{
               hour: 1,
-              minute: 5
+              minute: 5,
             }}
           />
           <DateTimePicker
@@ -148,7 +144,7 @@ export default function TodoAddModal({
             }
             steps={{
               hour: 1,
-              minute: 5
+              minute: 5,
             }}
           />
         </div>
@@ -160,9 +156,14 @@ export default function TodoAddModal({
           onChange={filterInputChange}
           rows={isMobile ? 20 : 5}
         />
-        <button type="submit" className={styles.addBtn}>
+        <Button
+          onClick={handleSubmit}
+          themeColor={"primary"}
+          fillMode="outline"
+          disabled={permissions.save ? false : true}
+        >
           SUBMIT
-        </button>
+        </Button>
       </form>
     </div>
   );

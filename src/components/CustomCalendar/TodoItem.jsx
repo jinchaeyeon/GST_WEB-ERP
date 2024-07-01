@@ -3,7 +3,6 @@ import styles from "./TodoItem.module.css";
 
 export default function TodoItem({
   todo,
-  month,
   deleteTodoItem,
   handleTodo,
   handleEditTrue,
@@ -39,7 +38,11 @@ export default function TodoItem({
         <BsFillTrashFill
           className={styles.delete}
           onClick={() => {
-            deleteTodoItem(month, todo.id);
+            if (!window.confirm("일정계획을 삭제 하시겠습니까?")) {
+              return false;
+            }
+
+            deleteTodoItem(todo.id);
           }}
         />
       </div>

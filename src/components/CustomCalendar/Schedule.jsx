@@ -1,6 +1,7 @@
+import { Button } from "@progress/kendo-react-buttons";
 import moment from "moment";
 import { useState } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
+import { convertDateToStr } from "../CommonFunction";
 import styles from "./Schedule.module.css";
 import TodoDetail from "./TodoDetail";
 import TodoEdit from "./TodoEdit";
@@ -17,6 +18,7 @@ export default function Schedule({
   closeDetail,
   updateTodoItem,
   colorList,
+  permissions
 }) {
   const [isEdit, setIsEdit] = useState(false);
   const handleEditTrue = () => {
@@ -26,16 +28,11 @@ export default function Schedule({
     setIsEdit(false);
   };
   // 해당 날짜의 일정 리스트 만들기
-  const month = date.getMonth() + "월";
-  const scheduleList = Object.keys(schedule).includes(`${date.getMonth()}월`)
-    ? schedule[month]
-        .filter(
-          (todo) =>
-            moment(todo.start).format("YYYY년 MM월 DD일") ===
-            moment(date).format("YYYY년 MM월 DD일")
-        )
-        .sort((a, b) => a.idx - b.idx)
-    : [];
+  const scheduleList = schedule
+    .filter(
+      (todo) => convertDateToStr(todo.start) == moment(date).format("YYYYMMDD")
+    )
+    .sort((a, b) => a.idx - b.idx);
 
   return (
     <div className={`${styles.container} ${"blue"}`}>
@@ -46,13 +43,13 @@ export default function Schedule({
             {moment(date).format("YYYY년 MM월 DD일")}
           </p>
           {isList && (
-            <button
-              className={styles.addBtn}
+            <Button
               onClick={openModal}
-              aria-label="addBtn"
-            >
-              <AiOutlinePlus />
-            </button>
+              themeColor={"primary"}
+              fillMode="outline"
+              icon="plus"
+              disabled={permissions.save ? false : true}
+            ></Button>
           )}
         </div>
       </div>
@@ -63,7 +60,6 @@ export default function Schedule({
             <TodoItem
               key={todo.id}
               todo={todo}
-              month={month}
               deleteTodoItem={deleteTodoItem}
               handleTodo={handleTodo}
               handleEditTrue={handleEditTrue}
@@ -74,7 +70,6 @@ export default function Schedule({
         {!isList && !isEdit && (
           <TodoDetail
             todo={selectedTodo}
-            month={month}
             closeDetail={closeDetail}
             deleteTodoItem={deleteTodoItem}
             handleEditTrue={handleEditTrue}
@@ -84,7 +79,6 @@ export default function Schedule({
         {!isList && isEdit && (
           <TodoEdit
             todo={selectedTodo}
-            month={month}
             updateTodoItem={updateTodoItem}
             schedule={schedule}
             handleEditFalse={handleEditFalse}

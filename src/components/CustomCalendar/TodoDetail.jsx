@@ -6,7 +6,6 @@ import styles from "./TodoDetail.module.css";
 
 export default function TodoDetail({
   todo,
-  month,
   closeDetail,
   deleteTodoItem,
   handleEditTrue,
@@ -18,7 +17,7 @@ export default function TodoDetail({
     start: convertDateToStrWithTime2(new Date(todo.start)),
     end: convertDateToStrWithTime2(new Date(todo.end)),
   });
-  console.log(filters);
+
   return (
     <div className={`${styles.todoBox} ${"blue"}`}>
       <div className={styles.header}>
@@ -53,7 +52,10 @@ export default function TodoDetail({
           <BsFillTrashFill
             className={styles.delete}
             onClick={() => {
-              deleteTodoItem(month, todo.id);
+              if (!window.confirm("일정계획을 삭제 하시겠습니까?")) {
+                return false;
+              }
+              deleteTodoItem(todo.id);
               closeDetail();
             }}
           />

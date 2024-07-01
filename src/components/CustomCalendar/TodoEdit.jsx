@@ -8,9 +8,7 @@ import styles from "./TodoEdit.module.css";
 
 export default function TodoEdit({
   todo,
-  month,
   updateTodoItem,
-  schedule,
   handleEditFalse,
   handleTodo,
   colorList,
@@ -50,16 +48,16 @@ export default function TodoEdit({
 
     const newTodo = {
       id: filters.id,
-      start: `${filters.start}`,
-      end: `${filters.end}`,
-      colorID: `${filters.colorID.sub_code}`,
-      title: `${filters.title}`,
-      contents: `${filters.contents}`,
-      person: `${sessionUserId}`,
+      start: filters.start,
+      end: filters.end,
+      colorID: filters.colorID.sub_code,
+      title: filters.title,
+      contents: filters.contents,
+      person: sessionUserId,
       idx: filters.idx,
     };
 
-    updateTodoItem(month, newTodo);
+    updateTodoItem(newTodo);
     handleTodo(newTodo);
     handleEditFalse();
   };

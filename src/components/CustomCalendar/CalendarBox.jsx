@@ -1,6 +1,7 @@
 import moment from "moment";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { convertDateToStr } from "../CommonFunction";
 import "./CalendarBox.css";
 
 export default function CalendarBox({
@@ -15,21 +16,13 @@ export default function CalendarBox({
 
   const show = ({ date, view }) => {
     if (view === "month") {
-      const month = date.getMonth() + "월";
-
       let html = [];
-      const scheduleList = Object.keys(schedule).includes(
-        `${date.getMonth()}월`
-      )
-        ? schedule[month]
-            .filter(
-              (todo) =>
-                moment(todo.start).format("YYYY년 MM월 DD일") ===
-                moment(date).format("YYYY년 MM월 DD일")
-            )
-            .sort((a, b) => a.idx - b.idx)
-        : [];
-
+      const scheduleList = schedule
+        .filter(
+          (todo) =>
+            convertDateToStr(todo.start) == moment(date).format("YYYYMMDD")
+        )
+        .sort((a, b) => a.idx - b.idx);
       const korean = /[ㄱ-ㅎ|ㅏ-ㅣ-가-힣]/;
 
       for (let i = 0; i < scheduleList.length; i++) {
@@ -68,9 +61,12 @@ export default function CalendarBox({
           </div>
         );
       }
-  
+
       return (
-        <div className="scheduleBox">
+        <div
+          className="scheduleBox"
+          style={{ display: "flex", gap: "5px", flexDirection: "column" }}
+        >
           {isMobile && scheduleList.length > 0 ? (
             <div
               key={scheduleList[0].id}
