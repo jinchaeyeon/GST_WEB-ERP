@@ -70,7 +70,10 @@ export default function TodoAddModal({
       alert("제목을 입력해주세요");
       return;
     }
-
+    if (filters.start > filters.end) {
+      alert("시작시간이 종료시간보다 이후 입니다.");
+      return;
+    }
     const newTodo = {
       id: uuidv4(),
       start: filters.start,
