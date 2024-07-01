@@ -52,7 +52,7 @@ export default function TodoDetail({
           <BsFillTrashFill
             className={styles.delete}
             onClick={() => {
-              if (!window.confirm("일정계획을 삭제 하시겠습니까?")) {
+              if (!window.confirm("일정계획을 삭제 하시겠습니까? (확인 후 우측 상단의 저장 버튼을 클릭해주세요.)")) {
                 return false;
               }
               deleteTodoItem(todo.id);

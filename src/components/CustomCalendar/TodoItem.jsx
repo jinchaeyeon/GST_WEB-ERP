@@ -1,4 +1,5 @@
 import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
+import { convertDateToStrWithTime3 } from "../CommonFunction";
 import styles from "./TodoItem.module.css";
 
 export default function TodoItem({
@@ -24,7 +25,17 @@ export default function TodoItem({
             )[0]?.color,
           }}
         ></div>
-        <p className={styles.title}>{todo.title}</p>
+        <p
+          className={styles.title}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginRight: "10px",
+          }}
+        >
+          <div>{todo.title}</div>
+          <div>{convertDateToStrWithTime3(todo.start)}</div>
+        </p>
       </div>
       <div className={`${styles.btnBox} ${"blue"}`}>
         <BsFillPencilFill
@@ -38,7 +49,11 @@ export default function TodoItem({
         <BsFillTrashFill
           className={styles.delete}
           onClick={() => {
-            if (!window.confirm("일정계획을 삭제 하시겠습니까?")) {
+            if (
+              !window.confirm(
+                "일정계획을 삭제 하시겠습니까? (확인 후 우측 상단의 저장 버튼을 클릭해주세요.)"
+              )
+            ) {
               return false;
             }
 

@@ -239,6 +239,14 @@ export const convertDateToStrWithTime2 = (date: Date) => {
   return dateTime;
 };
 
+export const convertDateToStrWithTime3 = (date: Date) => {
+  const dateTime: string =
+    (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) +
+    ":" +
+    (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes());
+  return dateTime;
+};
+
 //8자리 날짜 stirng에 구분자 추가
 export const dateformat = (str: string) => {
   if (!str) return "";

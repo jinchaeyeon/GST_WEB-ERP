@@ -36,7 +36,7 @@ export default function TodoAddModal({
       setFilters((prev) => ({
         ...prev,
         start: new Date(date.setHours(0, 0, 0, 0)),
-        end: new Date(date.setHours(0, 0, 0, 0))
+        end: new Date(date.setHours(0, 0, 0, 0)),
       }));
     },
     [date]
@@ -120,7 +120,7 @@ export default function TodoAddModal({
           type="text"
           value={filters.title}
           onChange={filterInputChange}
-          style={{ height: "40px" }}
+          style={{ height: "40px", fontSize: "large" }}
         />
         <p>시간</p>
         <div style={{ display: "flex", flexDirection: "row", height: "40px" }}>
@@ -136,6 +136,7 @@ export default function TodoAddModal({
               hour: 1,
               minute: 5,
             }}
+            size="large"
           />
           <DateTimePicker
             value={filters.end}
@@ -149,6 +150,7 @@ export default function TodoAddModal({
               hour: 1,
               minute: 5,
             }}
+            size="large"
           />
         </div>
         <p>내용</p>
@@ -164,6 +166,7 @@ export default function TodoAddModal({
           themeColor={"primary"}
           fillMode="outline"
           disabled={permissions.save ? false : true}
+          style={{ height: "50px" }}
         >
           SUBMIT
         </Button>

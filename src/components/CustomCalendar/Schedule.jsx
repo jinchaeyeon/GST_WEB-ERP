@@ -36,25 +36,27 @@ export default function Schedule({
       )
     )
     .sort((a, b) => a.idx - b.idx);
-    
+
   return (
     <div className={`${styles.container} ${"blue"}`}>
       <div className={styles.header}>
-        <p className={styles.title}>Schedule</p>
-        <div className={styles.dateBox}>
-          <p className={styles.date}>
-            {moment(date).format("YYYY년 MM월 DD일")}
-          </p>
-          {isList && (
-            <Button
-              onClick={openModal}
-              themeColor={"primary"}
-              fillMode="outline"
-              icon="plus"
-              disabled={permissions.save ? false : true}
-            ></Button>
-          )}
+        <div style={{display: "flex", alignItems: "center"}}>
+          <p className={styles.title}>Schedule</p>
+          <div className={styles.dateBox}>
+            <p className={styles.date}>
+              {moment(date).format("YYYY년 MM월 DD일")}
+            </p>
+          </div>
         </div>
+        {isList && (
+          <Button
+            onClick={openModal}
+            themeColor={"primary"}
+            fillMode="outline"
+            icon="plus"
+            disabled={permissions.save ? false : true}
+          ></Button>
+        )}
       </div>
       <div className={styles.scheduleBox}>
         {/* 해당 date에 맞는 데이터를 골라 map으로 돌며 item 생성. */}

@@ -74,7 +74,7 @@ export default function TodoEdit({
           type="text"
           value={filters.title}
           onChange={filterInputChange}
-          style={{ marginTop: "5px", height: "40px" }}
+          style={{ marginTop: "5px", height: "40px", fontSize: "large" }}
         />
       </div>
       <div style={{ marginTop: "5px" }}>
@@ -99,6 +99,7 @@ export default function TodoEdit({
               hour: 1,
               minute: 5,
             }}
+            size="large"
           />
           <DateTimePicker
             value={filters.end}
@@ -112,6 +113,7 @@ export default function TodoEdit({
               hour: 1,
               minute: 5,
             }}
+            size="large"
           />
         </div>
       </div>
