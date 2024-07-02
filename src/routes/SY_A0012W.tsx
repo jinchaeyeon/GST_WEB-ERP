@@ -529,7 +529,7 @@ const SY_A0120: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
-  const [menuId, setMenuId] = useState<String>("");
+  const [menuId, setMenuId] = useState<any>("reset");
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -602,12 +602,14 @@ const SY_A0120: React.FC = () => {
   }, [itemInfo]);
 
   useEffect(() => {
-    if (menuId != "") {
-      const items = mainDataResult.data.filter(
-        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-      )[0];
+    if(menuId != "reset") {
+      console.log(menuListData)
+      console.log(menuId)
+      console.log(menuListData.find(
+        (item: any) => item.sub_code == menuId
+      ))
       const datas = mainDataResult.data.map((item: any) =>
-        item.num == items.num
+        item.num == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
               home_menu_id_web: menuId,
@@ -621,7 +623,7 @@ const SY_A0120: React.FC = () => {
           total: prev.total,
         };
       });
-      setMenuId("");
+      setMenuId("reset");
     }
   }, [menuId]);
 
@@ -1231,7 +1233,7 @@ const SY_A0120: React.FC = () => {
       }
 
       deletedMainRows = [];
- 
+
       for (const item of dataItem) {
         const {
           rowstatus,

@@ -53,7 +53,7 @@ const SUB_ITEMS_FIELD: string = "menus";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
-  reloadData(workType: string, groupCode?: string): void;
+  reloadData(workType: any): void;
   modal?: boolean;
 };
 var height = 0;
@@ -173,7 +173,7 @@ const KendoWindow = ({
     form_id,
     sort_order
     FROM sysMenuPool
-    WHERE category <> 'FORM'
+    WHERE category <> 'FORM' AND category <> 'APP'
     AND parent_menu_id <> ''
     AND release_status = 'R'
     AND menu_name LIKE '%' + '${filter.menu}' + '%'
@@ -297,6 +297,19 @@ const KendoWindow = ({
     setVisible(false);
   };
 
+  const onConfirmClick2 = () => {
+    const datas = {
+      KeyID: "",
+      ParentKeyID: "",
+      category: "",
+      form_id: "",
+      menu_name: "",
+      sort_order: 0,
+    };
+    reloadData(datas);
+    setVisible(false);
+  };
+
   const Menus = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
   };
@@ -393,6 +406,9 @@ const KendoWindow = ({
         ></TreeList>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
+            <Button themeColor={"primary"} onClick={onConfirmClick2}>
+              초기화
+            </Button>
             <Button themeColor={"primary"} onClick={onConfirmClick}>
               확인
             </Button>
