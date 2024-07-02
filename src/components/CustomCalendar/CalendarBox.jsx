@@ -91,6 +91,7 @@ export default function CalendarBox({
         formatDay={(locale, start) =>
           start.toLocaleString("en", { day: "numeric" })
         }
+        calendarType="gregory"
         next2Label={null}
         prev2Label={null}
         tileContent={show}

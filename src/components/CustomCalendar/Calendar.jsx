@@ -7,11 +7,14 @@ import TodoAddModal from "./TodoAddModal";
 let deletedRow = [];
 
 export default function Calendar(props) {
+  let deviceWidth = document.documentElement.clientWidth;
+  let isMobile = deviceWidth < 1200;
   const [colorList, setColorList] = useState([]);
   const [date, setDate] = useState(new Date());
   const [modal, setModal] = useState(false);
   const [schedule, setSchedule] = useState([]);
   const [isList, setIsList] = useState(true);
+  const [isEdit, setIsEdit] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState({});
   const handleTodo = (todo) => {
     setSelectedTodo(todo);
@@ -34,10 +37,12 @@ export default function Calendar(props) {
   };
   const updateTodoItem = (newTodo) => {
     const items = schedule.filter((todo) => todo.id == newTodo.id);
-    const newList = schedule.filter((todo) => todo.id !== newTodo.id).concat({
-      ...newTodo,
-      rowstatus: items[0].rowstatus == "N" ? "N" : "U"
-    });
+    const newList = schedule
+      .filter((todo) => todo.id !== newTodo.id)
+      .concat({
+        ...newTodo,
+        rowstatus: items[0].rowstatus == "N" ? "N" : "U",
+      });
     setSchedule(newList);
     props.reload(deletedRow, newList);
   };
@@ -45,7 +50,7 @@ export default function Calendar(props) {
   const addTodoItem = (newTodo) => {
     const newList = schedule.concat({
       ...newTodo,
-      rowstatus: "N"
+      rowstatus: "N",
     });
     setSchedule(newList);
     props.reload(deletedRow, newList);
@@ -60,19 +65,34 @@ export default function Calendar(props) {
 
   return (
     <div className={styles.box}>
-      <CalendarBox
-        date={date}
-        handleDate={setDate}
-        schedule={schedule}
-        closeDetail={closeDetail}
-        colorList={colorList}
-      />
+      {!isMobile ? (
+        <CalendarBox
+          date={date}
+          handleDate={setDate}
+          schedule={schedule}
+          closeDetail={closeDetail}
+          colorList={colorList}
+        />
+      ) : (
+        !(!isList && isEdit) && (
+          <CalendarBox
+            date={date}
+            handleDate={setDate}
+            schedule={schedule}
+            closeDetail={closeDetail}
+            colorList={colorList}
+          />
+        )
+      )}
       <Schedule
         date={date}
         openModal={openModal}
         schedule={schedule}
         deleteTodoItem={deleteTodoItem}
         isList={isList}
+        setIsList={setIsList}
+        isEdit={isEdit}
+        setIsEdit={setIsEdit}
         selectedTodo={selectedTodo}
         handleTodo={handleTodo}
         closeDetail={closeDetail}

@@ -260,6 +260,7 @@ const CM_A1610W: React.FC = () => {
         rowstatus = "",
         contents = "",
         title = "",
+        custcd,
         isAllDay,
         id,
         colorID,
@@ -272,7 +273,7 @@ const CM_A1610W: React.FC = () => {
       dataArr.person_s.push("");
       dataArr.finyn_s.push("");
       dataArr.kind1_s.push("");
-      dataArr.custcd_s.push("");
+      dataArr.custcd_s.push(custcd);
       dataArr.title_s.push(title);
       dataArr.colorid_s.push(colorID);
     });
@@ -286,6 +287,7 @@ const CM_A1610W: React.FC = () => {
         title = "",
         isAllDay,
         colorID,
+        custcd,
       } = item;
       dataArr.rowstatus_s.push("D");
       dataArr.datnum_s.push(datnum);
@@ -295,7 +297,7 @@ const CM_A1610W: React.FC = () => {
       dataArr.person_s.push("");
       dataArr.finyn_s.push("");
       dataArr.kind1_s.push("");
-      dataArr.custcd_s.push("");
+      dataArr.custcd_s.push(custcd);
       dataArr.title_s.push(title);
       dataArr.colorid_s.push(colorID);
     });

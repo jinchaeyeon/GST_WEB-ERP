@@ -13,6 +13,9 @@ export default function Schedule({
   schedule,
   deleteTodoItem,
   isList,
+  setIsList,
+  isEdit,
+  setIsEdit,
   selectedTodo,
   handleTodo,
   closeDetail,
@@ -20,12 +23,12 @@ export default function Schedule({
   colorList,
   permissions,
 }) {
-  const [isEdit, setIsEdit] = useState(false);
   const handleEditTrue = () => {
     setIsEdit(true);
   };
   const handleEditFalse = () => {
     setIsEdit(false);
+    setIsList(true);
   };
 
   // 해당 날짜의 일정 리스트 만들기

@@ -17,7 +17,7 @@ export default function TodoDetail({
     start: convertDateToStrWithTime2(new Date(todo.start)),
     end: convertDateToStrWithTime2(new Date(todo.end)),
   });
-
+  console.log(filters)
   return (
     <div className={`${styles.todoBox} ${"blue"}`}>
       <div className={styles.header}>
@@ -33,6 +33,9 @@ export default function TodoDetail({
         </h2>
         <p className={styles.time}>
           {filters.start} ~ {filters.end}
+        </p>
+        <p className={styles.time}>
+          {filters.custnm}
         </p>
       </div>
       <p className={styles.description}>{filters.contents}</p>

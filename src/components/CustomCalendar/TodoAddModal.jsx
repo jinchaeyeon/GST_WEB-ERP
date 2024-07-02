@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
 import { UseGetValueFromSessionItem } from "../CommonFunction";
+import CustomersWindow from "../Windows/CommonWindows/CustomersWindow";
 import ColorRadio from "./ColorRadio";
 import styles from "./TodoAddModal.module.css";
 
@@ -29,6 +30,8 @@ export default function TodoAddModal({
     colorID: { sub_code: 0, code_name: "없음", color: "white" },
     person: sessionUserId,
     contents: "",
+    custcd: "",
+    custnm: "",
   });
 
   useEffect(
@@ -82,6 +85,8 @@ export default function TodoAddModal({
       title: filters.title,
       contents: filters.contents,
       person: sessionUserId,
+      custcd: filters.custcd,
+      custnm: filters.custnm,
       idx: 1,
       rowstatus: "N",
     };
@@ -96,81 +101,129 @@ export default function TodoAddModal({
       colorID: { sub_code: 0, code_name: "없음", color: "white" },
       person: sessionUserId,
       contents: "",
+      custcd: "",
     });
     closeModal();
   };
 
+  const [custWindowVisible, setCustWindowVisible] = useState(false);
+  const onCustWndClick = () => {
+    setCustWindowVisible(true);
+  };
+  const setCustData = (data) => {
+    setFilters((prev) => ({
+      ...prev,
+      custcd: data.custcd,
+      custnm: data.custnm,
+    }));
+  };
+
   return (
-    <div
-      className={open ? `${styles.modal} ${styles.openModal}` : styles.modal}
-    >
-      <form onSubmit={handleSubmit} className={`${styles.form} ${"blue"}`}>
-        <div className={styles.infoBox}>
-          <h2 className={styles.info}>일정 등록하기</h2>
-          <AiOutlineClose className={styles.closeBtn} onClick={closeModal} />
-        </div>
-        <ColorRadio
-          code={filters.colorID}
-          handleCode={filterComboChange}
-          colorData={colorList}
-        />
-        <p>제목</p>
-        <Input
-          name="title"
-          type="text"
-          value={filters.title}
-          onChange={filterInputChange}
-          style={{ height: "40px", fontSize: "large" }}
-        />
-        <p>시간</p>
-        <div style={{ display: "flex", flexDirection: "row", height: "40px" }}>
-          <DateTimePicker
-            value={filters.start}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                start: e.value,
-              }))
-            }
-            steps={{
-              hour: 1,
-              minute: 5,
-            }}
-            size="large"
+    <>
+      <div
+        className={open ? `${styles.modal} ${styles.openModal}` : styles.modal}
+      >
+        <div onSubmit={handleSubmit} className={`${styles.form} ${"blue"}`}>
+          <div className={styles.infoBox}>
+            <h2 className={styles.info}>일정 등록하기</h2>
+            <AiOutlineClose className={styles.closeBtn} onClick={closeModal} />
+          </div>
+          <ColorRadio
+            code={filters.colorID}
+            handleCode={filterComboChange}
+            colorData={colorList}
           />
-          <DateTimePicker
-            value={filters.end}
-            onChange={(e) =>
-              setFilters((prev) => ({
-                ...prev,
-                end: e.value,
-              }))
-            }
-            steps={{
-              hour: 1,
-              minute: 5,
-            }}
-            size="large"
+          <p>제목</p>
+          <Input
+            name="title"
+            type="text"
+            value={filters.title}
+            onChange={filterInputChange}
+            style={{ height: "40px", fontSize: "large" }}
           />
+          <p>시간</p>
+          <div
+            style={{ display: "flex", flexDirection: "row", height: "40px" }}
+          >
+            <DateTimePicker
+              value={filters.start}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  start: e.value,
+                }))
+              }
+              steps={{
+                hour: 1,
+                minute: 5,
+              }}
+              size="large"
+            />
+            <DateTimePicker
+              value={filters.end}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  end: e.value,
+                }))
+              }
+              steps={{
+                hour: 1,
+                minute: 5,
+              }}
+              size="large"
+            />
+          </div>
+          <div style={{ marginTop: "5px" }}>
+            <p>업체</p>
+            <div style={{ marginTop: "5px", display: "flex" }}>
+              <Input
+                name="custnm"
+                type="text"
+                value={filters.custnm}
+                className="readonly"
+                style={{ height: "40px", fontSize: "large" }}
+              />
+              <Button
+                onClick={onCustWndClick}
+                themeColor={"primary"}
+                fillMode="flat"
+              >
+                참조
+              </Button>
+            </div>
+          </div>
+          <div>
+            <p>내용</p>
+            <div style={{ marginTop: "5px" }}>
+              <TextArea
+                name="contents"
+                type="text"
+                value={filters.contents}
+                onChange={filterInputChange}
+                rows={isMobile ? 20 : 5}
+              />
+            </div>
+          </div>
+          <Button
+            onClick={handleSubmit}
+            themeColor={"primary"}
+            fillMode="outline"
+            disabled={permissions.save ? false : true}
+            style={{ height: "50px" }}
+          >
+            SUBMIT
+          </Button>
         </div>
-        <p>내용</p>
-        <TextArea
-          name="contents"
-          type="text"
-          value={filters.contents}
-          onChange={filterInputChange}
-          rows={isMobile ? 20 : 5}
+      </div>
+      {custWindowVisible && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible}
+          workType={"N"}
+          setData={setCustData}
+          modal={true}
         />
-        <Button
-          onClick={handleSubmit}
-          themeColor={"primary"}
-          fillMode="outline"
-          disabled={permissions.save ? false : true}
-          style={{ height: "50px" }}
-        >
-          SUBMIT
-        </Button>
-      </form>
-    </div>
+      )}
+    </>
   );
 }
