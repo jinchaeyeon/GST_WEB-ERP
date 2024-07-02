@@ -602,24 +602,27 @@ const SY_A0120: React.FC = () => {
   }, [itemInfo]);
 
   useEffect(() => {
-    const items = mainDataResult.data.filter(
-      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
-    const datas = mainDataResult.data.map((item: any) =>
-      item.num == items.num
-        ? {
-            ...item,
-            home_menu_id_web: menuId,
-            rowstatus: item.rowstatus == "N" ? "N" : "U",
-          }
-        : { ...item }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: datas,
-        total: prev.total,
-      };
-    });
+    if (menuId != "") {
+      const items = mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      const datas = mainDataResult.data.map((item: any) =>
+        item.num == items.num
+          ? {
+              ...item,
+              home_menu_id_web: menuId,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+            }
+          : { ...item }
+      );
+      setMainDataResult((prev) => {
+        return {
+          data: datas,
+          total: prev.total,
+        };
+      });
+      setMenuId("");
+    }
   }, [menuId]);
 
   //customOptionData 조회 후 디폴트 값 세팅
@@ -1228,7 +1231,7 @@ const SY_A0120: React.FC = () => {
       }
 
       deletedMainRows = [];
-      console.log(dataItem);
+ 
       for (const item of dataItem) {
         const {
           rowstatus,
