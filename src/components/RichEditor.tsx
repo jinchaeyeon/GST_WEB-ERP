@@ -7,11 +7,12 @@ import {
 } from "@progress/kendo-react-editor";
 import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { insertImagePlugin } from "../components/UploadImgFunction/insertImagePlugin";
-import { InsertImage } from "../components/UploadImgFunction/insertImageTool";
-import { insertImageFiles } from "../components/UploadImgFunction/utils";
 import { OSState } from "../store/atoms";
 import { TInsertImageFiles } from "../store/types";
+import { CustomLineheight } from "./CustomTool/CustomLineheight";
+import { insertImagePlugin } from "./CustomTool/insertImagePlugin";
+import { InsertImage } from "./CustomTool/insertImageTool";
+import { insertImageFiles } from "./CustomTool/utils";
 
 const {
   Bold,
@@ -59,9 +60,35 @@ type TRichEditor = {
   border?: boolean;
 };
 
-const noticeStyle = `body {
-  padding : 1.5cm;
-}`;
+const css = `
+        p, span{
+          font-family: Arial, sans-serif; 
+          margin: 0 !important;
+        }
+        table {
+          margin: 0;
+          border-collapse: collapse;
+          table-layout: fixed;
+          width: 100%;
+          overflow: hidden;
+        }
+        table td {          
+          padding: 0pt 5.4pt 0pt 5.4pt;
+          border: 1pt #000000 solid;
+        }
+        table td p {            
+          margin: 0;
+          padding: 0;
+        }
+        #parent {
+          width: 200px;
+          float: right;
+        }
+        #title {
+          background-color: #2289C3;
+          color: white;
+        }
+        `;
 
 const { EditorState, EditorView, Plugin, PluginKey } = ProseMirror;
 
@@ -86,7 +113,13 @@ const RichEditor = React.forwardRef(
           filterTransaction: (tr, _st) => editableRef.current || !tr.docChanged,
         }),
       ];
+      const iframeDocument = document
+        .getElementById(id)!
+        .querySelector("iframe")!.contentDocument;
+      const style = iframeDocument!.createElement("style");
+      style.prepend(iframeDocument!.createTextNode(css));
 
+      iframeDocument!.head.prepend(style);
       return new EditorView(
         { mount: event.dom },
         {
@@ -134,7 +167,7 @@ const RichEditor = React.forwardRef(
             );
 
             if (className.includes("notice-editor")) {
-              html.replace(noticeStyle, "");
+              html.replace(css, "");
             }
 
             return html;
@@ -177,7 +210,7 @@ const RichEditor = React.forwardRef(
       // HTML 문자열에서 style 태그 내용 추출
       const extractedStyles =
         extractStyleTagContents(html) +
-        (className.includes("notice-editor") ? noticeStyle : "");
+        (className.includes("notice-editor") ? css : "");
       setStyles(extractedStyles);
 
       if (extractedStyles) {
@@ -197,9 +230,9 @@ const RichEditor = React.forwardRef(
         }
 
         const style = iframeDocument!.createElement("style");
-        style.appendChild(iframeDocument!.createTextNode(extractedStyles));
+        style.prepend(iframeDocument!.createTextNode(extractedStyles));
 
-        iframeDocument!.head.appendChild(style);
+        iframeDocument!.head.prepend(style);
       }
     };
 
@@ -213,7 +246,7 @@ const RichEditor = React.forwardRef(
       } else {
         const newStyleTag = htmlDoc.createElement("style");
         newStyleTag.textContent = css;
-        htmlDoc.head.appendChild(newStyleTag);
+        htmlDoc.head.prepend(newStyleTag);
       }
     };
 
@@ -241,35 +274,6 @@ const RichEditor = React.forwardRef(
             element.setAttribute("cellpadding", "0");
           }
         }
-        // css 기본 설정
-        const css = `
-        p, span{
-          font-family: Arial, sans-serif; 
-        }
-        table {
-          margin: 0;
-          border-collapse: collapse;
-          table-layout: fixed;
-          width: 100%;
-          overflow: hidden;
-        }
-        table td {          
-          padding: 0pt 5.4pt 0pt 5.4pt;
-          border: 1pt #000000 solid;
-        }
-        table td p {            
-          margin: 0;
-          padding: 0;
-        }
-        #parent {
-          width: 200px;
-          float: right;
-        }
-        #title {
-          background-color: #2289C3;
-          color: white;
-        }
-        `;
 
         addCssToStyleTag(htmlDoc, css);
 
@@ -337,8 +341,9 @@ const RichEditor = React.forwardRef(
                   [Indent, Outdent],
                   [OrderedList, UnorderedList],
                   FontSize,
-                  // FontName,
-                  // FormatBlock,
+                  CustomLineheight,
+                  FontName,
+                  FormatBlock,
                   [Undo, Redo],
                   [Link, Unlink, InsertImage],
                   [InsertTable],
