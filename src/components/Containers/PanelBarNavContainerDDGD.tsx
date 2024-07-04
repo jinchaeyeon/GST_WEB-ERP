@@ -102,7 +102,7 @@ const PanelBarNavContainer = (props: any) => {
 
   let broswer = getBrowser();
   broswer = broswer.substring(broswer.lastIndexOf("/") + 1);
-
+  const [webheight, setWebHeight] = useState(0);
   // 반응형 처리
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
@@ -607,8 +607,6 @@ const PanelBarNavContainer = (props: any) => {
     }
   };
   const path = window.location.href;
-
-  const [webheight, setWebHeight] = useState(0);
 
   useLayoutEffect(() => {
     if (paths.length > 0) {

@@ -72,6 +72,7 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import SA_A9001W_IN_Window from "../components/Windows/SA_A9001W_IN_Window";
 import SA_A9001W_PRINTOPTION_Window from "../components/Windows/SA_A9001W_PRINTOPTION_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
@@ -95,6 +96,7 @@ const dateField = ["taxdt", "payindt", "acntdt", "indt"];
 const numberField = [
   "qty",
   "splyamt",
+  "wonamt",
   "taxamt",
   "totamt",
   "collectamt",
@@ -105,6 +107,7 @@ const checkBoxField = ["colfinyn", "rtxisuyn"];
 const numberField2 = [
   "qty",
   "splyamt",
+  "wonamt",
   "taxamt",
   "totamt",
   "collectamt",
@@ -133,11 +136,6 @@ const CustomRadioCell = (props: GridCellProps) => {
   ) : (
     <td />
   );
-};
-
-type TdataArr = {
-  reqdt_s: string[];
-  seq_s: string[];
 };
 
 const SA_A9001W: React.FC = () => {
@@ -298,13 +296,7 @@ const SA_A9001W: React.FC = () => {
   const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [positionListData, setPositionListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [taxtypeListData, setTaxtypeListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [etaxListData, setEtaxListData] = useState([COM_CODE_DEFAULT_VALUE]);
@@ -312,8 +304,6 @@ const SA_A9001W: React.FC = () => {
     if (bizComponentData !== null) {
       setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
       setBillstat2ListData(getBizCom(bizComponentData, "L_AC902"));
-      setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
-      setPositionListData(getBizCom(bizComponentData, "L_BA028"));
       setReport_statListData(getBizCom(bizComponentData, "L_AC906"));
       setLocationListData(getBizCom(bizComponentData, "L_BA002"));
       setTaxtypeListData(getBizCom(bizComponentData, "L_AC014"));
@@ -365,8 +355,11 @@ const SA_A9001W: React.FC = () => {
     setSubDataResult3(process([], subDataState3));
   };
 
+  const pc = UseGetValueFromSessionItem("pc");
+  const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -457,7 +450,12 @@ const SA_A9001W: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if (value != null) {
+    if (name == "rtxisuyn" || name == "colfinyn") {
+      setInfomation((prev) => ({
+        ...prev,
+        [name]: value == true ? "Y" : "N",
+      }));
+    } else {
       setInfomation((prev) => ({
         ...prev,
         [name]: value,
@@ -485,6 +483,8 @@ const SA_A9001W: React.FC = () => {
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [prinOptionWindowVisible, setPrintOptionWindowVisible] =
     useState<boolean>(false);
+  const [dataWindowVisible, setDataWindowVisible] = useState<boolean>(false);
+
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -519,6 +519,7 @@ const SA_A9001W: React.FC = () => {
       ...prev,
       custcd: data.custcd,
       custnm: data.custnm,
+      custregnum: data.bizregnum,
     }));
   };
   const setPrintData = (data: any) => {
@@ -573,7 +574,7 @@ const SA_A9001W: React.FC = () => {
     acntdiv: "",
     acseq1: 0,
     acseq2: 0,
-    actdt: new Date(),
+    actdt: null,
     actkey: "",
     actloca: "",
     amtunit: "",
@@ -598,7 +599,7 @@ const SA_A9001W: React.FC = () => {
     email: "",
     errorcnt: 0,
     erroryn: "N",
-    etax: "",
+    etax: "1",
     etxyn: "N",
     exceptyn: "N",
     frnamt: "",
@@ -633,7 +634,7 @@ const SA_A9001W: React.FC = () => {
     reqnum: "",
     rtelno: "",
     rtxisuyn: "",
-    seq: 1,
+    seq: 0,
     siz: "",
     splyamt: 0,
     taxamt: 0,
@@ -732,6 +733,7 @@ const SA_A9001W: React.FC = () => {
       });
 
       if (totalRowCnt > 0) {
+        setWorkType("U");
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
@@ -773,8 +775,7 @@ const SA_A9001W: React.FC = () => {
             acntdiv: selectedRow.acntdiv,
             acseq1: selectedRow.acseq1,
             acseq2: selectedRow.acseq2,
-            actdt:
-              selectedRow.actdt != "" ? toDate(selectedRow.actdt) : new Date(),
+            actdt: selectedRow.actdt != "" ? toDate(selectedRow.actdt) : null,
             actkey: selectedRow.actkey,
             actloca: selectedRow.actloca,
             amtunit: selectedRow.amtunit,
@@ -820,7 +821,7 @@ const SA_A9001W: React.FC = () => {
             mintax: selectedRow.mintax,
             nonledyn: selectedRow.nonledyn,
             orgdiv: selectedRow.orgdiv,
-            paydt: selectedRow.paydt,
+            paydt: selectedRow.paydt != "" ? toDate(selectedRow.paydt) : null,
             payindt:
               selectedRow.payindt != "" ? toDate(selectedRow.payindt) : null,
             paymeth: selectedRow.paymeth,
@@ -834,8 +835,7 @@ const SA_A9001W: React.FC = () => {
             remark2: selectedRow.remark2,
             report_issue_id: selectedRow.report_issue_id,
             report_stat: selectedRow.report_stat,
-            reqdt:
-              selectedRow.reqdt != "" ? toDate(selectedRow.reqdt) : new Date(),
+            reqdt: selectedRow.reqdt != "" ? toDate(selectedRow.reqdt) : null,
             reqnum: selectedRow.reqnum,
             rtelno: selectedRow.rtelno,
             rtxisuyn: selectedRow.rtxisuyn,
@@ -881,7 +881,7 @@ const SA_A9001W: React.FC = () => {
             acntdiv: rows[0].acntdiv,
             acseq1: rows[0].acseq1,
             acseq2: rows[0].acseq2,
-            actdt: rows[0].actdt != "" ? toDate(rows[0].actdt) : new Date(),
+            actdt: rows[0].actdt != "" ? toDate(rows[0].actdt) : null,
             actkey: rows[0].actkey,
             actloca: rows[0].actloca,
             amtunit: rows[0].amtunit,
@@ -925,7 +925,7 @@ const SA_A9001W: React.FC = () => {
             mintax: rows[0].mintax,
             nonledyn: rows[0].nonledyn,
             orgdiv: rows[0].orgdiv,
-            paydt: rows[0].paydt,
+            paydt: rows[0].paydt != "" ? toDate(rows[0].paydt) : null,
             payindt: rows[0].payindt != "" ? toDate(rows[0].payindt) : null,
             paymeth: rows[0].paymeth,
             person: rows[0].person,
@@ -938,7 +938,7 @@ const SA_A9001W: React.FC = () => {
             remark2: rows[0].remark2,
             report_issue_id: rows[0].report_issue_id,
             report_stat: rows[0].report_stat,
-            reqdt: rows[0].reqdt != "" ? toDate(rows[0].reqdt) : new Date(),
+            reqdt: rows[0].reqdt != "" ? toDate(rows[0].reqdt) : null,
             reqnum: rows[0].reqnum,
             rtelno: rows[0].rtelno,
             rtxisuyn: rows[0].rtxisuyn,
@@ -1283,13 +1283,6 @@ const SA_A9001W: React.FC = () => {
     const location = locationListData.find(
       (item: any) => item.code_name == selectedRowData.location
     )?.sub_code;
-    const position = positionListData.find(
-      (item: any) => item.code_name == selectedRowData.position
-    )?.sub_code;
-    const qtyunit = qtyunitListData.find(
-      (item: any) => item.code_name == selectedRowData.qtyunit
-    )?.sub_code;
-
     setSubFilters((prev) => ({
       ...prev,
       pgNum: 1,
@@ -1325,10 +1318,7 @@ const SA_A9001W: React.FC = () => {
       acntdiv: selectedRowData.acntdiv,
       acseq1: selectedRowData.acseq1,
       acseq2: selectedRowData.acseq2,
-      actdt:
-        selectedRowData.actdt != ""
-          ? toDate(selectedRowData.actdt)
-          : new Date(),
+      actdt: selectedRowData.actdt != "" ? toDate(selectedRowData.actdt) : null,
       actkey: selectedRowData.actkey,
       actloca: selectedRowData.actloca,
       amtunit: selectedRowData.amtunit,
@@ -1339,7 +1329,7 @@ const SA_A9001W: React.FC = () => {
       chgrat: selectedRowData.chgrat,
       chk: selectedRowData.chk,
       cnt: selectedRowData.cnt,
-      colfinyn: selectedRowData.colfinyn,
+      colfinyn: selectedRowData.colfinyn == true ? "Y" : "N",
       collactkey: selectedRowData.collactkey,
       collectamt: selectedRowData.collectamt,
       collectdt:
@@ -1356,7 +1346,7 @@ const SA_A9001W: React.FC = () => {
       email: selectedRowData.email,
       errorcnt: selectedRowData.errorcnt,
       erroryn: selectedRowData.erroryn,
-      etax: etax,
+      etax: etax == undefined ? "2" : etax,
       etxyn: selectedRowData.etxyn,
       exceptyn: selectedRowData.exceptyn,
       frnamt: selectedRowData.frnamt,
@@ -1370,31 +1360,28 @@ const SA_A9001W: React.FC = () => {
       items: selectedRowData.items,
       janamt: selectedRowData.janamt,
       lcnum: selectedRowData.lcnum,
-      location: location,
+      location: location == undefined ? sessionLocation : location,
       mintax: selectedRowData.mintax,
       nonledyn: selectedRowData.nonledyn,
       orgdiv: selectedRowData.orgdiv,
-      paydt: selectedRowData.paydt,
+      paydt: selectedRowData.paydt != "" ? toDate(selectedRowData.paydt) : null,
       payindt:
         selectedRowData.payindt != "" ? toDate(selectedRowData.payindt) : null,
       paymeth: selectedRowData.paymeth,
       person: selectedRowData.person,
-      position: position,
+      position: selectedRowData.position,
       prtdiv: selectedRowData.prtdiv,
       prtyn: selectedRowData.prtyn,
       qty: selectedRowData.qty,
-      qtyunit: qtyunit,
+      qtyunit: selectedRowData.qtyunit,
       remark: selectedRowData.remark,
       remark2: selectedRowData.remark2,
       report_issue_id: selectedRowData.report_issue_id,
       report_stat: selectedRowData.report_stat,
-      reqdt:
-        selectedRowData.reqdt != ""
-          ? toDate(selectedRowData.reqdt)
-          : new Date(),
+      reqdt: selectedRowData.reqdt != "" ? toDate(selectedRowData.reqdt) : null,
       reqnum: selectedRowData.reqnum,
       rtelno: selectedRowData.rtelno,
-      rtxisuyn: selectedRowData.rtxisuyn,
+      rtxisuyn: selectedRowData.rtxisuyn == true ? "Y" : "N",
       seq: selectedRowData.seq,
       siz: selectedRowData.siz,
       splyamt: selectedRowData.splyamt,
@@ -1403,7 +1390,7 @@ const SA_A9001W: React.FC = () => {
         selectedRowData.taxdt != ""
           ? toDate(selectedRowData.taxdt)
           : new Date(),
-      taxtype: taxtype,
+      taxtype: taxtype == undefined ? "111" : taxtype,
       telno: selectedRowData.telno,
       totamt: selectedRowData.totamt,
       unp: selectedRowData.unp,
@@ -1836,6 +1823,648 @@ const SA_A9001W: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {};
   const exitEdit2 = () => {};
 
+  const onPurCreateClick = (e: any) => {
+    if (!permissions.save) return;
+    let valid = true;
+    const selectRows = mainDataResult.data.filter(
+      (item: any) => item.chk == true
+    );
+    let dataArr: any = {
+      rowstatus_s: [],
+      reqdt_s: [],
+      seq_s: [],
+    };
+    if (selectRows.length == 0) {
+      alert("데이터가 없습니다");
+    } else {
+      selectRows.map((item: any) => {
+        dataArr.rowstatus_s.push("");
+        dataArr.reqdt_s.push(item.reqdt);
+        dataArr.seq_s.push(item.seq);
+      });
+      setParaData((prev) => ({
+        ...prev,
+        workType: "CREATE",
+        orgdiv: selectRows[0].orgdiv,
+        reqdt: selectRows[0].reqdt,
+        seq: selectRows[0].seq,
+        location: selectRows[0].location,
+        inoutdiv: selectRows[0].inoutdiv,
+        splyamt: selectRows[0].splyamt,
+        taxamt: selectRows[0].taxamt,
+        taxtype: selectRows[0].taxtype,
+        taxdt: selectRows[0].taxdt,
+        custcd: selectRows[0].custcd,
+        custnm: selectRows[0].custnm,
+        custregnum: selectRows[0].custregnum,
+        items: selectRows[0].items,
+        bizdiv: selectRows[0].bizdiv,
+        actloca: selectRows[0].actloca,
+        actdt: selectRows[0].actdt,
+        acseq1: selectRows[0].acseq1,
+        acseq2: selectRows[0].acseq2,
+        dptcd: selectRows[0].dptcd,
+        siz: selectRows[0].siz,
+        qty: selectRows[0].qty,
+        wgt: selectRows[0].wgt,
+        qtyunit: selectRows[0].qtyunit,
+        unp: selectRows[0].unp,
+        lcnum: selectRows[0].lcnum,
+        frnamt: selectRows[0].frnamt,
+        chgrat: selectRows[0].chgrat,
+        exceptyn: selectRows[0].exceptyn,
+        prtyn: selectRows[0].prtyn,
+        prtdiv: selectRows[0].prtdiv,
+        remark: selectRows[0].remark,
+        remark2: selectRows[0].remark2,
+        paydt: selectRows[0].paydt,
+        acntdiv: selectRows[0].acntdiv,
+        rtxisuyn: selectRows[0].rtxisuyn,
+        etax: selectRows[0].etax,
+        colfinyn: selectRows[0].colfinyn,
+        inputpath: selectRows[0].inputpath,
+        mintax: selectRows[0].mintax,
+        nonledyn: selectRows[0].nonledyn,
+        paymeth: selectRows[0].paymeth,
+        position: selectRows[0].position,
+        payindt: selectRows[0].payindt,
+        inamt: selectRows[0].inamt,
+        innum: selectRows[0].innum,
+        innumseq: selectRows[0].innumseq,
+        innumseq2: selectRows[0].innumseq2,
+        inyn: selectRows[0].inyn,
+
+        itemacnt: "",
+
+        array: "",
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
+        reqdt_s: dataArr.reqdt_s.join("|"),
+      }));
+    }
+  };
+
+  const onPurDropClick = (e: any) => {
+    if (!permissions.save) return;
+    if (!window.confirm("해제하시겠습니까?")) {
+      return false;
+    }
+
+    const selectRows = mainDataResult.data.filter(
+      (item: any) => item.chk == true
+    );
+    let dataArr: any = {
+      rowstatus_s: [],
+      reqdt_s: [],
+      seq_s: [],
+    };
+    if (selectRows.length == 0) {
+      alert("데이터가 없습니다");
+    } else {
+      let valid = true;
+      selectRows.map((item: any) => {
+        if (item.actkey == "") {
+          valid = false;
+          return false;
+        }
+      });
+      if (valid != true) {
+        alert("전표번호가 존재하지 않는 계산서입니다.");
+        return false;
+      }
+      selectRows.map((item: any) => {
+        dataArr.rowstatus_s.push("");
+        dataArr.reqdt_s.push(item.reqdt);
+        dataArr.seq_s.push(item.seq);
+      });
+      setParaData((prev) => ({
+        ...prev,
+        workType: "DROP",
+        orgdiv: selectRows[0].orgdiv,
+        reqdt: selectRows[0].reqdt,
+        seq: selectRows[0].seq,
+        location: selectRows[0].location,
+        inoutdiv: selectRows[0].inoutdiv,
+        splyamt: selectRows[0].splyamt,
+        taxamt: selectRows[0].taxamt,
+        taxtype: selectRows[0].taxtype,
+        taxdt: selectRows[0].taxdt,
+        custcd: selectRows[0].custcd,
+        custnm: selectRows[0].custnm,
+        custregnum: selectRows[0].custregnum,
+        items: selectRows[0].items,
+        bizdiv: selectRows[0].bizdiv,
+        actloca: selectRows[0].actloca,
+        actdt: selectRows[0].actdt,
+        acseq1: selectRows[0].acseq1,
+        acseq2: selectRows[0].acseq2,
+        dptcd: selectRows[0].dptcd,
+        siz: selectRows[0].siz,
+        qty: selectRows[0].qty,
+        wgt: selectRows[0].wgt,
+        qtyunit: selectRows[0].qtyunit,
+        unp: selectRows[0].unp,
+        lcnum: selectRows[0].lcnum,
+        frnamt: selectRows[0].frnamt,
+        chgrat: selectRows[0].chgrat,
+        exceptyn: selectRows[0].exceptyn,
+        prtyn: selectRows[0].prtyn,
+        prtdiv: selectRows[0].prtdiv,
+        remark: selectRows[0].remark,
+        remark2: selectRows[0].remark2,
+        paydt: selectRows[0].paydt,
+        acntdiv: selectRows[0].acntdiv,
+        rtxisuyn: selectRows[0].rtxisuyn,
+        etax: selectRows[0].etax,
+        colfinyn: selectRows[0].colfinyn,
+        inputpath: selectRows[0].inputpath,
+        mintax: selectRows[0].mintax,
+        nonledyn: selectRows[0].nonledyn,
+        paymeth: selectRows[0].paymeth,
+        position: selectRows[0].position,
+        payindt: selectRows[0].payindt,
+        inamt: selectRows[0].inamt,
+        innum: selectRows[0].innum,
+        innumseq: selectRows[0].innumseq,
+        innumseq2: selectRows[0].innumseq2,
+        inyn: selectRows[0].inyn,
+
+        itemacnt: "",
+
+        array: "",
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
+        reqdt_s: dataArr.reqdt_s.join("|"),
+      }));
+    }
+  };
+
+  const onDeleteClick = () => {
+    if (!permissions.delete) return;
+    if (!window.confirm("삭제하시겠습니까?")) {
+      return false;
+    }
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "D",
+      reqdt: convertDateToStr(infomation.reqdt),
+      seq: infomation.seq,
+    }));
+  };
+
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "",
+    orgdiv: "",
+    reqdt: "",
+    seq: 0,
+    location: "",
+    inoutdiv: "",
+    splyamt: 0,
+    taxamt: 0,
+    taxtype: "",
+    taxdt: "",
+    custcd: "",
+    custnm: "",
+    custregnum: "",
+    items: "",
+    bizdiv: "",
+    actloca: "",
+    actdt: "",
+    acseq1: 0,
+    acseq2: 0,
+    dptcd: "",
+    siz: "",
+    qty: 0,
+    wgt: 0,
+    qtyunit: "",
+    unp: 0,
+    lcnum: "",
+    frnamt: "",
+    chgrat: 0,
+    exceptyn: "",
+    prtyn: "",
+    prtdiv: "",
+    remark: "",
+    remark2: "",
+    paydt: "",
+    acntdiv: "",
+    rtxisuyn: "",
+    etax: "",
+    colfinyn: "",
+    inputpath: "",
+    mintax: "",
+    nonledyn: "",
+    paymeth: "",
+    position: "",
+    payindt: "",
+    inamt: 0,
+    innum: "",
+    innumseq: 0,
+    innumseq2: 0,
+    inyn: "",
+
+    itemacnt: "",
+
+    array: "",
+
+    rowstatus_s: "",
+    reqdt_s: "",
+    seq_s: "",
+    payindt_s: "",
+
+    reason: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_SA_A9001W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_reqdt": ParaData.reqdt,
+      "@p_seq": ParaData.seq,
+      "@p_location": ParaData.location,
+      "@p_inoutdiv": ParaData.inoutdiv,
+      "@p_splyamt": ParaData.splyamt,
+      "@p_taxamt": ParaData.taxamt,
+      "@p_taxtype": ParaData.taxtype,
+      "@p_taxdt": ParaData.taxdt,
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_custregnum": ParaData.custregnum,
+      "@p_items": ParaData.items,
+      "@p_bizdiv": ParaData.bizdiv,
+      "@p_actloca": ParaData.actloca,
+      "@p_actdt": ParaData.actdt,
+      "@p_acseq1": ParaData.acseq1,
+      "@p_acseq2": ParaData.acseq2,
+      "@p_dptcd": ParaData.dptcd,
+      "@p_siz": ParaData.siz,
+      "@p_qty": ParaData.qty,
+      "@p_wgt": ParaData.wgt,
+      "@p_qtyunit": ParaData.qtyunit,
+      "@p_unp": ParaData.unp,
+      "@p_lcnum": ParaData.lcnum,
+      "@p_frnamt": ParaData.frnamt,
+      "@p_chgrat": ParaData.chgrat,
+      "@p_exceptyn": ParaData.exceptyn,
+      "@p_prtyn": ParaData.prtyn,
+      "@p_prtdiv": ParaData.prtdiv,
+      "@p_remark": ParaData.remark,
+      "@p_remark2": ParaData.remark2,
+      "@p_paydt": ParaData.paydt,
+      "@p_acntdiv": ParaData.acntdiv,
+      "@p_rtxisuyn": ParaData.rtxisuyn,
+      "@p_etax": ParaData.etax,
+      "@p_colfinyn": ParaData.colfinyn,
+      "@p_inputpath": ParaData.inputpath,
+      "@p_mintax": ParaData.mintax,
+      "@p_nonledyn": ParaData.nonledyn,
+      "@p_paymeth": ParaData.paymeth,
+      "@p_position": ParaData.position,
+      "@p_payindt": ParaData.payindt,
+      "@p_inamt": ParaData.inamt,
+      "@p_innum": ParaData.innum,
+      "@p_innumseq": ParaData.innumseq,
+      "@p_innumseq2": ParaData.innumseq2,
+      "@p_inyn": ParaData.inyn,
+
+      "@p_itemacnt": ParaData.itemacnt,
+
+      "@p_array": ParaData.array,
+
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_reqdt_s": ParaData.reqdt_s,
+      "@p_seq_s": ParaData.seq_s,
+      "@p_payindt_s": ParaData.payindt_s,
+
+      "@p_reason": ParaData.reason,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "SA_A9001W",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    if (!permissions.save && ParaData.workType != "D") return;
+    if (!permissions.delete && ParaData.workType == "D") return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      if (ParaData.workType == "D") {
+        const isLastDataDeleted =
+          mainDataResult.data.length == 0 && filters.pgNum > 0;
+        if (isLastDataDeleted) {
+          setPage({
+            skip:
+              filters.pgNum == 1 || filters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            pgNum: prev.pgNum,
+            isSearch: true,
+          }));
+        }
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+      }
+      setWorkType("U");
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "",
+        orgdiv: "",
+        reqdt: "",
+        seq: 0,
+        location: "",
+        inoutdiv: "",
+        splyamt: 0,
+        taxamt: 0,
+        taxtype: "",
+        taxdt: "",
+        custcd: "",
+        custnm: "",
+        custregnum: "",
+        items: "",
+        bizdiv: "",
+        actloca: "",
+        actdt: "",
+        acseq1: 0,
+        acseq2: 0,
+        dptcd: "",
+        siz: "",
+        qty: 0,
+        wgt: 0,
+        qtyunit: "",
+        unp: 0,
+        lcnum: "",
+        frnamt: "",
+        chgrat: 0,
+        exceptyn: "",
+        prtyn: "",
+        prtdiv: "",
+        remark: "",
+        remark2: "",
+        paydt: "",
+        acntdiv: "",
+        rtxisuyn: "",
+        etax: "",
+        colfinyn: "",
+        inputpath: "",
+        mintax: "",
+        nonledyn: "",
+        paymeth: "",
+        position: "",
+        payindt: "",
+        inamt: 0,
+        innum: "",
+        innumseq: 0,
+        innumseq2: 0,
+        inyn: "",
+
+        itemacnt: "",
+
+        array: "",
+
+        rowstatus_s: "",
+        reqdt_s: "",
+        seq_s: "",
+        payindt_s: "",
+
+        reason: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (
+      ParaData.workType != "" &&
+      permissions.save &&
+      ParaData.workType != "D"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (ParaData.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData, permissions]);
+
+  const setCopyData2 = (data: any) => {
+    var qty = 0;
+    var amt = 0;
+    var taxamt = 0;
+    var seq = 0;
+    data.map((item: any) => {
+      qty = qty + item.qty;
+      amt = amt + item.amt;
+      taxamt = taxamt + item.taxamt;
+    });
+
+    setInfomation({
+      acntdiv: "",
+      acseq1: 0,
+      acseq2: 0,
+      actdt: null,
+      actkey: "",
+      actloca: "",
+      amtunit: data[0].amtunit,
+      billseq: 0,
+      billstat: "",
+      billstat2: "",
+      bizdiv: "",
+      chgrat: 0,
+      chk: "",
+      cnt: "N",
+      colfinyn: "",
+      collactkey: "",
+      collectamt: 0,
+      collectdt: null,
+      collectnum: "",
+      custabbr: "",
+      custcd: data[0].custcd,
+      custnm: data[0].custnm,
+      custregnum: data[0].custregnum,
+      doexdiv: data[0].doexdiv,
+      dptcd: "",
+      email: "",
+      errorcnt: 0,
+      erroryn: "N",
+      etax: "1",
+      etxyn: "N",
+      exceptyn: "N",
+      frnamt: "",
+      inamt: 0,
+      innum: "",
+      innumseq: 0,
+      innumseq2: 0,
+      inoutdiv: "2",
+      inputpath: "",
+      inyn: "",
+      items: data[0].itemnm,
+      janamt: 0,
+      lcnum: "",
+      location: data[0].location,
+      mintax: "",
+      nonledyn: "",
+      orgdiv: data[0].orgdiv,
+      paydt: null,
+      payindt: null,
+      paymeth: data[0].paymeth1,
+      person: data[0].person,
+      position: data[0].position,
+      prtdiv: "",
+      prtyn: "N",
+      qty: qty,
+      qtyunit: data[0].qtyunit,
+      remark: "",
+      remark2: "",
+      report_issue_id: "",
+      report_stat: "N",
+      reqdt: null,
+      reqnum: data[0].reqnum,
+      rtelno: "",
+      rtxisuyn: "",
+      seq: 0,
+      siz: "",
+      splyamt: amt,
+      taxamt: taxamt,
+      taxdt: data[0].outdt == "" ? new Date() : toDate(data[0].outdt),
+      taxtype: "111",
+      telno: "",
+      totamt: amt + taxamt,
+      unp: 0,
+      wgt: 0,
+      ycnt: "N",
+    });
+    const rows = data.map((prev: any) => ({
+      ...prev,
+      num: seq++,
+      recnum: prev.recdt + "-" + prev.seq1.toString(),
+    }));
+
+    setSubDataResult((prev) => {
+      return {
+        data: rows,
+        total: data.length,
+      };
+    });
+    setSelectedSubState({ [rows[0][DATA_ITEM_KEY2]]: true });
+  };
+
+  const onAddClick = () => {
+    setWorkType("N");
+    setDataWindowVisible(true);
+  };
+
+  const onSaveClick = () => {
+    if (!permissions.save) return;
+    if (subDataResult.data.length == 0) {
+      alert("신규 생성을 해주세요.");
+      return;
+    }
+    let dataArr: any = {
+      array: [],
+    };
+    subDataResult.data.forEach((item: any, idx: number) => {
+      const { recnum } = item;
+      dataArr.array.push(recnum);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: workType,
+      orgdiv: infomation.orgdiv,
+      reqdt: infomation.reqdt == null ? "" : convertDateToStr(infomation.reqdt),
+      seq: infomation.seq,
+      location: infomation.location,
+      inoutdiv: infomation.inoutdiv,
+      splyamt: infomation.splyamt,
+      taxamt: infomation.taxamt,
+      taxtype: infomation.taxtype,
+      taxdt: convertDateToStr(infomation.taxdt),
+      custcd: infomation.custcd,
+      custnm: infomation.custnm,
+      custregnum: infomation.custregnum,
+      items: infomation.items,
+      bizdiv: infomation.bizdiv,
+      actloca: infomation.actloca,
+      actdt: infomation.actdt == null ? "" : convertDateToStr(infomation.actdt),
+      acseq1: infomation.acseq1,
+      acseq2: infomation.acseq2,
+      dptcd: infomation.dptcd,
+      siz: infomation.siz,
+      qty: infomation.qty,
+      wgt: infomation.wgt,
+      qtyunit: infomation.qtyunit,
+      unp: infomation.unp,
+      lcnum: infomation.lcnum,
+      frnamt: infomation.frnamt,
+      chgrat: infomation.chgrat,
+      exceptyn: infomation.exceptyn,
+      prtyn: infomation.prtyn,
+      prtdiv: infomation.prtdiv,
+      remark: infomation.remark,
+      remark2: infomation.remark2,
+      paydt: infomation.paydt == null ? "" : convertDateToStr(infomation.paydt),
+      acntdiv: infomation.acntdiv,
+      rtxisuyn: infomation.rtxisuyn,
+      etax: infomation.etax,
+      colfinyn: infomation.colfinyn,
+      inputpath: infomation.inputpath,
+      mintax: infomation.mintax,
+      nonledyn: infomation.nonledyn,
+      paymeth: infomation.paymeth,
+      position: infomation.position,
+      payindt:
+        infomation.payindt == null ? "" : convertDateToStr(infomation.payindt),
+      inamt: infomation.inamt,
+      innum: infomation.innum,
+      innumseq: infomation.innumseq,
+      innumseq2: infomation.innumseq2,
+      inyn: infomation.inyn,
+
+      itemacnt: "",
+
+      array: dataArr.array.join("|"),
+      rowstatus_s: "",
+      seq_s: "",
+      reqdt_s: "",
+    }));
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -2044,9 +2673,9 @@ const SA_A9001W: React.FC = () => {
                       flexDirection: "column",
                     }}
                   >
-                    <div>
+                    <ButtonContainer>
                       <Button
-                        //onClick={onPurCreateClick}
+                        onClick={onPurCreateClick}
                         themeColor={"primary"}
                         icon="plus-outline"
                         disabled={permissions.save ? false : true}
@@ -2054,7 +2683,7 @@ const SA_A9001W: React.FC = () => {
                         매출 전표 생성
                       </Button>
                       <Button
-                        //onClick={onPurDropClick}
+                        onClick={onPurDropClick}
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="minus-outline"
@@ -2062,8 +2691,8 @@ const SA_A9001W: React.FC = () => {
                       >
                         매출 전표 해제
                       </Button>
-                    </div>
-                    <div>
+                    </ButtonContainer>
+                    <ButtonContainer>
                       <Button
                         //onClick={onPayCreateClick}
                         themeColor={"primary"}
@@ -2081,47 +2710,10 @@ const SA_A9001W: React.FC = () => {
                       >
                         수금 전표 해제
                       </Button>
-                    </div>
-                    <div>
+                    </ButtonContainer>
+                    <ButtonContainer>
                       <Button
-                        //onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="delete"
-                        disabled={permissions.save ? false : true}
-                      >
-                        E-TAX삭제요청
-                      </Button>
-                      <Button
-                        //onClick={onDeleteClick2}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="email"
-                        disabled={permissions.save ? false : true}
-                      >
-                        E-MAIL 전송
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        //onClick={onSaveClick}
-                        themeColor={"primary"}
-                        icon="error"
-                        disabled={permissions.save ? false : true}
-                      >
-                        ERROR확인
-                      </Button>
-                      <Button
-                        //onClick={onSaveClick}
-                        themeColor={"primary"}
-                        icon="save"
-                        disabled={permissions.save ? false : true}
-                      >
-                        수금강제완료
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        //onClick={onAddClick}
+                        onClick={onAddClick}
                         themeColor={"primary"}
                         icon="file-add"
                         style={{ marginRight: "4px" }}
@@ -2130,7 +2722,7 @@ const SA_A9001W: React.FC = () => {
                         매출 E-TAX(전표) 생성
                       </Button>
                       <Button
-                        //onClick={onDeleteClick2}
+                        onClick={onDeleteClick}
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="delete"
@@ -2138,7 +2730,7 @@ const SA_A9001W: React.FC = () => {
                       >
                         매출 E-TAX(전표) 삭제
                       </Button>
-                    </div>
+                    </ButtonContainer>
                   </div>
                 </GridTitleContainer>
                 <ExcelExport
@@ -2275,7 +2867,7 @@ const SA_A9001W: React.FC = () => {
                         이전
                       </Button>
                       <Button
-                        // onClick={onSaveClick}
+                        onClick={onSaveClick}
                         themeColor={"primary"}
                         icon="save"
                         disabled={permissions.save ? false : true}
@@ -2353,7 +2945,7 @@ const SA_A9001W: React.FC = () => {
                           <Checkbox
                             name="rtxisuyn"
                             label={"역발행여부"}
-                            value={infomation.rtxisuyn}
+                            value={infomation.rtxisuyn == "Y" ? true : false}
                             onChange={InputChange}
                           />
                         </td>
@@ -2363,7 +2955,7 @@ const SA_A9001W: React.FC = () => {
                           <Checkbox
                             name="colfinyn"
                             label={"수금강제완료"}
-                            value={infomation.colfinyn}
+                            value={infomation.colfinyn == "Y" ? true : false}
                             onChange={InputChange}
                           />
                         </td>
@@ -2866,7 +3458,7 @@ const SA_A9001W: React.FC = () => {
                 <GridTitle>요약정보</GridTitle>
                 <ButtonContainer>
                   <Button
-                    //onClick={onPurCreateClick}
+                    onClick={onPurCreateClick}
                     themeColor={"primary"}
                     icon="plus-outline"
                     disabled={permissions.save ? false : true}
@@ -2874,7 +3466,7 @@ const SA_A9001W: React.FC = () => {
                     매출 전표 생성
                   </Button>
                   <Button
-                    //onClick={onPurDropClick}
+                    onClick={onPurDropClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus-outline"
@@ -2900,40 +3492,7 @@ const SA_A9001W: React.FC = () => {
                     수금 전표 해제
                   </Button>
                   <Button
-                    //onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="delete"
-                    disabled={permissions.save ? false : true}
-                  >
-                    E-TAX삭제요청
-                  </Button>
-                  <Button
-                    //onClick={onDeleteClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="email"
-                    disabled={permissions.save ? false : true}
-                  >
-                    E-MAIL 전송
-                  </Button>
-                  <Button
-                    //onClick={onSaveClick}
-                    themeColor={"primary"}
-                    icon="error"
-                    disabled={permissions.save ? false : true}
-                  >
-                    ERROR확인
-                  </Button>
-                  <Button
-                    //onClick={onSaveClick}
-                    themeColor={"primary"}
-                    icon="save"
-                    disabled={permissions.save ? false : true}
-                  >
-                    수금강제완료
-                  </Button>
-                  <Button
-                    //onClick={onAddClick}
+                    onClick={onAddClick}
                     themeColor={"primary"}
                     icon="file-add"
                     style={{ marginRight: "4px" }}
@@ -2942,7 +3501,7 @@ const SA_A9001W: React.FC = () => {
                     매출 E-TAX(전표) 생성
                   </Button>
                   <Button
-                    //onClick={onDeleteClick2}
+                    onClick={onDeleteClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
@@ -2951,7 +3510,7 @@ const SA_A9001W: React.FC = () => {
                     매출 E-TAX(전표) 삭제
                   </Button>
                   <Button
-                    // onClick={onSaveClick}
+                    onClick={onSaveClick}
                     themeColor={"primary"}
                     icon="save"
                     disabled={permissions.save ? false : true}
@@ -3136,7 +3695,7 @@ const SA_A9001W: React.FC = () => {
                           <Checkbox
                             name="rtxisuyn"
                             label={"역발행여부"}
-                            value={infomation.rtxisuyn}
+                            value={infomation.rtxisuyn == "Y" ? true : false}
                             onChange={InputChange}
                           />
                         </td>
@@ -3146,7 +3705,7 @@ const SA_A9001W: React.FC = () => {
                           <Checkbox
                             name="colfinyn"
                             label={"수금강제완료"}
-                            value={infomation.colfinyn}
+                            value={infomation.colfinyn == "Y" ? true : false}
                             onChange={InputChange}
                           />
                         </td>
@@ -3649,6 +4208,14 @@ const SA_A9001W: React.FC = () => {
           filters={filters}
           pathname="SA_A9001W"
           modal={true}
+        />
+      )}
+      {dataWindowVisible && (
+        <SA_A9001W_IN_Window
+          setVisible={setDataWindowVisible}
+          setData={setCopyData2}
+          modal={true}
+          pathname="SA_A9001W"
         />
       )}
       {gridList.map((grid: TGrid) =>
