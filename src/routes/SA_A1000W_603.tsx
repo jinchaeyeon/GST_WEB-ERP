@@ -4461,35 +4461,32 @@ const SA_A1000W_603: React.FC = () => {
 
   const onPlanDeleteClick = () => {
     if (!permissions.save) return;
-    if (Information.quosts != "2") {
-      alert("진행단계가 [계획요청] 상태만 취소 가능합니다.");
-    } else {
-      let array: any[] = [];
-      let noarray: any[] = [];
-      const dataItem = mainDataResult2.data.filter(
-        (item: any) => item.chk == true
-      );
 
-      dataItem.map((item: any) => {
-        if (item.quosts == "2") {
-          array.push(item.quoseq);
-        } else {
-          noarray.push("NO." + item.quoseq);
-        }
-      });
+    let array: any[] = [];
+    let noarray: any[] = [];
+    const dataItem = mainDataResult2.data.filter(
+      (item: any) => item.chk == true
+    );
 
-      if (noarray.length > 0) {
-        alert(noarray.join(",") + "은 [진행단계]가 계획요청이 아닙니다.");
+    dataItem.map((item: any) => {
+      if (item.quosts == "2") {
+        array.push(item.quoseq);
       } else {
-        setParaData((prev) => ({
-          ...prev,
-          workType: "DesTran_d",
-          orgdiv: sessionOrgdiv,
-          quonum: Information.quonum,
-          quorev: Information.quorev,
-          quoseq_s: array.join("|"),
-        }));
+        noarray.push("NO." + item.quoseq);
       }
+    });
+
+    if (noarray.length > 0) {
+      alert(noarray.join(",") + "은 [진행단계]가 계획요청이 아닙니다.");
+    } else {
+      setParaData((prev) => ({
+        ...prev,
+        workType: "DesTran_d",
+        orgdiv: sessionOrgdiv,
+        quonum: Information.quonum,
+        quorev: Information.quorev,
+        quoseq_s: array.join("|"),
+      }));
     }
   };
 

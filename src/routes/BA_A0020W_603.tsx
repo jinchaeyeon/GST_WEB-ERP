@@ -1,6 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { Checkbox, Input, MaskedTextBox } from "@progress/kendo-react-inputs";
 import React, {
   createContext,
   useContext,
@@ -314,6 +314,18 @@ const BA_A0020W_603: React.FC = () => {
     webheight3,
     webheight4,
   ]);
+  function bizNoFormatter(num: any) {
+    var formatNum = "";
+    try {
+      if (num.length == 10) {
+        formatNum = num.replace(/(\d{3})(\d{2})(\d{5})/, "$1-$2-$3");
+      }
+    } catch (e) {
+      formatNum = num;
+      console.log(e);
+    }
+    return formatNum;
+  }
 
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -661,7 +673,7 @@ const BA_A0020W_603: React.FC = () => {
       custcd: "자동생성",
       custnm: "",
       bizdiv: "",
-      bizregnum: "",
+      bizregnum: "--",
       repreregno: "",
       compclass: "",
       comptype: "",
@@ -722,7 +734,7 @@ const BA_A0020W_603: React.FC = () => {
       setInformation((prev: any) => ({
         ...prev,
         [name]: value,
-        bizregnum: "",
+        bizregnum: "--",
       }));
     } else if (name == "bizregnum") {
       setInformation((prev: any) => ({
@@ -814,7 +826,7 @@ const BA_A0020W_603: React.FC = () => {
     custcd: "자동생성",
     custnm: "",
     bizdiv: "",
-    bizregnum: "",
+    bizregnum: "--",
     repreregno: "",
     compclass: "",
     comptype: "",
@@ -945,7 +957,7 @@ const BA_A0020W_603: React.FC = () => {
             custcd: selectedRow.custcd,
             custnm: selectedRow.custnm,
             bizdiv: selectedRow.bizdiv,
-            bizregnum: selectedRow.bizregnum,
+            bizregnum: bizNoFormatter(selectedRow.bizregnum),
             repreregno: selectedRow.repreregno,
             compclass: selectedRow.compclass,
             comptype: selectedRow.comptype,
@@ -1010,7 +1022,7 @@ const BA_A0020W_603: React.FC = () => {
             custcd: rows[0].custcd,
             custnm: rows[0].custnm,
             bizdiv: rows[0].bizdiv,
-            bizregnum: rows[0].bizregnum,
+            bizregnum: bizNoFormatter(rows[0].bizregnum),
             repreregno: rows[0].repreregno,
             compclass: rows[0].compclass,
             comptype: rows[0].comptype,
@@ -1464,7 +1476,7 @@ const BA_A0020W_603: React.FC = () => {
       custcd: selectedRowData.custcd,
       custnm: selectedRowData.custnm,
       bizdiv: selectedRowData.bizdiv,
-      bizregnum: selectedRowData.bizregnum,
+      bizregnum: bizNoFormatter(selectedRowData.bizregnum),
       repreregno: selectedRowData.repreregno,
       compclass: selectedRowData.compclass,
       comptype: selectedRowData.comptype,
@@ -2037,7 +2049,7 @@ const BA_A0020W_603: React.FC = () => {
       custcd: "자동생성",
       custnm: "",
       bizdiv: defaultOption.find((item: any) => item.id == "bizdiv")?.valueCode,
-      bizregnum: "",
+      bizregnum: "--",
       repreregno: "",
       compclass: defaultOption.find((item: any) => item.id == "compclass")
         ?.valueCode,
@@ -2294,6 +2306,7 @@ const BA_A0020W_603: React.FC = () => {
     ) {
       alert("필수값을 입력해주세요.");
     } else {
+      console.log(information.bizregnum)
       setParaData((prev) => ({
         ...prev,
         workType: workType,
@@ -2302,7 +2315,10 @@ const BA_A0020W_603: React.FC = () => {
         custnm: information.custnm,
         custabbr: information.custabbr,
         ceonm: information.ceonm,
-        bizregnum: information.bizregnum,
+        bizregnum:
+          information.bizregnum == "___-__-_____"
+            ? ""
+            : information.bizregnum.replace(/-/g, ""),
         repreregno: information.repreregno,
         address: information.address,
         address_sub: information.address_sub,
@@ -3458,9 +3474,9 @@ const BA_A0020W_603: React.FC = () => {
                           <>
                             <th>사업자 등록번호</th>
                             <td>
-                              <Input
+                              <MaskedTextBox
                                 name="bizregnum"
-                                type="text"
+                                mask="000-00-00000"
                                 value={information.bizregnum}
                                 onChange={InputChange}
                               />
@@ -4502,9 +4518,9 @@ const BA_A0020W_603: React.FC = () => {
                         <>
                           <th>사업자 등록번호</th>
                           <td>
-                            <Input
+                            <MaskedTextBox
                               name="bizregnum"
-                              type="text"
+                              mask="000-00-00000"
                               value={information.bizregnum}
                               onChange={InputChange}
                             />
