@@ -29,18 +29,6 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_testnum",
-        field: "testnum",
-        caption: "시험번호",
-        width: 130,
-      },
-      {
-        id: "col_quotestnum",
-        field: "quotestnum",
-        caption: "예약번호",
-        width: 100,
-      },
-      {
         id: "col_exdlvdt2",
         field: "exdlvdt2",
         caption: "시험예약일",
@@ -53,10 +41,22 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
+        id: "col_testnum",
+        field: "testnum",
+        caption: "시험번호",
+        width: 130,
+      },
+      {
         id: "col_rule_status",
         field: "rule_status",
         caption: "예약관리",
         width: 120,
+      },
+      {
+        id: "col_quotestnum",
+        field: "quotestnum",
+        caption: "예약번호",
+        width: 100,
       },
       {
         id: "col_orddt",
@@ -64,7 +64,6 @@ export const gridList: Array<TGrid> = [
         caption: "수주일자",
         width: 120,
       },
-      
       {
         id: "col_custcd",
         field: "custcd",
@@ -90,12 +89,6 @@ export const gridList: Array<TGrid> = [
         width: 250,
       },
       {
-        id: "col_itemacnt",
-        field: "itemacnt",
-        caption: "품목계정",
-        width: 120,
-      },
-      {
         id: "col_week_b",
         field: "week_b",
         caption: "기본(주차)",
@@ -114,28 +107,28 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_tkyn",
-        field: "tkyn",
-        caption: "TK여부",
-        width: 100,
-      },
-      {
         id: "col_totqty",
         field: "totqty",
         caption: "총 마리수",
         width: 100,
       },
       {
-        id: "col_contracamt",
-        field: "contracamt",
-        caption: "계약금액",
-        width: 130,
+        id: "col_itemacnt",
+        field: "itemacnt",
+        caption: "품목계정",
+        width: 120,
       },
       {
         id: "col_remark",
         field: "remark",
         caption: "비고",
         width: 200,
+      },
+      {
+        id: "col_contracamt",
+        field: "contracamt",
+        caption: "계약금액",
+        width: 130,
       },
     ],
   },

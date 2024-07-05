@@ -417,6 +417,17 @@ const Main: React.FC = () => {
     );
   };
 
+  const onLinkChange = (event: any) => {
+    const origin = window.location.origin;
+    window.open(origin + `/SA_A1000W_603?go=` + event.projectNo);
+  };
+
+  const onLinkChange2 = (event: any) => {
+    console.log(event)
+    const origin = window.location.origin;
+    window.open(origin + `/CM_A5000W?go=` + event.document_id);
+  };
+
   return (
     <>
       {!isMobile ? (
@@ -499,6 +510,9 @@ const Main: React.FC = () => {
                   onSelectionChange={(e: any) => {
                     setSelected(e.value);
                   }}
+                  onDoubleClick={(e: any) => {
+                    onLinkChange(selected);
+                  }}
                   filters={false}
                 />
               </GridMui>
@@ -518,6 +532,9 @@ const Main: React.FC = () => {
                   height={webheight2}
                   onSelectionChange={(e: any) => {
                     setSelected2(e.value);
+                  }}
+                  onDoubleClick={(e: any) => {
+                    onLinkChange2(selected2);
                   }}
                   filters={false}
                   customCell={[["answeryn", answerynBodyTemplate]]}
@@ -606,6 +623,9 @@ const Main: React.FC = () => {
                 onSelectionChange={(e: any) => {
                   setSelected(e.value);
                 }}
+                onDoubleClick={(e: any) => {
+                  onLinkChange(selected);
+                }}
                 height={"300px"}
                 filters={false}
               />
@@ -625,6 +645,9 @@ const Main: React.FC = () => {
                 selection={selected2}
                 onSelectionChange={(e: any) => {
                   setSelected2(e.value);
+                }}
+                onDoubleClick={(e: any) => {
+                  onLinkChange2(selected2);
                 }}
                 height={"300px"}
                 filters={false}

@@ -115,6 +115,7 @@ const PaginatorTable = (props) => {
           emptyMessage="No DATA."
           selection={props.selection}
           onSelectionChange={props.onSelectionChange}
+          onDoubleClick={props.onDoubleClick}
         >
           {colums()}
         </DataTable>
