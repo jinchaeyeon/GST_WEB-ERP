@@ -1442,6 +1442,10 @@ const CopyWindow = ({
           value == true && Information_ori.rowstatus_tk == "U"
             ? 0
             : Information_ori.spareqty_tk,
+        refineperiod_tk:
+          value == true 
+            ? Information.refineperiod_base
+            : Information_ori.refineperiod_tk,
       }));
     } else {
       setInformation((prev) => ({

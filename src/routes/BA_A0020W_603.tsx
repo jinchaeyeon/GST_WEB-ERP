@@ -2306,7 +2306,7 @@ const BA_A0020W_603: React.FC = () => {
     ) {
       alert("필수값을 입력해주세요.");
     } else {
-      console.log(information.bizregnum)
+      console.log(information.bizregnum);
       setParaData((prev) => ({
         ...prev,
         workType: workType,
@@ -3604,18 +3604,18 @@ const BA_A0020W_603: React.FC = () => {
                         <th>우편번호</th>
                         <td>
                           <Input
-                            name="phonenum"
+                            name="zipcode"
                             type="text"
-                            value={information.phonenum}
+                            value={information.zipcode}
                             onChange={InputChange}
                           />
                         </td>
                         <th>TEL</th>
                         <td>
                           <Input
-                            name="zipcode"
+                            name="phonenum"
                             type="text"
-                            value={information.zipcode}
+                            value={information.phonenum}
                             onChange={InputChange}
                           />
                         </td>
@@ -4648,18 +4648,18 @@ const BA_A0020W_603: React.FC = () => {
                       <th>우편번호</th>
                       <td>
                         <Input
-                          name="phonenum"
+                          name="zipcode"
                           type="text"
-                          value={information.phonenum}
+                          value={information.zipcode}
                           onChange={InputChange}
                         />
                       </td>
                       <th>TEL</th>
                       <td>
                         <Input
-                          name="zipcode"
+                          name="phonenum"
                           type="text"
-                          value={information.zipcode}
+                          value={information.phonenum}
                           onChange={InputChange}
                         />
                       </td>
