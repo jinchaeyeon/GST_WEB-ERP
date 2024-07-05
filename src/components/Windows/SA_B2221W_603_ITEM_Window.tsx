@@ -68,10 +68,10 @@ const SA_B2221W_603_ITEM_Window = ({
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [position, setPosition] = useState<IWindowPosition>({
-    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
-    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
-    width: isMobile == true ? deviceWidth : 1200,
-    height: isMobile == true ? deviceHeight : 800,
+    left: isMobile == true ? 0 : (deviceWidth - 500) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 700) / 2,
+    width: isMobile == true ? deviceWidth : 500,
+    height: isMobile == true ? deviceHeight : 700,
   });
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
@@ -333,7 +333,7 @@ const SA_B2221W_603_ITEM_Window = ({
 
   return (
     <Window
-      titles={"품목마스터"}
+      titles={"유형마스터"}
       positions={position}
       Close={onClose}
       modals={modal}
@@ -365,7 +365,6 @@ const SA_B2221W_603_ITEM_Window = ({
                   onChange={filterInputChange}
                 />
               </td>
-
               <th>시험유형명</th>
               <td>
                 <Input
@@ -374,28 +373,6 @@ const SA_B2221W_603_ITEM_Window = ({
                   value={filters.itemnm}
                   onChange={filterInputChange}
                 />
-              </td>
-
-              <th>규격</th>
-              <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사용여부</th>
-              <td>
-                {bizComponentData !== null && (
-                  <BizComponentRadioGroup
-                    name="useyn"
-                    value={filters.useyn}
-                    bizComponentId="R_USEYN"
-                    bizComponentData={bizComponentData}
-                    changeData={filterRadioChange}
-                  />
-                )}
               </td>
             </tr>
           </tbody>
@@ -447,14 +424,11 @@ const SA_B2221W_603_ITEM_Window = ({
         >
           <GridColumn
             field="itemcd"
-            title="품목코드"
+            title="시험유형"
             width="200px"
             footerCell={mainTotalFooterCell}
           />
-          <GridColumn field="itemnm" title="품목명" width="200px" />
-          <GridColumn field="insiz" title="규격" width="120px" />
-          <GridColumn field="itemacntnm" title="품목계정" width="120px" />
-          <GridColumn field="useyn" title="사용여부" width="120px" />
+          <GridColumn field="itemnm" title="시험유형명" width="200px" />
         </Grid>
       </GridContainer>
       <BottomContainer className="BottomContainer">
