@@ -883,6 +883,16 @@ const CopyWindow = ({
       ...item,
       [EDIT_FIELD]: undefined,
     }));
+   
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  useEffect(() => {
     let amt = 0;
     let taxamt = 0;
     let totamt = 0;
@@ -900,14 +910,7 @@ const CopyWindow = ({
       taxamt: taxamt,
       totamt: totamt,
     }));
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  };
-
+  }, [mainDataResult])
   return (
     <>
       <Window

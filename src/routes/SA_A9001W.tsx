@@ -72,6 +72,7 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import SA_A9001W_GET_Window from "../components/Windows/SA_A9001W_GET_Window";
 import SA_A9001W_IN_Window from "../components/Windows/SA_A9001W_IN_Window";
 import SA_A9001W_PRINTOPTION_Window from "../components/Windows/SA_A9001W_PRINTOPTION_Window";
 import { useApi } from "../hooks/api";
@@ -484,6 +485,7 @@ const SA_A9001W: React.FC = () => {
   const [prinOptionWindowVisible, setPrintOptionWindowVisible] =
     useState<boolean>(false);
   const [dataWindowVisible, setDataWindowVisible] = useState<boolean>(false);
+  const [dataWindowVisible2, setDataWindowVisible2] = useState<boolean>(false);
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -1999,6 +2001,179 @@ const SA_A9001W: React.FC = () => {
     }
   };
 
+  const onPayDropClick = () => {
+    if (!permissions.save) return;
+    if (!window.confirm("해제하시겠습니까?")) {
+      return false;
+    }
+
+    const selectRows = mainDataResult.data.filter(
+      (item: any) => item.chk == true
+    );
+    let dataArr: any = {
+      rowstatus_s: [],
+      reqdt_s: [],
+      seq_s: [],
+    };
+    if (selectRows.length == 0) {
+      alert("데이터가 없습니다");
+    } else {
+      let valid = true;
+      selectRows.map((item: any) => {
+        if (item.collectnum == "") {
+          valid = false;
+          return false;
+        }
+      });
+      if (valid != true) {
+        alert("수금번호가 존재하지 않는 계산서입니다.");
+        return false;
+      }
+      selectRows.map((item: any) => {
+        dataArr.rowstatus_s.push("");
+        dataArr.reqdt_s.push(item.reqdt);
+        dataArr.seq_s.push(item.seq);
+      });
+      setParaData((prev) => ({
+        ...prev,
+        workType: "COLDROP",
+        orgdiv: selectRows[0].orgdiv,
+        reqdt: selectRows[0].reqdt,
+        seq: selectRows[0].seq,
+        location: selectRows[0].location,
+        inoutdiv: selectRows[0].inoutdiv,
+        splyamt: selectRows[0].splyamt,
+        taxamt: selectRows[0].taxamt,
+        taxtype: selectRows[0].taxtype,
+        taxdt: selectRows[0].taxdt,
+        custcd: selectRows[0].custcd,
+        custnm: selectRows[0].custnm,
+        custregnum: selectRows[0].custregnum,
+        items: selectRows[0].items,
+        bizdiv: selectRows[0].bizdiv,
+        actloca: selectRows[0].actloca,
+        actdt: selectRows[0].actdt,
+        acseq1: selectRows[0].acseq1,
+        acseq2: selectRows[0].acseq2,
+        dptcd: selectRows[0].dptcd,
+        siz: selectRows[0].siz,
+        qty: selectRows[0].qty,
+        wgt: selectRows[0].wgt,
+        qtyunit: selectRows[0].qtyunit,
+        unp: selectRows[0].unp,
+        lcnum: selectRows[0].lcnum,
+        frnamt: selectRows[0].frnamt,
+        chgrat: selectRows[0].chgrat,
+        exceptyn: selectRows[0].exceptyn,
+        prtyn: selectRows[0].prtyn,
+        prtdiv: selectRows[0].prtdiv,
+        remark: selectRows[0].remark,
+        remark2: selectRows[0].remark2,
+        paydt: selectRows[0].paydt,
+        acntdiv: selectRows[0].acntdiv,
+        rtxisuyn: selectRows[0].rtxisuyn,
+        etax: selectRows[0].etax,
+        colfinyn: selectRows[0].colfinyn,
+        inputpath: selectRows[0].inputpath,
+        mintax: selectRows[0].mintax,
+        nonledyn: selectRows[0].nonledyn,
+        paymeth: selectRows[0].paymeth,
+        position: selectRows[0].position,
+        payindt: selectRows[0].payindt,
+        inamt: selectRows[0].inamt,
+        innum: selectRows[0].innum,
+        innumseq: selectRows[0].innumseq,
+        innumseq2: selectRows[0].innumseq2,
+        inyn: selectRows[0].inyn,
+
+        itemacnt: "",
+
+        array: "",
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
+        reqdt_s: dataArr.reqdt_s.join("|"),
+      }));
+    }
+  }
+
+  const onMinusClick = () => {
+    if (!permissions.save) return;
+    if (!window.confirm("- 계산서를 발행하시겠습니까?")) {
+      return false;
+    }
+
+    if(workType == "N") {
+      alert("저장 후 진행해주세요.")
+    } else if(mainDataResult.total > 0) {
+      const selectRows = mainDataResult.data.filter(
+        (item: any) => item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "MN",
+        orgdiv: selectRows.orgdiv,
+        reqdt: selectRows.reqdt,
+        seq: selectRows.seq,
+        location: selectRows.location,
+        inoutdiv: selectRows.inoutdiv,
+        splyamt: selectRows.splyamt,
+        taxamt: selectRows.taxamt,
+        taxtype: selectRows.taxtype,
+        taxdt: selectRows.taxdt,
+        custcd: selectRows.custcd,
+        custnm: selectRows.custnm,
+        custregnum: selectRows.custregnum,
+        items: selectRows.items,
+        bizdiv: selectRows.bizdiv,
+        actloca: selectRows.actloca,
+        actdt: selectRows.actdt,
+        acseq1: selectRows.acseq1,
+        acseq2: selectRows.acseq2,
+        dptcd: selectRows.dptcd,
+        siz: selectRows.siz,
+        qty: selectRows.qty,
+        wgt: selectRows.wgt,
+        qtyunit: selectRows.qtyunit,
+        unp: selectRows.unp,
+        lcnum: selectRows.lcnum,
+        frnamt: selectRows.frnamt,
+        chgrat: selectRows.chgrat,
+        exceptyn: selectRows.exceptyn,
+        prtyn: selectRows.prtyn,
+        prtdiv: selectRows.prtdiv,
+        remark: selectRows.remark,
+        remark2: selectRows.remark2,
+        paydt: selectRows.paydt,
+        acntdiv: selectRows.acntdiv,
+        rtxisuyn: selectRows.rtxisuyn,
+        etax: selectRows.etax,
+        colfinyn: selectRows.colfinyn,
+        inputpath: selectRows.inputpath,
+        mintax: selectRows.mintax,
+        nonledyn: selectRows.nonledyn,
+        paymeth: selectRows.paymeth,
+        position: selectRows.position,
+        payindt: selectRows.payindt,
+        inamt: selectRows.inamt,
+        innum: selectRows.innum,
+        innumseq: selectRows.innumseq,
+        innumseq2: selectRows.innumseq2,
+        inyn: selectRows.inyn,
+
+        itemacnt: "",
+
+        array: "",
+        rowstatus_s: "",
+        seq_s: "",
+        reqdt_s: "",
+      }));
+
+    } else {
+      alert("데이터가 없습니다");
+    }
+  }
+
   const onDeleteClick = () => {
     if (!permissions.delete) return;
     if (!window.confirm("삭제하시겠습니까?")) {
@@ -2384,9 +2559,15 @@ const SA_A9001W: React.FC = () => {
     setSelectedSubState({ [rows[0][DATA_ITEM_KEY2]]: true });
   };
 
+  const setCopyData3 = (data: any) => {};
+
   const onAddClick = () => {
     setWorkType("N");
     setDataWindowVisible(true);
+  };
+
+  const onAddClick2 = () => {
+    setDataWindowVisible2(true);
   };
 
   const onSaveClick = () => {
@@ -2694,7 +2875,7 @@ const SA_A9001W: React.FC = () => {
                     </ButtonContainer>
                     <ButtonContainer>
                       <Button
-                        //onClick={onPayCreateClick}
+                        onClick={onAddClick2}
                         themeColor={"primary"}
                         icon="plus-outline"
                         disabled={permissions.save ? false : true}
@@ -2702,7 +2883,7 @@ const SA_A9001W: React.FC = () => {
                         수금 전표 생성
                       </Button>
                       <Button
-                        // onClick={onPayDropClick}
+                        onClick={onPayDropClick}
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="minus-outline"
@@ -2877,7 +3058,7 @@ const SA_A9001W: React.FC = () => {
                     </div>
                     <div>
                       <Button
-                        //onClick={onAddClick}
+                        onClick={onMinusClick}
                         themeColor={"primary"}
                         style={{ marginRight: "4px" }}
                         disabled={permissions.save ? false : true}
@@ -3475,7 +3656,7 @@ const SA_A9001W: React.FC = () => {
                     매출 전표 해제
                   </Button>
                   <Button
-                    //onClick={onPayCreateClick}
+                    onClick={onAddClick2}
                     themeColor={"primary"}
                     icon="plus-outline"
                     disabled={permissions.save ? false : true}
@@ -3483,7 +3664,7 @@ const SA_A9001W: React.FC = () => {
                     수금 전표 생성
                   </Button>
                   <Button
-                    // onClick={onPayDropClick}
+                    onClick={onPayDropClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="minus-outline"
@@ -3630,7 +3811,7 @@ const SA_A9001W: React.FC = () => {
                 <FormBoxWrap className="FormBoxWrap">
                   <ButtonContainer>
                     <Button
-                      //onClick={onAddClick}
+                       onClick={onMinusClick}
                       themeColor={"primary"}
                       style={{ marginRight: "4px" }}
                       disabled={permissions.save ? false : true}
@@ -4214,6 +4395,21 @@ const SA_A9001W: React.FC = () => {
         <SA_A9001W_IN_Window
           setVisible={setDataWindowVisible}
           setData={setCopyData2}
+          modal={true}
+          pathname="SA_A9001W"
+        />
+      )}
+      {dataWindowVisible2 && (
+        <SA_A9001W_GET_Window
+          data={mainDataResult.data.filter((item: any) => item.chk == true)}
+          setVisible={setDataWindowVisible2}
+          setData={(data) =>
+            setFilters((prev) => ({
+              ...prev,
+              isSearch: true,
+              find_row_value: data,
+            }))
+          }
           modal={true}
           pathname="SA_A9001W"
         />
