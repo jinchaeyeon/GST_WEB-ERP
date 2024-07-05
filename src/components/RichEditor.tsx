@@ -341,7 +341,7 @@ const RichEditor = React.forwardRef(
                   [Indent, Outdent],
                   [OrderedList, UnorderedList],
                   FontSize,
-                  CustomLineheight,
+                  //CustomLineheight, 보류사항
                   FontName,
                   FormatBlock,
                   [Undo, Redo],

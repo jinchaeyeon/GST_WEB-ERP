@@ -17,7 +17,7 @@ import {
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -75,8 +75,9 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import SA_A9001W_GET_Window from "../components/Windows/SA_A9001W_GET_Window";
 import SA_A9001W_IN_Window from "../components/Windows/SA_A9001W_IN_Window";
 import SA_A9001W_PRINTOPTION_Window from "../components/Windows/SA_A9001W_PRINTOPTION_Window";
+import SA_A9001W_Transaction_Window from "../components/Windows/SA_A9001W_Transaction_Window";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A9001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -157,7 +158,7 @@ const SA_A9001W: React.FC = () => {
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const processApi = useApi();
-  const [workType, setWorkType] = useState<"N" | "U">("U");
+  const [workType, setWorkType] = useState<"N" | "U">("N");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A9001W", setCustomOptionData);
@@ -486,7 +487,8 @@ const SA_A9001W: React.FC = () => {
     useState<boolean>(false);
   const [dataWindowVisible, setDataWindowVisible] = useState<boolean>(false);
   const [dataWindowVisible2, setDataWindowVisible2] = useState<boolean>(false);
-
+  const [transactionWindowVisible, setTransactionWindowClick] =
+    useState<boolean>(false);
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -533,7 +535,8 @@ const SA_A9001W: React.FC = () => {
       reciver: data.reciver,
     }));
   };
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -961,6 +964,83 @@ const SA_A9001W: React.FC = () => {
         setSubDataResult(process([], subDataState));
         setSubDataResult2(process([], subDataState2));
         setSubDataResult3(process([], subDataState3));
+        setWorkType("N");
+        setInfomation({
+          acntdiv: "",
+          acseq1: 0,
+          acseq2: 0,
+          actdt: null,
+          actkey: "",
+          actloca: "",
+          amtunit: "",
+          billseq: 0,
+          billstat: "",
+          billstat2: "",
+          bizdiv: "",
+          chgrat: 0,
+          chk: "",
+          cnt: "N",
+          colfinyn: "",
+          collactkey: "",
+          collectamt: 0,
+          collectdt: null,
+          collectnum: "",
+          custabbr: "",
+          custcd: "",
+          custnm: "",
+          custregnum: "",
+          doexdiv: "",
+          dptcd: "",
+          email: "",
+          errorcnt: 0,
+          erroryn: "N",
+          etax: "1",
+          etxyn: "N",
+          exceptyn: "N",
+          frnamt: "",
+          inamt: 0,
+          innum: "",
+          innumseq: 0,
+          innumseq2: 0,
+          inoutdiv: "2",
+          inputpath: "",
+          inyn: "",
+          items: "",
+          janamt: 0,
+          lcnum: "",
+          location: "01",
+          mintax: "",
+          nonledyn: "",
+          orgdiv: "01",
+          paydt: null,
+          payindt: null,
+          paymeth: "",
+          person: "",
+          position: "",
+          prtdiv: "",
+          prtyn: "N",
+          qty: 0,
+          qtyunit: "",
+          remark: "",
+          remark2: "",
+          report_issue_id: "",
+          report_stat: "N",
+          reqdt: new Date(),
+          reqnum: "",
+          rtelno: "",
+          rtxisuyn: "",
+          seq: 0,
+          siz: "",
+          splyamt: 0,
+          taxamt: 0,
+          taxdt: new Date(),
+          taxtype: "",
+          telno: "",
+          totamt: 0,
+          unp: 0,
+          wgt: 0,
+          ycnt: "N",
+        });
       }
     }
     setFilters((prev) => ({
@@ -1825,8 +1905,47 @@ const SA_A9001W: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {};
   const exitEdit2 = () => {};
 
+  const checkSave = () => {
+    let valid = true;
+
+    if (
+      infomation.location == "" ||
+      infomation.location == null ||
+      infomation.location == undefined
+    ) {
+      valid = false;
+    }
+    if (
+      infomation.custregnum == "" ||
+      infomation.custregnum == null ||
+      infomation.custregnum == undefined
+    ) {
+      valid = false;
+    }
+    if (
+      infomation.taxtype == "" ||
+      infomation.taxtype == null ||
+      infomation.taxtype == undefined
+    ) {
+      valid = false;
+    }
+
+    return valid;
+  };
+
   const onPurCreateClick = (e: any) => {
     if (!permissions.save) return;
+
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
+
+    if (!checkSave()) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
+
     let valid = true;
     const selectRows = mainDataResult.data.filter(
       (item: any) => item.chk == true
@@ -1911,7 +2030,15 @@ const SA_A9001W: React.FC = () => {
     if (!window.confirm("해제하시겠습니까?")) {
       return false;
     }
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
 
+    if (!checkSave()) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
     const selectRows = mainDataResult.data.filter(
       (item: any) => item.chk == true
     );
@@ -2006,7 +2133,15 @@ const SA_A9001W: React.FC = () => {
     if (!window.confirm("해제하시겠습니까?")) {
       return false;
     }
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
 
+    if (!checkSave()) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
     const selectRows = mainDataResult.data.filter(
       (item: any) => item.chk == true
     );
@@ -2094,19 +2229,27 @@ const SA_A9001W: React.FC = () => {
         reqdt_s: dataArr.reqdt_s.join("|"),
       }));
     }
-  }
+  };
 
   const onMinusClick = () => {
     if (!permissions.save) return;
-    if (!window.confirm("- 계산서를 발행하시겠습니까?")) {
+    if (!window.confirm("마이너스 계산서를 발행하시겠습니까?")) {
       return false;
     }
 
-    if(workType == "N") {
-      alert("저장 후 진행해주세요.")
-    } else if(mainDataResult.total > 0) {
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
+
+    if (!checkSave()) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
+    if (mainDataResult.total > 0) {
       const selectRows = mainDataResult.data.filter(
-        (item: any) => item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        (item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
 
       setParaData((prev) => ({
@@ -2168,11 +2311,10 @@ const SA_A9001W: React.FC = () => {
         seq_s: "",
         reqdt_s: "",
       }));
-
     } else {
       alert("데이터가 없습니다");
     }
-  }
+  };
 
   const onDeleteClick = () => {
     if (!permissions.delete) return;
@@ -2180,12 +2322,16 @@ const SA_A9001W: React.FC = () => {
       return false;
     }
 
-    setParaData((prev) => ({
-      ...prev,
-      workType: "D",
-      reqdt: convertDateToStr(infomation.reqdt),
-      seq: infomation.seq,
-    }));
+    if (mainDataResult.total > 0) {
+      setParaData((prev) => ({
+        ...prev,
+        workType: "D",
+        reqdt: convertDateToStr(infomation.reqdt),
+        seq: infomation.seq,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
   };
 
   const [ParaData, setParaData] = useState({
@@ -2457,6 +2603,158 @@ const SA_A9001W: React.FC = () => {
     }
   }, [ParaData, permissions]);
 
+  const [ParaData2, setParaData2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "",
+    orgdiv: "",
+    location: "",
+    reqdt: "",
+    seq: 0,
+    taxdt: "",
+    etax: "",
+    custcd: "",
+    gubun: "",
+    splyamt: "",
+    taxamt: "",
+    remark: "",
+    billstat: "",
+    rtn: "",
+    report_issue_id: "",
+    userid: "",
+    pc: "",
+
+    Accattachyn: "",
+    rreg_id: 0,
+    service_id: "",
+    salelist: "",
+  });
+
+  const para2: Iparameters = {
+    procedureName: "P_SA_A9001W_S2",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData2.workType,
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": ParaData2.location,
+      "@p_reqdt": ParaData2.reqdt,
+      "@p_seq": ParaData2.seq,
+      "@p_taxdt": ParaData2.taxdt,
+      "@p_etax": ParaData2.etax,
+      "@p_custcd": ParaData2.custcd,
+      "@p_gubun": ParaData2.gubun,
+      "@p_splyamt": ParaData2.splyamt,
+      "@p_taxamt": ParaData2.taxamt,
+      "@p_remark": ParaData2.remark,
+      "@p_billstat": ParaData2.billstat,
+      "@p_rtn": ParaData2.rtn,
+      "@p_report_issue_id": ParaData2.report_issue_id,
+
+      "@p_Accattachyn": ParaData2.Accattachyn,
+      "@p_rreg_id": ParaData2.rreg_id,
+      "@p_salelist": ParaData2.salelist,
+
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_service_id": companyCode,
+    },
+  };
+
+  const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save && ParaData2.workType != "D") return;
+    if (!permissions.delete && ParaData2.workType == "D") return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      if (ParaData2.workType == "D") {
+        const isLastDataDeleted =
+          mainDataResult.data.length == 0 && filters.pgNum > 0;
+        if (isLastDataDeleted) {
+          setPage({
+            skip:
+              filters.pgNum == 1 || filters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            pgNum: prev.pgNum,
+            isSearch: true,
+          }));
+        }
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+      }
+      setParaData2({
+        pgSize: PAGE_SIZE,
+        workType: "",
+        orgdiv: "",
+        location: "",
+        reqdt: "",
+        seq: 0,
+        taxdt: "",
+        etax: "",
+        custcd: "",
+        gubun: "",
+        splyamt: "",
+        taxamt: "",
+        remark: "",
+        billstat: "",
+        rtn: "",
+        report_issue_id: "",
+        userid: "",
+        pc: "",
+
+        Accattachyn: "",
+        rreg_id: 0,
+        service_id: "",
+        salelist: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (
+      ParaData2.workType != "" &&
+      permissions.save &&
+      ParaData2.workType != "D"
+    ) {
+      fetchTodoGridSaved2();
+    }
+    if (ParaData2.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved2();
+    }
+  }, [ParaData2, permissions]);
+
   const setCopyData2 = (data: any) => {
     var qty = 0;
     var amt = 0;
@@ -2559,8 +2857,6 @@ const SA_A9001W: React.FC = () => {
     setSelectedSubState({ [rows[0][DATA_ITEM_KEY2]]: true });
   };
 
-  const setCopyData3 = (data: any) => {};
-
   const onAddClick = () => {
     setWorkType("N");
     setDataWindowVisible(true);
@@ -2572,8 +2868,9 @@ const SA_A9001W: React.FC = () => {
 
   const onSaveClick = () => {
     if (!permissions.save) return;
-    if (subDataResult.data.length == 0) {
-      alert("신규 생성을 해주세요.");
+
+    if (!checkSave()) {
+      alert("필수값을 채워주세요.");
       return;
     }
     let dataArr: any = {
@@ -2643,6 +2940,45 @@ const SA_A9001W: React.FC = () => {
       rowstatus_s: "",
       seq_s: "",
       reqdt_s: "",
+    }));
+  };
+
+  const onPAXClick = () => {
+    setTransactionWindowClick(true);
+  };
+
+  const setPrintData2 = (data: any) => {
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
+
+    if (!checkSave()) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
+
+    setParaData2((prev) => ({
+      ...prev,
+      workType: "EM",
+      orgdiv: infomation.orgdiv,
+      location: infomation.location,
+      reqdt: infomation.reqdt == null ? "" : convertDateToStr(infomation.reqdt),
+      seq: infomation.seq,
+      taxdt: convertDateToStr(infomation.taxdt),
+      etax: infomation.etax,
+      custcd: infomation.custcd,
+      gubun: "",
+      splyamt: infomation.splyamt,
+      taxamt: infomation.taxamt,
+      remark: infomation.remark,
+      billstat: infomation.billstat,
+      rtn: "",
+      report_issue_id: infomation.report_issue_id,
+
+      Accattachyn: data,
+      rreg_id: 0,
+      salelist: "",
     }));
   };
 
@@ -3066,7 +3402,7 @@ const SA_A9001W: React.FC = () => {
                         (-)계산서 생성
                       </Button>
                       <Button
-                        //onClick={onDeleteClick2}
+                        onClick={onPAXClick}
                         fillMode="outline"
                         themeColor={"primary"}
                         disabled={permissions.delete ? false : true}
@@ -3259,6 +3595,7 @@ const SA_A9001W: React.FC = () => {
                             type="text"
                             value={infomation.custregnum}
                             onChange={InputChange}
+                            className="required"
                           />
                         </td>
                         <th>공급가액</th>
@@ -3811,7 +4148,7 @@ const SA_A9001W: React.FC = () => {
                 <FormBoxWrap className="FormBoxWrap">
                   <ButtonContainer>
                     <Button
-                       onClick={onMinusClick}
+                      onClick={onMinusClick}
                       themeColor={"primary"}
                       style={{ marginRight: "4px" }}
                       disabled={permissions.save ? false : true}
@@ -3819,7 +4156,7 @@ const SA_A9001W: React.FC = () => {
                       (-)계산서 생성
                     </Button>
                     <Button
-                      //onClick={onDeleteClick2}
+                      onClick={onPAXClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       disabled={permissions.delete ? false : true}
@@ -4009,6 +4346,7 @@ const SA_A9001W: React.FC = () => {
                             type="text"
                             value={infomation.custregnum}
                             onChange={InputChange}
+                            className="required"
                           />
                         </td>
                         <th>공급가액</th>
@@ -4412,6 +4750,14 @@ const SA_A9001W: React.FC = () => {
           }
           modal={true}
           pathname="SA_A9001W"
+        />
+      )}
+      {transactionWindowVisible && (
+        <SA_A9001W_Transaction_Window
+          setVisible={setTransactionWindowClick}
+          setData={setPrintData2}
+          pathname="SA_A9001W"
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>

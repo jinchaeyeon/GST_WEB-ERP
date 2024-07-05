@@ -1390,22 +1390,10 @@ const CopyWindow = ({
     mainDataResult.data.map((item) => {
       sum += item.amt_1;
       sum2 += item.amt_2;
-
-      if (
-        (item.acntcd == "1110130" || item.acntcd == "1110131") &&
-        item.acntnum == ""
-      ) {
-        valid = false;
-      }
     });
 
     if (sum != sum2) {
       alert("차변의 합계금액과 대변의 합계금액이 맞지 않습니다.");
-      return false;
-    }
-
-    if (valid != true) {
-      alert("계정이 보통예금인 경우 예적금 코드는 필수값입니다.");
       return false;
     }
 
@@ -1438,7 +1426,7 @@ const CopyWindow = ({
         amt_1 = "",
         amt_2 = "",
         remark = "",
-        salenum = "",
+        taxnum = "",
         acntnum = "",
         notenum = "",
         enddt = "",
@@ -1455,7 +1443,7 @@ const CopyWindow = ({
       dataArr.amt1_s.push(amt_1);
       dataArr.amt2_s.push(amt_2);
       dataArr.remark_s.push(remark == undefined ? "" : remark);
-      dataArr.taxnum_s.push(salenum == undefined ? "" : salenum);
+      dataArr.taxnum_s.push(taxnum == undefined ? "" : taxnum);
       dataArr.acntnum_s.push(acntnum == undefined ? "" : acntnum);
       dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
       dataArr.enddt_s.push(
