@@ -457,7 +457,7 @@ const SA_B2226W: React.FC = () => {
                             title={item.title}
                             data={numberWithCommas3(item.data) + "천원"}
                             backgroundColor={theme.palette.primary.dark}
-                            fontsize={"2.3rem"}
+                            fontsize={"1.8rem"}
                             titlefontsize={"1rem"}
                             form={"SA_B2226W"}
                             height={"140px"}
@@ -498,9 +498,9 @@ const SA_B2226W: React.FC = () => {
                         <Card
                           title={"목표 금액"}
                           titlefontsize={"1rem"}
-                          data={Math.round(doughnut.target) + "천원"}
+                          data={numberWithCommas3(Math.round(doughnut.target)) + "천원"}
                           backgroundColor={theme.palette.primary.main}
-                          fontsize={"1.5rem"}
+                          fontsize={"1.3rem"}
                           form={"SA_B2226W"}
                           height={"100px"}
                         />
@@ -509,9 +509,9 @@ const SA_B2226W: React.FC = () => {
                         <Card
                           title={"실적 금액"}
                           titlefontsize={"1rem"}
-                          data={Math.round(doughnut.performance) + "천원"}
+                          data={numberWithCommas3(Math.round(doughnut.performance)) + "천원"}
                           backgroundColor={theme.palette.primary.main}
-                          fontsize={"1.5rem"}
+                          fontsize={"1.3rem"}
                           form={"SA_B2226W"}
                           height={"100px"}
                         />
