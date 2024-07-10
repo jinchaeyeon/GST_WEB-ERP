@@ -116,14 +116,6 @@ const CommonComboBox = ({
         className={className}
         disabled={disabled}
       />
-      <style>
-        {`
-        .k-dropdowngrid-popup {
-          overflow-y: scroll;
-          max-height: 250px;
-        }
-        `}
-      </style>
     </>
   );
 };

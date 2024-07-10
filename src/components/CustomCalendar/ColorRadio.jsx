@@ -103,14 +103,6 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
               }}
               clearButton={false}
             />
-            <style>
-              {`
-    .k-dropdowngrid-popup {
-      overflow-y: scroll;
-      max-height: 250px;
-    }
-    `}
-            </style>
           </>
         ) : (
           ""

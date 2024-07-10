@@ -184,14 +184,6 @@ const ComboBoxCell = (props: CustomCellProps) => {
                 onChange={handleChange}
                 disabled={disabled}
               />
-              <style>
-                {`
-  .k-dropdowngrid-popup {
-    overflow-y: scroll;
-    max-height: 250px;
-  }
-  `}
-              </style>
             </>
           ) : value ? (
             value[textField]
@@ -215,14 +207,6 @@ const ComboBoxCell = (props: CustomCellProps) => {
                 onChange={handleChange}
                 disabled={disabled}
               />
-              <style>
-                {`
-  .k-dropdowngrid-popup {
-    overflow-y: scroll;
-    max-height: 250px;
-  }
-  `}
-              </style>
             </>
           ) : value ? (
             value[textField]
@@ -268,14 +252,6 @@ const ComboBoxCell = (props: CustomCellProps) => {
               onChange={handleChange}
               disabled={disabled}
             />
-            <style>
-              {`
-  .k-dropdowngrid-popup {
-    overflow-y: scroll;
-    max-height: 250px;
-  }
-  `}
-            </style>
           </>
         ) : value ? (
           value[textField]

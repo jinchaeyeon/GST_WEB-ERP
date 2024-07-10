@@ -61,14 +61,6 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
         onChange={readonly ? undefined : onChange}
         {...others}
       />
-      <style>
-        {`
-      .k-dropdowngrid-popup {
-        overflow-y: scroll;
-        max-height: 250px;
-      }
-      `}
-      </style>
     </>
   );
 };

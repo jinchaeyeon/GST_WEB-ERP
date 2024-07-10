@@ -87,14 +87,6 @@ const MultiColumnComboBoxWithQuery = ({
         textField={textField}
         onChange={onChangeHandle}
       />
-      <style>
-        {`
-  .k-dropdowngrid-popup {
-    overflow-y: scroll;
-    max-height: 250px;
-  }
-  `}
-      </style>
     </>
   );
 };
