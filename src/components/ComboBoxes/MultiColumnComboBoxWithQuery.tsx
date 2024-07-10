@@ -94,6 +94,7 @@ const MultiColumnComboBoxWithQuery = ({
         onChange={onChangeHandle}
         opened={state}
         onOpen={() => setState(true)}
+        onClose={() => setState(false)}
       />
     </>
   );

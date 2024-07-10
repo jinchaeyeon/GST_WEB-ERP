@@ -91,6 +91,7 @@ const CustomOptionComboBox = ({
         disabled={disabled}
         opened={state}
         onOpen={() => setState(true)}
+        onClose={() => setState(false)}
       />
     </>
   );

@@ -67,6 +67,7 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
         onChange={readonly ? undefined : onChange}
         opened={state}
         onOpen={() => setState(true)}
+        onClose={() => setState(false)}
         {...others}
       />
     </>
