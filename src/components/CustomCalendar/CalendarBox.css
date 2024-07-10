@@ -172,6 +172,15 @@ abbr {
   color: var(--color-blue);
 }
 
+.react-calendar__year-view__months__month > abbr {
+  white-space: nowrap;
+}
+
+.react-calendar__decade-view__years__year {
+  display: flex;
+  justify-content: center;
+}
+
 @media (max-width: 1200px) {
   .container {
     display: flex;
@@ -181,6 +190,10 @@ abbr {
     width: 100%;
     height: 65%;
     padding-bottom: 4px;
+  }
+
+  .react-calendar__month-view__days {
+    height: calc(100% - 32px);
   }
 
   .react-calendar__month-view__days__day {
