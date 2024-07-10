@@ -1,6 +1,6 @@
 import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
 import { FieldRenderProps } from "@progress/kendo-react-form";
-import React from "react";
+import React, { useState } from "react";
 import { checkIsObjValid } from "../CommonFunction";
 
 type TFieldComboBox = {
@@ -44,6 +44,12 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
     isValid = checkIsObjValid(value, comparisonValue);
   }
 
+  const [state, setState] = useState(false);
+
+  document.getElementById(id)?.addEventListener("focusout", (event) => {
+    setState(false);
+  });
+
   return (
     <>
       <MultiColumnComboBox
@@ -59,6 +65,8 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
         valid={isValid}
         id={id}
         onChange={readonly ? undefined : onChange}
+        opened={state}
+        onOpen={() => setState(true)}
         {...others}
       />
     </>

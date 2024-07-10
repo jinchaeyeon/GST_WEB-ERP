@@ -75,6 +75,12 @@ const MultiColumnComboBoxWithQuery = ({
     changeData({ name, value });
   };
 
+  const [state, setState] = useState(false);
+
+  document.getElementById(name)?.addEventListener("focusout", (event) => {
+    setState(false);
+  });
+
   return (
     <>
       <KendoMultiColumnComboBox
@@ -86,6 +92,8 @@ const MultiColumnComboBoxWithQuery = ({
         columns={newColumns}
         textField={textField}
         onChange={onChangeHandle}
+        opened={state}
+        onOpen={() => setState(true)}
       />
     </>
   );

@@ -101,6 +101,12 @@ const CommonComboBox = ({
     }
   };
 
+  const [state, setState] = useState(false);
+
+  document.getElementById(name)?.addEventListener("focusout", (event) => {
+    setState(false);
+  });
+
   return (
     <>
       <MultiColumnComboBox
@@ -115,6 +121,8 @@ const CommonComboBox = ({
         required={required}
         className={className}
         disabled={disabled}
+        opened={state}
+        onOpen={() => setState(true)}
       />
     </>
   );
