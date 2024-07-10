@@ -28,12 +28,12 @@ export const CustomFormEditor = (props: SchedulerFormEditorProps) => {
   const [Data, setData] = useState([]);
   const [bizComponentData, setBizComponentData] = useState([]);
   //공정코드,외주구분,사용자,설비,자재불출(자재사용)구분_BOM,수량단위
-  UseBizComponent("L_RESOURCE", setBizComponentData);
+  UseBizComponent("L_CR400150", setBizComponentData);
   const processApi = useApi();
 
   useEffect(() => {
     if (bizComponentData !== null) {
-      setData(getBizCom(bizComponentData, "L_RESOURCE"));
+      setData(getBizCom(bizComponentData, "L_CR400150"));
     }
   }, [bizComponentData]);
 

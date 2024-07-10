@@ -10,13 +10,22 @@ import {
   Typography,
 } from "@mui/material";
 import {
+  DataResult,
   GroupDescriptor,
   GroupResult,
+  State,
   groupBy,
+  process,
 } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
 import { setGroupIds } from "@progress/kendo-react-data-tools";
 import { Calendar } from "@progress/kendo-react-dateinputs";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+} from "@progress/kendo-react-grid";
 import {
   AgendaView,
   DayView,
@@ -26,7 +35,7 @@ import {
   TimelineView,
   WeekView,
 } from "@progress/kendo-react-scheduler";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -52,7 +61,7 @@ import {
   getDeviceHeight,
   getHeight,
 } from "../components/CommonFunction";
-import { GAP, PAGE_SIZE } from "../components/CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
 import { useApi } from "../hooks/api";
 import { OSState, isLoading, loginResultState } from "../store/atoms";
@@ -70,7 +79,10 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 var height = 0;
 var height2 = 0;
+var height3 = 0;
+var height4 = 0;
 
+const DATA_ITEM_KEY = "num";
 const CM_A3100W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -89,7 +101,7 @@ const CM_A3100W: React.FC = () => {
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [mobileheight3, setMobileHeight3] = useState(0);
   const [webheight, setWebHeight] = useState(0);
-  var height = getHeight(".ButtonContainer");
+  const [webheight2, setWebHeight2] = useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("CM_A3100W", setCustomOptionData);
@@ -97,13 +109,17 @@ const CM_A3100W: React.FC = () => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".TitleContainer");
+      height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".ButtonContainer3");
 
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height2);
-        setMobileHeight2(getDeviceHeight(true) - height - height2);
-        setWebHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(false) - height - height2);
+        setMobileHeight3(getDeviceHeight(false) - height3 - height2);
+        setWebHeight(getDeviceHeight(false) - height - height2);
+        setWebHeight2(getDeviceHeight(false) - height3 - height2 - height4);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
@@ -111,7 +127,8 @@ const CM_A3100W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, webheight]);
+  }, [customOptionData, webheight, webheight2]);
+
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -126,11 +143,27 @@ const CM_A3100W: React.FC = () => {
   );
   const [osstate, setOSState] = useRecoilState(OSState);
   const [list, setList] = useState([]);
-  const [view, setView] = React.useState("timeline");
+  const [view, setView] = React.useState("week");
   const [date, setDate] = React.useState(new Date());
   const [orientation, setOrientation] = React.useState<
     "horizontal" | "vertical"
   >("vertical");
+  const [resourceDataState, setResourceDataState] = useState<State>({
+    sort: [],
+  });
+  const [resourceDataResult, setResourceDataResult] = useState<DataResult>(
+    process([], resourceDataState)
+  );
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
+  const idGetter = getter(DATA_ITEM_KEY);
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
 
   const handleViewChange = React.useCallback(
     (event: any) => {
@@ -334,11 +367,13 @@ const CM_A3100W: React.FC = () => {
       setFilters2((prev) => ({
         ...prev,
         isSearch: true,
+        resource: paraData.resource_s,
         pgNum: 1,
       }));
       setFilters3((prev) => ({
         ...prev,
         isSearch: true,
+        resource: paraData.resource_s,
         pgNum: 1,
       }));
       setParaData({
@@ -428,7 +463,8 @@ const CM_A3100W: React.FC = () => {
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
+    const selectedDate = value;
+    setDate(selectedDate);
     if (name == undefined) {
       setFilters((prev) => ({
         ...prev,
@@ -452,6 +488,9 @@ const CM_A3100W: React.FC = () => {
         [name]: value,
       }));
     }
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   //그리드 데이터 조회
@@ -469,7 +508,7 @@ const CM_A3100W: React.FC = () => {
         "@p_orgdiv": filters.orgdiv,
         "@p_date": convertDateToStr(filters.todt),
         "@p_resource": filters.resource,
-        "@p_group": filters.group,
+        // "@p_group": filters.group,
       },
     };
     try {
@@ -480,17 +519,18 @@ const CM_A3100W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((item: any) => ({
-        ...item,
-        text: item.resource_name,
-        groupId: item.group + "group",
-        group_category_name: item.group,
-      }));
+      const rows = data.tables[0].Rows;
+
+      setResourceDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
 
       if (totalRowCnt > 0) {
         const newDataState = processWithGroups(rows, group);
         setTotal(totalRowCnt);
-
         setResultState(
           newDataState
             .filter((item: any, index: any) => index != 0)
@@ -536,7 +576,7 @@ const CM_A3100W: React.FC = () => {
         "@p_orgdiv": filters.orgdiv,
         "@p_date": convertDateToStr(filters.todt),
         "@p_resource": filters2.resource,
-        "@p_group": filters2.group,
+        // "@p_group": filters2.group,
       },
     };
     try {
@@ -555,7 +595,6 @@ const CM_A3100W: React.FC = () => {
         title: item.contents,
         person: item.user_id,
       }));
-
       setData(rows);
       rows.map((item: { num: number }) => {
         if (item.num > temp) {
@@ -588,7 +627,7 @@ const CM_A3100W: React.FC = () => {
         "@p_orgdiv": filters3.orgdiv,
         "@p_date": convertDateToStr(filters3.todt),
         "@p_resource": filters3.resource,
-        "@p_group": filters3.group,
+        // "@p_group": filters3.group,
       },
     };
     try {
@@ -620,6 +659,25 @@ const CM_A3100W: React.FC = () => {
     }));
     setLoading(false);
   };
+
+  const hasInitialized = useRef(false); 
+
+  useEffect(() => {
+    if (!hasInitialized.current && resourceDataResult.data.length > 0) {
+      const firstItem = resourceDataResult.data[0];
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        resource: firstItem.sub_code,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        resource: firstItem.sub_code, 
+      }));
+      hasInitialized.current = true;
+    }
+  }, [resourceDataResult.data]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -662,6 +720,34 @@ const CM_A3100W: React.FC = () => {
     }
   }, [filters3, permissions, customOptionData]);
 
+  const handleRowClick = (e: { dataItem: any }) => {
+    const items = e.dataItem;
+
+    if (!permissions.view) return;
+
+    setFilters2((prev) => ({
+      ...prev,
+      isSearch: true,
+      group: "",
+      resource: items.sub_code,
+    }));
+
+    setFilters3((prev) => ({
+      ...prev,
+      isSearch: true,
+      group: "",
+      resource: items.sub_code,
+    }));
+
+    if (swiper && isMobile) {
+      swiper.slideTo(2);
+    }
+  };
+
+  const onResourceDataStateChange = (event: GridDataStateChangeEvent) => {
+    setResourceDataState(event.dataState);
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -698,19 +784,17 @@ const CM_A3100W: React.FC = () => {
             >
               <GridTitleContainer>
                 <GridTitle>
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
-                    달력
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(1);
-                        }
-                      }}
-                      icon="chevron-right"
-                      themeColor={"primary"}
-                      fillMode={"flat"}
-                    ></Button>
-                  </ButtonContainer>
+                  달력
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
                 </GridTitle>
               </GridTitleContainer>
               <Calendar
@@ -719,105 +803,70 @@ const CM_A3100W: React.FC = () => {
                 value={filters.todt}
                 onChange={filterInputChange}
               />
-              <GridTitleContainer>
-                <GridTitle>자원</GridTitle>
-              </GridTitleContainer>
-              {resultState.length > 0
-                ? resultState.map((item: any, index: any) => {
-                    return (
-                      <Accordion defaultExpanded={true}>
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                          aria-controls="panel1-content"
-                          id="panel1-header"
-                          style={{ backgroundColor: "#edf4fb" }}
-                        >
-                          <Typography>{item.text}</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails
-                          style={{
-                            borderTop: "1px solid rgba(0, 0, 0, .125)",
-                          }}
-                        >
-                          <List>
-                            {item.items != undefined
-                              ? item.items.length > 0 &&
-                                item.items.map((items: any) => {
-                                  return (
-                                    <ListItem disablePadding>
-                                      <ListItemButton
-                                        onClick={() => {
-                                          if (!permissions.view) return;
-                                          setFilters2((prev) => ({
-                                            ...prev,
-                                            isSearch: true,
-                                            group: items.group,
-                                            resource: items.office_resource_num,
-                                          }));
-                                          setFilters3((prev) => ({
-                                            ...prev,
-                                            isSearch: true,
-                                            group: items.group,
-                                            resource: items.office_resource_num,
-                                          }));
-                                          if (swiper && isMobile) {
-                                            swiper.slideTo(1);
-                                          }
-                                        }}
-                                      >
-                                        <ListItemText
-                                          primary={items.resource_name}
-                                        />
-                                      </ListItemButton>
-                                    </ListItem>
-                                  );
-                                })
-                              : ""}
-                          </List>
-                        </AccordionDetails>
-                      </Accordion>
-                    );
-                  })
-                : ""}
             </GridContainer>
           </SwiperSlide>
           <SwiperSlide key={1}>
+            <GridContainer>
+              <GridTitleContainer className="ButtonContainer2">
+                <GridTitle>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="chevron-left"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                  회의실 정보
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(2);
+                      }
+                    }}
+                    icon="chevron-right"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                </GridTitle>
+              </GridTitleContainer>
+              <Grid
+                data={process(
+                  resourceDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  resourceDataState
+                )}
+                {...resourceDataState}
+                onDataStateChange={onResourceDataStateChange}
+                onRowClick={handleRowClick}
+                dataItemKey={DATA_ITEM_KEY}
+                fixedScroll={true}
+                style={{ height: mobileheight3 }}
+              >
+                <GridColumn field="code_name" title="회의실" />
+                <GridColumn field="memo" title="메모" />
+              </Grid>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
-                <GridTitle>
-                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                <GridTitle>                 
                     <Button
                       onClick={() => {
                         if (swiper && isMobile) {
-                          swiper.slideTo(0);
+                          swiper.slideTo(1);
                         }
                       }}
                       icon="chevron-left"
                       themeColor={"primary"}
                       fillMode={"flat"}
-                    ></Button>
-                    <div>
-                      <Button
-                        //onClick={onSaveClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        disabled={permissions.save ? false : true}
-                      >
-                        저장
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          if (swiper && isMobile) {
-                            swiper.slideTo(2);
-                          }
-                        }}
-                        icon="chevron-right"
-                        themeColor={"primary"}
-                        fillMode={"flat"}
-                      ></Button>
-                    </div>
-                  </ButtonContainer>
+                    ></Button>               
+                   회의실 예약
                 </GridTitle>
               </GridTitleContainer>
               {osstate == true ? (
@@ -863,7 +912,7 @@ const CM_A3100W: React.FC = () => {
                 >
                   <TimelineView showWorkHours={false} />
                   <DayView showWorkHours={false} />
-                  <WeekView showWorkHours={false} />
+                  <WeekView />
                   <MonthView />
                   <AgendaView />
                 </Scheduler>
@@ -894,8 +943,8 @@ const CM_A3100W: React.FC = () => {
       ) : (
         <>
           <GridContainerWrap>
-            <GridContainer width="30%">
-              <GridContainer>
+            <GridContainer width="20%">
+              <GridContainer className="ButtonContainer2">
                 <GridTitleContainer>
                   <GridTitle>달력</GridTitle>
                 </GridTitleContainer>
@@ -907,82 +956,33 @@ const CM_A3100W: React.FC = () => {
                 />
               </GridContainer>
               <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>자원</GridTitle>
+                <GridTitleContainer className="ButtonContainer3">
+                  <GridTitle>회의실 정보</GridTitle>
                 </GridTitleContainer>
-                {resultState.length > 0
-                  ? resultState.map((item: any, index: any) => {
-                      return (
-                        <Accordion defaultExpanded={true}>
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1-content"
-                            id="panel1-header"
-                            style={{ backgroundColor: "#edf4fb" }}
-                          >
-                            <Typography>{item.text}</Typography>
-                          </AccordionSummary>
-                          <AccordionDetails
-                            style={{
-                              borderTop: "1px solid rgba(0, 0, 0, .125)",
-                            }}
-                          >
-                            <List>
-                              {item.items != undefined
-                                ? item.items.length > 0 &&
-                                  item.items.map((items: any) => {
-                                    return (
-                                      <ListItem disablePadding>
-                                        <ListItemButton
-                                          onClick={() => {
-                                            if (!permissions.view) return;
-                                            setFilters2((prev) => ({
-                                              ...prev,
-                                              isSearch: true,
-                                              group: items.group,
-                                              resource:
-                                                items.office_resource_num,
-                                            }));
-                                            setFilters3((prev) => ({
-                                              ...prev,
-                                              isSearch: true,
-                                              group: items.group,
-                                              resource:
-                                                items.office_resource_num,
-                                            }));
-                                          }}
-                                        >
-                                          <ListItemText
-                                            primary={items.resource_name}
-                                          />
-                                        </ListItemButton>
-                                      </ListItem>
-                                    );
-                                  })
-                                : ""}
-                            </List>
-                          </AccordionDetails>
-                        </Accordion>
-                      );
-                    })
-                  : ""}
+                <Grid
+                  data={process(
+                    resourceDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    resourceDataState
+                  )}
+                  {...resourceDataState}
+                  onDataStateChange={onResourceDataStateChange}
+                  onRowClick={handleRowClick}
+                  dataItemKey={DATA_ITEM_KEY}
+                  fixedScroll={true}
+                  style={{ height: webheight2 }}
+                >
+                  <GridColumn field="code_name" title="회의실" />
+                  <GridColumn field="memo" title="메모" />
+                </Grid>
               </GridContainer>
             </GridContainer>
-            <GridContainer width={`calc(70% - ${GAP}px)`}>
+            <GridContainer width={`calc(80% - ${GAP}px)`}>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer">
-                  <GridTitle></GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      //onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      disabled={permissions.save ? false : true}
-                    >
-                      저장
-                    </Button>
-                  </ButtonContainer>
+                  <GridTitle>회의실 예약</GridTitle>
                 </GridTitleContainer>
                 {osstate == true ? (
                   <div
@@ -999,7 +999,8 @@ const CM_A3100W: React.FC = () => {
                   </div>
                 ) : (
                   <Scheduler
-                    id="CM_A3100W_SCHEDULER"
+                    // id="CM_A3100W_SCHEDULER"
+                    height={webheight}
                     data={data}
                     onDataChange={handleDataChange}
                     view={view}
@@ -1022,12 +1023,11 @@ const CM_A3100W: React.FC = () => {
                         textField: "text",
                       },
                     ]}
-                    form={FormWithCustomEditor}
-                    height={webheight}
+                    form={FormWithCustomEditor}                    
                   >
                     <TimelineView showWorkHours={false} />
                     <DayView showWorkHours={false} />
-                    <WeekView showWorkHours={false} />
+                    <WeekView />
                     <MonthView />
                     <AgendaView />
                   </Scheduler>
