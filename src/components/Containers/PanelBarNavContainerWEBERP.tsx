@@ -165,23 +165,6 @@ const PanelBarNavContainer = (props: any) => {
   // 반응형 처리
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
-  useEffect(() => {
-    const handleWindowResize = () => {
-      let deviceWidth = document.documentElement.clientWidth;
-      let isMobile = deviceWidth <= 1200;
-      if (isMobile) {
-        setIsFilterHideStates(true); // 모바일 닫힌 상태로 설정
-        setIsFilterheightstates(30);
-      } else {
-        setIsFilterHideStates(false); // 데스크톱 열린 상태로 설정
-        setIsFilterheightstates(0);
-      }
-    };
-    window.addEventListener("resize", handleWindowResize);
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-    };
-  });
 
   // useEffect(() => {
   //   const handleTabClose = (event: BeforeUnloadEvent) => {
