@@ -27,8 +27,6 @@ module.exports = {
         },
       },
     },
-    contentBase: path.resolve(__dirname, 'build'),
-    hot: true,
     historyApiFallback: true,
     compress: true,
     port: 3000,
@@ -90,21 +88,21 @@ module.exports = {
       {
         test: /\.css$/i,
         exclude: /\.module\.css$/i, // 모듈 파일 제외 설정
-        use: ['style-loader', 'css-loader'],
+        use: ["style-loader", "css-loader"],
       },
       // CSS Module ([filename].module.css)
       {
         test: /\.module\.css$/i,
         use: [
-          'style-loader',
+          "style-loader",
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
             },
           },
         ],
-      },  
+      },
       {
         test: /\.(png|jpg|jpeg|ttf|woff|svg)$/,
         use: [

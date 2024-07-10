@@ -2636,7 +2636,12 @@ const SA_A1000W_603: React.FC = () => {
     if (!permissions.view) return;
     let data: any;
     setLoading(true);
-
+    const status =
+      filters.status.length == 0
+        ? "|3|4"
+        : filters.status.length == 1
+        ? filters.status[0].sub_code
+        : getName(filters.status);
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_SA_A1000W_603_Q",

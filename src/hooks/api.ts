@@ -134,23 +134,17 @@ const generateUrl = (url: string, params: any) => {
   }
 };
 
-const generateGetUrl = () => {
-  const [Link, setLink] = useRecoilState(linkState);
-
-  if (Link == "") {
-    axios.get(`/apiserver.json`).then((res: any) => {
-      setLink(res.data[0].url);
-    });
-  }
-};
-
 export const useApi = () => {
   const token = localStorage.getItem("accessToken");
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const [Link, setLink] = useRecoilState(linkState);
-  generateGetUrl();
+  if (Link == "") {
+    axios.get(`/apiserver.json`).then((res: any) => {
+      setLink(res.data[0].url);
+    });
+  }
   const pc = UseGetValueFromSessionItem("pc");
   const [sessionItemFetched, setSessionItemFetched] = useState(false); // 세션 아이템을 가져왔는지 여부
   const sessionItemCheck = localStorage.getItem("sessionItem");
