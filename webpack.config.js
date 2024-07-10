@@ -27,6 +27,7 @@ module.exports = {
         },
       },
     },
+    contentBase: path.resolve(__dirname, 'build'),
     hot: true,
     historyApiFallback: true,
     compress: true,
@@ -153,6 +154,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "build"),
     filename: "[name].[contenthash:8].js",
+    chunkFilename: "[name].[contenthash:8].js",
     clean: true,
   },
 };
