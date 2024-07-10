@@ -49,7 +49,7 @@
 
 .react-calendar__month-view__days__day abbr {
   position: absolute;
-  top: 25%;
+  top: 15%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
@@ -195,6 +195,13 @@ abbr {
     width: 100%;
     height: 65%;
     padding-bottom: 4px;
+  }
+
+  .react-calendar__month-view__days__day abbr {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .react-calendar__month-view__days {
