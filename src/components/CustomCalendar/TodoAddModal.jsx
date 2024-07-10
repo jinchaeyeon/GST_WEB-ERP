@@ -133,14 +133,16 @@ export default function TodoAddModal({
             handleCode={filterComboChange}
             colorData={colorList}
           />
-          <p>제목</p>
-          <Input
-            name="title"
-            type="text"
-            value={filters.title}
-            onChange={filterInputChange}
-            style={{ height: "40px", fontSize: "large" }}
-          />
+          <div style={{ marginTop: "5px" }}>
+            <p>제목</p>
+            <Input
+              name="title"
+              type="text"
+              value={filters.title}
+              onChange={filterInputChange}
+              style={{ height: "40px", fontSize: "large" }}
+            />
+          </div>
           <p>시간</p>
           <div
             style={{ display: "flex", flexDirection: "row", height: "40px" }}
@@ -193,7 +195,7 @@ export default function TodoAddModal({
               </Button>
             </div>
           </div>
-          <div>
+          <div style={{ marginTop: "5px" }}>
             <p>내용</p>
             <div style={{ marginTop: "5px" }}>
               <TextArea
