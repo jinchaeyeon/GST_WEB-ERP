@@ -1,5 +1,4 @@
 import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
-import { useState } from "react";
 import styles from "./ColorRadio.module.css";
 
 const newColumn = [
@@ -15,11 +14,6 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
     handleCode(event.value);
   };
   const textField = "code_name";
-  const [state, setState] = useState(false);
-
-  document.getElementById(id)?.addEventListener("focusout", (event) => {
-    setState(false);
-  });
   return (
     <div className={`${styles.box} ${isTheme && styles.theme}`}>
       {colorData
@@ -108,9 +102,6 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
                 width: "150px",
               }}
               clearButton={false}
-              opened={state}
-              onOpen={() => setState(true)}
-              onClose={() => setState(false)}
             />
           </>
         ) : (
