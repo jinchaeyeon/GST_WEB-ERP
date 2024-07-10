@@ -51,16 +51,16 @@ const CustomOptionComboBox = ({
       }));
 
       newColumns = newColumns.filter((column: any) => column.width !== 0);
-    } 
+    }
 
-    if(newColumns.length == 0) {
+    if (newColumns.length == 0) {
       newColumns = [
         {
-          field: '',
-          header: '',
-          width: '300px',
+          field: "",
+          header: "",
+          width: "300px",
         },
-      ]
+      ];
     }
   }
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
@@ -69,20 +69,29 @@ const CustomOptionComboBox = ({
   };
 
   return (
-    <MultiColumnComboBox
-      data={listData}
-      textField={textField}
-      value={
-        value ? listData.find((item: any) => item[valueField] == value) : ""
-      }
-      columns={newColumns}
-      onChange={onChangeHandle}
-      id={name}
-      required={required}
-      className={className}
-      disabled={disabled}
-      style={{maxHeight: "300px", overflow: "auto"}}
-    />
+    <>
+      <MultiColumnComboBox
+        data={listData}
+        textField={textField}
+        value={
+          value ? listData.find((item: any) => item[valueField] == value) : ""
+        }
+        columns={newColumns}
+        onChange={onChangeHandle}
+        id={name}
+        required={required}
+        className={className}
+        disabled={disabled}
+      />
+      <style>
+        {`
+    .k-dropdowngrid-popup {
+      overflow-y: scroll;
+      max-height: 250px;
+    }
+    `}
+      </style>
+    </>
   );
 };
 

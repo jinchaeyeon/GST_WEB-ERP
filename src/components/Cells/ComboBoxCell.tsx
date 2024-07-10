@@ -175,14 +175,24 @@ const ComboBoxCell = (props: CustomCellProps) => {
           style={{ backgroundColor: value == undefined ? "" : value.color }}
         >
           {isInEdit ? (
-            <MultiColumnComboBox
-              data={listData}
-              value={value}
-              columns={newColumns}
-              textField={textField}
-              onChange={handleChange}
-              disabled={disabled}
-            />
+            <>
+              <MultiColumnComboBox
+                data={listData}
+                value={value}
+                columns={newColumns}
+                textField={textField}
+                onChange={handleChange}
+                disabled={disabled}
+              />
+              <style>
+                {`
+  .k-dropdowngrid-popup {
+    overflow-y: scroll;
+    max-height: 250px;
+  }
+  `}
+              </style>
+            </>
           ) : value ? (
             value[textField]
           ) : (
@@ -196,14 +206,24 @@ const ComboBoxCell = (props: CustomCellProps) => {
           style={{ color: color }}
         >
           {isInEdit ? (
-            <MultiColumnComboBox
-              data={listData}
-              value={value}
-              columns={newColumns}
-              textField={textField}
-              onChange={handleChange}
-              disabled={disabled}
-            />
+            <>
+              <MultiColumnComboBox
+                data={listData}
+                value={value}
+                columns={newColumns}
+                textField={textField}
+                onChange={handleChange}
+                disabled={disabled}
+              />
+              <style>
+                {`
+  .k-dropdowngrid-popup {
+    overflow-y: scroll;
+    max-height: 250px;
+  }
+  `}
+              </style>
+            </>
           ) : value ? (
             value[textField]
           ) : (
@@ -239,14 +259,24 @@ const ComboBoxCell = (props: CustomCellProps) => {
         }}
       >
         {isInEdit ? (
-          <MultiColumnComboBox
-            data={listData}
-            value={value}
-            columns={newColumns}
-            textField={textField}
-            onChange={handleChange}
-            disabled={disabled}
-          />
+          <>
+            <MultiColumnComboBox
+              data={listData}
+              value={value}
+              columns={newColumns}
+              textField={textField}
+              onChange={handleChange}
+              disabled={disabled}
+            />
+            <style>
+              {`
+  .k-dropdowngrid-popup {
+    overflow-y: scroll;
+    max-height: 250px;
+  }
+  `}
+            </style>
+          </>
         ) : value ? (
           value[textField]
         ) : (

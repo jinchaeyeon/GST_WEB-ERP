@@ -43,7 +43,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
         level: level,
         field: "rowstatus",
         syntheticEvent: e.syntheticEvent,
-        value:  dataItem["rowstatus"] == "N" ? "N" : "U",
+        value: dataItem["rowstatus"] == "N" ? "N" : "U",
       });
     }
   };
@@ -61,13 +61,23 @@ const ComboBoxCell = (props: CustomCellProps) => {
   const defaultRendering = (
     <td aria-colindex={ariaColumnIndex}>
       {isInEdit ? (
-        <MultiColumnComboBox
-          data={listData}
-          value={value}
-          columns={newColumns}
-          textField={textField}
-          onChange={handleChange}
-        />
+        <>
+          <MultiColumnComboBox
+            data={listData}
+            value={value}
+            columns={newColumns}
+            textField={textField}
+            onChange={handleChange}
+          />
+          <style>
+            {`
+  .k-dropdowngrid-popup {
+    overflow-y: scroll;
+    max-height: 250px;
+  }
+  `}
+          </style>
+        </>
       ) : value ? (
         value[textField]
       ) : (

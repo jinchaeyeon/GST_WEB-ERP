@@ -76,16 +76,26 @@ const MultiColumnComboBoxWithQuery = ({
   };
 
   return (
-    <KendoMultiColumnComboBox
-      id={name}
-      data={listData}
-      value={
-        value ? listData.find((item: any) => item[valueField] == value) : ""
-      }
-      columns={newColumns}
-      textField={textField}
-      onChange={onChangeHandle}
-    />
+    <>
+      <KendoMultiColumnComboBox
+        id={name}
+        data={listData}
+        value={
+          value ? listData.find((item: any) => item[valueField] == value) : ""
+        }
+        columns={newColumns}
+        textField={textField}
+        onChange={onChangeHandle}
+      />
+      <style>
+        {`
+  .k-dropdowngrid-popup {
+    overflow-y: scroll;
+    max-height: 250px;
+  }
+  `}
+      </style>
+    </>
   );
 };
 

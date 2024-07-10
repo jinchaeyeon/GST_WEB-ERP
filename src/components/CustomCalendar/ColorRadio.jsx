@@ -84,24 +84,34 @@ export default function ColorRadio({ code, handleCode, colorData, isTheme }) {
         code.sub_code != "2" &&
         code.sub_code != "3" &&
         code.sub_code != "4" ? (
-          <MultiColumnComboBox
-            data={colorData.filter(
-              (item) =>
-                item.sub_code != 0 &&
-                item.sub_code != 1 &&
-                item.sub_code != 2 &&
-                item.sub_code != 3 &&
-                item.sub_code != 4
-            )}
-            value={code}
-            columns={newColumn}
-            onChange={onChange}
-            textField={textField}
-            style={{
-              width: "150px",
-            }}
-            clearButton={false}
-          />
+          <>
+            <MultiColumnComboBox
+              data={colorData.filter(
+                (item) =>
+                  item.sub_code != 0 &&
+                  item.sub_code != 1 &&
+                  item.sub_code != 2 &&
+                  item.sub_code != 3 &&
+                  item.sub_code != 4
+              )}
+              value={code}
+              columns={newColumn}
+              onChange={onChange}
+              textField={textField}
+              style={{
+                width: "150px",
+              }}
+              clearButton={false}
+            />
+            <style>
+              {`
+    .k-dropdowngrid-popup {
+      overflow-y: scroll;
+      max-height: 250px;
+    }
+    `}
+            </style>
+          </>
         ) : (
           ""
         )}

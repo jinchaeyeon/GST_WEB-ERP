@@ -102,20 +102,29 @@ const CommonComboBox = ({
   };
 
   return (
-    <MultiColumnComboBox
-      id={name}
-      data={listData}
-      value={
-        value ? listData.find((item: any) => item[valueField] == value) : ""
-      }
-      columns={newColumns}
-      textField={textField}
-      onChange={onChangeHandle}
-      required={required}
-      className={className}
-      disabled={disabled}
-      style={{maxHeight: "300px", overflow: "auto"}}
-    />
+    <>
+      <MultiColumnComboBox
+        id={name}
+        data={listData}
+        value={
+          value ? listData.find((item: any) => item[valueField] == value) : ""
+        }
+        columns={newColumns}
+        textField={textField}
+        onChange={onChangeHandle}
+        required={required}
+        className={className}
+        disabled={disabled}
+      />
+      <style>
+        {`
+        .k-dropdowngrid-popup {
+          overflow-y: scroll;
+          max-height: 250px;
+        }
+        `}
+      </style>
+    </>
   );
 };
 

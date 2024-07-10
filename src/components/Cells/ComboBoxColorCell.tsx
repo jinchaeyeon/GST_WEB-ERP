@@ -70,13 +70,23 @@ const ComboBoxColorCell = (props: CustomCellProps) => {
       style={styles}
     >
       {isInEdit ? (
-        <MultiColumnComboBox
-          data={listData}
-          value={value}
-          columns={newColumns}
-          textField={textField}
-          onChange={handleChange}
-        />
+        <>
+          <MultiColumnComboBox
+            data={listData}
+            value={value}
+            columns={newColumns}
+            textField={textField}
+            onChange={handleChange}
+          />
+          <style>
+            {`
+  .k-dropdowngrid-popup {
+    overflow-y: scroll;
+    max-height: 250px;
+  }
+  `}
+          </style>
+        </>
       ) : value ? (
         value[textField]
       ) : (

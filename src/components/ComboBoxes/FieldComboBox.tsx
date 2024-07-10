@@ -45,21 +45,31 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
   }
 
   return (
-    <MultiColumnComboBox
-      data={listData}
-      textField={textField}
-      value={
-        typeof value == "string"
-          ? listData.find((item: any) => item[valueField] == value)
-          : value
+    <>
+      <MultiColumnComboBox
+        data={listData}
+        textField={textField}
+        value={
+          typeof value == "string"
+            ? listData.find((item: any) => item[valueField] == value)
+            : value
+        }
+        columns={newColumns}
+        className={className}
+        valid={isValid}
+        id={id}
+        onChange={readonly ? undefined : onChange}
+        {...others}
+      />
+      <style>
+        {`
+      .k-dropdowngrid-popup {
+        overflow-y: scroll;
+        max-height: 250px;
       }
-      columns={newColumns}
-      className={className}
-      valid={isValid}
-      id={id}
-      onChange={readonly ? undefined : onChange}
-      {...others}
-    />
+      `}
+      </style>
+    </>
   );
 };
 
