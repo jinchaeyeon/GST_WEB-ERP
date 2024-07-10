@@ -2,6 +2,7 @@ import {
   ComboBoxChangeEvent,
   MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
+import { useState } from "react";
 import { GetPropertyValueByName } from "../CommonFunction";
 
 type TCustomOptionComboBox = {
@@ -68,6 +69,12 @@ const CustomOptionComboBox = ({
     changeData({ name, value, e });
   };
 
+  const [state, setState] = useState(false);
+
+  document.getElementById(name)?.addEventListener("focusout", (event) => {
+    setState(false);
+  });
+
   return (
     <>
       <MultiColumnComboBox
@@ -82,15 +89,9 @@ const CustomOptionComboBox = ({
         required={required}
         className={className}
         disabled={disabled}
+        opened={state}
+        onOpen={() => setState(true)}
       />
-      <style>
-        {`
-    .k-dropdowngrid-popup {
-      overflow-y: scroll;
-      max-height: 250px;
-    }
-    `}
-      </style>
     </>
   );
 };

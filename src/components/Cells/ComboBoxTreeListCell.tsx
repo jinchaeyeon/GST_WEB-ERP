@@ -69,14 +69,6 @@ const ComboBoxCell = (props: CustomCellProps) => {
             textField={textField}
             onChange={handleChange}
           />
-          <style>
-            {`
-  .k-dropdowngrid-popup {
-    overflow-y: scroll;
-    max-height: 250px;
-  }
-  `}
-          </style>
         </>
       ) : value ? (
         value[textField]

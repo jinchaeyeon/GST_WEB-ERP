@@ -74,6 +74,10 @@ code {
     monospace !important;
 }
 
+.k-table-scroller {
+  max-height: 200px;
+}
+
 .MUI {
   -ms-overflow-style: none;
   /* IE and Edge */
