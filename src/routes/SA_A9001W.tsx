@@ -72,10 +72,12 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import SA_A9001W_Error_Window from "../components/Windows/SA_A9001W_Error_Window";
 import SA_A9001W_GET_Window from "../components/Windows/SA_A9001W_GET_Window";
 import SA_A9001W_IN_Window from "../components/Windows/SA_A9001W_IN_Window";
 import SA_A9001W_PRINTOPTION_Window from "../components/Windows/SA_A9001W_PRINTOPTION_Window";
 import SA_A9001W_Transaction_Window from "../components/Windows/SA_A9001W_Transaction_Window";
+import SA_A9001W_Update_Window from "../components/Windows/SA_A9001W_Update_Window";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A9001W_C";
@@ -489,6 +491,8 @@ const SA_A9001W: React.FC = () => {
   const [dataWindowVisible2, setDataWindowVisible2] = useState<boolean>(false);
   const [transactionWindowVisible, setTransactionWindowClick] =
     useState<boolean>(false);
+  const [updateWindowVisible, setUpdateWindowClick] = useState<boolean>(false);
+  const [errorWindowVisible, setErrorWindowClick] = useState<boolean>(false);
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -2863,6 +2867,8 @@ const SA_A9001W: React.FC = () => {
   };
 
   const onAddClick2 = () => {
+    if (!permissions.save) return;
+
     setDataWindowVisible2(true);
   };
 
@@ -2944,10 +2950,12 @@ const SA_A9001W: React.FC = () => {
   };
 
   const onPAXClick = () => {
+    if (!permissions.save) return;
     setTransactionWindowClick(true);
   };
 
   const setPrintData2 = (data: any) => {
+    if (!permissions.save) return;
     if (workType == "N") {
       alert("저장 후 진행해주세요.");
       return;
@@ -2968,7 +2976,7 @@ const SA_A9001W: React.FC = () => {
       taxdt: convertDateToStr(infomation.taxdt),
       etax: infomation.etax,
       custcd: infomation.custcd,
-      gubun: "",
+      gubun: filters.gubun,
       splyamt: infomation.splyamt,
       taxamt: infomation.taxamt,
       remark: infomation.remark,
@@ -2980,6 +2988,159 @@ const SA_A9001W: React.FC = () => {
       rreg_id: 0,
       salelist: "",
     }));
+  };
+
+  const onUpdateClick = () => {
+    if (!permissions.save) return;
+
+    if (!window.confirm("선택한 데이터로 수정세금계산서를 발행하시겠습니까?")) {
+      return false;
+    }
+
+    setUpdateWindowClick(true);
+  };
+
+  const setPrintData3 = (data: any) => {
+    if (!permissions.save) return;
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
+
+    if (!checkSave()) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
+
+    setParaData2((prev) => ({
+      ...prev,
+      workType: "EDIT",
+      orgdiv: infomation.orgdiv,
+      location: infomation.location,
+      reqdt: infomation.reqdt == null ? "" : convertDateToStr(infomation.reqdt),
+      seq: infomation.seq,
+      taxdt: convertDateToStr(infomation.taxdt),
+      etax: infomation.etax,
+      custcd: infomation.custcd,
+      gubun: filters.gubun,
+      splyamt: infomation.splyamt,
+      taxamt: infomation.taxamt,
+      remark: infomation.remark,
+      billstat: infomation.billstat,
+      rtn: data.rtn,
+      report_issue_id: data.report_issue_id,
+
+      Accattachyn: "",
+      rreg_id: 0,
+      salelist: "",
+    }));
+  };
+
+  const onEmailClick = () => {
+    if (!permissions.save) return;
+
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
+
+    if (
+      !window.confirm("선택한 전자세금계산서 건을 [E-MAIL 재전송]하시겠습니까?")
+    ) {
+      return false;
+    }
+
+    if (mainDataResult.total > 0) {
+      setParaData2((prev) => ({
+        ...prev,
+        workType: "EJ",
+        orgdiv: infomation.orgdiv,
+        location: infomation.location,
+        reqdt:
+          infomation.reqdt == null ? "" : convertDateToStr(infomation.reqdt),
+        seq: infomation.seq,
+        taxdt: convertDateToStr(infomation.taxdt),
+        etax: infomation.etax,
+        custcd: infomation.custcd,
+        gubun: filters.gubun,
+        splyamt: infomation.splyamt,
+        taxamt: infomation.taxamt,
+        remark: infomation.remark,
+        billstat: infomation.billstat,
+        rtn: "",
+        report_issue_id: infomation.report_issue_id,
+
+        Accattachyn: "",
+        rreg_id: 0,
+        salelist: "",
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onDeleteClick2 = () => {
+    if (!permissions.save) return;
+
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
+
+    if (mainDataResult.total > 0) {
+      if (
+        infomation.billstat == "0" ||
+        infomation.billstat == "2" ||
+        infomation.billstat == "4"
+      ) {
+        setParaData2((prev) => ({
+          ...prev,
+          workType: "EDEL",
+          orgdiv: infomation.orgdiv,
+          location: infomation.location,
+          reqdt:
+            infomation.reqdt == null ? "" : convertDateToStr(infomation.reqdt),
+          seq: infomation.seq,
+          taxdt: convertDateToStr(infomation.taxdt),
+          etax: infomation.etax,
+          custcd: infomation.custcd,
+          gubun: filters.gubun,
+          splyamt: infomation.splyamt,
+          taxamt: infomation.taxamt,
+          remark: infomation.remark,
+          billstat: infomation.billstat,
+          rtn: "",
+          report_issue_id: infomation.report_issue_id,
+
+          Accattachyn: "",
+          rreg_id: 0,
+          salelist: "",
+        }));
+      } else {
+        alert("삭제요청은 [미개봉, 반려, 승인취소]상태에서만 처리 가능합니다.");
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onErrorCheckClick = () => {
+    if (!permissions.view) return;
+
+    if (workType == "N") {
+      alert("저장 후 진행해주세요.");
+      return;
+    }
+
+    if (mainDataResult.total > 0) {
+      if (infomation.billstat == "E") {
+        setErrorWindowClick(true);
+      } else {
+        alert("선택된 계산서는 ERROR 가 발생 된 계산서가 아닙니다.");
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
   };
 
   return (
@@ -3230,6 +3391,35 @@ const SA_A9001W: React.FC = () => {
                     </ButtonContainer>
                     <ButtonContainer>
                       <Button
+                        onClick={onDeleteClick2}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="delete"
+                        disabled={permissions.save ? false : true}
+                      >
+                        E-TAX 삭제요청
+                      </Button>
+                      <Button
+                        onClick={onEmailClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="email"
+                        disabled={permissions.save ? false : true}
+                      >
+                        E-MAIL 전송
+                      </Button>
+                      <Button
+                        onClick={onErrorCheckClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="error"
+                        disabled={permissions.view ? false : true}
+                      >
+                        ERROR 확인
+                      </Button>
+                    </ButtonContainer>
+                    <ButtonContainer>
+                      <Button
                         onClick={onAddClick}
                         themeColor={"primary"}
                         icon="file-add"
@@ -3405,12 +3595,12 @@ const SA_A9001W: React.FC = () => {
                         onClick={onPAXClick}
                         fillMode="outline"
                         themeColor={"primary"}
-                        disabled={permissions.delete ? false : true}
+                        disabled={permissions.save ? false : true}
                       >
                         E-TAX전송
                       </Button>
                       <Button
-                        // onClick={onSaveClick}
+                        onClick={onUpdateClick}
                         themeColor={"primary"}
                         disabled={permissions.save ? false : true}
                       >
@@ -4010,6 +4200,33 @@ const SA_A9001W: React.FC = () => {
                     수금 전표 해제
                   </Button>
                   <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                    disabled={permissions.save ? false : true}
+                  >
+                    E-TAX 삭제요청
+                  </Button>
+                  <Button
+                    onClick={onEmailClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="email"
+                    disabled={permissions.save ? false : true}
+                  >
+                    E-MAIL 전송
+                  </Button>
+                  <Button
+                    onClick={onErrorCheckClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="error"
+                    disabled={permissions.view ? false : true}
+                  >
+                    ERROR 확인
+                  </Button>
+                  <Button
                     onClick={onAddClick}
                     themeColor={"primary"}
                     icon="file-add"
@@ -4159,12 +4376,12 @@ const SA_A9001W: React.FC = () => {
                       onClick={onPAXClick}
                       fillMode="outline"
                       themeColor={"primary"}
-                      disabled={permissions.delete ? false : true}
+                      disabled={permissions.save ? false : true}
                     >
                       E-TAX전송
                     </Button>
                     <Button
-                      // onClick={onSaveClick}
+                      onClick={onUpdateClick}
                       themeColor={"primary"}
                       disabled={permissions.save ? false : true}
                     >
@@ -4757,6 +4974,22 @@ const SA_A9001W: React.FC = () => {
           setVisible={setTransactionWindowClick}
           setData={setPrintData2}
           pathname="SA_A9001W"
+          modal={true}
+        />
+      )}
+      {updateWindowVisible && (
+        <SA_A9001W_Update_Window
+          setVisible={setUpdateWindowClick}
+          setData={setPrintData3}
+          pathname="SA_A9001W"
+          modal={true}
+        />
+      )}
+      {errorWindowVisible && (
+        <SA_A9001W_Error_Window
+          setVisible={setErrorWindowClick}
+          pathname="SA_A9001W"
+          infomation={infomation}
           modal={true}
         />
       )}
