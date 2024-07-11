@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { checkIsObjValid } from "../CommonFunction";
 
 type TFieldComboBox = {
+  id: any;
   fieldRenderProps: FieldRenderProps;
   listData: any;
   valueField: string;
@@ -16,13 +17,13 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
   valueField,
   textField,
   className = "",
+  id = "",
 }: TFieldComboBox) => {
   const {
     validationMessage,
     visited,
     value,
     label,
-    id,
     valid,
     columns,
     onChange,
@@ -50,6 +51,11 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
     setState(false);
   });
 
+  function change(event: any) {
+    onChange(event);
+    setState(false);
+  }
+
   return (
     <>
       <MultiColumnComboBox
@@ -64,7 +70,7 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
         className={className}
         valid={isValid}
         id={id}
-        onChange={readonly ? undefined : onChange}
+        onChange={(event) => readonly ? undefined : change(event)}
         opened={state}
         onOpen={() => setState(true)}
         onClose={() => setState(false)}

@@ -73,6 +73,7 @@ const MultiColumnComboBoxWithQuery = ({
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value == null ? "" : e.target.value[valueField];
     changeData({ name, value });
+    setState(false);
   };
 
   const [state, setState] = useState(false);

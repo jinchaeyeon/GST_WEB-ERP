@@ -52,6 +52,7 @@ export const CustomFormEditor = (props: SchedulerFormEditorProps) => {
         valueField="sub_code"
         textField="code_name"
         className="required"
+        id="resources"
       />
     </FormElement>
   );

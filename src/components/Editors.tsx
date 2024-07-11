@@ -150,7 +150,7 @@ const DDLWithValidation = (fieldRenderProps: FieldRenderProps) => {
 
 //Grid Cell 수정모드에서 사용되는 ComboBox
 const ComboBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
-  const { listData, valueField, textField } = fieldRenderProps;
+  const { listData, valueField, textField, id } = fieldRenderProps;
 
   return (
     <div>
@@ -159,6 +159,7 @@ const ComboBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
         listData={listData}
         valueField={valueField}
         textField={textField}
+        id={id}
       />
       {/* {visited && validationMessage && <Error>{validationMessage}</Error>} */}
     </div>
@@ -589,6 +590,7 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
           valueField={valueField}
           textField={textField}
           className={className}
+          id={id}
         />
       </div>
     </FieldWrapper>

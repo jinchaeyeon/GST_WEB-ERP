@@ -99,6 +99,7 @@ const CommonComboBox = ({
     } else {
       changeData({ name, value, e });
     }
+    setState(false);
   };
 
   const [state, setState] = useState(false);

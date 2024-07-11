@@ -275,6 +275,7 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
                       ).bizComponentItems
                     }
                     className="required"
+                    id={"stopcds"}
                   />
                 )}
               </FieldWrap>
@@ -299,6 +300,7 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
                     valueField="user_id"
                     textField="user_name"
                     className="required"
+                    id="prodemps"
                   />
                 )}
               </FieldWrap>

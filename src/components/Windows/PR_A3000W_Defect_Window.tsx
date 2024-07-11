@@ -88,7 +88,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <FormComboBoxCell bizComponent={bizComponent} {...props} />
+    <FormComboBoxCell bizComponent={bizComponent} {...props} id="comboboxcells"/>
   ) : (
     <td />
   );

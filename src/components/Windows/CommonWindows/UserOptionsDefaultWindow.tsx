@@ -940,6 +940,7 @@ const KendoWindow = ({
                   className={workType == "U" ? "readonly" : "required"}
                   data={typeData}
                   columns={typeColumn}
+                  id="option_ids"
                 />
               </FieldWrap>
             </fieldset>

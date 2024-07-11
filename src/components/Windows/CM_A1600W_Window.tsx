@@ -48,6 +48,7 @@ export const CustomFormEditor = (props: SchedulerFormEditorProps) => {
         data={colorData}
         valueField="sub_code"
         textField="code_name"
+        id="labels"
       />
       <Field label={"시작일자"} name={"start"} component={FormDatePicker} />
       <Field label={"종료일자"} name={"end"} component={FormDatePicker} />

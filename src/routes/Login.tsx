@@ -273,6 +273,7 @@ const Login: React.FC = () => {
                   textField="name"
                   columns={langCodesColumns}
                   defaultValue={DEFAULT_LANG_CODE}
+                  id="langCodes"
                 />
                 {ifShowCompanyList ? (
                   <Field
@@ -284,6 +285,7 @@ const Login: React.FC = () => {
                     textField="name"
                     columns={companyCodesColumns}
                     onKeyDown={companyCodesKeyDown}
+                    id="companyCodes"
                   />
                 ) : (
                   <Field
