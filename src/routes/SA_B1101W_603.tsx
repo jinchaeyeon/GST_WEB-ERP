@@ -439,7 +439,7 @@ const SA_B1101W_603: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>계약현황조회</Title>
+        <Title>청구계획조회</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -577,7 +577,7 @@ const SA_B1101W_603: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="계약현황조회"
+          fileName="청구계획조회"
         >
           <Grid
             style={{
