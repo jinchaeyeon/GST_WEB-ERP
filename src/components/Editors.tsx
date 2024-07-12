@@ -402,7 +402,7 @@ export const FormCheckBoxReadOnlyCell = (props: GridCellProps) => {
 
 //Form Field에서 사용되는 Input
 export const FormInput = (fieldRenderProps: FieldRenderProps) => {
-  const { validationMessage, visited, label, id, valid, ...others } =
+  const { validationMessage, visited, label, id, valid, disabled=false, ...others } =
     fieldRenderProps;
 
   return (
@@ -411,7 +411,7 @@ export const FormInput = (fieldRenderProps: FieldRenderProps) => {
         {label}
       </Label>
       <div className={"k-form-field-wrap"}>
-        <Input valid={valid} id={id} {...others} />
+        <Input valid={valid} id={id} disabled={disabled} {...others} />
       </div>
     </FieldWrapper>
   );
@@ -444,6 +444,7 @@ export const FormTextArea = (fieldRenderProps: FieldRenderProps) => {
     rows = 8,
     labelClassName = "",
     textClassName = "k-form-field-wrap",
+    disabled=false,
     ...others
   } = fieldRenderProps;
   return (
@@ -457,6 +458,7 @@ export const FormTextArea = (fieldRenderProps: FieldRenderProps) => {
           id={id}
           rows={rows}
           className={labelClassName}
+          disabled={disabled}
           {...others}
         />
       </div>
@@ -646,6 +648,7 @@ export const FormDatePicker = (fieldRenderProps: FieldRenderProps) => {
     valid,
     value,
     className,
+    disabled=false,
     ...others
   } = fieldRenderProps;
 
@@ -663,6 +666,7 @@ export const FormDatePicker = (fieldRenderProps: FieldRenderProps) => {
           value={value}
           className={className ?? ""}
           id={id}
+          disabled={disabled}
           {...others}
         />
       </div>
