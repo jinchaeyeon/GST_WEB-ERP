@@ -136,4 +136,63 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList3",
+    columns: [
+      {
+        id: "col_brwnum",
+        field: "brwnum",
+        caption: "차입번호",
+        width: 120,
+      },
+      {
+        id: "col_brwnm",
+        field: "brwnm",
+        caption: "차입명",
+        width: 150,
+      },
+      {
+        id: "col_custnm",
+        field: "custnm",
+        caption: "차입처",
+        width: 150,
+      },
+      {
+        id: "col_bankacntnum2",
+        field: "bankacntnum",
+        caption: "계좌번호",
+        width: 150,
+      },
+      {
+        id: "col_brwdt",
+        field: "brwdt",
+        caption: "차입일자",
+        width: 120,
+      },
+      {
+        id: "col_enddt",
+        field: "enddt",
+        caption: "만기일자",
+        width: 120,
+      },
+      {
+        id: "col_brwamt",
+        field: "brwamt",
+        caption: "차입금액",
+        width: 100,
+      },
+      {
+        id: "col_brwdesc",
+        field: "brwdesc",
+        caption: "차입금내역",
+        width: 150,
+      },
+      {
+        id: "col_remark4",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+    ],
+  },
 ];

@@ -5,6 +5,7 @@ import { TPermissions } from "../../store/types";
 
 interface IStyle {
   marginLeft?: string;
+  marginRight?: string;
   marginTop?: string;
 }
 interface IExcelUploadButton {

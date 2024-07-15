@@ -32,6 +32,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
@@ -93,8 +94,10 @@ let temp2_1 = 0;
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY2_1 = "num";
 const DATA_ITEM_KEY2_2 = "num";
+const DATA_ITEM_KEY3 = "num";
 let targetRowIndex2: null | number = null;
-const dateField = ["cotracdt", "paydt", "acntdt"];
+let targetRowIndex3: null | number = null;
+const dateField = ["cotracdt", "paydt", "acntdt", "brwdt", "enddt"];
 const numberField = [
   "monsaveamt",
   "contracamt",
@@ -104,12 +107,21 @@ const numberField = [
   "acseq2",
   "dramt",
   "cramt",
+  "brwamt",
 ];
-const numberField2 = ["monsaveamt", "contracamt", "payamt", "dramt", "cramt"];
+const numberField2 = [
+  "monsaveamt",
+  "contracamt",
+  "payamt",
+  "dramt",
+  "cramt",
+  "brwamt",
+];
 let deletedMainRows2_1: object[] = [];
 
 const AC_A0050W: React.FC = () => {
   let gridRef2: any = useRef(null);
+  let gridRef3: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   let deviceWidth = document.documentElement.clientWidth;
@@ -144,6 +156,7 @@ const AC_A0050W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter2_1 = getter(DATA_ITEM_KEY2_1);
   const idGetter2_2 = getter(DATA_ITEM_KEY2_2);
+  const idGetter3 = getter(DATA_ITEM_KEY3);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_AC023, L_dptcd_001, L_BA020, L_AC046, R_USEYN_only",
@@ -173,6 +186,7 @@ const AC_A0050W: React.FC = () => {
   const [webheight2, setWebHeight2] = useState(0);
   const [webheight2_1, setWebHeight2_1] = useState(0);
   const [webheight2_2, setWebHeight2_2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".k-tabstrip-items-wrapper");
@@ -196,6 +210,7 @@ const AC_A0050W: React.FC = () => {
           (getDeviceHeight(true) - height - height2) / 2 - height5
         );
         setWebHeight2_2((getDeviceHeight(true) - height - height2) / 2);
+        setWebHeight3((getDeviceHeight(true) - height - height2) / 2 - height3);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
@@ -203,7 +218,16 @@ const AC_A0050W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, webheight, webheight2, tabSelected, tabSelected2]);
+  }, [
+    customOptionData,
+    webheight,
+    webheight2,
+    webheight2_1,
+    webheight2_2,
+    webheight3,
+    tabSelected,
+    tabSelected2,
+  ]);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -223,6 +247,10 @@ const AC_A0050W: React.FC = () => {
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         useyn2: defaultOption.find((item: any) => item.id == "useyn2")
           ?.valueCode,
+        isSearch: true,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
         isSearch: true,
       }));
     }
@@ -250,6 +278,9 @@ const AC_A0050W: React.FC = () => {
   const [mainDataState2_2, setMainDataState2_2] = useState<State>({
     sort: [],
   });
+  const [mainDataState3, setMainDataState3] = useState<State>({
+    sort: [],
+  });
   const [tempState2_1, setTempState2_1] = useState<State>({
     sort: [],
   });
@@ -262,6 +293,9 @@ const AC_A0050W: React.FC = () => {
   const [mainDataResult2_2, setMainDataResult2_2] = useState<DataResult>(
     process([], mainDataState2_2)
   );
+  const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
+    process([], mainDataState3)
+  );
   const [tempResult2_1, setTempResult2_1] = useState<DataResult>(
     process([], tempState2_1)
   );
@@ -272,6 +306,9 @@ const AC_A0050W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [selectedState2_2, setSelectedState2_2] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState3, setSelectedState3] = useState<{
     [id: string]: boolean | number[];
   }>({});
   //조회조건 초기값
@@ -310,6 +347,20 @@ const AC_A0050W: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "SLIP",
     acntsrtnum: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
+  const [filters3, setFilters3] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "LIST",
+    brwnum: "",
+    brwnm: "",
+    brwdesc: "",
+    custcd: "",
+    custnm: "",
+    remark: "",
+    find_row_value: "",
     pgNum: 1,
     isSearch: false,
   });
@@ -372,6 +423,15 @@ const AC_A0050W: React.FC = () => {
     }));
   };
 
+  const filterInputChange2 = (e: any) => {
+    const { value, name } = e.target;
+
+    setFilters3((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -403,7 +463,10 @@ const AC_A0050W: React.FC = () => {
   const [accountWindowVisible2, setAccountWindowVisible2] =
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const [excelAttachmentsWindowVisible, setExcelAttachmentsWindowVisible] =
     useState<boolean>(false);
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
@@ -411,11 +474,17 @@ const AC_A0050W: React.FC = () => {
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
+  const onCustWndClick2 = () => {
+    setCustWindowVisible2(true);
+  };
   const onAccountWndClick = () => {
     setAccountWindowVisible(true);
   };
   const onAccountWndClick2 = () => {
     setAccountWindowVisible2(true);
+  };
+  const onExcelAttachmentsWndClick = () => {
+    setExcelAttachmentsWindowVisible(true);
   };
   const setAcntData = (data: any) => {
     setFilters2((prev) => ({
@@ -439,6 +508,15 @@ const AC_A0050W: React.FC = () => {
       };
     });
   };
+  const setCustData2 = (data: ICustData) => {
+    setFilters3((prev: any) => {
+      return {
+        ...prev,
+        bankcd: data.custcd,
+        banknm: data.custnm,
+      };
+    });
+  };
   const getAttachmentsData = (data: IAttachmentData) => {
     setInfomation((prev) => {
       return {
@@ -454,6 +532,7 @@ const AC_A0050W: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   const [page2_1, setPage2_1] = useState(initialPageState);
   const [page2_2, setPage2_2] = useState(initialPageState);
+  const [page3, setPage3] = useState(initialPageState);
   const pageChange2 = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -506,7 +585,20 @@ const AC_A0050W: React.FC = () => {
       take: initialPageState.take,
     });
   };
+  const pageChange3 = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage3({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     if (!permissions.view) return;
@@ -902,6 +994,97 @@ const AC_A0050W: React.FC = () => {
     }));
     setLoading(false);
   };
+
+  const fetchMainGrid3 = async (filters3: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A0050W_tab3_Q",
+      pageNumber: filters3.pgNum,
+      pageSize: filters3.pgSize,
+      parameters: {
+        "@p_work_type": filters3.workType,
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_brwnum": filters3.brwnum,
+        "@p_brwnm": filters3.brwnm,
+        "@p_brwdesc": filters3.brwdesc,
+        "@p_dptcd": filters3.dptcd,
+        "@p_custcd": filters3.custcd,
+        "@p_custnm": filters3.custnm,
+        "@p_remark": filters3.remark,
+
+        "@p_find_row_value": filters3.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+      if (filters3.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef3.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.brwnum == filters3.find_row_value
+          );
+          targetRowIndex3 = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage3({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef3.current) {
+          targetRowIndex3 = 0;
+        }
+      }
+
+      setMainDataResult3((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters3.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.brwnum == filters3.find_row_value);
+        if (selectedRow != undefined) {
+          setSelectedState3({ [selectedRow[DATA_ITEM_KEY3]]: true });
+        } else {
+          setSelectedState3({ [rows[0][DATA_ITEM_KEY3]]: true });
+        }
+      } else {
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   const resetAllGrid = () => {
     if (tabSelected == 0) {
       setMainDataResult(defaultData);
@@ -942,6 +1125,9 @@ const AC_A0050W: React.FC = () => {
         savecnt: 0,
         useyn: "N",
       });
+    } else if (tabSelected == 2) {
+      setPage3(initialPageState);
+      setMainDataResult3(process([], mainDataState3));
     }
   };
 
@@ -971,6 +1157,13 @@ const AC_A0050W: React.FC = () => {
         if (isMobile && swiper) {
           swiper.slideTo(0);
         }
+      } else if (tabSelected == 2) {
+        setFilters3((prev) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
       }
     } catch (e) {
       alert(e);
@@ -1037,6 +1230,20 @@ const AC_A0050W: React.FC = () => {
   }, [filters2_2, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
+    if (
+      filters3.isSearch &&
+      permissions.view &&
+      customOptionData !== null &&
+      bizComponentData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3);
+      setFilters3((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid3(deepCopiedFilters);
+    }
+  }, [filters3, permissions, customOptionData, bizComponentData]);
+
+  useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex2 !== null && gridRef2.current) {
       gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
@@ -1044,9 +1251,18 @@ const AC_A0050W: React.FC = () => {
     }
   }, [mainDataResult2]);
 
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex3 !== null && gridRef3.current) {
+      gridRef3.current.scrollIntoView({ rowIndex: targetRowIndex3 });
+      targetRowIndex3 = null;
+    }
+  }, [mainDataResult3]);
+
   let _export2: any;
   let _export2_1: any;
   let _export2_2: any;
+  let _export3: any;
   const exportExcel = () => {
     if (tabSelected == 1) {
       if (tabSelected2 == 0) {
@@ -1074,6 +1290,14 @@ const AC_A0050W: React.FC = () => {
           _export2.save(optionsGridOne);
         }
       }
+    } else if (tabSelected == 2) {
+      if (tabSelected2 == 0) {
+        if (_export3 !== null && _export3 !== undefined) {
+          const optionsGridOne = _export3.workbookOptions();
+          optionsGridOne.sheets[0].title = "요약정보";
+          _export3.save(optionsGridOne);
+        }
+      }
     }
   };
 
@@ -1093,6 +1317,9 @@ const AC_A0050W: React.FC = () => {
   };
   const onMainDataStateChange2_2 = (event: GridDataStateChangeEvent) => {
     setMainDataState2_2(event.dataState);
+  };
+  const onMainDataStateChange3 = (event: GridDataStateChangeEvent) => {
+    setMainDataState3(event.dataState);
   };
   //그리드 푸터
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
@@ -1138,6 +1365,21 @@ const AC_A0050W: React.FC = () => {
       </td>
     );
   };
+
+  const mainTotalFooterCell3 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult3.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult3.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
@@ -1179,6 +1421,28 @@ const AC_A0050W: React.FC = () => {
       return <td></td>;
     }
   };
+
+  const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult3.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
+
   const editNumberFooterCell2_1 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2_1.data.forEach((item) =>
@@ -1259,6 +1523,7 @@ const AC_A0050W: React.FC = () => {
       swiper.slideTo(1);
     }
   };
+
   const onSelectionChange2_1 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -1275,6 +1540,19 @@ const AC_A0050W: React.FC = () => {
     });
     setSelectedState2_2(newSelectedState);
   };
+
+  const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+    setSelectedState2(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+  };
+
   const onMainSortChange2 = (e: any) => {
     setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1285,6 +1563,11 @@ const AC_A0050W: React.FC = () => {
   const onMainSortChange2_2 = (e: any) => {
     setMainDataState2_2((prev) => ({ ...prev, sort: e.sort }));
   };
+
+  const onMainSortChange3 = (e: any) => {
+    setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
+  };
+
   const onAddClick2 = () => {
     const defaultOption = GetPropertyValueByName(
       customOptionData.menuCustomDefaultOptions,
@@ -1773,6 +2056,9 @@ const AC_A0050W: React.FC = () => {
           isSearch: true,
         }));
       }
+      if (paraData.workType == "EXCEL") {
+        alert("처리되었습니다.");
+      }
       deletedMainRows2_1 = [];
       setParaData({
         workType: "",
@@ -1877,6 +2163,132 @@ const AC_A0050W: React.FC = () => {
       skip: 0,
       take: prev.take + 1,
     }));
+  };
+
+  const saveExcel = (jsonArr: any[]) => {
+    if (jsonArr.length == 0) {
+      alert("데이터가 없습니다.");
+      return;
+    }
+    const columns: string[] = [
+      "결제계좌번호",
+      "계약금액",
+      "계약일자",
+      "계정과목",
+      "예금코드",
+      "예적금구분",
+      "예적금명",
+      "이율",
+    ];
+
+    let valid = true;
+    let valid2 = true;
+    jsonArr.map((items: any) => {
+      Object.keys(items).map((item: any) => {
+        if (!columns.includes(item) && valid == true) {
+          valid = false;
+          return;
+        }
+        if (
+          items["예적금구분"] == null ||
+          items["예적금구분"] == undefined ||
+          items["예적금구분"] == ""
+        ) {
+          valid2 = false;
+          return;
+        }
+        if (
+          items["예금코드"] == null ||
+          items["예금코드"] == undefined ||
+          items["예금코드"] == ""
+        ) {
+          valid2 = false;
+          return;
+        }
+        if (
+          items["예적금명"] == null ||
+          items["예적금명"] == undefined ||
+          items["예적금명"] == ""
+        ) {
+          valid2 = false;
+          return;
+        }
+        if (
+          items["결제계좌번호"] == null ||
+          items["결제계좌번호"] == undefined ||
+          items["결제계좌번호"] == ""
+        ) {
+          valid2 = false;
+          return;
+        }
+      });
+    });
+
+    if (valid != true) {
+      alert("양식이 맞지 않습니다.");
+      return;
+    }
+    if (valid2 != true) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
+    setLoading(true);
+    let detailArr: any = {
+      bankacntdiv_s: [],
+      acntsrtnum_s: [],
+      acntsrtnm_s: [],
+      bankacntnum_s: [],
+      acntcd_s: [],
+      cotracdt_s: [],
+      contracamt_s: [],
+      intrat_s1: [],
+    };
+
+    jsonArr.forEach(async (item: any) => {
+      const {
+        결제계좌번호 = "",
+        계약금액 = "",
+        계약일자 = "",
+        계정과목 = "",
+        예금코드 = "",
+        예적금구분 = "",
+        예적금명 = "",
+        이율 = "",
+      } = item;
+
+      detailArr.bankacntdiv_s.push(
+        bankacntdivListData.find((item: any) => item.code_name == 예적금구분)
+          ?.sub_code == undefined
+          ? 예적금구분
+          : bankacntdivListData.find(
+              (item: any) => item.code_name == 예적금구분
+            )?.sub_code
+      );
+      detailArr.acntsrtnum_s.push(예금코드 == undefined ? "" : 예금코드);
+      detailArr.acntsrtnm_s.push(예적금명 == undefined ? "" : 예적금명);
+      detailArr.bankacntnum_s.push(
+        결제계좌번호 == undefined ? "" : 결제계좌번호
+      );
+      detailArr.acntcd_s.push(계정과목 == undefined ? "" : 계정과목);
+      detailArr.cotracdt_s.push(계약일자 == undefined ? "" : 계약일자);
+      detailArr.contracamt_s.push(계약금액 == "" ? "0" : 계약금액);
+      detailArr.intrat_s1.push(이율 == "" ? "0" : 이율);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "EXCEL",
+      orgdiv: sessionOrgdiv,
+      bankacntdiv_s: detailArr.bankacntdiv_s.join("|"),
+      acntsrtnum_s: detailArr.acntsrtnum_s.join("|"),
+      acntsrtnm_s: detailArr.acntsrtnm_s.join("|"),
+      bankacntnum_s: detailArr.bankacntnum_s.join("|"),
+      acntcd_s: detailArr.acntcd_s.join("|"),
+      cotracdt_s: detailArr.cotracdt_s.join("|"),
+      contracamt_s: detailArr.contracamt_s.join("|"),
+      intrat_s1: detailArr.intrat_s1.join("|"),
+    }));
+    setLoading(false);
   };
 
   return (
@@ -2051,7 +2463,28 @@ const AC_A0050W: React.FC = () => {
                 <SwiperSlide key={0}>
                   <GridContainer>
                     <GridTitleContainer className="ButtonContainer">
-                      <GridTitle>요약정보</GridTitle>
+                      <GridTitle>
+                        요약정보{" "}
+                        <ExcelUploadButton
+                          saveExcel={saveExcel}
+                          permissions={{
+                            view: true,
+                            save: true,
+                            delete: true,
+                            print: true,
+                          }}
+                          style={{ marginLeft: "5px", marginRight: "5px" }}
+                        />
+                        <Button
+                          title="Export Excel"
+                          onClick={onExcelAttachmentsWndClick}
+                          icon="file"
+                          fillMode="outline"
+                          themeColor={"primary"}
+                        >
+                          엑셀양식
+                        </Button>
+                      </GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick2}
@@ -2800,7 +3233,28 @@ const AC_A0050W: React.FC = () => {
             <>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer">
-                  <GridTitle>요약정보</GridTitle>
+                  <GridTitle>
+                    요약정보
+                    <ExcelUploadButton
+                      saveExcel={saveExcel}
+                      permissions={{
+                        view: true,
+                        save: true,
+                        delete: true,
+                        print: true,
+                      }}
+                      style={{ marginLeft: "5px", marginRight: "5px" }}
+                    />
+                    <Button
+                      title="Export Excel"
+                      onClick={onExcelAttachmentsWndClick}
+                      icon="file"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                    >
+                      엑셀양식
+                    </Button>
+                  </GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick2}
@@ -3471,7 +3925,193 @@ const AC_A0050W: React.FC = () => {
         <TabStripTab
           title="차입금관리"
           disabled={permissions.view ? false : true}
-        ></TabStripTab>
+        >
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>차입번호</th>
+                  <td>
+                    <Input
+                      name="brwnum"
+                      type="text"
+                      value={filters3.brwnum}
+                      onChange={filterInputChange2}
+                    />
+                  </td>
+                  <th>차입명</th>
+                  <td>
+                    <Input
+                      name="brwnm"
+                      type="text"
+                      value={filters3.brwnm}
+                      onChange={filterInputChange2}
+                    />
+                  </td>
+                  <th>차입금내역</th>
+                  <td>
+                    <Input
+                      name="brwdesc"
+                      type="text"
+                      value={filters3.brwdesc}
+                      onChange={filterInputChange2}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>차입처</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={filters3.custcd}
+                      onChange={filterInputChange2}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick2}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>계정과목코드</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters3.custnm}
+                      onChange={filterInputChange2}
+                    />
+                  </td>
+                  <th>비고</th>
+                  <td>
+                    <Input
+                      name="remark"
+                      type="text"
+                      value={filters3.remark}
+                      onChange={filterInputChange2}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          {isMobile ? (
+            <></>
+          ) : (
+            <>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>요약정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      //onClick={onAddClick2}
+                      themeColor={"primary"}
+                      icon="file-add"
+                      disabled={permissions.save ? false : true}
+                    >
+                      생성
+                    </Button>
+                    <Button
+                      //onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                      disabled={permissions.delete ? false : true}
+                    >
+                      삭제
+                    </Button>
+                    <Button
+                      //onClick={onSaveClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    >
+                      저장
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult3.data}
+                  ref={(exporter) => {
+                    _export3 = exporter;
+                  }}
+                  fileName="자금관리"
+                >
+                  <Grid
+                    style={{ height: webheight3 }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef3}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList3"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell3
+                                    : numberField2.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell3
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </>
+          )}
+        </TabStripTab>
       </TabStrip>
       {accountWindowVisible && (
         <AccountWindow
@@ -3495,11 +4135,31 @@ const AC_A0050W: React.FC = () => {
           modal={true}
         />
       )}
+      {custWindowVisible2 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible2}
+          workType={"N"}
+          setData={setCustData2}
+          modal={true}
+        />
+      )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={infomation.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
+          modal={true}
+        />
+      )}
+      {excelAttachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setExcelAttachmentsWindowVisible}
+          para={"AC_A0050W"} // 그룹코드에 따라 양식 분리
           permission={{
             upload: permissions.save,
             download: permissions.view,
