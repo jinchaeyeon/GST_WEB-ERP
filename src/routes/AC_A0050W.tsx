@@ -17,7 +17,9 @@ import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { MonthView, Scheduler } from "@progress/kendo-react-scheduler";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
 import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -80,12 +82,14 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0050W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-
+var index = 0;
 let height = 0;
 let height2 = 0;
 let height3 = 0;
 let height4 = 0;
-
+let height5 = 0;
+let height6 = 0;
+let temp2_1 = 0;
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY2_1 = "num";
 const DATA_ITEM_KEY2_2 = "num";
@@ -120,6 +124,8 @@ const AC_A0050W: React.FC = () => {
   const [osstate, setOSState] = useRecoilState(OSState);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A0050W", setCustomOptionData);
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -160,6 +166,9 @@ const AC_A0050W: React.FC = () => {
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight2_1, setMobileHeight2_1] = useState(0);
+  const [mobileheight2_2, setMobileHeight2_2] = useState(0);
+  const [mobileheight2_3, setMobileHeight2_3] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
   const [webheight2_1, setWebHeight2_1] = useState(0);
@@ -169,15 +178,22 @@ const AC_A0050W: React.FC = () => {
       height = getHeight(".k-tabstrip-items-wrapper");
       height2 = getHeight(".TitleContainer");
       height3 = getHeight(".ButtonContainer");
-      height4 = getHeight(".ButtonContainer2_1");
+      height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer2_1");
+      height6 = getHeight(".ButtonContainer2_2");
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(false) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight2_1(getDeviceHeight(true) - height - height2 - height4);
+        setMobileHeight2_2(getDeviceHeight(true) - height - height2 - height5);
+        setMobileHeight2_3(getDeviceHeight(true) - height - height2 - height6);
+        setWebHeight(getDeviceHeight(false) - height - height2);
         setWebHeight(getDeviceHeight(false) - height - height2);
         setWebHeight2((getDeviceHeight(true) - height - height2) / 2 - height3);
         setWebHeight2_1(
-          (getDeviceHeight(true) - height - height2) / 2 - height4
+          (getDeviceHeight(true) - height - height2) / 2 - height5
         );
         setWebHeight2_2((getDeviceHeight(true) - height - height2) / 2);
       };
@@ -952,6 +968,9 @@ const AC_A0050W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if (isMobile && swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -1235,6 +1254,10 @@ const AC_A0050W: React.FC = () => {
       pgNum: 1,
     }));
     setPage2_1(initialPageState);
+
+    if (isMobile && swiper) {
+      swiper.slideTo(1);
+    }
   };
   const onSelectionChange2_1 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -1311,6 +1334,10 @@ const AC_A0050W: React.FC = () => {
       savecnt: 0,
       useyn: defaultOption.find((item: any) => item.id == "useyn")?.valueCode,
     });
+
+    if (isMobile && swiper) {
+      swiper.slideTo(1);
+    }
   };
 
   const onMainItemChange2_1 = (event: GridItemChangeEvent) => {
@@ -1716,6 +1743,8 @@ const AC_A0050W: React.FC = () => {
           find_row_value: data.returnString,
           isSearch: true,
         }));
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
       } else {
         const isLastDataDeleted =
           mainDataResult2.data.length == 1 && filters.pgNum > 1;
@@ -1744,7 +1773,7 @@ const AC_A0050W: React.FC = () => {
           isSearch: true,
         }));
       }
-
+      deletedMainRows2_1 = [];
       setParaData({
         workType: "",
         orgdiv: "",
@@ -1815,6 +1844,39 @@ const AC_A0050W: React.FC = () => {
     } else {
       alert("데이터가 없습니다.");
     }
+  };
+
+  const onAddClick2_1 = () => {
+    mainDataResult2_1.data.map((item) => {
+      if (item.num > temp2_1) {
+        temp2_1 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY2_1]: ++temp2_1,
+      acntsrtnum: infomation.acntsrtnum,
+      acntsrtseq: infomation.acntsrtseq,
+      intrat: 0,
+      orgdiv: sessionOrgdiv,
+      payamt: 0,
+      paydt: convertDateToStr(new Date()),
+      remark: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState2_1({ [newDataItem[DATA_ITEM_KEY2_1]]: true });
+    setMainDataResult2_1((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+    setPage2_1((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
   };
 
   return (
@@ -1977,7 +2039,763 @@ const AC_A0050W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           {isMobile ? (
-            <></>
+            <>
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer>
+                    <GridTitleContainer className="ButtonContainer">
+                      <GridTitle>요약정보</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick2}
+                          themeColor={"primary"}
+                          icon="file-add"
+                          disabled={permissions.save ? false : true}
+                        >
+                          생성
+                        </Button>
+                        <Button
+                          onClick={onDeleteClick2}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="delete"
+                          disabled={permissions.delete ? false : true}
+                        >
+                          삭제
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult2.data}
+                      ref={(exporter) => {
+                        _export2 = exporter;
+                      }}
+                      fileName="자금관리"
+                    >
+                      <Grid
+                        style={{ height: mobileheight2 }}
+                        data={process(
+                          mainDataResult2.data.map((row) => ({
+                            ...row,
+                            dptcd: dptcdListData.find(
+                              (item: any) => item.dptcd == row.dptcd
+                            )?.dptnm,
+                            [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                          })),
+                          mainDataState2
+                        )}
+                        {...mainDataState2}
+                        onDataStateChange={onMainDataStateChange2}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult2.total}
+                        skip={page2.skip}
+                        take={page2.take}
+                        pageable={true}
+                        onPageChange={pageChange2}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef2}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList2"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell2
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell2
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer>
+                    <ButtonContainer
+                      className="ButtonContainer"
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
+                      <div>
+                        <Button
+                          onClick={onSaveClick2}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          disabled={permissions.save ? false : true}
+                        >
+                          저장
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          disabled={infomation.workType != "N" ? false : true}
+                          icon="arrow-right"
+                          themeColor={"primary"}
+                          fillMode={"outline"}
+                        >
+                          다음
+                        </Button>
+                      </div>
+                    </ButtonContainer>
+                    <FormBoxWrap
+                      border={true}
+                      style={{ height: mobileheight2_1 }}
+                    >
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>예적금구분</th>
+                            <td>
+                              {infomation.workType == "N" ? (
+                                customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="bankacntdiv"
+                                    value={infomation.bankacntdiv}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange}
+                                    type="new"
+                                    className="required"
+                                  />
+                                )
+                              ) : (
+                                <Input
+                                  name="bankacntdiv"
+                                  type="text"
+                                  value={
+                                    bankacntdivListData.find(
+                                      (item: any) =>
+                                        item.sub_code == infomation.bankacntdiv
+                                    )?.code_name
+                                  }
+                                  className="readonly"
+                                />
+                              )}
+                            </td>
+                            <th>예금코드</th>
+                            <td>
+                              {infomation.workType == "N" ? (
+                                <Input
+                                  name="acntsrtnum"
+                                  type="text"
+                                  value={infomation.acntsrtnum}
+                                  onChange={InputChange}
+                                  className="required"
+                                />
+                              ) : (
+                                <Input
+                                  name="acntsrtnum"
+                                  type="text"
+                                  value={infomation.acntsrtnum}
+                                  className="readonly"
+                                />
+                              )}
+                            </td>
+                            <th>관리부서</th>
+                            <td>
+                              {infomation.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="dptcd"
+                                      value={infomation.dptcd}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange}
+                                      type="new"
+                                      textField="dptnm"
+                                      valueField="dptcd"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="dptcd"
+                                      value={infomation.dptcd}
+                                      bizComponentId="L_dptcd_001"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange}
+                                      textField="dptnm"
+                                      valueField="dptcd"
+                                    />
+                                  )}
+                            </td>
+                            <th>차월한도액</th>
+                            <td>
+                              <NumericTextBox
+                                name="limitamt"
+                                value={infomation.limitamt}
+                                onChange={InputChange}
+                                format="n2"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>예적금명</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="acntsrtnm"
+                                type="text"
+                                value={infomation.acntsrtnm}
+                                onChange={InputChange}
+                                className="required"
+                              />
+                            </td>
+                            <th>계약일자</th>
+                            <td>
+                              <DatePicker
+                                name="cotracdt"
+                                value={infomation.cotracdt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>불입횟수</th>
+                            <td>
+                              <NumericTextBox
+                                name="savecnt"
+                                value={infomation.savecnt}
+                                onChange={InputChange}
+                                format="n0"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>결제계좌번호</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="bankacntnum"
+                                type="text"
+                                value={infomation.bankacntnum}
+                                onChange={InputChange}
+                                className="required"
+                              />
+                            </td>
+                            <th>계약금액</th>
+                            <td>
+                              <NumericTextBox
+                                name="contracamt"
+                                value={infomation.contracamt}
+                                onChange={InputChange}
+                                format="n2"
+                              />
+                            </td>
+                            <th>월불입액</th>
+                            <td>
+                              <NumericTextBox
+                                name="monsaveamt"
+                                value={infomation.monsaveamt}
+                                onChange={InputChange}
+                                format="n2"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>계정과목</th>
+                            <td>
+                              <Input
+                                name="acntcd"
+                                type="text"
+                                value={infomation.acntcd}
+                                onChange={InputChange}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onAccountWndClick2}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>계정과목명</th>
+                            <td>
+                              <Input
+                                name="acntnm"
+                                type="text"
+                                value={infomation.acntnm}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>이율</th>
+                            <td>
+                              <NumericTextBox
+                                name="intrat"
+                                value={infomation.intrat}
+                                onChange={InputChange}
+                                format="n4"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>은행코드</th>
+                            <td>
+                              <Input
+                                name="bankcd"
+                                type="text"
+                                value={infomation.bankcd}
+                                onChange={InputChange}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>은행코드명</th>
+                            <td>
+                              <Input
+                                name="banknm"
+                                type="text"
+                                value={infomation.banknm}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>화폐단위</th>
+                            <td>
+                              {infomation.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="amtunit"
+                                      value={infomation.amtunit}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="amtunit"
+                                      value={infomation.amtunit}
+                                      bizComponentId="L_BA020"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange}
+                                    />
+                                  )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>적금구분</th>
+                            <td>
+                              {infomation.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="plandiv"
+                                      value={infomation.plandiv}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="plandiv"
+                                      value={infomation.plandiv}
+                                      bizComponentId="L_AC046"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange}
+                                    />
+                                  )}
+                            </td>
+                            <th>만기일자</th>
+                            <td>
+                              <DatePicker
+                                name="enddt"
+                                value={infomation.enddt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>해약일자</th>
+                            <td>
+                              <DatePicker
+                                name="closedt"
+                                value={infomation.closedt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange}
+                                placeholder=""
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>담보사항</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="motgdesc"
+                                type="text"
+                                value={infomation.motgdesc}
+                                onChange={InputChange}
+                              />
+                            </td>
+                            <th>사용유무</th>
+                            <td>
+                              {infomation.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionRadioGroup
+                                      name="useyn"
+                                      customOptionData={customOptionData}
+                                      changeData={RadioChange}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentRadioGroup
+                                      name="useyn"
+                                      value={infomation.useyn}
+                                      bizComponentId="R_USEYN_only"
+                                      bizComponentData={bizComponentData}
+                                      changeData={RadioChange}
+                                    />
+                                  )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>첨부파일</th>
+                            <td colSpan={7}>
+                              <Input
+                                name="files"
+                                type="text"
+                                value={infomation.files}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onAttachmentsWndClick}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>비고</th>
+                            <td colSpan={7}>
+                              <TextArea
+                                value={infomation.remark}
+                                name="remark"
+                                rows={2}
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </SwiperSlide>
+                {infomation.workType != "N" ? (
+                  <>
+                    <SwiperSlide key={2}>
+                      <GridContainer>
+                        <GridTitleContainer className="ButtonContainer2_1">
+                          <ButtonContainer
+                            style={{ justifyContent: "space-between" }}
+                          >
+                            <Button
+                              onClick={() => {
+                                if (swiper && isMobile) {
+                                  swiper.slideTo(1);
+                                }
+                              }}
+                              icon="arrow-left"
+                              themeColor={"primary"}
+                              fillMode={"outline"}
+                            >
+                              이전
+                            </Button>
+                            <div>
+                              <Button
+                                onClick={onAddClick2_1}
+                                themeColor={"primary"}
+                                icon="plus"
+                                title="행 생성"
+                                disabled={permissions.save ? false : true}
+                              />
+                              <Button
+                                onClick={onDeleteClick2_1}
+                                fillMode="outline"
+                                themeColor={"primary"}
+                                icon="minus"
+                                title="행 삭제"
+                                disabled={permissions.delete ? false : true}
+                              />
+                              <Button
+                                onClick={() => {
+                                  if (swiper && isMobile) {
+                                    swiper.slideTo(3);
+                                  }
+                                }}
+                                disabled={
+                                  infomation.workType != "N" ? false : true
+                                }
+                                icon="arrow-right"
+                                themeColor={"primary"}
+                                fillMode={"outline"}
+                              >
+                                다음
+                              </Button>
+                            </div>
+                          </ButtonContainer>
+                        </GridTitleContainer>
+                        <ExcelExport
+                          data={mainDataResult2_1.data}
+                          ref={(exporter) => {
+                            _export2_1 = exporter;
+                          }}
+                          fileName="자금관리"
+                        >
+                          <Grid
+                            style={{ height: mobileheight2_2 }}
+                            data={process(
+                              mainDataResult2_1.data.map((row) => ({
+                                ...row,
+                                paydt: row.paydt
+                                  ? new Date(dateformat(row.paydt))
+                                  : new Date(dateformat("99991231")),
+                                [SELECTED_FIELD]:
+                                  selectedState2_1[idGetter2_1(row)],
+                              })),
+                              mainDataState2_1
+                            )}
+                            {...mainDataState2_1}
+                            onDataStateChange={onMainDataStateChange2_1}
+                            //선택 기능
+                            dataItemKey={DATA_ITEM_KEY2_1}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onSelectionChange2_1}
+                            //스크롤 조회 기능
+                            fixedScroll={true}
+                            total={mainDataResult2_1.total}
+                            skip={page2_1.skip}
+                            take={page2_1.take}
+                            pageable={true}
+                            onPageChange={pageChange2_1}
+                            //정렬기능
+                            sortable={true}
+                            onSortChange={onMainSortChange2_1}
+                            //컬럼순서조정
+                            reorderable={true}
+                            //컬럼너비조정
+                            resizable={true}
+                            onItemChange={onMainItemChange2_1}
+                            cellRender={customCellRender2_1}
+                            rowRender={customRowRender2_1}
+                            editField={EDIT_FIELD}
+                          >
+                            <GridColumn
+                              field="rowstatus"
+                              title=" "
+                              width="50px"
+                            />
+                            {customOptionData !== null &&
+                              customOptionData.menuCustomColumnOptions[
+                                "grdList2_1"
+                              ]
+                                ?.sort(
+                                  (a: any, b: any) => a.sortOrder - b.sortOrder
+                                )
+                                ?.map(
+                                  (item: any, idx: number) =>
+                                    item.sortOrder !== -1 && (
+                                      <GridColumn
+                                        key={idx}
+                                        id={item.id}
+                                        field={item.fieldName}
+                                        title={item.caption}
+                                        width={item.width}
+                                        cell={
+                                          numberField.includes(item.fieldName)
+                                            ? NumberCell
+                                            : dateField.includes(item.fieldName)
+                                            ? DateCell
+                                            : undefined
+                                        }
+                                        footerCell={
+                                          item.sortOrder == 0
+                                            ? mainTotalFooterCell2_1
+                                            : numberField2.includes(
+                                                item.fieldName
+                                              )
+                                            ? editNumberFooterCell2_1
+                                            : undefined
+                                        }
+                                      />
+                                    )
+                                )}
+                          </Grid>
+                        </ExcelExport>
+                      </GridContainer>
+                    </SwiperSlide>
+                    <SwiperSlide key={3}>
+                      <GridContainer>
+                        <ButtonContainer
+                          className="ButtonContainer2_2"
+                          style={{ justifyContent: "space-between" }}
+                        >
+                          <Button
+                            onClick={() => {
+                              if (swiper && isMobile) {
+                                swiper.slideTo(2);
+                              }
+                            }}
+                            icon="arrow-left"
+                            themeColor={"primary"}
+                            fillMode={"outline"}
+                          >
+                            이전
+                          </Button>
+                        </ButtonContainer>
+                        <ExcelExport
+                          data={mainDataResult2_2.data}
+                          ref={(exporter) => {
+                            _export2_2 = exporter;
+                          }}
+                          fileName="자금관리"
+                        >
+                          <Grid
+                            style={{ height: mobileheight2_3 }}
+                            data={process(
+                              mainDataResult2_2.data.map((row) => ({
+                                ...row,
+                                [SELECTED_FIELD]:
+                                  selectedState2_2[idGetter2_2(row)],
+                              })),
+                              mainDataState2_2
+                            )}
+                            {...mainDataState2_2}
+                            onDataStateChange={onMainDataStateChange2_2}
+                            //선택 기능
+                            dataItemKey={DATA_ITEM_KEY2_2}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onSelectionChange2_2}
+                            //스크롤 조회 기능
+                            fixedScroll={true}
+                            total={mainDataResult2_2.total}
+                            skip={page2_2.skip}
+                            take={page2_2.take}
+                            pageable={true}
+                            onPageChange={pageChange2_2}
+                            //정렬기능
+                            sortable={true}
+                            onSortChange={onMainSortChange2_2}
+                            //컬럼순서조정
+                            reorderable={true}
+                            //컬럼너비조정
+                            resizable={true}
+                          >
+                            {customOptionData !== null &&
+                              customOptionData.menuCustomColumnOptions[
+                                "grdList2_2"
+                              ]
+                                ?.sort(
+                                  (a: any, b: any) => a.sortOrder - b.sortOrder
+                                )
+                                ?.map(
+                                  (item: any, idx: number) =>
+                                    item.sortOrder !== -1 && (
+                                      <GridColumn
+                                        key={idx}
+                                        id={item.id}
+                                        field={item.fieldName}
+                                        title={item.caption}
+                                        width={item.width}
+                                        cell={
+                                          numberField.includes(item.fieldName)
+                                            ? NumberCell
+                                            : dateField.includes(item.fieldName)
+                                            ? DateCell
+                                            : undefined
+                                        }
+                                        footerCell={
+                                          item.sortOrder == 0
+                                            ? mainTotalFooterCell2_2
+                                            : numberField2.includes(
+                                                item.fieldName
+                                              )
+                                            ? gridSumQtyFooterCell2_2
+                                            : undefined
+                                        }
+                                      />
+                                    )
+                                )}
+                          </Grid>
+                        </ExcelExport>
+                      </GridContainer>
+                    </SwiperSlide>
+                  </>
+                ) : (
+                  ""
+                )}
+              </Swiper>
+            </>
           ) : (
             <>
               <GridContainer>
@@ -2457,7 +3275,7 @@ const AC_A0050W: React.FC = () => {
                     <GridTitleContainer className="ButtonContainer2_1">
                       <ButtonContainer>
                         <Button
-                          //onClick={onAddClick2}
+                          onClick={onAddClick2_1}
                           themeColor={"primary"}
                           icon="plus"
                           title="행 생성"
@@ -2650,6 +3468,10 @@ const AC_A0050W: React.FC = () => {
             </>
           )}
         </TabStripTab>
+        <TabStripTab
+          title="차입금관리"
+          disabled={permissions.view ? false : true}
+        ></TabStripTab>
       </TabStrip>
       {accountWindowVisible && (
         <AccountWindow
