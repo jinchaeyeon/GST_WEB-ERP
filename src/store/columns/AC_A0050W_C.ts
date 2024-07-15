@@ -41,6 +41,12 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "col_contracamt",
+        field: "contracamt",
+        caption: "계약금액",
+        width: 100,
+      },
+      {
         id: "col_monsaveamt",
         field: "monsaveamt",
         caption: "월불입액",
@@ -56,6 +62,76 @@ export const gridList: Array<TGrid> = [
         id: "col_remark",
         field: "remark",
         caption: "비고",
+        width: 200,
+      },
+    ],
+  },
+  {
+    gridName: "grdList2_1",
+    columns: [
+      {
+        id: "col_paydt",
+        field: "paydt",
+        caption: "불입일자",
+        width: 120,
+      },
+      {
+        id: "col_payamt",
+        field: "payamt",
+        caption: "불입금액",
+        width: 100,
+      },
+      {
+        id: "col_intrat",
+        field: "intrat",
+        caption: "이율",
+        width: 100,
+      },
+      {
+        id: "col_remark2",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+    ],
+  },
+  {
+    gridName: "grdList2_2",
+    columns: [
+      {
+        id: "col_acntdt",
+        field: "acntdt",
+        caption: "전표일자",
+        width: 120,
+      },
+      {
+        id: "col_acseq1",
+        field: "acseq1",
+        caption: "전표순번1",
+        width: 80,
+      },
+      {
+        id: "col_acseq2",
+        field: "acseq2",
+        caption: "전표순번2",
+        width: 80,
+      },
+      {
+        id: "col_dramt",
+        field: "dramt",
+        caption: "차변금액",
+        width: 100,
+      },
+      {
+        id: "col_cramt",
+        field: "cramt",
+        caption: "대변금액",
+        width: 100,
+      },
+      {
+        id: "col_remark3",
+        field: "remark3",
+        caption: "적요",
         width: 200,
       },
     ],
