@@ -31,6 +31,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   convertDateToStr,
+  findMessage,
   getBizCom,
   getDeviceHeight,
   getGridItemChangedData,
@@ -41,7 +42,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UsePermissions
+  UsePermissions,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -393,15 +394,27 @@ const HU_A2040W: React.FC = () => {
   }, [ParaData, permissions]);
 
   const search = () => {
-    // deletedMainRows = [];
-    resetAllGrid();
-    setPage(initialPageState); // 페이지 초기화
-    setFilters((prev: any) => ({
-      ...prev,
-      pgNum: 1,
-      find_row_value: "",
-      isSearch: true,
-    }));
+    try {
+      if (
+        convertDateToStr(filters.dutydt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.dutydt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.dutydt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.dutydt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "HU_A2040W_005");
+      } else {
+        resetAllGrid();
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -416,7 +429,6 @@ const HU_A2040W: React.FC = () => {
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
-    console.log(name, value);
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -671,13 +683,63 @@ const HU_A2040W: React.FC = () => {
           isSearch: true,
         }));
 
-        if (!isSuccess) {         
+        if (!isSuccess) {
           alert(errorMessage);
+        } else {
+          alert(findMessage(messagesData, "HU_A2040W_004"));
         }
       } else {
         alert("양식이 맞지 않습니다.");
       }
       setLoading(false);
+    }
+  };
+
+  const onConnectionClick = async () => {
+    if (!permissions.save) return;
+
+    setLoading(true);
+    let data;
+
+    const para: Iparameters = {
+      procedureName: "P_HU_A2040W_S",
+      pageNumber: 1,
+      pageSize: 10,
+      parameters: {
+        "@p_work_type": "CONN",
+        "@p_orgdiv": orgdiv,
+        "@p_location": location,
+        "@p_dutydt": convertDateToStr(filters.dutydt),
+        "@p_rowstatus_s": "N",
+        "@p_orgdiv_s": orgdiv,
+        "@p_dutydt_s": "",
+        "@p_prsnnum_s": "",
+        "@p_starttime_s": "",
+        "@p_endtime_s": "",
+        "@p_shh_s": "",
+        "@p_smm_s": "",
+        "@p_ehh_s": "",
+        "@p_emm_s": "",
+        "@p_remark_s": "",
+        "@p_company_code": companyCode,
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "HU_A2040W",
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    setLoading(false);
+
+    if (!data.isSuccess) {
+      alert(data.errorMessage);
+    } else {
+      alert(findMessage(messagesData, "HU_A2040W_004"));
     }
   };
 
@@ -852,40 +914,49 @@ const HU_A2040W: React.FC = () => {
       </FilterContainer>
       <GridContainer>
         <GridTitleContainer className="ButtonContainer">
-          <GridTitle>
-            <ButtonContainer style={{ justifyContent: "space-between" }}>
-              {!isMobile && (
-                <div>
-                  기본정보
-                  <ExcelUploadButtons
-                    saveExcel={saveExcel}
-                    permissions={permissions}
-                    disabled={permissions.save ? false : true}
-                    style={{}}
-                  />
-                  <Button
-                    title="Export Excel"
-                    onClick={onAttachmentsWndClick}
-                    icon="file"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    disabled={permissions.view ? false : true}
-                  >
-                    엑셀양식
-                  </Button>
-                </div>
-              )}
+          <GridTitle>기본정보</GridTitle>
+          <ButtonContainer style={{ justifyContent: "space-between" }}>
+            {!isMobile && filters.procMethod == "B" && (
+              <div>
+                <ExcelUploadButtons
+                  saveExcel={saveExcel}
+                  permissions={permissions}
+                  disabled={permissions.save ? false : true}
+                  style={{}}
+                />
+                <Button
+                  title="Export Excel"
+                  onClick={onAttachmentsWndClick}
+                  icon="file"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  disabled={permissions.view ? false : true}
+                >
+                  엑셀양식
+                </Button>
+              </div>
+            )}
+            {!isMobile && filters.procMethod == "T" && (
               <Button
-                onClick={onSaveClick}
-                fillMode="outline"
+                title="불러오기"
+                onClick={onConnectionClick}
+                icon="upload"
                 themeColor={"primary"}
-                icon="save"
                 disabled={permissions.save ? false : true}
               >
-                저장
+                불러오기
               </Button>
-            </ButtonContainer>
-          </GridTitle>
+            )}
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              disabled={permissions.save ? false : true}
+            >
+              저장
+            </Button>
+          </ButtonContainer>
         </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
