@@ -136,6 +136,7 @@ const EA_A3000W = lazy(() => import("./routes/EA_A3000W"));
 const HU_A1000W = lazy(() => import("./routes/HU_A1000W"));
 const HU_A1060W = lazy(() => import("./routes/HU_A1060W"));
 const HU_A2000W = lazy(() => import("./routes/HU_A2000W"));
+const HU_A2040W = lazy(() => import("./routes/HU_A2040W"));
 const HU_A2070W = lazy(() => import("./routes/HU_A2070W"));
 const HU_A2100W = lazy(() => import("./routes/HU_A2100W"));
 const HU_A2140W = lazy(() => import("./routes/HU_A2140W"));
@@ -875,6 +876,8 @@ const AppInner: React.FC = () => {
       return HU_A1060W;
     } else if (str == "HU_A2000W") {
       return HU_A2000W;
+    } else if (str == "HU_A2040W") {
+      return HU_A2040W;
     } else if (str == "HU_A2070W") {
       return HU_A2070W;
     } else if (str == "HU_A2100W") {
@@ -1241,6 +1244,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
                     {/* 인사관리 */}
                     <AuthRoute path="/HU_A1000W" component={HU_A1000W} exact />
+                    <AuthRoute path="/HU_A2040W" component={HU_A2040W} exact />
                     <AuthRoute path="/HU_A2070W" component={HU_A2070W} exact />
                     <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
                     <AuthRoute path="/HU_A2140W" component={HU_A2140W} exact />
