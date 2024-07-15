@@ -195,4 +195,74 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList3_1",
+    columns: [
+      {
+        id: "col_paydt2",
+        field: "paydt",
+        caption: "상환일자",
+        width: 120,
+      },
+      {
+        id: "col_payamt2",
+        field: "payamt",
+        caption: "상환금액",
+        width: 100,
+      },
+      {
+        id: "col_intamt",
+        field: "intamt",
+        caption: "상환이자금액",
+        width: 100,
+      },
+      {
+        id: "col_remark5",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+    ],
+  },
+  {
+    gridName: "grdList3_2",
+    columns: [
+      {
+        id: "col_acntdt3",
+        field: "acntdt",
+        caption: "전표일자",
+        width: 120,
+      },
+      {
+        id: "col_acseq13",
+        field: "acseq1",
+        caption: "전표순번1",
+        width: 80,
+      },
+      {
+        id: "col_acseq23",
+        field: "acseq2",
+        caption: "전표순번2",
+        width: 80,
+      },
+      {
+        id: "col_dramt3",
+        field: "dramt",
+        caption: "차변금액",
+        width: 100,
+      },
+      {
+        id: "col_cramt3",
+        field: "cramt",
+        caption: "대변금액",
+        width: 100,
+      },
+      {
+        id: "col_remark33",
+        field: "remark3",
+        caption: "적요",
+        width: 200,
+      },
+    ],
+  },
 ];

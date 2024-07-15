@@ -12,7 +12,12 @@ import {
   GridPageChangeEvent,
   GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import { Input, NumericTextBox, TextArea } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  Input,
+  NumericTextBox,
+  TextArea,
+} from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { MonthView, Scheduler } from "@progress/kendo-react-scheduler";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -91,10 +96,13 @@ let height4 = 0;
 let height5 = 0;
 let height6 = 0;
 let temp2_1 = 0;
+let temp3_1 = 0;
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY2_1 = "num";
 const DATA_ITEM_KEY2_2 = "num";
 const DATA_ITEM_KEY3 = "num";
+const DATA_ITEM_KEY3_1 = "num";
+const DATA_ITEM_KEY3_2 = "num";
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 const dateField = ["cotracdt", "paydt", "acntdt", "brwdt", "enddt"];
@@ -108,6 +116,7 @@ const numberField = [
   "dramt",
   "cramt",
   "brwamt",
+  "intamt",
 ];
 const numberField2 = [
   "monsaveamt",
@@ -116,8 +125,10 @@ const numberField2 = [
   "dramt",
   "cramt",
   "brwamt",
+  "intamt",
 ];
 let deletedMainRows2_1: object[] = [];
+let deletedMainRows3_1: object[] = [];
 
 const AC_A0050W: React.FC = () => {
   let gridRef2: any = useRef(null);
@@ -157,9 +168,11 @@ const AC_A0050W: React.FC = () => {
   const idGetter2_1 = getter(DATA_ITEM_KEY2_1);
   const idGetter2_2 = getter(DATA_ITEM_KEY2_2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
+  const idGetter3_1 = getter(DATA_ITEM_KEY3_1);
+  const idGetter3_2 = getter(DATA_ITEM_KEY3_2);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_AC023, L_dptcd_001, L_BA020, L_AC046, R_USEYN_only",
+    "L_AC210, L_AC030, L_AC023, L_dptcd_001, L_BA020, L_AC046, R_USEYN_only",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -182,11 +195,17 @@ const AC_A0050W: React.FC = () => {
   const [mobileheight2_1, setMobileHeight2_1] = useState(0);
   const [mobileheight2_2, setMobileHeight2_2] = useState(0);
   const [mobileheight2_3, setMobileHeight2_3] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight3_1, setMobileHeight3_1] = useState(0);
+  const [mobileheight3_2, setMobileHeight3_2] = useState(0);
+  const [mobileheight3_3, setMobileHeight3_3] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
   const [webheight2_1, setWebHeight2_1] = useState(0);
   const [webheight2_2, setWebHeight2_2] = useState(0);
   const [webheight3, setWebHeight3] = useState(0);
+  const [webheight3_1, setWebHeight3_1] = useState(0);
+  const [webheight3_2, setWebHeight3_2] = useState(0);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".k-tabstrip-items-wrapper");
@@ -203,6 +222,10 @@ const AC_A0050W: React.FC = () => {
         setMobileHeight2_1(getDeviceHeight(true) - height - height2 - height4);
         setMobileHeight2_2(getDeviceHeight(true) - height - height2 - height5);
         setMobileHeight2_3(getDeviceHeight(true) - height - height2 - height6);
+        setMobileHeight3(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight3_1(getDeviceHeight(true) - height - height2 - height4);
+        setMobileHeight3_2(getDeviceHeight(true) - height - height2 - height5);
+        setMobileHeight3_3(getDeviceHeight(true) - height - height2 - height6);
         setWebHeight(getDeviceHeight(false) - height - height2);
         setWebHeight(getDeviceHeight(false) - height - height2);
         setWebHeight2((getDeviceHeight(true) - height - height2) / 2 - height3);
@@ -211,6 +234,10 @@ const AC_A0050W: React.FC = () => {
         );
         setWebHeight2_2((getDeviceHeight(true) - height - height2) / 2);
         setWebHeight3((getDeviceHeight(true) - height - height2) / 2 - height3);
+        setWebHeight3_1(
+          (getDeviceHeight(true) - height - height2) / 2 - height5
+        );
+        setWebHeight3_2((getDeviceHeight(true) - height - height2) / 2);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
@@ -225,6 +252,8 @@ const AC_A0050W: React.FC = () => {
     webheight2_1,
     webheight2_2,
     webheight3,
+    webheight3_1,
+    webheight3_2,
     tabSelected,
     tabSelected2,
   ]);
@@ -281,7 +310,16 @@ const AC_A0050W: React.FC = () => {
   const [mainDataState3, setMainDataState3] = useState<State>({
     sort: [],
   });
+  const [mainDataState3_1, setMainDataState3_1] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState3_2, setMainDataState3_2] = useState<State>({
+    sort: [],
+  });
   const [tempState2_1, setTempState2_1] = useState<State>({
+    sort: [],
+  });
+  const [tempState3_1, setTempState3_1] = useState<State>({
     sort: [],
   });
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
@@ -293,11 +331,20 @@ const AC_A0050W: React.FC = () => {
   const [mainDataResult2_2, setMainDataResult2_2] = useState<DataResult>(
     process([], mainDataState2_2)
   );
+  const [mainDataResult3_1, setMainDataResult3_1] = useState<DataResult>(
+    process([], mainDataState3_1)
+  );
+  const [mainDataResult3_2, setMainDataResult3_2] = useState<DataResult>(
+    process([], mainDataState3_2)
+  );
   const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
     process([], mainDataState3)
   );
   const [tempResult2_1, setTempResult2_1] = useState<DataResult>(
     process([], tempState2_1)
+  );
+  const [tempResult3_1, setTempResult3_1] = useState<DataResult>(
+    process([], tempState3_1)
   );
   const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
@@ -309,6 +356,12 @@ const AC_A0050W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [selectedState3, setSelectedState3] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState3_1, setSelectedState3_1] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState3_2, setSelectedState3_2] = useState<{
     [id: string]: boolean | number[];
   }>({});
   //조회조건 초기값
@@ -364,7 +417,20 @@ const AC_A0050W: React.FC = () => {
     pgNum: 1,
     isSearch: false,
   });
-
+  const [filters3_1, setFilters3_1] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "DETAIL",
+    brwnum: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+  const [filters3_2, setFilters3_2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "SLIP",
+    brwnum: "",
+    pgNum: 1,
+    isSearch: false,
+  });
   const [infomation, setInfomation] = useState<{ [name: string]: any }>({
     workType: "N",
     acntcd: "",
@@ -394,6 +460,44 @@ const AC_A0050W: React.FC = () => {
     remark: "",
     savecnt: 0,
     useyn: "N",
+  });
+
+  const [infomation2, setInfomation2] = useState<{ [name: string]: any }>({
+    workType: "N",
+    acntcd: "",
+    acntnm: "",
+    amtunit: "",
+    attdatnum: "",
+    bankacntnum: "",
+    brwamt: 0,
+    brwamtdlr: 0,
+    brwamtown: 0,
+    brwdesc: "",
+    brwdt: null,
+    brwnm: "",
+    brwnum: "",
+    brwtype: "",
+    chgintrat: 0,
+    chgrat: 0,
+    custcd: "",
+    custnm: "",
+    enddt: null,
+    endrdmdt: null,
+    files: "",
+    findrow_key: "",
+    intpayamt: 0,
+    intpaydt: null,
+    intpayown: 0,
+    intpayterm: "",
+    intrat: 0,
+    janamt: 0,
+    motgdesc: "",
+    orgdiv: sessionOrgdiv,
+    rdmprd: 0,
+    rdmterm: "N",
+    redeem: 0,
+    remark: "",
+    strdmdt: null,
   });
 
   const filterInputChange = (e: any) => {
@@ -441,10 +545,35 @@ const AC_A0050W: React.FC = () => {
     }));
   };
 
+  const InputChange2 = (e: any) => {
+    const { value, name } = e.target;
+
+    if (name == "rdmterm") {
+      setInfomation2((prev) => ({
+        ...prev,
+        [name]: value == true ? "Y" : "N",
+      }));
+    } else {
+      setInfomation2((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
     setInfomation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const ComboBoxChange2 = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation2((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -462,14 +591,22 @@ const AC_A0050W: React.FC = () => {
     useState<boolean>(false);
   const [accountWindowVisible2, setAccountWindowVisible2] =
     useState<boolean>(false);
+  const [accountWindowVisible3, setAccountWindowVisible3] =
+    useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
+  const [custWindowVisible3, setCustWindowVisible3] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
     useState<boolean>(false);
   const [excelAttachmentsWindowVisible, setExcelAttachmentsWindowVisible] =
     useState<boolean>(false);
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
+  };
+  const onAttachmentsWndClick2 = () => {
+    setAttachmentsWindowVisible2(true);
   };
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -477,11 +614,17 @@ const AC_A0050W: React.FC = () => {
   const onCustWndClick2 = () => {
     setCustWindowVisible2(true);
   };
+  const onCustWndClick3 = () => {
+    setCustWindowVisible3(true);
+  };
   const onAccountWndClick = () => {
     setAccountWindowVisible(true);
   };
   const onAccountWndClick2 = () => {
     setAccountWindowVisible2(true);
+  };
+  const onAccountWndClick3 = () => {
+    setAccountWindowVisible3(true);
   };
   const onExcelAttachmentsWndClick = () => {
     setExcelAttachmentsWindowVisible(true);
@@ -494,6 +637,13 @@ const AC_A0050W: React.FC = () => {
   };
   const setAcntData2 = (data: any) => {
     setInfomation((prev) => ({
+      ...prev,
+      acntcd: data.acntcd,
+      acntnm: data.acntnm,
+    }));
+  };
+  const setAcntData3 = (data: any) => {
+    setInfomation2((prev) => ({
       ...prev,
       acntcd: data.acntcd,
       acntnm: data.acntnm,
@@ -517,8 +667,28 @@ const AC_A0050W: React.FC = () => {
       };
     });
   };
+  const setCustData3 = (data: ICustData) => {
+    setInfomation2((prev: any) => {
+      return {
+        ...prev,
+        custcd: data.custcd,
+        custnm: data.custnm,
+      };
+    });
+  };
   const getAttachmentsData = (data: IAttachmentData) => {
     setInfomation((prev) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
+  };
+  const getAttachmentsData2 = (data: IAttachmentData) => {
+    setInfomation2((prev) => {
       return {
         ...prev,
         attdatnum: data.attdatnum,
@@ -533,6 +703,8 @@ const AC_A0050W: React.FC = () => {
   const [page2_1, setPage2_1] = useState(initialPageState);
   const [page2_2, setPage2_2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
+  const [page3_1, setPage3_1] = useState(initialPageState);
+  const [page3_2, setPage3_2] = useState(initialPageState);
   const pageChange2 = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -587,7 +759,16 @@ const AC_A0050W: React.FC = () => {
   };
   const pageChange3 = (event: GridPageChangeEvent) => {
     const { page } = event;
-
+    setPage3_1(initialPageState);
+    setPage3_2(initialPageState);
+    setFilters3_1((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
+    setFilters3_2((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
     setFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
@@ -599,6 +780,36 @@ const AC_A0050W: React.FC = () => {
       take: initialPageState.take,
     });
   };
+
+  const pageChange3_1 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters3_1((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage3_1({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+  const pageChange3_2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters3_2((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage3_2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     if (!permissions.view) return;
@@ -1011,7 +1222,6 @@ const AC_A0050W: React.FC = () => {
         "@p_brwnum": filters3.brwnum,
         "@p_brwnm": filters3.brwnm,
         "@p_brwdesc": filters3.brwdesc,
-        "@p_dptcd": filters3.dptcd,
         "@p_custcd": filters3.custcd,
         "@p_custnm": filters3.custnm,
         "@p_remark": filters3.remark,
@@ -1064,10 +1274,156 @@ const AC_A0050W: React.FC = () => {
             : rows.find((row: any) => row.brwnum == filters3.find_row_value);
         if (selectedRow != undefined) {
           setSelectedState3({ [selectedRow[DATA_ITEM_KEY3]]: true });
+          setInfomation2({
+            workType: "U",
+            acntcd: selectedRow.acntcd,
+            acntnm: selectedRow.acntnm,
+            amtunit: selectedRow.amtunit,
+            attdatnum: selectedRow.attdatnum,
+            bankacntnum: selectedRow.bankacntnum,
+            brwamt: selectedRow.brwamt,
+            brwamtdlr: selectedRow.brwamtdlr,
+            brwamtown: selectedRow.brwamtown,
+            brwdesc: selectedRow.brwdesc,
+            brwdt: selectedRow.brwdt == "" ? null : toDate(selectedRow.brwdt),
+            brwnm: selectedRow.brwnm,
+            brwnum: selectedRow.brwnum,
+            brwtype: selectedRow.brwtype,
+            chgintrat: selectedRow.chgintrat,
+            chgrat: selectedRow.chgrat,
+            custcd: selectedRow.custcd,
+            custnm: selectedRow.custnm,
+            enddt: selectedRow.enddt == "" ? null : toDate(selectedRow.enddt),
+            endrdmdt:
+              selectedRow.endrdmdt == "" ? null : toDate(selectedRow.endrdmdt),
+            files: selectedRow.files,
+            findrow_key: selectedRow.findrow_key,
+            intpayamt: selectedRow.intpayamt,
+            intpaydt:
+              selectedRow.intpaydt == "" ? null : toDate(selectedRow.intpaydt),
+            intpayown: selectedRow.intpayown,
+            intpayterm: selectedRow.intpayterm,
+            intrat: selectedRow.intrat,
+            janamt: selectedRow.janamt,
+            motgdesc: selectedRow.motgdesc,
+            orgdiv: selectedRow.orgdiv,
+            rdmprd: selectedRow.rdmprd,
+            rdmterm: selectedRow.rdmterm,
+            redeem: selectedRow.redeem,
+            remark: selectedRow.remark,
+            strdmdt:
+              selectedRow.strdmdt == "" ? null : toDate(selectedRow.strdmdt),
+          });
+          setFilters3_1((prev) => ({
+            ...prev,
+            isSearch: true,
+            brwnum: selectedRow.brwnum,
+            pgNum: 1,
+          }));
+          setFilters3_2((prev) => ({
+            ...prev,
+            isSearch: true,
+            brwnum: selectedRow.brwnum,
+            pgNum: 1,
+          }));
+          setPage3_1(initialPageState);
+          setPage3_2(initialPageState);
         } else {
           setSelectedState3({ [rows[0][DATA_ITEM_KEY3]]: true });
+          setInfomation2({
+            workType: "U",
+            acntcd: rows[0].acntcd,
+            acntnm: rows[0].acntnm,
+            amtunit: rows[0].amtunit,
+            attdatnum: rows[0].attdatnum,
+            bankacntnum: rows[0].bankacntnum,
+            brwamt: rows[0].brwamt,
+            brwamtdlr: rows[0].brwamtdlr,
+            brwamtown: rows[0].brwamtown,
+            brwdesc: rows[0].brwdesc,
+            brwdt: rows[0].brwdt == "" ? null : toDate(rows[0].brwdt),
+            brwnm: rows[0].brwnm,
+            brwnum: rows[0].brwnum,
+            brwtype: rows[0].brwtype,
+            chgintrat: rows[0].chgintrat,
+            chgrat: rows[0].chgrat,
+            custcd: rows[0].custcd,
+            custnm: rows[0].custnm,
+            enddt: rows[0].enddt == "" ? null : toDate(rows[0].enddt),
+            endrdmdt: rows[0].endrdmdt == "" ? null : toDate(rows[0].endrdmdt),
+            files: rows[0].files,
+            findrow_key: rows[0].findrow_key,
+            intpayamt: rows[0].intpayamt,
+            intpaydt: rows[0].intpaydt == "" ? null : toDate(rows[0].intpaydt),
+            intpayown: rows[0].intpayown,
+            intpayterm: rows[0].intpayterm,
+            intrat: rows[0].intrat,
+            janamt: rows[0].janamt,
+            motgdesc: rows[0].motgdesc,
+            orgdiv: rows[0].orgdiv,
+            rdmprd: rows[0].rdmprd,
+            rdmterm: rows[0].rdmterm,
+            redeem: rows[0].redeem,
+            remark: rows[0].remark,
+            strdmdt: rows[0].strdmdt == "" ? null : toDate(rows[0].strdmdt),
+          });
+          setFilters3_1((prev) => ({
+            ...prev,
+            isSearch: true,
+            brwnum: rows[0].brwnum,
+            pgNum: 1,
+          }));
+          setFilters3_2((prev) => ({
+            ...prev,
+            isSearch: true,
+            brwnum: rows[0].brwnum,
+            pgNum: 1,
+          }));
+          setPage3_1(initialPageState);
+          setPage3_2(initialPageState);
         }
       } else {
+        setInfomation2({
+          workType: "N",
+          acntcd: "",
+          acntnm: "",
+          amtunit: "",
+          attdatnum: "",
+          bankacntnum: "",
+          brwamt: 0,
+          brwamtdlr: 0,
+          brwamtown: 0,
+          brwdesc: "",
+          brwdt: null,
+          brwnm: "",
+          brwnum: "",
+          brwtype: "",
+          chgintrat: 0,
+          chgrat: 0,
+          custcd: "",
+          custnm: "",
+          enddt: null,
+          endrdmdt: null,
+          files: "",
+          findrow_key: "",
+          intpayamt: 0,
+          intpaydt: null,
+          intpayown: 0,
+          intpayterm: "",
+          intrat: 0,
+          janamt: 0,
+          motgdesc: "",
+          orgdiv: sessionOrgdiv,
+          rdmprd: 0,
+          rdmterm: "N",
+          redeem: 0,
+          remark: "",
+          strdmdt: null,
+        });
+        setPage3_1(initialPageState);
+        setPage3_2(initialPageState);
+        setMainDataResult3_1(process([], mainDataState3_1));
+        setMainDataResult3_2(process([], mainDataState3_2));
       }
     } else {
       console.log("[오류 발생]");
@@ -1075,6 +1431,126 @@ const AC_A0050W: React.FC = () => {
     }
     // 필터 isSearch false처리, pgNum 세팅
     setFilters3((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchMainGrid3_1 = async (filters3_1: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A0050W_tab3_Q",
+      pageNumber: filters3_1.pgNum,
+      pageSize: filters3_1.pgSize,
+      parameters: {
+        "@p_work_type": filters3_1.workType,
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_brwnum": filters3_1.brwnum,
+        "@p_brwnm": filters3.brwnm,
+        "@p_brwdesc": filters3.brwdesc,
+        "@p_custcd": filters3.custcd,
+        "@p_custnm": filters3.custnm,
+        "@p_remark": filters3.remark,
+
+        "@p_find_row_value": filters3.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult3_1((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        setSelectedState3_1({ [rows[0][DATA_ITEM_KEY3_1]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters3_1((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchMainGrid3_2 = async (filters3_2: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A0050W_tab3_Q",
+      pageNumber: filters3_2.pgNum,
+      pageSize: filters3_2.pgSize,
+      parameters: {
+        "@p_work_type": filters3_2.workType,
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_brwnum": filters3_2.brwnum,
+        "@p_brwnm": filters3.brwnm,
+        "@p_brwdesc": filters3.brwdesc,
+        "@p_custcd": filters3.custcd,
+        "@p_custnm": filters3.custnm,
+        "@p_remark": filters3.remark,
+
+        "@p_find_row_value": filters3.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult3_2((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        setSelectedState3_2({ [rows[0][DATA_ITEM_KEY3_2]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters3_2((prev) => ({
       ...prev,
       pgNum:
         data && data.hasOwnProperty("pageNumber")
@@ -1127,7 +1603,48 @@ const AC_A0050W: React.FC = () => {
       });
     } else if (tabSelected == 2) {
       setPage3(initialPageState);
+      setPage3_1(initialPageState);
+      setPage3_2(initialPageState);
       setMainDataResult3(process([], mainDataState3));
+      setMainDataResult3_1(process([], mainDataState3_1));
+      setMainDataResult3_2(process([], mainDataState3_2));
+      setInfomation2({
+        workType: "N",
+        acntcd: "",
+        acntnm: "",
+        amtunit: "",
+        attdatnum: "",
+        bankacntnum: "",
+        brwamt: 0,
+        brwamtdlr: 0,
+        brwamtown: 0,
+        brwdesc: "",
+        brwdt: null,
+        brwnm: "",
+        brwnum: "",
+        brwtype: "",
+        chgintrat: 0,
+        chgrat: 0,
+        custcd: "",
+        custnm: "",
+        enddt: null,
+        endrdmdt: null,
+        files: "",
+        findrow_key: "",
+        intpayamt: 0,
+        intpaydt: null,
+        intpayown: 0,
+        intpayterm: "",
+        intrat: 0,
+        janamt: 0,
+        motgdesc: "",
+        orgdiv: sessionOrgdiv,
+        rdmprd: 0,
+        rdmterm: "N",
+        redeem: 0,
+        remark: "",
+        strdmdt: null,
+      });
     }
   };
 
@@ -1164,6 +1681,9 @@ const AC_A0050W: React.FC = () => {
           find_row_value: "",
           isSearch: true,
         }));
+        if (isMobile && swiper) {
+          swiper.slideTo(0);
+        }
       }
     } catch (e) {
       alert(e);
@@ -1244,6 +1764,42 @@ const AC_A0050W: React.FC = () => {
   }, [filters3, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
+    if (
+      filters3_1.isSearch &&
+      permissions.view &&
+      customOptionData !== null &&
+      bizComponentData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3_1);
+      setFilters3_1((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid3_1(deepCopiedFilters);
+    }
+  }, [filters3_1, permissions, customOptionData, bizComponentData]);
+
+  useEffect(() => {
+    if (
+      filters3_2.isSearch &&
+      permissions.view &&
+      customOptionData !== null &&
+      bizComponentData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3_2);
+      setFilters3_2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid3_2(deepCopiedFilters);
+    }
+  }, [filters3_2, permissions, customOptionData, bizComponentData]);
+
+  useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex2 !== null && gridRef2.current) {
       gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
@@ -1263,6 +1819,8 @@ const AC_A0050W: React.FC = () => {
   let _export2_1: any;
   let _export2_2: any;
   let _export3: any;
+  let _export3_1: any;
+  let _export3_2: any;
   const exportExcel = () => {
     if (tabSelected == 1) {
       if (tabSelected2 == 0) {
@@ -1297,12 +1855,60 @@ const AC_A0050W: React.FC = () => {
           optionsGridOne.sheets[0].title = "요약정보";
           _export3.save(optionsGridOne);
         }
+      } else if (tabSelected2 == 1) {
+        if (_export3 !== null && _export3 !== undefined) {
+          const optionsGridOne = _export3.workbookOptions();
+          const optionsGridTwo = _export3_1.workbookOptions();
+          optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+          optionsGridOne.sheets[0].title = "요약정보";
+          optionsGridOne.sheets[1].title = "상세정보";
+          _export3.save(optionsGridOne);
+        }
+      } else if (tabSelected2 == 2) {
+        if (_export3 !== null && _export3 !== undefined) {
+          const optionsGridOne = _export3.workbookOptions();
+          const optionsGridTwo = _export3_2.workbookOptions();
+          optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+          optionsGridOne.sheets[0].title = "요약정보";
+          optionsGridOne.sheets[1].title = "전표상세정보";
+          _export3.save(optionsGridOne);
+        }
       }
     }
   };
 
   const handleSelectTab = (e: any) => {
+    setTabSelected2(0);
     setTabSelected(e.selected);
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+
+    if (tabSelected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: "",
+      }));
+    } else if (tabSelected == 1) {
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: "",
+      }));
+    } else if (tabSelected == 2) {
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: "",
+      }));
+    }
   };
   const handleSelectTab2 = (e: any) => {
     setTabSelected2(e.selected);
@@ -1320,6 +1926,12 @@ const AC_A0050W: React.FC = () => {
   };
   const onMainDataStateChange3 = (event: GridDataStateChangeEvent) => {
     setMainDataState3(event.dataState);
+  };
+  const onMainDataStateChange3_1 = (event: GridDataStateChangeEvent) => {
+    setMainDataState3_1(event.dataState);
+  };
+  const onMainDataStateChange3_2 = (event: GridDataStateChangeEvent) => {
+    setMainDataState3_2(event.dataState);
   };
   //그리드 푸터
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
@@ -1372,6 +1984,35 @@ const AC_A0050W: React.FC = () => {
       <td colSpan={props.colSpan} style={props.style}>
         총
         {mainDataResult3.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const mainTotalFooterCell3_1 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult3_1.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult3_1.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell3_2 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult3_2.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult3_2.total == -1
           ? 0
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
             (parts[1] ? "." + parts[1] : "")}
@@ -1443,9 +2084,49 @@ const AC_A0050W: React.FC = () => {
     }
   };
 
+  const gridSumQtyFooterCell3_2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult3_2.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
+
   const editNumberFooterCell2_1 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2_1.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
+  const editNumberFooterCell3_1 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult3_1.data.forEach((item) =>
       props.field !== undefined
         ? (sum += parseFloat(
             item[props.field] == "" || item[props.field] == undefined
@@ -1517,7 +2198,14 @@ const AC_A0050W: React.FC = () => {
       acntsrtnum: selectedRowData.acntsrtnum,
       pgNum: 1,
     }));
+    setFilters2_2((prev) => ({
+      ...prev,
+      isSearch: true,
+      acntsrtnum: selectedRowData.acntsrtnum,
+      pgNum: 1,
+    }));
     setPage2_1(initialPageState);
+    setPage2_2(initialPageState);
 
     if (isMobile && swiper) {
       swiper.slideTo(1);
@@ -1544,13 +2232,94 @@ const AC_A0050W: React.FC = () => {
   const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState2,
-      dataItemKey: DATA_ITEM_KEY2,
+      selectedState: selectedState3,
+      dataItemKey: DATA_ITEM_KEY3,
     });
-    setSelectedState2(newSelectedState);
+    setSelectedState3(newSelectedState);
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+
+    setInfomation2({
+      workType: "U",
+      acntcd: selectedRowData.acntcd,
+      acntnm: selectedRowData.acntnm,
+      amtunit: selectedRowData.amtunit,
+      attdatnum: selectedRowData.attdatnum,
+      bankacntnum: selectedRowData.bankacntnum,
+      brwamt: selectedRowData.brwamt,
+      brwamtdlr: selectedRowData.brwamtdlr,
+      brwamtown: selectedRowData.brwamtown,
+      brwdesc: selectedRowData.brwdesc,
+      brwdt: selectedRowData.brwdt == "" ? null : toDate(selectedRowData.brwdt),
+      brwnm: selectedRowData.brwnm,
+      brwnum: selectedRowData.brwnum,
+      brwtype: selectedRowData.brwtype,
+      chgintrat: selectedRowData.chgintrat,
+      chgrat: selectedRowData.chgrat,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      enddt: selectedRowData.enddt == "" ? null : toDate(selectedRowData.enddt),
+      endrdmdt:
+        selectedRowData.endrdmdt == ""
+          ? null
+          : toDate(selectedRowData.endrdmdt),
+      files: selectedRowData.files,
+      findrow_key: selectedRowData.findrow_key,
+      intpayamt: selectedRowData.intpayamt,
+      intpaydt:
+        selectedRowData.intpaydt == ""
+          ? null
+          : toDate(selectedRowData.intpaydt),
+      intpayown: selectedRowData.intpayown,
+      intpayterm: selectedRowData.intpayterm,
+      intrat: selectedRowData.intrat,
+      janamt: selectedRowData.janamt,
+      motgdesc: selectedRowData.motgdesc,
+      orgdiv: selectedRowData.orgdiv,
+      rdmprd: selectedRowData.rdmprd,
+      rdmterm: selectedRowData.rdmterm,
+      redeem: selectedRowData.redeem,
+      remark: selectedRowData.remark,
+      strdmdt:
+        selectedRowData.strdmdt == "" ? null : toDate(selectedRowData.strdmdt),
+    });
+
+    setFilters3_1((prev) => ({
+      ...prev,
+      isSearch: true,
+      brwnum: selectedRowData.brwnum,
+      pgNum: 1,
+    }));
+
+    setFilters3_2((prev) => ({
+      ...prev,
+      isSearch: true,
+      brwnum: selectedRowData.brwnum,
+      pgNum: 1,
+    }));
+    setPage3_1(initialPageState);
+    setPage3_2(initialPageState);
+    if (isMobile && swiper) {
+      swiper.slideTo(1);
+    }
+  };
+
+  const onSelectionChange3_1 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState3_1,
+      dataItemKey: DATA_ITEM_KEY3_1,
+    });
+    setSelectedState3_1(newSelectedState);
+  };
+  const onSelectionChange3_2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState3_2,
+      dataItemKey: DATA_ITEM_KEY3_2,
+    });
+    setSelectedState3_2(newSelectedState);
   };
 
   const onMainSortChange2 = (e: any) => {
@@ -1567,7 +2336,12 @@ const AC_A0050W: React.FC = () => {
   const onMainSortChange3 = (e: any) => {
     setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
   };
-
+  const onMainSortChange3_1 = (e: any) => {
+    setMainDataState3_1((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange3_2 = (e: any) => {
+    setMainDataState3_2((prev) => ({ ...prev, sort: e.sort }));
+  };
   const onAddClick2 = () => {
     const defaultOption = GetPropertyValueByName(
       customOptionData.menuCustomDefaultOptions,
@@ -1623,6 +2397,64 @@ const AC_A0050W: React.FC = () => {
     }
   };
 
+  const onAddClick3 = () => {
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+    setPage3_1(initialPageState);
+    setPage3_2(initialPageState);
+    setMainDataResult3_1(process([], mainDataState3_1));
+    setMainDataResult3_2(process([], mainDataState3_2));
+    setTabSelected2(0);
+    setInfomation2({
+      workType: "N",
+      acntcd: "",
+      acntnm: "",
+      amtunit: defaultOption.find((item: any) => item.id == "amtunit")
+        ?.valueCode,
+      attdatnum: "",
+      bankacntnum: "",
+      brwamt: 0,
+      brwamtdlr: 0,
+      brwamtown: 0,
+      brwdesc: "",
+      brwdt: null,
+      brwnm: "",
+      brwnum: "",
+      brwtype: defaultOption.find((item: any) => item.id == "brwtype")
+        ?.valueCode,
+      chgintrat: 0,
+      chgrat: 0,
+      custcd: "",
+      custnm: "",
+      enddt: null,
+      endrdmdt: null,
+      files: "",
+      findrow_key: "",
+      intpayamt: 0,
+      intpaydt: null,
+      intpayown: 0,
+      intpayterm: defaultOption.find((item: any) => item.id == "intpayterm")
+        ?.valueCode,
+      intrat: 0,
+      janamt: 0,
+      motgdesc: "",
+      orgdiv: sessionOrgdiv,
+      rdmprd: 0,
+      rdmterm: "N",
+      redeem: 0,
+      remark: "",
+      strdmdt: null,
+    });
+  };
+
   const onMainItemChange2_1 = (event: GridItemChangeEvent) => {
     setMainDataState2_1((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -1645,6 +2477,32 @@ const AC_A0050W: React.FC = () => {
       originalProps={props}
       tr={tr}
       exitEdit={exitEdit2_1}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const onMainItemChange3_1 = (event: GridItemChangeEvent) => {
+    setMainDataState3_1((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult3_1,
+      setMainDataResult3_1,
+      DATA_ITEM_KEY3_1
+    );
+  };
+  const customCellRender3_1 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit3_1}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender3_1 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit3_1}
       editField={EDIT_FIELD}
     />
   );
@@ -1730,6 +2588,87 @@ const AC_A0050W: React.FC = () => {
     }
   };
 
+  const enterEdit3_1 = (dataItem: any, field: string) => {
+    if (field != "rowstatus") {
+      const newData = mainDataResult3_1.data.map((item) =>
+        item[DATA_ITEM_KEY3_1] == dataItem[DATA_ITEM_KEY3_1]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+
+      setTempResult3_1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3_1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult3_1((prev) => {
+        return {
+          data: mainDataResult3_1.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit3_1 = () => {
+    if (tempResult3_1.data != mainDataResult3_1.data) {
+      const newData = mainDataResult3_1.data.map((item) =>
+        item[DATA_ITEM_KEY3_1] ==
+        Object.getOwnPropertyNames(selectedState3_1)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult3_1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3_1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult3_1.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult3_1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3_1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
   const onDeleteClick2_1 = (e: any) => {
     let newData: any[] = [];
     let Object: any[] = [];
@@ -1766,8 +2705,71 @@ const AC_A0050W: React.FC = () => {
     }
   };
 
+  const onDeleteClick3_1 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult3_1.data.forEach((item: any, index: number) => {
+      if (!selectedState3_1[item[DATA_ITEM_KEY3_1]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedMainRows3_1.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult3_1.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult3_1.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult3_1((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState3_1({
+        [data != undefined ? data[DATA_ITEM_KEY3_1] : newData[0]]: true,
+      });
+    }
+  };
+
   const onSaveClick2 = () => {
     if (!permissions.save) return;
+
+    let valid = true;
+
+    if (
+      infomation.bankacntdiv == "" ||
+      infomation.bankacntdiv == undefined ||
+      infomation.bankacntdiv == null ||
+      infomation.acntsrtnum == "" ||
+      infomation.acntsrtnum == undefined ||
+      infomation.acntsrtnum == null ||
+      infomation.acntsrtnm == "" ||
+      infomation.acntsrtnm == undefined ||
+      infomation.acntsrtnm == null ||
+      infomation.bankacntnum == "" ||
+      infomation.bankacntnum == undefined ||
+      infomation.bankacntnum == null ||
+      infomation.acntcd == "" ||
+      infomation.acntcd == undefined ||
+      infomation.acntcd == null
+    ) {
+      valid = false;
+    }
+
+    if (valid != true) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
 
     const dataItem = mainDataResult2_1.data.filter((item: any) => {
       return (
@@ -1897,6 +2899,174 @@ const AC_A0050W: React.FC = () => {
     }
   };
 
+  const onSaveClick3 = () => {
+    if (!permissions.save) return;
+
+    let valid = true;
+
+    if (
+      infomation2.brwnum == "" ||
+      infomation2.brwnum == undefined ||
+      infomation2.brwnum == null ||
+      infomation2.brwnm == "" ||
+      infomation2.brwnm == undefined ||
+      infomation2.brwnm == null
+    ) {
+      valid = false;
+    }
+
+    if (valid != true) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
+
+    const dataItem = mainDataResult3_1.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+    let dataArr: any = {
+      rowstatus_s: [],
+      brwseq_s: [],
+      paydt_s: [],
+      payamt_s: [],
+      intamt_s: [],
+      remark_s: [],
+    };
+    if (dataItem.length == 0 && deletedMainRows3_1.length == 0) {
+      setParaData2((prev) => ({
+        ...prev,
+        workType: infomation2.workType,
+        orgdiv: infomation2.orgdiv,
+        brwnum: infomation2.brwnum,
+        brwnm: infomation2.brwnm,
+        brwdesc: infomation2.brwdesc,
+        custcd: infomation2.custcd,
+        brwdt:
+          infomation2.brwdt == null ? "" : convertDateToStr(infomation2.brwdt),
+        bankacntnum: infomation2.bankacntnum,
+        brwtype: infomation2.brwtype,
+        acntcd: infomation2.acntcd,
+        enddt:
+          infomation2.enddt == null ? "" : convertDateToStr(infomation2.enddt),
+        brwamt: infomation2.brwamt,
+        brwamtdlr: infomation2.brwamtdlr,
+        brwamtown: infomation2.brwamtown,
+        amtunit: infomation2.amtunit,
+        chgrat: infomation2.chgrat,
+        rdmprd: infomation2.rdmprd,
+        rdmterm: infomation2.rdmterm,
+        strdmdt:
+          infomation2.strdmdt == null
+            ? ""
+            : convertDateToStr(infomation2.strdmdt),
+        endrdmdt:
+          infomation2.endrdmdt == null
+            ? ""
+            : convertDateToStr(infomation2.endrdmdt),
+        intrat: infomation2.intrat,
+        chgintrat: infomation2.chgintrat,
+        intpayterm: infomation2.intpayterm,
+        intpayamt: infomation2.intpayamt,
+        intpayown: infomation2.intpayown,
+        intpaydt:
+          infomation2.intpaydt == null
+            ? ""
+            : convertDateToStr(infomation2.intpaydt),
+        motgdesc: infomation2.motgdesc,
+        remark: infomation2.remark,
+
+        attdatnum: infomation2.attdatnum,
+      }));
+    } else {
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          brwseq = "",
+          paydt = "",
+          payamt = "",
+          intamt = "",
+          remark = "",
+        } = item;
+
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.brwseq_s.push(brwseq);
+        dataArr.paydt_s.push(paydt == "99991231" ? "" : paydt);
+        dataArr.payamt_s.push(payamt);
+        dataArr.intamt_s.push(intamt);
+        dataArr.remark_s.push(remark);
+      });
+      deletedMainRows3_1.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          brwseq = "",
+          paydt = "",
+          payamt = "",
+          intamt = "",
+          remark = "",
+        } = item;
+
+        dataArr.rowstatus_s.push("D");
+        dataArr.brwseq_s.push(brwseq);
+        dataArr.paydt_s.push(paydt == "99991231" ? "" : paydt);
+        dataArr.payamt_s.push(payamt);
+        dataArr.intamt_s.push(intamt);
+        dataArr.remark_s.push(remark);
+      });
+      setParaData2((prev) => ({
+        ...prev,
+        workType: infomation2.workType,
+        orgdiv: infomation2.orgdiv,
+        brwnum: infomation2.brwnum,
+        brwnm: infomation2.brwnm,
+        brwdesc: infomation2.brwdesc,
+        custcd: infomation2.custcd,
+        brwdt:
+          infomation2.brwdt == null ? "" : convertDateToStr(infomation2.brwdt),
+        bankacntnum: infomation2.bankacntnum,
+        brwtype: infomation2.brwtype,
+        acntcd: infomation2.acntcd,
+        enddt:
+          infomation2.enddt == null ? "" : convertDateToStr(infomation2.enddt),
+        brwamt: infomation2.brwamt,
+        brwamtdlr: infomation2.brwamtdlr,
+        brwamtown: infomation2.brwamtown,
+        amtunit: infomation2.amtunit,
+        chgrat: infomation2.chgrat,
+        rdmprd: infomation2.rdmprd,
+        rdmterm: infomation2.rdmterm,
+        strdmdt:
+          infomation2.strdmdt == null
+            ? ""
+            : convertDateToStr(infomation2.strdmdt),
+        endrdmdt:
+          infomation2.endrdmdt == null
+            ? ""
+            : convertDateToStr(infomation2.endrdmdt),
+        intrat: infomation2.intrat,
+        chgintrat: infomation2.chgintrat,
+        intpayterm: infomation2.intpayterm,
+        intpayamt: infomation2.intpayamt,
+        intpayown: infomation2.intpayown,
+        intpaydt:
+          infomation2.intpaydt == null
+            ? ""
+            : convertDateToStr(infomation2.intpaydt),
+        motgdesc: infomation2.motgdesc,
+        remark: infomation2.remark,
+
+        attdatnum: infomation2.attdatnum,
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        brwseq_s: dataArr.brwseq_s.join("|"),
+        paydt_s: dataArr.paydt_s.join("|"),
+        payamt_s: dataArr.payamt_s.join("|"),
+        intamt_s: dataArr.intamt_s.join("|"),
+        remark_s: dataArr.remark_s.join("|"),
+      }));
+    }
+  };
+
   const [paraData, setParaData] = useState({
     workType: "",
     orgdiv: "",
@@ -1936,6 +3106,45 @@ const AC_A0050W: React.FC = () => {
     cotracdt_s: "",
     contracamt_s: "",
     intrat_s1: "",
+  });
+
+  const [paraData2, setParaData2] = useState({
+    workType: "",
+    orgdiv: "",
+    brwnum: "",
+    brwnm: "",
+    brwdesc: "",
+    custcd: "",
+    brwdt: "",
+    bankacntnum: "",
+    brwtype: "",
+    acntcd: "",
+    enddt: "",
+    brwamt: 0,
+    brwamtdlr: 0,
+    brwamtown: 0,
+    amtunit: "",
+    chgrat: 0,
+    rdmprd: 0,
+    rdmterm: "",
+    strdmdt: "",
+    endrdmdt: "",
+    intrat: 0,
+    chgintrat: 0,
+    intpayterm: "",
+    intpayamt: 0,
+    intpayown: 0,
+    intpaydt: "",
+    motgdesc: "",
+    remark: "",
+
+    attdatnum: "",
+    rowstatus_s: "",
+    brwseq_s: "",
+    paydt_s: "",
+    payamt_s: "",
+    intamt_s: "",
+    remark_s: "",
   });
 
   const para: Iparameters = {
@@ -1995,6 +3204,57 @@ const AC_A0050W: React.FC = () => {
     },
   };
 
+  const para2: Iparameters = {
+    procedureName: "P_AC_A0050W_tab3_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData2.workType,
+
+      "@p_orgdiv": paraData2.orgdiv,
+      "@p_brwnum": paraData2.brwnum,
+      "@p_brwnm": paraData2.brwnm,
+      "@p_brwdesc": paraData2.brwdesc,
+      "@p_custcd": paraData2.custcd,
+      "@p_brwdt": paraData2.brwdt,
+      "@p_bankacntnum": paraData2.bankacntnum,
+      "@p_brwtype": paraData2.brwtype,
+      "@p_acntcd": paraData2.acntcd,
+      "@p_enddt": paraData2.enddt,
+      "@p_brwamt": paraData2.brwamt,
+      "@p_brwamtdlr": paraData2.brwamtdlr,
+      "@p_brwamtown": paraData2.brwamtown,
+      "@p_amtunit": paraData2.amtunit,
+      "@p_chgrat": paraData2.chgrat,
+      "@p_rdmprd": paraData2.rdmprd,
+      "@p_rdmterm": paraData2.rdmterm,
+      "@p_strdmdt": paraData2.strdmdt,
+      "@p_endrdmdt": paraData2.endrdmdt,
+      "@p_intrat": paraData2.intrat,
+      "@p_chgintrat": paraData2.chgintrat,
+      "@p_intpayterm": paraData2.intpayterm,
+      "@p_intpayamt": paraData2.intpayamt,
+      "@p_intpayown": paraData2.intpayown,
+      "@p_intpaydt": paraData2.intpaydt,
+      "@p_motgdesc": paraData2.motgdesc,
+      "@p_remark": paraData2.remark,
+
+      "@p_attdatnum": paraData2.attdatnum,
+
+      /* 차입금 상세 (AC051T) */
+      "@p_rowstatus_s": paraData2.rowstatus_s,
+      "@p_brwseq_s": paraData2.brwseq_s,
+      "@p_paydt_s": paraData2.paydt_s,
+      "@p_payamt_s": paraData2.payamt_s,
+      "@p_intamt_s": paraData2.intamt_s,
+      "@p_remark_s": paraData2.remark_s,
+
+      "@p_exec_userid": userId,
+      "@p_exec_pc": pc,
+      "@p_form_id": "AC_A0050W",
+    },
+  };
+
   useEffect(() => {
     if (
       paraData.workType != "" &&
@@ -2007,6 +3267,19 @@ const AC_A0050W: React.FC = () => {
       fetchTodoGridSaved();
     }
   }, [paraData, permissions]);
+
+  useEffect(() => {
+    if (
+      paraData2.workType != "" &&
+      permissions.save &&
+      paraData2.workType != "D"
+    ) {
+      fetchTodoGridSaved2();
+    }
+    if (paraData2.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved2();
+    }
+  }, [paraData2, permissions]);
 
   const fetchTodoGridSaved = async () => {
     if (!permissions.save && paraData.workType != "D") return;
@@ -2030,7 +3303,7 @@ const AC_A0050W: React.FC = () => {
         setUnsavedName([]);
       } else {
         const isLastDataDeleted =
-          mainDataResult2.data.length == 1 && filters.pgNum > 1;
+          mainDataResult2.data.length == 1 && filters2.pgNum > 1;
         const findRowIndex = mainDataResult2.data.findIndex(
           (row: any) =>
             row[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
@@ -2108,6 +3381,101 @@ const AC_A0050W: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save && paraData2.workType != "D") return;
+    if (!permissions.delete && paraData2.workType == "D") return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      if (paraData2.workType != "D") {
+        setFilters3((prev) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        }));
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
+      } else {
+        const isLastDataDeleted =
+          mainDataResult3.data.length == 1 && filters3.pgNum > 1;
+        const findRowIndex = mainDataResult3.data.findIndex(
+          (row: any) =>
+            row[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+        );
+        setDeletedAttadatnums([infomation2.attdatnum]);
+        resetAllGrid();
+
+        if (isLastDataDeleted) {
+          setPage3({
+            skip: PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+        }
+        setFilters3((prev) => ({
+          ...prev,
+          find_row_value:
+            mainDataResult3.data[findRowIndex < 1 ? 1 : findRowIndex - 1] ==
+            undefined
+              ? ""
+              : mainDataResult3.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+                  .brwnum,
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+      }
+      deletedMainRows3_1 = [];
+      setParaData2({
+        workType: "",
+        orgdiv: "",
+        brwnum: "",
+        brwnm: "",
+        brwdesc: "",
+        custcd: "",
+        brwdt: "",
+        bankacntnum: "",
+        brwtype: "",
+        acntcd: "",
+        enddt: "",
+        brwamt: 0,
+        brwamtdlr: 0,
+        brwamtown: 0,
+        amtunit: "",
+        chgrat: 0,
+        rdmprd: 0,
+        rdmterm: "",
+        strdmdt: "",
+        endrdmdt: "",
+        intrat: 0,
+        chgintrat: 0,
+        intpayterm: "",
+        intpayamt: 0,
+        intpayown: 0,
+        intpaydt: "",
+        motgdesc: "",
+        remark: "",
+
+        attdatnum: "",
+        rowstatus_s: "",
+        brwseq_s: "",
+        paydt_s: "",
+        payamt_s: "",
+        intamt_s: "",
+        remark_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick2 = () => {
     if (!permissions.delete) return;
@@ -2125,6 +3493,29 @@ const AC_A0050W: React.FC = () => {
         workType: "D",
         orgdiv: data.orgdiv,
         acntsrtnum: data.acntsrtnum,
+        attdatnum: data.attdatnum,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onDeleteClick3 = () => {
+    if (!permissions.delete) return;
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    if (mainDataResult3.data.length != 0) {
+      const data = mainDataResult3.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+      )[0];
+      setParaData2((prev) => ({
+        ...prev,
+        workType: "D",
+        orgdiv: data.orgdiv,
+        brwnum: data.brwnum,
         attdatnum: data.attdatnum,
       }));
     } else {
@@ -2159,6 +3550,39 @@ const AC_A0050W: React.FC = () => {
       };
     });
     setPage2_1((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+  };
+
+  const onAddClick3_1 = () => {
+    mainDataResult3_1.data.map((item) => {
+      if (item.num > temp3_1) {
+        temp3_1 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY3_1]: ++temp3_1,
+      brwnum: infomation2.brwnum,
+      brwseq: infomation2.brwseq,
+      intamt: 0,
+      orgdiv: sessionOrgdiv,
+      payamt: 0,
+      paydt: convertDateToStr(new Date()),
+      remark: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState3_1({ [newDataItem[DATA_ITEM_KEY3_1]]: true });
+    setMainDataResult3_1((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+    setPage3_1((prev) => ({
       ...prev,
       skip: 0,
       take: prev.take + 1,
@@ -2217,6 +3641,14 @@ const AC_A0050W: React.FC = () => {
           items["결제계좌번호"] == null ||
           items["결제계좌번호"] == undefined ||
           items["결제계좌번호"] == ""
+        ) {
+          valid2 = false;
+          return;
+        }
+        if (
+          items["계정과목"] == null ||
+          items["계정과목"] == undefined ||
+          items["계정과목"] == ""
         ) {
           valid2 = false;
           return;
@@ -3012,6 +4444,15 @@ const AC_A0050W: React.FC = () => {
                                 title="행 삭제"
                                 disabled={permissions.delete ? false : true}
                               />
+                              <Button
+                                onClick={onSaveClick2}
+                                fillMode="outline"
+                                themeColor={"primary"}
+                                icon="save"
+                                disabled={permissions.save ? false : true}
+                              >
+                                저장
+                              </Button>
                               <Button
                                 onClick={() => {
                                   if (swiper && isMobile) {
@@ -3975,7 +5416,7 @@ const AC_A0050W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>계정과목코드</th>
+                  <th>차입처명</th>
                   <td>
                     <Input
                       name="custnm"
@@ -3998,7 +5439,809 @@ const AC_A0050W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           {isMobile ? (
-            <></>
+            <>
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer>
+                    <GridTitleContainer className="ButtonContainer">
+                      <GridTitle>요약정보</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick3}
+                          themeColor={"primary"}
+                          icon="file-add"
+                          disabled={permissions.save ? false : true}
+                        >
+                          생성
+                        </Button>
+                        <Button
+                          onClick={onDeleteClick3}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="delete"
+                          disabled={permissions.delete ? false : true}
+                        >
+                          삭제
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult3.data}
+                      ref={(exporter) => {
+                        _export3 = exporter;
+                      }}
+                      fileName="자금관리"
+                    >
+                      <Grid
+                        style={{ height: mobileheight3 }}
+                        data={process(
+                          mainDataResult3.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                          })),
+                          mainDataState3
+                        )}
+                        {...mainDataState3}
+                        onDataStateChange={onMainDataStateChange3}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY3}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3.total}
+                        skip={page3.skip}
+                        take={page3.take}
+                        pageable={true}
+                        onPageChange={pageChange3}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef3}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList3"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell3
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell3
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer>
+                    <ButtonContainer
+                      className="ButtonContainer"
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
+                      <div>
+                        <Button
+                          onClick={onSaveClick3}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          disabled={permissions.save ? false : true}
+                        >
+                          저장
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          disabled={infomation.workType != "N" ? false : true}
+                          icon="arrow-right"
+                          themeColor={"primary"}
+                          fillMode={"outline"}
+                        >
+                          다음
+                        </Button>
+                      </div>
+                    </ButtonContainer>
+                    <FormBoxWrap
+                      border={true}
+                      style={{ height: mobileheight3_1 }}
+                    >
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>차입번호</th>
+                            <td colSpan={3}>
+                              {infomation2.workType == "N" ? (
+                                <Input
+                                  name="brwnum"
+                                  type="text"
+                                  value={infomation2.brwnum}
+                                  onChange={InputChange2}
+                                  className="required"
+                                />
+                              ) : (
+                                <Input
+                                  name="brwnum"
+                                  type="text"
+                                  value={infomation2.brwnum}
+                                  className="readonly"
+                                />
+                              )}
+                            </td>
+                            <th>계정과목코드</th>
+                            <td>
+                              <Input
+                                name="acntcd"
+                                type="text"
+                                value={infomation2.acntcd}
+                                onChange={InputChange2}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onAccountWndClick3}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>계정과목명</th>
+                            <td>
+                              <Input
+                                name="acntnm"
+                                type="text"
+                                value={infomation2.acntnm}
+                                onChange={InputChange2}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>차입명</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="brwnm"
+                                type="text"
+                                value={infomation2.brwnm}
+                                onChange={InputChange2}
+                                className="required"
+                              />
+                            </td>
+                            <th>차입금내역</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="brwdesc"
+                                type="text"
+                                value={infomation2.brwdesc}
+                                onChange={InputChange2}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>차입처</th>
+                            <td>
+                              <Input
+                                name="custcd"
+                                type="text"
+                                value={infomation2.custcd}
+                                onChange={InputChange2}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick3}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>차입처명</th>
+                            <td>
+                              <Input
+                                name="custnm"
+                                type="text"
+                                value={infomation2.custnm}
+                                onChange={InputChange2}
+                              />
+                            </td>
+                            <th>담보사항</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="motgdesc"
+                                type="text"
+                                value={infomation2.motgdesc}
+                                onChange={InputChange2}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>차입유형</th>
+                            <td>
+                              {infomation2.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="brwtype"
+                                      value={infomation2.brwtype}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange2}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="brwtype"
+                                      value={infomation2.brwtype}
+                                      bizComponentId="L_AC030"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange2}
+                                    />
+                                  )}
+                            </td>
+                            <th>차입일자</th>
+                            <td>
+                              <DatePicker
+                                name="brwdt"
+                                value={infomation2.brwdt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange2}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>이자지급조건</th>
+                            <td>
+                              {infomation2.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="intpayterm"
+                                      value={infomation2.intpayterm}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange2}
+                                      type="new"
+                                      textField="name"
+                                      valueField="code"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="intpayterm"
+                                      value={infomation2.intpayterm}
+                                      bizComponentId="L_AC210"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange2}
+                                      textField="name"
+                                      valueField="code"
+                                    />
+                                  )}
+                            </td>
+                            <th>이자불입일</th>
+                            <td>
+                              <DatePicker
+                                name="intpaydt"
+                                value={infomation2.intpaydt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange2}
+                                placeholder=""
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>계좌번호</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="bankacntnum"
+                                type="text"
+                                value={infomation2.bankacntnum}
+                                onChange={InputChange2}
+                              />
+                            </td>
+                            <th>이자지급금액</th>
+                            <td>
+                              <NumericTextBox
+                                name="intpayamt"
+                                value={infomation2.intpayamt}
+                                onChange={InputChange2}
+                                format="n2"
+                              />
+                            </td>
+                            <th>이자지급자국금액</th>
+                            <td>
+                              <NumericTextBox
+                                name="intpayown"
+                                value={infomation2.intpayown}
+                                onChange={InputChange2}
+                                format="n2"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>차입금액</th>
+                            <td>
+                              <NumericTextBox
+                                name="brwamt"
+                                value={infomation2.brwamt}
+                                onChange={InputChange2}
+                                format="n2"
+                              />
+                            </td>
+                            <th>화폐단위</th>
+                            <td>
+                              {infomation2.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="amtunit"
+                                      value={infomation2.amtunit}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange2}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="amtunit"
+                                      value={infomation2.amtunit}
+                                      bizComponentId="L_BA020"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange2}
+                                    />
+                                  )}
+                            </td>
+                            <th>환율</th>
+                            <td>
+                              <NumericTextBox
+                                name="chgrat"
+                                value={infomation2.chgrat}
+                                onChange={InputChange2}
+                                format="n4"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>차입달러금액</th>
+                            <td>
+                              <NumericTextBox
+                                name="brwamtdlr"
+                                value={infomation2.brwamtdlr}
+                                onChange={InputChange2}
+                                format="n2"
+                              />
+                            </td>
+                            <th>차입자국금액</th>
+                            <td>
+                              <NumericTextBox
+                                name="brwamtown"
+                                value={infomation2.brwamtown}
+                                onChange={InputChange2}
+                                format="n2"
+                              />
+                            </td>
+                            <th>이율</th>
+                            <td>
+                              <NumericTextBox
+                                name="intrat"
+                                value={infomation2.intrat}
+                                onChange={InputChange2}
+                                format="n2"
+                              />
+                            </td>
+                            <th>변경이율</th>
+                            <td>
+                              <NumericTextBox
+                                name="chgintrat"
+                                value={infomation2.chgintrat}
+                                onChange={InputChange2}
+                                format="n4"
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>최조상환일</th>
+                            <td>
+                              <DatePicker
+                                name="strdmdt"
+                                value={infomation2.strdmdt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange2}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>최종상환일</th>
+                            <td>
+                              <DatePicker
+                                name="endrdmdt"
+                                value={infomation2.endrdmdt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange2}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>만기일자</th>
+                            <td>
+                              <DatePicker
+                                name="enddt"
+                                value={infomation2.enddt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange2}
+                                placeholder=""
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>상환조건</th>
+                            <td>
+                              <Checkbox
+                                name="rdmterm"
+                                value={
+                                  infomation2.rdmterm == "Y" ? true : false
+                                }
+                                onChange={InputChange2}
+                                label={"(만기일시)"}
+                              />
+                            </td>
+                            <th>상환주기</th>
+                            <td>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <NumericTextBox
+                                  name="rdmprd"
+                                  value={infomation2.rdmprd}
+                                  onChange={InputChange2}
+                                  format="n0"
+                                  width={"80%"}
+                                />
+                                개월
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>첨부파일</th>
+                            <td colSpan={7}>
+                              <Input
+                                name="files"
+                                type="text"
+                                value={infomation2.files}
+                                className="readonly"
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  type={"button"}
+                                  onClick={onAttachmentsWndClick2}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>비고</th>
+                            <td colSpan={7}>
+                              <TextArea
+                                value={infomation2.remark}
+                                name="remark"
+                                rows={2}
+                                onChange={InputChange2}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </SwiperSlide>
+                {infomation.workType != "N" ? (
+                  <>
+                    <SwiperSlide key={2}>
+                      <GridContainer>
+                        <GridTitleContainer className="ButtonContainer2_1">
+                          <ButtonContainer
+                            style={{ justifyContent: "space-between" }}
+                          >
+                            <Button
+                              onClick={() => {
+                                if (swiper && isMobile) {
+                                  swiper.slideTo(1);
+                                }
+                              }}
+                              icon="arrow-left"
+                              themeColor={"primary"}
+                              fillMode={"outline"}
+                            >
+                              이전
+                            </Button>
+                            <div>
+                              <Button
+                                onClick={onAddClick3_1}
+                                themeColor={"primary"}
+                                icon="plus"
+                                title="행 생성"
+                                disabled={permissions.save ? false : true}
+                              />
+                              <Button
+                                onClick={onDeleteClick3_1}
+                                fillMode="outline"
+                                themeColor={"primary"}
+                                icon="minus"
+                                title="행 삭제"
+                                disabled={permissions.delete ? false : true}
+                              />
+                              <Button
+                                onClick={onSaveClick3}
+                                fillMode="outline"
+                                themeColor={"primary"}
+                                icon="save"
+                                disabled={permissions.save ? false : true}
+                              >
+                                저장
+                              </Button>
+                              <Button
+                                onClick={() => {
+                                  if (swiper && isMobile) {
+                                    swiper.slideTo(3);
+                                  }
+                                }}
+                                disabled={
+                                  infomation.workType != "N" ? false : true
+                                }
+                                icon="arrow-right"
+                                themeColor={"primary"}
+                                fillMode={"outline"}
+                              >
+                                다음
+                              </Button>
+                            </div>
+                          </ButtonContainer>
+                        </GridTitleContainer>
+                        <ExcelExport
+                          data={mainDataResult3_1.data}
+                          ref={(exporter) => {
+                            _export3_1 = exporter;
+                          }}
+                          fileName="자금관리"
+                        >
+                          <Grid
+                            style={{ height: mobileheight3_2 }}
+                            data={process(
+                              mainDataResult3_1.data.map((row) => ({
+                                ...row,
+                                paydt: row.paydt
+                                  ? new Date(dateformat(row.paydt))
+                                  : new Date(dateformat("99991231")),
+                                [SELECTED_FIELD]:
+                                  selectedState3_1[idGetter3_1(row)],
+                              })),
+                              mainDataState3_1
+                            )}
+                            {...mainDataState3_1}
+                            onDataStateChange={onMainDataStateChange3_1}
+                            //선택 기능
+                            dataItemKey={DATA_ITEM_KEY3_1}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onSelectionChange3_1}
+                            //스크롤 조회 기능
+                            fixedScroll={true}
+                            total={mainDataResult3_1.total}
+                            skip={page3_1.skip}
+                            take={page3_1.take}
+                            pageable={true}
+                            onPageChange={pageChange3_1}
+                            //정렬기능
+                            sortable={true}
+                            onSortChange={onMainSortChange3_1}
+                            //컬럼순서조정
+                            reorderable={true}
+                            //컬럼너비조정
+                            resizable={true}
+                            onItemChange={onMainItemChange3_1}
+                            cellRender={customCellRender3_1}
+                            rowRender={customRowRender3_1}
+                            editField={EDIT_FIELD}
+                          >
+                            <GridColumn
+                              field="rowstatus"
+                              title=" "
+                              width="50px"
+                            />
+                            {customOptionData !== null &&
+                              customOptionData.menuCustomColumnOptions[
+                                "grdList3_1"
+                              ]
+                                ?.sort(
+                                  (a: any, b: any) => a.sortOrder - b.sortOrder
+                                )
+                                ?.map(
+                                  (item: any, idx: number) =>
+                                    item.sortOrder !== -1 && (
+                                      <GridColumn
+                                        key={idx}
+                                        id={item.id}
+                                        field={item.fieldName}
+                                        title={item.caption}
+                                        width={item.width}
+                                        cell={
+                                          numberField.includes(item.fieldName)
+                                            ? NumberCell
+                                            : dateField.includes(item.fieldName)
+                                            ? DateCell
+                                            : undefined
+                                        }
+                                        footerCell={
+                                          item.sortOrder == 0
+                                            ? mainTotalFooterCell3_1
+                                            : numberField2.includes(
+                                                item.fieldName
+                                              )
+                                            ? editNumberFooterCell3_1
+                                            : undefined
+                                        }
+                                      />
+                                    )
+                                )}
+                          </Grid>
+                        </ExcelExport>
+                      </GridContainer>
+                    </SwiperSlide>
+                    <SwiperSlide key={3}>
+                      <GridContainer>
+                        <ButtonContainer
+                          className="ButtonContainer2_2"
+                          style={{ justifyContent: "space-between" }}
+                        >
+                          <Button
+                            onClick={() => {
+                              if (swiper && isMobile) {
+                                swiper.slideTo(2);
+                              }
+                            }}
+                            icon="arrow-left"
+                            themeColor={"primary"}
+                            fillMode={"outline"}
+                          >
+                            이전
+                          </Button>
+                        </ButtonContainer>
+                        <ExcelExport
+                          data={mainDataResult3_2.data}
+                          ref={(exporter) => {
+                            _export3_2 = exporter;
+                          }}
+                          fileName="자금관리"
+                        >
+                          <Grid
+                            style={{ height: mobileheight3_3 }}
+                            data={process(
+                              mainDataResult3_2.data.map((row) => ({
+                                ...row,
+                                [SELECTED_FIELD]:
+                                  selectedState3_2[idGetter3_2(row)],
+                              })),
+                              mainDataState3_2
+                            )}
+                            {...mainDataState3_2}
+                            onDataStateChange={onMainDataStateChange3_2}
+                            //선택 기능
+                            dataItemKey={DATA_ITEM_KEY3_2}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onSelectionChange3_2}
+                            //스크롤 조회 기능
+                            fixedScroll={true}
+                            total={mainDataResult3_2.total}
+                            skip={page3_2.skip}
+                            take={page3_2.take}
+                            pageable={true}
+                            onPageChange={pageChange3_2}
+                            //정렬기능
+                            sortable={true}
+                            onSortChange={onMainSortChange3_2}
+                            //컬럼순서조정
+                            reorderable={true}
+                            //컬럼너비조정
+                            resizable={true}
+                          >
+                            {customOptionData !== null &&
+                              customOptionData.menuCustomColumnOptions[
+                                "grdList3_2"
+                              ]
+                                ?.sort(
+                                  (a: any, b: any) => a.sortOrder - b.sortOrder
+                                )
+                                ?.map(
+                                  (item: any, idx: number) =>
+                                    item.sortOrder !== -1 && (
+                                      <GridColumn
+                                        key={idx}
+                                        id={item.id}
+                                        field={item.fieldName}
+                                        title={item.caption}
+                                        width={item.width}
+                                        cell={
+                                          numberField.includes(item.fieldName)
+                                            ? NumberCell
+                                            : dateField.includes(item.fieldName)
+                                            ? DateCell
+                                            : undefined
+                                        }
+                                        footerCell={
+                                          item.sortOrder == 0
+                                            ? mainTotalFooterCell3_2
+                                            : numberField2.includes(
+                                                item.fieldName
+                                              )
+                                            ? gridSumQtyFooterCell3_2
+                                            : undefined
+                                        }
+                                      />
+                                    )
+                                )}
+                          </Grid>
+                        </ExcelExport>
+                      </GridContainer>
+                    </SwiperSlide>
+                  </>
+                ) : (
+                  ""
+                )}
+              </Swiper>
+            </>
           ) : (
             <>
               <GridContainer>
@@ -4006,7 +6249,7 @@ const AC_A0050W: React.FC = () => {
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <Button
-                      //onClick={onAddClick2}
+                      onClick={onAddClick3}
                       themeColor={"primary"}
                       icon="file-add"
                       disabled={permissions.save ? false : true}
@@ -4014,7 +6257,7 @@ const AC_A0050W: React.FC = () => {
                       생성
                     </Button>
                     <Button
-                      //onClick={onDeleteClick2}
+                      onClick={onDeleteClick3}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
@@ -4023,7 +6266,7 @@ const AC_A0050W: React.FC = () => {
                       삭제
                     </Button>
                     <Button
-                      //onClick={onSaveClick2}
+                      onClick={onSaveClick3}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
@@ -4109,8 +6352,612 @@ const AC_A0050W: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
+              <TabStrip
+                style={{ width: "100%" }}
+                selected={tabSelected2}
+                onSelect={handleSelectTab2}
+                scrollable={isMobile}
+              >
+                <TabStripTab
+                  title="기본정보"
+                  disabled={permissions.view ? false : true}
+                >
+                  <FormBoxWrap border={true} className="FormBoxWrap">
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>차입번호</th>
+                          <td colSpan={3}>
+                            {infomation2.workType == "N" ? (
+                              <Input
+                                name="brwnum"
+                                type="text"
+                                value={infomation2.brwnum}
+                                onChange={InputChange2}
+                                className="required"
+                              />
+                            ) : (
+                              <Input
+                                name="brwnum"
+                                type="text"
+                                value={infomation2.brwnum}
+                                className="readonly"
+                              />
+                            )}
+                          </td>
+                          <th>계정과목코드</th>
+                          <td>
+                            <Input
+                              name="acntcd"
+                              type="text"
+                              value={infomation2.acntcd}
+                              onChange={InputChange2}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onAccountWndClick3}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>계정과목명</th>
+                          <td>
+                            <Input
+                              name="acntnm"
+                              type="text"
+                              value={infomation2.acntnm}
+                              onChange={InputChange2}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>차입명</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="brwnm"
+                              type="text"
+                              value={infomation2.brwnm}
+                              onChange={InputChange2}
+                              className="required"
+                            />
+                          </td>
+                          <th>차입금내역</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="brwdesc"
+                              type="text"
+                              value={infomation2.brwdesc}
+                              onChange={InputChange2}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>차입처</th>
+                          <td>
+                            <Input
+                              name="custcd"
+                              type="text"
+                              value={infomation2.custcd}
+                              onChange={InputChange2}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick3}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>차입처명</th>
+                          <td>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={infomation2.custnm}
+                              onChange={InputChange2}
+                            />
+                          </td>
+                          <th>담보사항</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="motgdesc"
+                              type="text"
+                              value={infomation2.motgdesc}
+                              onChange={InputChange2}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>차입유형</th>
+                          <td>
+                            {infomation2.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="brwtype"
+                                    value={infomation2.brwtype}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange2}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="brwtype"
+                                    value={infomation2.brwtype}
+                                    bizComponentId="L_AC030"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange2}
+                                  />
+                                )}
+                          </td>
+                          <th>차입일자</th>
+                          <td>
+                            <DatePicker
+                              name="brwdt"
+                              value={infomation2.brwdt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange2}
+                              placeholder=""
+                            />
+                          </td>
+                          <th>이자지급조건</th>
+                          <td>
+                            {infomation2.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="intpayterm"
+                                    value={infomation2.intpayterm}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange2}
+                                    type="new"
+                                    textField="name"
+                                    valueField="code"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="intpayterm"
+                                    value={infomation2.intpayterm}
+                                    bizComponentId="L_AC210"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange2}
+                                    textField="name"
+                                    valueField="code"
+                                  />
+                                )}
+                          </td>
+                          <th>이자불입일</th>
+                          <td>
+                            <DatePicker
+                              name="intpaydt"
+                              value={infomation2.intpaydt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange2}
+                              placeholder=""
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>계좌번호</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="bankacntnum"
+                              type="text"
+                              value={infomation2.bankacntnum}
+                              onChange={InputChange2}
+                            />
+                          </td>
+                          <th>이자지급금액</th>
+                          <td>
+                            <NumericTextBox
+                              name="intpayamt"
+                              value={infomation2.intpayamt}
+                              onChange={InputChange2}
+                              format="n2"
+                            />
+                          </td>
+                          <th>이자지급자국금액</th>
+                          <td>
+                            <NumericTextBox
+                              name="intpayown"
+                              value={infomation2.intpayown}
+                              onChange={InputChange2}
+                              format="n2"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>차입금액</th>
+                          <td>
+                            <NumericTextBox
+                              name="brwamt"
+                              value={infomation2.brwamt}
+                              onChange={InputChange2}
+                              format="n2"
+                            />
+                          </td>
+                          <th></th>
+                          <td></td>
+                          <th>화폐단위</th>
+                          <td>
+                            {infomation2.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="amtunit"
+                                    value={infomation2.amtunit}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange2}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="amtunit"
+                                    value={infomation2.amtunit}
+                                    bizComponentId="L_BA020"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange2}
+                                  />
+                                )}
+                          </td>
+                          <th>환율</th>
+                          <td>
+                            <NumericTextBox
+                              name="chgrat"
+                              value={infomation2.chgrat}
+                              onChange={InputChange2}
+                              format="n4"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>차입달러금액</th>
+                          <td>
+                            <NumericTextBox
+                              name="brwamtdlr"
+                              value={infomation2.brwamtdlr}
+                              onChange={InputChange2}
+                              format="n2"
+                            />
+                          </td>
+                          <th>차입자국금액</th>
+                          <td>
+                            <NumericTextBox
+                              name="brwamtown"
+                              value={infomation2.brwamtown}
+                              onChange={InputChange2}
+                              format="n2"
+                            />
+                          </td>
+                          <th>이율</th>
+                          <td>
+                            <NumericTextBox
+                              name="intrat"
+                              value={infomation2.intrat}
+                              onChange={InputChange2}
+                              format="n2"
+                            />
+                          </td>
+                          <th>변경이율</th>
+                          <td>
+                            <NumericTextBox
+                              name="chgintrat"
+                              value={infomation2.chgintrat}
+                              onChange={InputChange2}
+                              format="n4"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>최조상환일</th>
+                          <td>
+                            <DatePicker
+                              name="strdmdt"
+                              value={infomation2.strdmdt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange2}
+                              placeholder=""
+                            />
+                          </td>
+                          <th>최종상환일</th>
+                          <td>
+                            <DatePicker
+                              name="endrdmdt"
+                              value={infomation2.endrdmdt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange2}
+                              placeholder=""
+                            />
+                          </td>
+                          <th>만기일자</th>
+                          <td>
+                            <DatePicker
+                              name="enddt"
+                              value={infomation2.enddt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange2}
+                              placeholder=""
+                            />
+                          </td>
+                          <th></th>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <th>상환조건</th>
+                          <td>
+                            <Checkbox
+                              name="rdmterm"
+                              value={infomation2.rdmterm == "Y" ? true : false}
+                              onChange={InputChange2}
+                              label={"(만기일시)"}
+                            />
+                          </td>
+                          <th>상환주기</th>
+                          <td>
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <NumericTextBox
+                                name="rdmprd"
+                                value={infomation2.rdmprd}
+                                onChange={InputChange2}
+                                format="n0"
+                                width={"80%"}
+                              />
+                              개월
+                            </div>
+                          </td>
+                          <th></th>
+                          <td></td>
+                          <th></th>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <th>첨부파일</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="files"
+                              type="text"
+                              value={infomation2.files}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick2}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>비고</th>
+                          <td colSpan={7}>
+                            <TextArea
+                              value={infomation2.remark}
+                              name="remark"
+                              rows={2}
+                              onChange={InputChange2}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </TabStripTab>
+                <TabStripTab
+                  title="상세정보"
+                  disabled={
+                    permissions.view
+                      ? infomation2.workType == "N"
+                        ? true
+                        : false
+                      : true
+                  }
+                >
+                  <GridContainer>
+                    <GridTitleContainer className="ButtonContainer2_1">
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick3_1}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 생성"
+                          disabled={permissions.save ? false : true}
+                        />
+                        <Button
+                          onClick={onDeleteClick3_1}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                          disabled={permissions.delete ? false : true}
+                        />
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult3_1.data}
+                      ref={(exporter) => {
+                        _export3_1 = exporter;
+                      }}
+                      fileName="자금관리"
+                    >
+                      <Grid
+                        style={{ height: webheight3_1 }}
+                        data={process(
+                          mainDataResult3_1.data.map((row) => ({
+                            ...row,
+                            paydt: row.paydt
+                              ? new Date(dateformat(row.paydt))
+                              : new Date(dateformat("99991231")),
+                            [SELECTED_FIELD]:
+                              selectedState3_1[idGetter3_1(row)],
+                          })),
+                          mainDataState3_1
+                        )}
+                        {...mainDataState3_1}
+                        onDataStateChange={onMainDataStateChange3_1}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY3_1}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3_1}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3_1.total}
+                        skip={page3_1.skip}
+                        take={page3_1.take}
+                        pageable={true}
+                        onPageChange={pageChange3_1}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3_1}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        onItemChange={onMainItemChange3_1}
+                        cellRender={customCellRender3_1}
+                        rowRender={customRowRender3_1}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList3_1"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell3_1
+                                        : numberField2.includes(item.fieldName)
+                                        ? editNumberFooterCell3_1
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab
+                  title="전표상세정보"
+                  disabled={
+                    permissions.view
+                      ? infomation2.workType == "N"
+                        ? true
+                        : false
+                      : true
+                  }
+                >
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult3_2.data}
+                      ref={(exporter) => {
+                        _export3_2 = exporter;
+                      }}
+                      fileName="자금관리"
+                    >
+                      <Grid
+                        style={{ height: webheight3_2 }}
+                        data={process(
+                          mainDataResult3_2.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]:
+                              selectedState3_2[idGetter3_2(row)],
+                          })),
+                          mainDataState3_2
+                        )}
+                        {...mainDataState3_2}
+                        onDataStateChange={onMainDataStateChange3_2}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY3_2}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange3_2}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult3_2.total}
+                        skip={page3_2.skip}
+                        take={page3_2.take}
+                        pageable={true}
+                        onPageChange={pageChange3_2}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange3_2}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList3_2"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell3_2
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell3_2
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+              </TabStrip>
             </>
           )}
+        </TabStripTab>
+        <TabStripTab
+          title="어음관리"
+          disabled={permissions.view ? false : true}
+        >
         </TabStripTab>
       </TabStrip>
       {accountWindowVisible && (
@@ -4124,6 +6971,13 @@ const AC_A0050W: React.FC = () => {
         <AccountWindow
           setVisible={setAccountWindowVisible2}
           setData={setAcntData2}
+          modal={true}
+        />
+      )}
+      {accountWindowVisible3 && (
+        <AccountWindow
+          setVisible={setAccountWindowVisible3}
+          setData={setAcntData3}
           modal={true}
         />
       )}
@@ -4143,11 +6997,32 @@ const AC_A0050W: React.FC = () => {
           modal={true}
         />
       )}
+      {custWindowVisible3 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible3}
+          workType={"N"}
+          setData={setCustData3}
+          modal={true}
+        />
+      )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={infomation.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
+          modal={true}
+        />
+      )}
+      {attachmentsWindowVisible2 && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible2}
+          setData={getAttachmentsData2}
+          para={infomation2.attdatnum}
           permission={{
             upload: permissions.save,
             download: permissions.view,
