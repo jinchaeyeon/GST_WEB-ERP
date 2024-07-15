@@ -11,7 +11,7 @@ import {
   GridPageChangeEvent,
   GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
+import { Input, NumericTextBox, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { MonthView, Scheduler } from "@progress/kendo-react-scheduler";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -41,6 +41,7 @@ import {
   getHeight,
   GetPropertyValueByName,
   handleKeyPressSearch,
+  toDate,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -49,12 +50,14 @@ import {
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { FormWithCustomEditor2 } from "../components/Scheduler/custom-form";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { ICustData } from "../hooks/interfaces";
+import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import { isLoading, OSState } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0050W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -93,7 +96,7 @@ const AC_A0050W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_dptcd_001, L_BA020, L_AC046",
+    "L_dptcd_001, L_BA020, L_AC046, R_USEYN_only",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -147,7 +150,8 @@ const AC_A0050W: React.FC = () => {
         bankacntdiv: defaultOption.find((item: any) => item.id == "bankacntdiv")
           ?.valueCode,
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
-        useyn: defaultOption.find((item: any) => item.id == "useyn")?.valueCode,
+        useyn2: defaultOption.find((item: any) => item.id == "useyn2")
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -196,7 +200,7 @@ const AC_A0050W: React.FC = () => {
     dptcd: "",
     acntcd: "",
     remark: "",
-    useyn: "",
+    useyn2: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -254,7 +258,7 @@ const AC_A0050W: React.FC = () => {
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
-    setFilters((prev) => ({
+    setFilters2((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -278,12 +282,24 @@ const AC_A0050W: React.FC = () => {
     }));
   };
 
+  const RadioChange = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   const [accountWindowVisible, setAccountWindowVisible] =
     useState<boolean>(false);
   const [accountWindowVisible2, setAccountWindowVisible2] =
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -312,6 +328,17 @@ const AC_A0050W: React.FC = () => {
         ...prev,
         custcd: data.custcd,
         custnm: data.custnm,
+      };
+    });
+  };
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setInfomation((prev) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
       };
     });
   };
@@ -407,7 +434,7 @@ const AC_A0050W: React.FC = () => {
         "@p_remark": filters2.remark,
         "@p_acntcd": filters2.acntcd,
         "@p_bankacntdiv": filters2.bankacntdiv,
-        "@p_useyn": filters2.useyn,
+        "@p_useyn": filters2.useyn2,
 
         "@p_find_row_value": filters2.find_row_value,
       },
@@ -459,10 +486,102 @@ const AC_A0050W: React.FC = () => {
               );
         if (selectedRow != undefined) {
           setSelectedState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
+          setInfomation({
+            workType: "U",
+            acntcd: selectedRow.acntcd,
+            acntnm: selectedRow.acntnm,
+            acntsrtnm: selectedRow.acntsrtnm,
+            acntsrtnum: selectedRow.acntsrtnum,
+            amtunit: selectedRow.amtunit,
+            attdatnum: selectedRow.attdatnum,
+            bankacntdiv: selectedRow.bankacntdiv,
+            bankacntnum: selectedRow.bankacntnum,
+            bankcd: selectedRow.bankcd,
+            bankdiv: selectedRow.bankdiv,
+            banknm: selectedRow.banknm,
+            closedt:
+              selectedRow.closedt == "" ? null : toDate(selectedRow.closedt),
+            contracamt: selectedRow.contracamt,
+            cotracdt:
+              selectedRow.cotracdt == "" ? null : toDate(selectedRow.cotracdt),
+            dptcd: selectedRow.dptcd,
+            enddt: selectedRow.enddt == "" ? null : toDate(selectedRow.enddt),
+            files: selectedRow.files,
+            findrow_key: selectedRow.findrow_key,
+            intrat: selectedRow.intrat,
+            limitamt: selectedRow.limitamt,
+            monsaveamt: selectedRow.monsaveamt,
+            motgdesc: selectedRow.motgdesc,
+            orgdiv: selectedRow.orgdiv,
+            plandiv: selectedRow.plandiv,
+            remark: selectedRow.remark,
+            savecnt: selectedRow.savecnt,
+            useyn: selectedRow.useyn,
+          });
         } else {
           setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+          setInfomation({
+            workType: "U",
+            acntcd: rows[0].acntcd,
+            acntnm: rows[0].acntnm,
+            acntsrtnm: rows[0].acntsrtnm,
+            acntsrtnum: rows[0].acntsrtnum,
+            amtunit: rows[0].amtunit,
+            attdatnum: rows[0].attdatnum,
+            bankacntdiv: rows[0].bankacntdiv,
+            bankacntnum: rows[0].bankacntnum,
+            bankcd: rows[0].bankcd,
+            bankdiv: rows[0].bankdiv,
+            banknm: rows[0].banknm,
+            closedt: rows[0].closedt == "" ? null : toDate(rows[0].closedt),
+            contracamt: rows[0].contracamt,
+            cotracdt: rows[0].cotracdt == "" ? null : toDate(rows[0].cotracdt),
+            dptcd: rows[0].dptcd,
+            enddt: rows[0].enddt == "" ? null : toDate(rows[0].enddt),
+            files: rows[0].files,
+            findrow_key: rows[0].findrow_key,
+            intrat: rows[0].intrat,
+            limitamt: rows[0].limitamt,
+            monsaveamt: rows[0].monsaveamt,
+            motgdesc: rows[0].motgdesc,
+            orgdiv: rows[0].orgdiv,
+            plandiv: rows[0].plandiv,
+            remark: rows[0].remark,
+            savecnt: rows[0].savecnt,
+            useyn: rows[0].useyn,
+          });
         }
       } else {
+        setInfomation({
+          workType: "N",
+          acntcd: "",
+          acntnm: "",
+          acntsrtnm: "",
+          acntsrtnum: "",
+          amtunit: "",
+          attdatnum: "",
+          bankacntdiv: "",
+          bankacntnum: "",
+          bankcd: "",
+          bankdiv: "",
+          banknm: "",
+          closedt: null,
+          contracamt: 0,
+          cotracdt: null,
+          dptcd: "",
+          enddt: null,
+          files: "",
+          findrow_key: "",
+          intrat: 0,
+          limitamt: 0,
+          monsaveamt: 0,
+          motgdesc: "",
+          orgdiv: sessionOrgdiv,
+          plandiv: "",
+          remark: "",
+          savecnt: 0,
+          useyn: "N",
+        });
       }
     } else {
       console.log("[오류 발생]");
@@ -484,6 +603,38 @@ const AC_A0050W: React.FC = () => {
     if (tabSelected == 0) {
       setMainDataResult(defaultData);
     } else if (tabSelected == 1) {
+      setPage2(initialPageState);
+      setMainDataResult2(process([], mainDataState2));
+      setInfomation({
+        workType: "N",
+        acntcd: "",
+        acntnm: "",
+        acntsrtnm: "",
+        acntsrtnum: "",
+        amtunit: "",
+        attdatnum: "",
+        bankacntdiv: "",
+        bankacntnum: "",
+        bankcd: "",
+        bankdiv: "",
+        banknm: "",
+        closedt: null,
+        contracamt: 0,
+        cotracdt: null,
+        dptcd: "",
+        enddt: null,
+        files: "",
+        findrow_key: "",
+        intrat: 0,
+        limitamt: 0,
+        monsaveamt: 0,
+        motgdesc: "",
+        orgdiv: sessionOrgdiv,
+        plandiv: "",
+        remark: "",
+        savecnt: 0,
+        useyn: "N",
+      });
     }
   };
 
@@ -589,10 +740,83 @@ const AC_A0050W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+
+    const dptcd = dptcdListData.find(
+      (item: any) => item.dptnm == selectedRowData.dptcd
+    )?.dptcd;
+
+    setInfomation({
+      workType: "U",
+      acntcd: selectedRowData.acntcd,
+      acntnm: selectedRowData.acntnm,
+      acntsrtnm: selectedRowData.acntsrtnm,
+      acntsrtnum: selectedRowData.acntsrtnum,
+      amtunit: selectedRowData.amtunit,
+      attdatnum: selectedRowData.attdatnum,
+      bankacntdiv: selectedRowData.bankacntdiv,
+      bankacntnum: selectedRowData.bankacntnum,
+      bankcd: selectedRowData.bankcd,
+      bankdiv: selectedRowData.bankdiv,
+      banknm: selectedRowData.banknm,
+      closedt:
+        selectedRowData.closedt == "" ? null : toDate(selectedRowData.closedt),
+      contracamt: selectedRowData.contracamt,
+      cotracdt:
+        selectedRowData.cotracdt == ""
+          ? null
+          : toDate(selectedRowData.cotracdt),
+      dptcd: dptcd,
+      enddt: selectedRowData.enddt == "" ? null : toDate(selectedRowData.enddt),
+      files: selectedRowData.files,
+      findrow_key: selectedRowData.findrow_key,
+      intrat: selectedRowData.intrat,
+      limitamt: selectedRowData.limitamt,
+      monsaveamt: selectedRowData.monsaveamt,
+      motgdesc: selectedRowData.motgdesc,
+      orgdiv: selectedRowData.orgdiv,
+      plandiv: selectedRowData.plandiv,
+      remark: selectedRowData.remark,
+      savecnt: selectedRowData.savecnt,
+      useyn: selectedRowData.useyn,
+    });
   };
 
   const onMainSortChange2 = (e: any) => {
     setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const onAddClick2 = () => {
+    setTabSelected2(0);
+    setInfomation({
+      workType: "N",
+      acntcd: "",
+      acntnm: "",
+      acntsrtnm: "",
+      acntsrtnum: "",
+      amtunit: "",
+      attdatnum: "",
+      bankacntdiv: "",
+      bankacntnum: "",
+      bankcd: "",
+      bankdiv: "",
+      banknm: "",
+      closedt: null,
+      contracamt: 0,
+      cotracdt: null,
+      dptcd: "",
+      enddt: null,
+      files: "",
+      findrow_key: "",
+      intrat: 0,
+      limitamt: 0,
+      monsaveamt: 0,
+      motgdesc: "",
+      orgdiv: sessionOrgdiv,
+      plandiv: "",
+      remark: "",
+      savecnt: 0,
+      useyn: "N",
+    });
   };
 
   return (
@@ -721,6 +945,7 @@ const AC_A0050W: React.FC = () => {
                       type="text"
                       value={filters2.acntcd}
                       onChange={filterInputChange}
+                      className="required"
                     />
                     <ButtonInInput>
                       <Button
@@ -734,7 +959,7 @@ const AC_A0050W: React.FC = () => {
                   <td>
                     {customOptionData !== null && (
                       <CustomOptionRadioGroup
-                        name="useyn"
+                        name="useyn2"
                         customOptionData={customOptionData}
                         changeData={filterRadioChange}
                       />
@@ -762,7 +987,7 @@ const AC_A0050W: React.FC = () => {
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <Button
-                      //onClick={onAddClick2}
+                      onClick={onAddClick2}
                       themeColor={"primary"}
                       icon="file-add"
                       disabled={permissions.save ? false : true}
@@ -1147,17 +1372,91 @@ const AC_A0050W: React.FC = () => {
                             />
                           </td>
                         </tr>
+                        <tr>
+                          <th>담보사항</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="motgdesc"
+                              type="text"
+                              value={infomation.motgdesc}
+                              onChange={InputChange}
+                            />
+                          </td>
+                          <th>사용유무</th>
+                          <td>
+                            {infomation.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionRadioGroup
+                                    name="useyn"
+                                    customOptionData={customOptionData}
+                                    changeData={RadioChange}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentRadioGroup
+                                    name="useyn"
+                                    value={infomation.useyn}
+                                    bizComponentId="R_USEYN_only"
+                                    bizComponentData={bizComponentData}
+                                    changeData={RadioChange}
+                                  />
+                                )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>첨부파일</th>
+                          <td colSpan={7}>
+                            <Input
+                              name="files"
+                              type="text"
+                              value={infomation.files}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>비고</th>
+                          <td colSpan={7}>
+                            <TextArea
+                              value={infomation.remark}
+                              name="remark"
+                              rows={2}
+                              onChange={InputChange}
+                            />
+                          </td>
+                        </tr>
                       </tbody>
                     </FormBox>
                   </FormBoxWrap>
                 </TabStripTab>
                 <TabStripTab
                   title="상세정보"
-                  disabled={permissions.view ? false : true}
+                  disabled={
+                    permissions.view
+                      ? infomation.workType == "N"
+                        ? true
+                        : false
+                      : true
+                  }
                 ></TabStripTab>
                 <TabStripTab
                   title="전표상세정보"
-                  disabled={permissions.view ? false : true}
+                  disabled={
+                    permissions.view
+                      ? infomation.workType == "N"
+                        ? true
+                        : false
+                      : true
+                  }
                 ></TabStripTab>
               </TabStrip>
             </>
@@ -1184,6 +1483,18 @@ const AC_A0050W: React.FC = () => {
           workType={"N"}
           setData={setCustData}
           modal={true}
+        />
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={infomation.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
         />
       )}
       {gridList.map((grid: TGrid) =>
