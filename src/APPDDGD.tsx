@@ -53,6 +53,7 @@ import { Iparameters } from "./store/types";
 const AC_A0000W = lazy(() => import("./routes/AC_A0000W"));
 const AC_A0020W = lazy(() => import("./routes/AC_A0020W"));
 const AC_A0030W = lazy(() => import("./routes/AC_A0030W"));
+const AC_A0050W = lazy(() => import("./routes/AC_A0050W"));
 const AC_A0070W = lazy(() => import("./routes/AC_A0070W"));
 const AC_A0090W = lazy(() => import("./routes/AC_A0090W"));
 const AC_A1000W = lazy(() => import("./routes/AC_A1000W"));
@@ -936,6 +937,8 @@ const AppInner: React.FC = () => {
       return AC_A0020W;
     } else if (str == "AC_A0030W") {
       return AC_A0030W;
+    } else if (str == "AC_A0050W") {
+      return AC_A0050W;
     } else if (str == "AC_A0070W") {
       return AC_A0070W;
     } else if (str == "AC_A0090W") {

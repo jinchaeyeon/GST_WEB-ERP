@@ -415,11 +415,7 @@ const AC_A6000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
-  const [tabSelected, setTabSelected] = useState(0);
-
-  const handleSelectTab = (e: any) => {
-    setTabSelected(e.selected);
-  };
+  
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
