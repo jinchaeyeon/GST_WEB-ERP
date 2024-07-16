@@ -1489,7 +1489,7 @@ const BA_A0020W_603: React.FC = () => {
           (item: any) => item.code_name == selectedRowData.itemlvl3
         ) == undefined
           ? ""
-          : custdivListData.find(
+          : itemlvl3ListData.find(
               (item: any) => item.code_name == selectedRowData.itemlvl3
             )?.sub_code,
       address: selectedRowData.address,
@@ -1499,7 +1499,7 @@ const BA_A0020W_603: React.FC = () => {
           (item: any) => item.code_name == selectedRowData.itemlvl2
         ) == undefined
           ? ""
-          : custdivListData.find(
+          : itemlvl2ListData.find(
               (item: any) => item.code_name == selectedRowData.itemlvl2
             )?.sub_code,
       files: selectedRowData.files,

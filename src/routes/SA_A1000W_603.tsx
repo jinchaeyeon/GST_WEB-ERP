@@ -3283,6 +3283,7 @@ const SA_A1000W_603: React.FC = () => {
     if (
       field != "rowstatus" &&
       field != "quosts" &&
+      field != "ordsts" &&
       field != "quoseq" &&
       field != "quotestnum" &&
       field != "itemlvl1" &&
