@@ -2023,6 +2023,7 @@ const BA_A0020W_603: React.FC = () => {
     setMainDataResult2(process([], mainDataState2));
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult4(process([], mainDataState4));
+    setTabSelected(0);
     const defaultOption = GetPropertyValueByName(
       customOptionData.menuCustomDefaultOptions,
       "new"
