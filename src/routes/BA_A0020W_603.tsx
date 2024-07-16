@@ -731,18 +731,6 @@ const BA_A0020W_603: React.FC = () => {
         [name]: value,
         custcd: value == true ? "자동생성" : "",
       }));
-    } else if (name == "repreregno") {
-      setInformation((prev: any) => ({
-        ...prev,
-        [name]: value,
-        bizregnum: "--",
-      }));
-    } else if (name == "bizregnum") {
-      setInformation((prev: any) => ({
-        ...prev,
-        [name]: value,
-        repreregno: "",
-      }));
     } else {
       setInformation((prev: any) => ({
         ...prev,
