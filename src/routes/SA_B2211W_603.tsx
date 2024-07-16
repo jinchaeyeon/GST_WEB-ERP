@@ -119,6 +119,7 @@ const SA_B2211W_603: React.FC = () => {
               setFilters((prev) => ({
                 ...prev,
                 frdt: e.value,
+                isSearch: true
               }))
             }
             dateFormat={"yy"}
@@ -130,27 +131,6 @@ const SA_B2211W_603: React.FC = () => {
     </React.Fragment>
   );
 
-  const endContent = (
-    <React.Fragment>
-      {isMobile ? (
-        ""
-      ) : (
-        <ButtonContainer>
-          <Button
-            icon="pi pi-search"
-            onClick={() =>
-              setFilters((prev) => ({
-                ...prev,
-                isSearch: true,
-              }))
-            }
-            disabled={permissions.view ? false : true}
-            className="mr-2"
-          />
-        </ButtonContainer>
-      )}
-    </React.Fragment>
-  );
   const [ChartList, setChartList] = useState([]);
   const [ChartList2, setChartList2] = useState([]);
   const [ChartList3, setChartList3] = useState([]);
@@ -574,7 +554,7 @@ const SA_B2211W_603: React.FC = () => {
               ""
             )}
           </TitleContainer>
-          <Toolbar start={startContent} end={endContent} />
+          <Toolbar start={startContent}/>
           <Divider />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={6} xl={4}>

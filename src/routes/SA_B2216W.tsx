@@ -299,6 +299,7 @@ const SA_B2216W: React.FC = () => {
               setFilters((prev) => ({
                 ...prev,
                 frdt: e.value,
+                isSearch: true
               }))
             }
             dateFormat={"yy"}
@@ -316,6 +317,7 @@ const SA_B2216W: React.FC = () => {
               setFilters((prev) => ({
                 ...prev,
                 mm: e.value,
+                isSearch: true
               }))
             }
             dateFormat={"mm"}
@@ -327,27 +329,6 @@ const SA_B2216W: React.FC = () => {
     </React.Fragment>
   );
 
-  const endContent = (
-    <React.Fragment>
-      {isMobile ? (
-        ""
-      ) : (
-        <ButtonContainer>
-          <Button
-            icon="pi pi-search"
-            onClick={() =>
-              setFilters((prev) => ({
-                ...prev,
-                isSearch: true,
-              }))
-            }
-            disabled={permissions.view ? false : true}
-            className="mr-2"
-          />
-        </ButtonContainer>
-      )}
-    </React.Fragment>
-  );
   return (
     <>
       <div
@@ -378,7 +359,7 @@ const SA_B2216W: React.FC = () => {
               ""
             )}
           </TitleContainer>
-          <Toolbar start={startContent} end={endContent} />
+          <Toolbar start={startContent} />
           <Divider />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
