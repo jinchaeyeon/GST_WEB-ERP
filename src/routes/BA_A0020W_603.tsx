@@ -699,6 +699,7 @@ const BA_A0020W_603: React.FC = () => {
       bankacntuser: "",
       bankacnt: "",
       estbdt: null,
+      etelnum: "",
     });
   };
 
@@ -852,6 +853,7 @@ const BA_A0020W_603: React.FC = () => {
     bankacntuser: "",
     bankacnt: "",
     estbdt: null,
+    etelnum: "",
   });
 
   //그리드 데이터 조회
@@ -985,6 +987,7 @@ const BA_A0020W_603: React.FC = () => {
             estbdt: isValidDate(selectedRow.estbdt)
               ? new Date(dateformat(selectedRow.estbdt))
               : null,
+            etelnum: selectedRow.etelnum,
           });
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
@@ -1050,6 +1053,7 @@ const BA_A0020W_603: React.FC = () => {
             estbdt: isValidDate(rows[0].estbdt)
               ? new Date(dateformat(rows[0].estbdt))
               : null,
+            etelnum: rows[0].etelnum,
           });
         }
       } else {
@@ -1489,7 +1493,7 @@ const BA_A0020W_603: React.FC = () => {
           (item: any) => item.code_name == selectedRowData.itemlvl3
         ) == undefined
           ? ""
-          : custdivListData.find(
+          : itemlvl3ListData.find(
               (item: any) => item.code_name == selectedRowData.itemlvl3
             )?.sub_code,
       address: selectedRowData.address,
@@ -1499,7 +1503,7 @@ const BA_A0020W_603: React.FC = () => {
           (item: any) => item.code_name == selectedRowData.itemlvl2
         ) == undefined
           ? ""
-          : custdivListData.find(
+          : itemlvl2ListData.find(
               (item: any) => item.code_name == selectedRowData.itemlvl2
             )?.sub_code,
       files: selectedRowData.files,
@@ -1518,6 +1522,7 @@ const BA_A0020W_603: React.FC = () => {
       estbdt: isValidDate(selectedRowData.estbdt)
         ? new Date(dateformat(selectedRowData.estbdt))
         : null,
+      etelnum: selectedRowData.etelnum,
     });
     if (swiper && isMobile) {
       swiper.slideTo(1);
@@ -2080,6 +2085,7 @@ const BA_A0020W_603: React.FC = () => {
       bankacntuser: "",
       bankacnt: "",
       estbdt: setDefaultDate2(customOptionData, "estbdt"),
+      etelnum: "",
     });
   };
 
@@ -2354,6 +2360,7 @@ const BA_A0020W_603: React.FC = () => {
           information.estbdt == null
             ? ""
             : convertDateToStr(information.estbdt),
+        etelnum: information.etelnum,
       }));
     }
   };
@@ -2395,6 +2402,7 @@ const BA_A0020W_603: React.FC = () => {
     bankacntuser: "",
     bankacnt: "",
     estbdt: "",
+    etelnum: "",
 
     rowstatus_s: "",
 
@@ -2465,6 +2473,7 @@ const BA_A0020W_603: React.FC = () => {
       "@p_bankacntuser": paraData.bankacntuser,
       "@p_bankacnt": paraData.bankacnt,
       "@p_estbdt": paraData.estbdt,
+      "@p_etelnum": paraData.etelnum,
 
       /* 재무 */
       "@p_seq_s": paraData.seq_s,
@@ -2616,6 +2625,7 @@ const BA_A0020W_603: React.FC = () => {
         bankacntuser: "",
         bankacnt: "",
         estbdt: "",
+        etelnum: "",
 
         rowstatus_s: "",
 
@@ -3241,131 +3251,6 @@ const BA_A0020W_603: React.FC = () => {
                   <FormBox>
                     <tbody>
                       <tr>
-                        <th>업체명</th>
-                        <td>
-                          <Input
-                            name="custnm"
-                            type="text"
-                            value={information.custnm}
-                            onChange={InputChange}
-                            className="required"
-                          />
-                        </td>
-                        <th>구분</th>
-                        <td>
-                          {workType == "N"
-                            ? customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="custdiv"
-                                  disabled
-                                  value={information.custdiv}
-                                  type="new"
-                                  customOptionData={customOptionData}
-                                  changeData={ComboBoxChange}
-                                  className="required"
-                                />
-                              )
-                            : bizComponentData !== null && (
-                                <BizComponentComboBox
-                                  name="custdiv"
-                                  disabled
-                                  value={information.custdiv}
-                                  bizComponentId="L_BA026"
-                                  bizComponentData={bizComponentData}
-                                  changeData={ComboBoxChange}
-                                  className="required"
-                                />
-                              )}
-                        </td>
-                        <th>상장여부</th>
-                        <td>
-                          <Checkbox
-                            name="listringyn"
-                            value={information.listringyn}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>상장구분</th>
-                        <td>
-                          {workType == "N"
-                            ? customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="listringdiv"
-                                  value={information.listringdiv}
-                                  type="new"
-                                  customOptionData={customOptionData}
-                                  changeData={ComboBoxChange}
-                                />
-                              )
-                            : bizComponentData !== null && (
-                                <BizComponentComboBox
-                                  name="listringdiv"
-                                  value={information.listringdiv}
-                                  bizComponentId="L_LISTRING"
-                                  bizComponentData={bizComponentData}
-                                  changeData={ComboBoxChange}
-                                />
-                              )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>영문회사명</th>
-                        <td>
-                          <Input
-                            name="compnm_eng"
-                            type="text"
-                            value={information.compnm_eng}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>매입단가항목</th>
-                        <td>
-                          {workType == "N"
-                            ? customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="inunpitem"
-                                  value={information.inunpitem}
-                                  type="new"
-                                  customOptionData={customOptionData}
-                                  changeData={ComboBoxChange}
-                                  className="required"
-                                />
-                              )
-                            : bizComponentData !== null && (
-                                <BizComponentComboBox
-                                  name="inunpitem"
-                                  value={information.inunpitem}
-                                  bizComponentId="L_BA008"
-                                  bizComponentData={bizComponentData}
-                                  changeData={ComboBoxChange}
-                                  className="required"
-                                />
-                              )}
-                        </td>
-                        <th>매출단가항목</th>
-                        <td>
-                          {workType == "N"
-                            ? customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="unpitem"
-                                  value={information.unpitem}
-                                  type="new"
-                                  customOptionData={customOptionData}
-                                  changeData={ComboBoxChange}
-                                  className="required"
-                                />
-                              )
-                            : bizComponentData !== null && (
-                                <BizComponentComboBox
-                                  name="unpitem"
-                                  value={information.unpitem}
-                                  bizComponentId="L_BA008"
-                                  bizComponentData={bizComponentData}
-                                  changeData={ComboBoxChange}
-                                  className="required"
-                                />
-                              )}
-                        </td>
                         <th>업체코드</th>
                         <td>
                           {information.custcd != "자동생성" &&
@@ -3432,8 +3317,173 @@ const BA_A0020W_603: React.FC = () => {
                             </>
                           )}
                         </td>
+                        <th>업체명</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="custnm"
+                            type="text"
+                            value={information.custnm}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                        <th>업체구분</th>
+                        <td>
+                          {workType == "N"
+                            ? customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="custdiv"
+                                  disabled
+                                  value={information.custdiv}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )
+                            : bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="custdiv"
+                                  disabled
+                                  value={information.custdiv}
+                                  bizComponentId="L_BA026"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )}
+                        </td>
                       </tr>
                       <tr>
+                        <th>사업자 등록번호</th>
+                        <td>
+                          <MaskedTextBox
+                            name="bizregnum"
+                            mask="000-00-00000"
+                            value={information.bizregnum}
+                            onChange={InputChange}
+                          />
+                        </td>
+
+                        <th>영문회사명</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="compnm_eng"
+                            type="text"
+                            value={information.compnm_eng}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>매입단가항목</th>
+                        <td>
+                          {workType == "N"
+                            ? customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="inunpitem"
+                                  value={information.inunpitem}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )
+                            : bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="inunpitem"
+                                  value={information.inunpitem}
+                                  bizComponentId="L_BA008"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>대표자명</th>
+                        <td>
+                          <Input
+                            name="ceonm"
+                            type="text"
+                            value={information.ceonm}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>우편번호</th>
+                        <td>
+                          <Input
+                            name="zipcode"
+                            type="text"
+                            value={information.zipcode}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>지역</th>
+                        <td>
+                          {workType == "N"
+                            ? customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="area"
+                                  value={information.area}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )
+                            : bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="area"
+                                  value={information.area}
+                                  bizComponentId="L_CR007"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                        </td>
+                        <th>매출단가항목</th>
+                        <td>
+                          {workType == "N"
+                            ? customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="unpitem"
+                                  value={information.unpitem}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )
+                            : bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="unpitem"
+                                  value={information.unpitem}
+                                  bizComponentId="L_BA008"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  className="required"
+                                />
+                              )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>주민등록번호</th>
+                        <td>
+                          <Input
+                            name="repreregno"
+                            type="text"
+                            value={information.repreregno}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>주소(본사)</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="address"
+                            type="text"
+                            value={information.address}
+                            onChange={InputChange}
+                          />
+                        </td>
                         <th>사업자구분</th>
                         <td>
                           {workType == "N"
@@ -3458,32 +3508,65 @@ const BA_A0020W_603: React.FC = () => {
                                 />
                               )}
                         </td>
-                        {information.bizdiv == "2" ? (
-                          <>
-                            <th>주민등록번호</th>
-                            <td>
-                              <Input
-                                name="repreregno"
-                                type="text"
-                                value={information.repreregno}
-                                onChange={InputChange}
-                              />
-                            </td>
-                          </>
-                        ) : (
-                          <>
-                            <th>사업자 등록번호</th>
-                            <td>
-                              <MaskedTextBox
-                                name="bizregnum"
-                                mask="000-00-00000"
-                                value={information.bizregnum}
-                                onChange={InputChange}
-                              />
-                            </td>
-                          </>
-                        )}
-
+                      </tr>
+                      <tr>
+                        <th>전화번호</th>
+                        <td>
+                          <Input
+                            name="phonenum"
+                            type="text"
+                            value={information.phonenum}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>주소(연구소)</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="address_sub"
+                            type="text"
+                            value={information.address_sub}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>개업년월일</th>
+                        <td>
+                          <DatePicker
+                            name="estbdt"
+                            format="yyyy-MM-dd"
+                            value={information.estbdt}
+                            onChange={InputChange}
+                            placeholder=""
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>전자전화번호</th>
+                        <td>
+                          <Input
+                            name="etelnum"
+                            type="text"
+                            value={information.etelnum}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>은행정보</th>
+                        <td>
+                          <Input
+                            name="bnkinfo"
+                            type="text"
+                            value={information.bnkinfo}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>예금주</th>
+                        <td>
+                          <Input
+                            name="bankacntuser"
+                            type="text"
+                            value={information.bankacntuser}
+                            onChange={InputChange}
+                          />
+                        </td>
                         <th>업태</th>
                         <td>
                           {workType == "N"
@@ -3506,6 +3589,26 @@ const BA_A0020W_603: React.FC = () => {
                                 />
                               )}
                         </td>
+                      </tr>
+                      <tr>
+                        <th>팩스번호</th>
+                        <td>
+                          <Input
+                            name="faxnum"
+                            type="text"
+                            value={information.faxnum}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>계좌번호</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="bankacnt"
+                            type="text"
+                            value={information.bankacnt}
+                            onChange={InputChange}
+                          />
+                        </td>
                         <th>업종</th>
                         <td>
                           <Input
@@ -3517,15 +3620,6 @@ const BA_A0020W_603: React.FC = () => {
                         </td>
                       </tr>
                       <tr>
-                        <th>그룹명</th>
-                        <td>
-                          <Input
-                            name="groupnm"
-                            type="text"
-                            value={information.groupnm}
-                            onChange={InputChange}
-                          />
-                        </td>
                         <th>신용평가등급</th>
                         <td>
                           {workType == "N"
@@ -3548,14 +3642,27 @@ const BA_A0020W_603: React.FC = () => {
                                 />
                               )}
                         </td>
-                        <th>대표자명</th>
+                        <th>기업구분</th>
                         <td>
-                          <Input
-                            name="ceonm"
-                            type="text"
-                            value={information.ceonm}
-                            onChange={InputChange}
-                          />
+                          {workType == "N"
+                            ? customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="itemlvl2"
+                                  value={information.itemlvl2}
+                                  type="new"
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )
+                            : bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="itemlvl2"
+                                  value={information.itemlvl2}
+                                  bizComponentId="L_BA076"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
                         </td>
                         <th>개발분야</th>
                         <td>
@@ -3579,73 +3686,13 @@ const BA_A0020W_603: React.FC = () => {
                                 />
                               )}
                         </td>
-                      </tr>
-                      <tr>
-                        <th>주소(본사)</th>
-                        <td colSpan={3}>
-                          <Input
-                            name="address"
-                            type="text"
-                            value={information.address}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>주소(연구소)</th>
-                        <td colSpan={3}>
-                          <Input
-                            name="address_sub"
-                            type="text"
-                            value={information.address_sub}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>우편번호</th>
-                        <td>
-                          <Input
-                            name="zipcode"
-                            type="text"
-                            value={information.zipcode}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>TEL</th>
-                        <td>
-                          <Input
-                            name="phonenum"
-                            type="text"
-                            value={information.phonenum}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>FAX</th>
-                        <td>
-                          <Input
-                            name="faxnum"
-                            type="text"
-                            value={information.faxnum}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>이메일</th>
-                        <td>
-                          <Input
-                            name="email"
-                            type="text"
-                            value={information.email}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>기업구분</th>
+                        <th>상장구분</th>
                         <td>
                           {workType == "N"
                             ? customOptionData !== null && (
                                 <CustomOptionComboBox
-                                  name="itemlvl2"
-                                  value={information.itemlvl2}
+                                  name="listringdiv"
+                                  value={information.listringdiv}
                                   type="new"
                                   customOptionData={customOptionData}
                                   changeData={ComboBoxChange}
@@ -3653,36 +3700,16 @@ const BA_A0020W_603: React.FC = () => {
                               )
                             : bizComponentData !== null && (
                                 <BizComponentComboBox
-                                  name="itemlvl2"
-                                  value={information.itemlvl2}
-                                  bizComponentId="L_BA076"
+                                  name="listringdiv"
+                                  value={information.listringdiv}
+                                  bizComponentId="L_LISTRING"
                                   bizComponentData={bizComponentData}
                                   changeData={ComboBoxChange}
                                 />
                               )}
                         </td>
-                        <th>지역</th>
-                        <td>
-                          {workType == "N"
-                            ? customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="area"
-                                  value={information.area}
-                                  type="new"
-                                  customOptionData={customOptionData}
-                                  changeData={ComboBoxChange}
-                                />
-                              )
-                            : bizComponentData !== null && (
-                                <BizComponentComboBox
-                                  name="area"
-                                  value={information.area}
-                                  bizComponentId="L_CR007"
-                                  bizComponentData={bizComponentData}
-                                  changeData={ComboBoxChange}
-                                />
-                              )}
-                        </td>
+                      </tr>
+                      <tr>
                         <th>국가</th>
                         <td>
                           {workType == "N"
@@ -3705,49 +3732,19 @@ const BA_A0020W_603: React.FC = () => {
                                 />
                               )}
                         </td>
-                        <th>개업년월일</th>
-                        <td>
-                          <DatePicker
-                            name="estbdt"
-                            format="yyyy-MM-dd"
-                            value={information.estbdt}
-                            onChange={InputChange}
-                            placeholder=""
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>은행정보</th>
-                        <td>
+                        <th>이메일</th>
+                        <td colSpan={3}>
                           <Input
-                            name="bnkinfo"
+                            name="email"
                             type="text"
-                            value={information.bnkinfo}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>예금주</th>
-                        <td>
-                          <Input
-                            name="bankacntuser"
-                            type="text"
-                            value={information.bankacntuser}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>계좌번호</th>
-                        <td>
-                          <Input
-                            name="bankacnt"
-                            type="text"
-                            value={information.bankacnt}
+                            value={information.email}
                             onChange={InputChange}
                           />
                         </td>
                       </tr>
                       <tr>
                         <th>첨부파일</th>
-                        <td colSpan={3}>
+                        <td colSpan={7}>
                           <Input
                             name="files"
                             type="text"
@@ -3763,8 +3760,10 @@ const BA_A0020W_603: React.FC = () => {
                             />
                           </ButtonInInput>
                         </td>
-                        <th>COMMENT</th>
-                        <td colSpan={3}>
+                      </tr>
+                      <tr>
+                        <th>비고</th>
+                        <td colSpan={7}>
                           <Input
                             name="remark"
                             type="text"
@@ -4285,131 +4284,6 @@ const BA_A0020W_603: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th>업체명</th>
-                      <td>
-                        <Input
-                          name="custnm"
-                          type="text"
-                          value={information.custnm}
-                          onChange={InputChange}
-                          className="required"
-                        />
-                      </td>
-                      <th>구분</th>
-                      <td>
-                        {workType == "N"
-                          ? customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="custdiv"
-                                disabled
-                                value={information.custdiv}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="required"
-                              />
-                            )
-                          : bizComponentData !== null && (
-                              <BizComponentComboBox
-                                name="custdiv"
-                                disabled
-                                value={information.custdiv}
-                                bizComponentId="L_BA026"
-                                bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                                className="required"
-                              />
-                            )}
-                      </td>
-                      <th>상장여부</th>
-                      <td>
-                        <Checkbox
-                          name="listringyn"
-                          value={information.listringyn}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>상장구분</th>
-                      <td>
-                        {workType == "N"
-                          ? customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="listringdiv"
-                                value={information.listringdiv}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
-                            )
-                          : bizComponentData !== null && (
-                              <BizComponentComboBox
-                                name="listringdiv"
-                                value={information.listringdiv}
-                                bizComponentId="L_LISTRING"
-                                bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>영문회사명</th>
-                      <td>
-                        <Input
-                          name="compnm_eng"
-                          type="text"
-                          value={information.compnm_eng}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>매입단가항목</th>
-                      <td>
-                        {workType == "N"
-                          ? customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="inunpitem"
-                                value={information.inunpitem}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="required"
-                              />
-                            )
-                          : bizComponentData !== null && (
-                              <BizComponentComboBox
-                                name="inunpitem"
-                                value={information.inunpitem}
-                                bizComponentId="L_BA008"
-                                bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                                className="required"
-                              />
-                            )}
-                      </td>
-                      <th>매출단가항목</th>
-                      <td>
-                        {workType == "N"
-                          ? customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="unpitem"
-                                value={information.unpitem}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="required"
-                              />
-                            )
-                          : bizComponentData !== null && (
-                              <BizComponentComboBox
-                                name="unpitem"
-                                value={information.unpitem}
-                                bizComponentId="L_BA008"
-                                bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                                className="required"
-                              />
-                            )}
-                      </td>
                       <th>업체코드</th>
                       <td>
                         {information.custcd != "자동생성" &&
@@ -4476,8 +4350,173 @@ const BA_A0020W_603: React.FC = () => {
                           </>
                         )}
                       </td>
+                      <th>업체명</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={information.custnm}
+                          onChange={InputChange}
+                          className="required"
+                        />
+                      </td>
+                      <th>업체구분</th>
+                      <td>
+                        {workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="custdiv"
+                                disabled
+                                value={information.custdiv}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="custdiv"
+                                disabled
+                                value={information.custdiv}
+                                bizComponentId="L_BA026"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                              />
+                            )}
+                      </td>
                     </tr>
                     <tr>
+                      <th>사업자 등록번호</th>
+                      <td>
+                        <MaskedTextBox
+                          name="bizregnum"
+                          mask="000-00-00000"
+                          value={information.bizregnum}
+                          onChange={InputChange}
+                        />
+                      </td>
+
+                      <th>영문회사명</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="compnm_eng"
+                          type="text"
+                          value={information.compnm_eng}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>매입단가항목</th>
+                      <td>
+                        {workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="inunpitem"
+                                value={information.inunpitem}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="inunpitem"
+                                value={information.inunpitem}
+                                bizComponentId="L_BA008"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                              />
+                            )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>대표자명</th>
+                      <td>
+                        <Input
+                          name="ceonm"
+                          type="text"
+                          value={information.ceonm}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>우편번호</th>
+                      <td>
+                        <Input
+                          name="zipcode"
+                          type="text"
+                          value={information.zipcode}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>지역</th>
+                      <td>
+                        {workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="area"
+                                value={information.area}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="area"
+                                value={information.area}
+                                bizComponentId="L_CR007"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
+                      </td>
+                      <th>매출단가항목</th>
+                      <td>
+                        {workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="unpitem"
+                                value={information.unpitem}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="unpitem"
+                                value={information.unpitem}
+                                bizComponentId="L_BA008"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                              />
+                            )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>주민등록번호</th>
+                      <td>
+                        <Input
+                          name="repreregno"
+                          type="text"
+                          value={information.repreregno}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>주소(본사)</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="address"
+                          type="text"
+                          value={information.address}
+                          onChange={InputChange}
+                        />
+                      </td>
                       <th>사업자구분</th>
                       <td>
                         {workType == "N"
@@ -4502,32 +4541,65 @@ const BA_A0020W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      {information.bizdiv == "2" ? (
-                        <>
-                          <th>주민등록번호</th>
-                          <td>
-                            <Input
-                              name="repreregno"
-                              type="text"
-                              value={information.repreregno}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        </>
-                      ) : (
-                        <>
-                          <th>사업자 등록번호</th>
-                          <td>
-                            <MaskedTextBox
-                              name="bizregnum"
-                              mask="000-00-00000"
-                              value={information.bizregnum}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        </>
-                      )}
-
+                    </tr>
+                    <tr>
+                      <th>전화번호</th>
+                      <td>
+                        <Input
+                          name="phonenum"
+                          type="text"
+                          value={information.phonenum}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>주소(연구소)</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="address_sub"
+                          type="text"
+                          value={information.address_sub}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>개업년월일</th>
+                      <td>
+                        <DatePicker
+                          name="estbdt"
+                          format="yyyy-MM-dd"
+                          value={information.estbdt}
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>전자전화번호</th>
+                      <td>
+                        <Input
+                          name="etelnum"
+                          type="text"
+                          value={information.etelnum}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>은행정보</th>
+                      <td>
+                        <Input
+                          name="bnkinfo"
+                          type="text"
+                          value={information.bnkinfo}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>예금주</th>
+                      <td>
+                        <Input
+                          name="bankacntuser"
+                          type="text"
+                          value={information.bankacntuser}
+                          onChange={InputChange}
+                        />
+                      </td>
                       <th>업태</th>
                       <td>
                         {workType == "N"
@@ -4550,6 +4622,26 @@ const BA_A0020W_603: React.FC = () => {
                               />
                             )}
                       </td>
+                    </tr>
+                    <tr>
+                      <th>팩스번호</th>
+                      <td>
+                        <Input
+                          name="faxnum"
+                          type="text"
+                          value={information.faxnum}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>계좌번호</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="bankacnt"
+                          type="text"
+                          value={information.bankacnt}
+                          onChange={InputChange}
+                        />
+                      </td>
                       <th>업종</th>
                       <td>
                         <Input
@@ -4561,15 +4653,6 @@ const BA_A0020W_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>그룹명</th>
-                      <td>
-                        <Input
-                          name="groupnm"
-                          type="text"
-                          value={information.groupnm}
-                          onChange={InputChange}
-                        />
-                      </td>
                       <th>신용평가등급</th>
                       <td>
                         {workType == "N"
@@ -4592,14 +4675,27 @@ const BA_A0020W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th>대표자명</th>
+                      <th>기업구분</th>
                       <td>
-                        <Input
-                          name="ceonm"
-                          type="text"
-                          value={information.ceonm}
-                          onChange={InputChange}
-                        />
+                        {workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="itemlvl2"
+                                value={information.itemlvl2}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="itemlvl2"
+                                value={information.itemlvl2}
+                                bizComponentId="L_BA076"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
                       </td>
                       <th>개발분야</th>
                       <td>
@@ -4623,73 +4719,13 @@ const BA_A0020W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                    </tr>
-                    <tr>
-                      <th>주소(본사)</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="address"
-                          type="text"
-                          value={information.address}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>주소(연구소)</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="address_sub"
-                          type="text"
-                          value={information.address_sub}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>우편번호</th>
-                      <td>
-                        <Input
-                          name="zipcode"
-                          type="text"
-                          value={information.zipcode}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>TEL</th>
-                      <td>
-                        <Input
-                          name="phonenum"
-                          type="text"
-                          value={information.phonenum}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>FAX</th>
-                      <td>
-                        <Input
-                          name="faxnum"
-                          type="text"
-                          value={information.faxnum}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>이메일</th>
-                      <td>
-                        <Input
-                          name="email"
-                          type="text"
-                          value={information.email}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>기업구분</th>
+                      <th>상장구분</th>
                       <td>
                         {workType == "N"
                           ? customOptionData !== null && (
                               <CustomOptionComboBox
-                                name="itemlvl2"
-                                value={information.itemlvl2}
+                                name="listringdiv"
+                                value={information.listringdiv}
                                 type="new"
                                 customOptionData={customOptionData}
                                 changeData={ComboBoxChange}
@@ -4697,36 +4733,16 @@ const BA_A0020W_603: React.FC = () => {
                             )
                           : bizComponentData !== null && (
                               <BizComponentComboBox
-                                name="itemlvl2"
-                                value={information.itemlvl2}
-                                bizComponentId="L_BA076"
+                                name="listringdiv"
+                                value={information.listringdiv}
+                                bizComponentId="L_LISTRING"
                                 bizComponentData={bizComponentData}
                                 changeData={ComboBoxChange}
                               />
                             )}
                       </td>
-                      <th>지역</th>
-                      <td>
-                        {workType == "N"
-                          ? customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="area"
-                                value={information.area}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
-                            )
-                          : bizComponentData !== null && (
-                              <BizComponentComboBox
-                                name="area"
-                                value={information.area}
-                                bizComponentId="L_CR007"
-                                bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
-                      </td>
+                    </tr>
+                    <tr>
                       <th>국가</th>
                       <td>
                         {workType == "N"
@@ -4749,49 +4765,19 @@ const BA_A0020W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th>개업년월일</th>
-                      <td>
-                        <DatePicker
-                          name="estbdt"
-                          format="yyyy-MM-dd"
-                          value={information.estbdt}
-                          onChange={InputChange}
-                          placeholder=""
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>은행정보</th>
-                      <td>
+                      <th>이메일</th>
+                      <td colSpan={3}>
                         <Input
-                          name="bnkinfo"
+                          name="email"
                           type="text"
-                          value={information.bnkinfo}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>예금주</th>
-                      <td>
-                        <Input
-                          name="bankacntuser"
-                          type="text"
-                          value={information.bankacntuser}
-                          onChange={InputChange}
-                        />
-                      </td>
-                      <th>계좌번호</th>
-                      <td>
-                        <Input
-                          name="bankacnt"
-                          type="text"
-                          value={information.bankacnt}
+                          value={information.email}
                           onChange={InputChange}
                         />
                       </td>
                     </tr>
                     <tr>
                       <th>첨부파일</th>
-                      <td colSpan={3}>
+                      <td colSpan={7}>
                         <Input
                           name="files"
                           type="text"
@@ -4807,8 +4793,10 @@ const BA_A0020W_603: React.FC = () => {
                           />
                         </ButtonInInput>
                       </td>
-                      <th>COMMENT</th>
-                      <td colSpan={3}>
+                    </tr>
+                    <tr>
+                      <th>비고</th>
+                      <td colSpan={7}>
                         <Input
                           name="remark"
                           type="text"
