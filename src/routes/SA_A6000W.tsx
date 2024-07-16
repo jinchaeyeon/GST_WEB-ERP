@@ -62,7 +62,7 @@ import {
   getMasterUserQuery,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -2406,32 +2406,45 @@ const SA_A6000W: React.FC = () => {
                   calendar={YearCalendar}
                 />
               </td>
-              <th>사번</th>
-              <td>
-                <Input
-                  name="user_id"
-                  type="text"
-                  value={filters.user_id}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    type="button"
-                    icon="more-horizontal"
-                    fillMode="flat"
-                    onClick={onPrsnnumWndClick}
-                  />
-                </ButtonInInput>
-              </td>
-              <th>성명</th>
-              <td>
-                <Input
-                  name="user_name"
-                  type="text"
-                  value={filters.user_name}
-                  onChange={filterInputChange}
-                />
-              </td>
+              {tabSelected == 1 ? (
+                <>
+                  <th>사번</th>
+                  <td>
+                    <Input
+                      name="user_id"
+                      type="text"
+                      value={filters.user_id}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onPrsnnumWndClick}
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>성명</th>
+                  <td>
+                    <Input
+                      name="user_name"
+                      type="text"
+                      value={filters.user_name}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </>
+              ) : isMobile ? (
+                ""
+              ) : (
+                <>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
+                </>
+              )}
             </tr>
           </tbody>
         </FilterBox>
