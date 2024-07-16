@@ -536,23 +536,6 @@ const SA_B2211W_603: React.FC = () => {
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>고객사별 실적 집계</Title>
-            {isMobile ? (
-              <ButtonContainer>
-                <Button
-                  icon="pi pi-search"
-                  onClick={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      isSearch: true,
-                    }))
-                  }
-                  disabled={permissions.view ? false : true}
-                  className="mr-2"
-                />
-              </ButtonContainer>
-            ) : (
-              ""
-            )}
           </TitleContainer>
           <Toolbar start={startContent}/>
           <Divider />

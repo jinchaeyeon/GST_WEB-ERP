@@ -398,23 +398,6 @@ const SA_B2226W: React.FC = () => {
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>종합실적 DASHBOARD</Title>
-            {isMobile ? (
-              <ButtonContainer>
-                <Button
-                  icon="pi pi-search"
-                  onClick={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      isSearch: true,
-                    }))
-                  }
-                  disabled={permissions.view ? false : true}
-                  className="mr-2"
-                />
-              </ButtonContainer>
-            ) : (
-              ""
-            )}
           </TitleContainer>
           <Toolbar start={startContent}/>
           <Divider />
