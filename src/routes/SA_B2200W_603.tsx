@@ -58,7 +58,7 @@ import { gridList } from "../store/columns/SA_B2200W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
-const dateField = ["exdlvdt2", "orddt"];
+const dateField = ["expindt2", "orddt"];
 const numberField = [
   "d_day",
   "week_b",
