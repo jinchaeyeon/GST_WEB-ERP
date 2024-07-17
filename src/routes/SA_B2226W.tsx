@@ -410,7 +410,7 @@ const SA_B2226W: React.FC = () => {
                         display: "flex",
                         justifyContent: "space-between",
                         width: "100%",
-                        padding: "5px 0px"
+                        padding: "5px 0px",
                       }}
                       className="text-xl text-900 font-bold"
                     >
@@ -457,21 +457,27 @@ const SA_B2226W: React.FC = () => {
               <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
                 <CardMui>
                   <CardContentMui>
-                    <GridTitle
-                      title={
-                        convertDateToStr(filters.frdt).substring(0, 4) +
-                        "년도 목표 현황"
-                      }
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        padding: "5px 0px",
+                      }}
+                      className="text-xl text-900 font-bold"
+                    >
+                      <div>
+                        {convertDateToStr(filters.frdt).substring(0, 4)}
+                        {"년도 목표 현황"}
+                      </div>
+                      <p>(단위: 천원)</p>
+                    </div>
                     <Grid container spacing={2}>
                       <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
                         <Card
                           title={"목표 금액"}
                           titlefontsize={"1rem"}
-                          data={
-                            numberWithCommas3(Math.round(doughnut.target)) +
-                            "천원"
-                          }
+                          data={numberWithCommas3(Math.round(doughnut.target))}
                           backgroundColor={theme.palette.primary.main}
                           fontsize={"1.3rem"}
                           form={"SA_B2226W"}
@@ -482,11 +488,9 @@ const SA_B2226W: React.FC = () => {
                         <Card
                           title={"실적 금액"}
                           titlefontsize={"1rem"}
-                          data={
-                            numberWithCommas3(
-                              Math.round(doughnut.performance)
-                            ) + "천원"
-                          }
+                          data={numberWithCommas3(
+                            Math.round(doughnut.performance)
+                          )}
                           backgroundColor={theme.palette.primary.main}
                           fontsize={"1.3rem"}
                           form={"SA_B2226W"}
