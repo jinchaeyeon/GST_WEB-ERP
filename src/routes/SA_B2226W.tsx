@@ -6,14 +6,13 @@ import {
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
 import { Knob } from "primereact/knob";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
+import { Title, TitleContainer } from "../CommonStyled";
 import Card from "../components/BIOComponents/CardBox";
 import {
   GetPropertyValueByName,
@@ -327,7 +326,7 @@ const SA_B2226W: React.FC = () => {
               setFilters((prev) => ({
                 ...prev,
                 frdt: e.value,
-                isSearch: true
+                isSearch: true,
               }))
             }
             dateFormat={"yy"}
@@ -399,25 +398,34 @@ const SA_B2226W: React.FC = () => {
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>종합실적 DASHBOARD</Title>
           </TitleContainer>
-          <Toolbar start={startContent}/>
+          <Toolbar start={startContent} />
           <Divider />
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
                 <CardMui>
                   <CardContentMui>
-                    <GridTitle
-                      title={
-                        convertDateToStr(filters.frdt).substring(0, 4) +
-                        "년도 실적 현황"
-                      }
-                    />
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        padding: "5px 0px"
+                      }}
+                      className="text-xl text-900 font-bold"
+                    >
+                      <div>
+                        {convertDateToStr(filters.frdt).substring(0, 4)}
+                        {"년도 실적 현황"}
+                      </div>
+                      <p>(단위: 천원)</p>
+                    </div>
                     <Grid container spacing={2}>
                       {cardOption.map((item) => (
                         <Grid item xs={12} sm={6} md={4} lg={4} xl={2.4}>
                           <Card
                             title={item.title}
-                            data={numberWithCommas3(item.data) + "천원"}
+                            data={numberWithCommas3(item.data)}
                             backgroundColor={theme.palette.primary.dark}
                             fontsize={"1.8rem"}
                             titlefontsize={"1rem"}
@@ -460,7 +468,10 @@ const SA_B2226W: React.FC = () => {
                         <Card
                           title={"목표 금액"}
                           titlefontsize={"1rem"}
-                          data={numberWithCommas3(Math.round(doughnut.target)) + "천원"}
+                          data={
+                            numberWithCommas3(Math.round(doughnut.target)) +
+                            "천원"
+                          }
                           backgroundColor={theme.palette.primary.main}
                           fontsize={"1.3rem"}
                           form={"SA_B2226W"}
@@ -471,7 +482,11 @@ const SA_B2226W: React.FC = () => {
                         <Card
                           title={"실적 금액"}
                           titlefontsize={"1rem"}
-                          data={numberWithCommas3(Math.round(doughnut.performance)) + "천원"}
+                          data={
+                            numberWithCommas3(
+                              Math.round(doughnut.performance)
+                            ) + "천원"
+                          }
                           backgroundColor={theme.palette.primary.main}
                           fontsize={"1.3rem"}
                           form={"SA_B2226W"}
