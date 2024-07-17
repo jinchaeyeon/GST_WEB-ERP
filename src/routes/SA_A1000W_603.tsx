@@ -5983,7 +5983,9 @@ const SA_A1000W_603: React.FC = () => {
                                   />
                                 )}
                           </td>
-                          <th>분석법 제공예정일</th>
+                          <th>
+                            분석법<br></br>제공예정일
+                          </th>
                           <td>
                             <DatePicker
                               name="assaydt"
@@ -7205,7 +7207,9 @@ const SA_A1000W_603: React.FC = () => {
                               />
                             )}
                       </td>
-                      <th style={{ width: "5%" }}>분석법 제공예정일</th>
+                      <th style={{ width: "5%" }}>
+                        분석법<br></br>제공예정일
+                      </th>
                       <td>
                         <DatePicker
                           name="assaydt"
@@ -8833,9 +8837,6 @@ const SA_A1000W_603: React.FC = () => {
                         data={process(
                           mainDataResult5.data.map((row) => ({
                             ...row,
-                            user_id: userListData.find(
-                              (items: any) => items.user_id == row.user_id
-                            )?.user_name,
                             ans_person: userListData.find(
                               (items: any) => items.user_id == row.ans_person
                             )?.user_name,

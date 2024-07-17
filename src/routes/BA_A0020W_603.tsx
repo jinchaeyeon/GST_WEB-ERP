@@ -501,7 +501,7 @@ const BA_A0020W_603: React.FC = () => {
           attdatnum: tempattach.attdatnum,
           files: tempattach.files,
         }));
-      } else if (tabSelected == 1) {
+      } else if (tabSelected == 2) {
         if (tempattach.attdatnumList.length > 0) {
           const newData = mainDataResult2.data.map((item: any) => {
             return {
@@ -1323,26 +1323,26 @@ const BA_A0020W_603: React.FC = () => {
         const optionsGridOne = _export.workbookOptions();
         optionsGridOne.sheets[0].title = "요약정보";
         _export.save(optionsGridOne);
-      } else if (tabSelected == 1) {
+      } else if (tabSelected == 2) {
         const optionsGridOne = _export.workbookOptions();
         const optionsGridTwo = _export2.workbookOptions();
         optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
         optionsGridOne.sheets[0].title = "요약정보";
-        optionsGridOne.sheets[1].title = "재무";
+        optionsGridOne.sheets[1].title = "재무현황";
         _export.save(optionsGridOne);
-      } else if (tabSelected == 2) {
+      } else if (tabSelected == 3) {
         const optionsGridOne = _export.workbookOptions();
         const optionsGridThree = _export3.workbookOptions();
         optionsGridOne.sheets[1] = optionsGridThree.sheets[0];
         optionsGridOne.sheets[0].title = "요약정보";
         optionsGridOne.sheets[1].title = "투자";
         _export.save(optionsGridOne);
-      } else if (tabSelected == 3) {
+      } else if (tabSelected == 1) {
         const optionsGridOne = _export.workbookOptions();
         const optionsGridFour = _export4.workbookOptions();
         optionsGridOne.sheets[1] = optionsGridFour.sheets[0];
         optionsGridOne.sheets[0].title = "요약정보";
-        optionsGridOne.sheets[1].title = "담당자";
+        optionsGridOne.sheets[1].title = "업체담당자";
         _export.save(optionsGridOne);
       }
     }
@@ -1355,6 +1355,7 @@ const BA_A0020W_603: React.FC = () => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
+    setTabSelected(0);
     resetAllGrid();
     setFilters((prev: any) => ({
       ...prev,
@@ -1423,7 +1424,7 @@ const BA_A0020W_603: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    setTabSelected(0);
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
     }
@@ -2464,7 +2465,7 @@ const BA_A0020W_603: React.FC = () => {
       "@p_estbdt": paraData.estbdt,
       "@p_etelnum": paraData.etelnum,
 
-      /* 재무 */
+      /* 재무현황 */
       "@p_seq_s": paraData.seq_s,
       "@p_yyyy_s": paraData.yyyy_s,
       "@p_dedt_ratio_s": paraData.dedt_rati_s,
@@ -2477,7 +2478,7 @@ const BA_A0020W_603: React.FC = () => {
       /* 투자 */
       "@p_paid_up_capital_s": paraData.paid_up_capital_s,
 
-      /* 담당자 */
+      /* 업체담당자 */
       "@p_rowstatus_s": paraData.rowstatus_s,
       "@p_custprsncd_s": paraData.custprsncd_s,
       "@p_prsnnm_s": paraData.prsnnm_s,
@@ -3245,64 +3246,60 @@ const BA_A0020W_603: React.FC = () => {
                           {information.custcd != "자동생성" &&
                           information.auto == true ? (
                             <>
-                              <td>
-                                <Input
-                                  name="custcd"
-                                  type="text"
-                                  value={information.custcd}
-                                  className="readonly"
-                                />
-                              </td>
+                              <Input
+                                name="custcd"
+                                type="text"
+                                value={information.custcd}
+                                className="readonly"
+                              />
                             </>
                           ) : (
                             <>
-                              <td>
-                                {information.auto == true ? (
-                                  <div className="filter-item-wrap">
-                                    <Input
-                                      name="custcd"
-                                      type="text"
-                                      value={"자동생성"}
-                                      className="readonly"
-                                      style={{ width: "100%" }}
-                                    />
-                                    <ButtonInInput>
-                                      <Checkbox
-                                        defaultChecked={true}
-                                        value={information.auto}
-                                        onChange={InputChange}
-                                        name="auto"
-                                        style={{
-                                          marginTop: "7px",
-                                          marginRight: "5px",
-                                        }}
-                                      />
-                                    </ButtonInInput>
-                                  </div>
-                                ) : (
-                                  <div className="filter-item-wrap">
-                                    <Input
-                                      name="custcd"
-                                      type="text"
-                                      value={information.custcd}
+                              {information.auto == true ? (
+                                <div className="filter-item-wrap">
+                                  <Input
+                                    name="custcd"
+                                    type="text"
+                                    value={"자동생성"}
+                                    className="readonly"
+                                    style={{ width: "100%" }}
+                                  />
+                                  <ButtonInInput>
+                                    <Checkbox
+                                      defaultChecked={true}
+                                      value={information.auto}
                                       onChange={InputChange}
-                                      className="required"
+                                      name="auto"
+                                      style={{
+                                        marginTop: "7px",
+                                        marginRight: "5px",
+                                      }}
                                     />
-                                    <ButtonInInput>
-                                      <Checkbox
-                                        defaultChecked={true}
-                                        value={information.auto}
-                                        onChange={InputChange}
-                                        name="auto"
-                                        style={{
-                                          marginTop: "7px",
-                                          marginRight: "5px",
-                                        }}
-                                      />
-                                    </ButtonInInput>
-                                  </div>
-                                )}
-                              </td>
+                                  </ButtonInInput>
+                                </div>
+                              ) : (
+                                <div className="filter-item-wrap">
+                                  <Input
+                                    name="custcd"
+                                    type="text"
+                                    value={information.custcd}
+                                    onChange={InputChange}
+                                    className="required"
+                                  />
+                                  <ButtonInInput>
+                                    <Checkbox
+                                      defaultChecked={true}
+                                      value={information.auto}
+                                      onChange={InputChange}
+                                      name="auto"
+                                      style={{
+                                        marginTop: "7px",
+                                        marginRight: "5px",
+                                      }}
+                                    />
+                                  </ButtonInInput>
+                                </div>
+                              )}
                             </>
                           )}
                         </td>
@@ -3766,7 +3763,120 @@ const BA_A0020W_603: React.FC = () => {
                 </FormBoxWrap>
               </TabStripTab>
               <TabStripTab
-                title="재무"
+                title="업체담당자"
+                disabled={
+                  permissions.view ? (workType == "N" ? true : false) : true
+                }
+              >
+                <GridContainer>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick4}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick4}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick4}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult4.data}
+                    ref={(exporter) => {
+                      _export4 = exporter;
+                    }}
+                    fileName="고객정보관리"
+                  >
+                    <Grid
+                      style={{ height: mobileheight5 }}
+                      data={process(
+                        mainDataResult4.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                        })),
+                        mainDataState4
+                      )}
+                      {...mainDataState4}
+                      onDataStateChange={onMainDataStateChange4}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY4}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange4}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult4.total}
+                      skip={page4.skip}
+                      take={page4.take}
+                      pageable={true}
+                      onPageChange={pageChange4}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange4}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={onMainItemChange4}
+                      cellRender={customCellRender4}
+                      rowRender={customRowRender4}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList4"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    comboField.includes(item.fieldName)
+                                      ? CustomComboBoxCell
+                                      : undefined
+                                  }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell4
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </TabStripTab>
+              <TabStripTab
+                title="재무현황"
                 disabled={
                   permissions.view ? (workType == "N" ? true : false) : true
                 }
@@ -4021,119 +4131,6 @@ const BA_A0020W_603: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
               </TabStripTab>
-              <TabStripTab
-                title="담당자"
-                disabled={
-                  permissions.view ? (workType == "N" ? true : false) : true
-                }
-              >
-                <GridContainer>
-                  <GridTitleContainer className="ButtonContainer2">
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick4}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onDeleteClick4}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onSaveClick4}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        title="저장"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={mainDataResult4.data}
-                    ref={(exporter) => {
-                      _export4 = exporter;
-                    }}
-                    fileName="고객정보관리"
-                  >
-                    <Grid
-                      style={{ height: mobileheight5 }}
-                      data={process(
-                        mainDataResult4.data.map((row) => ({
-                          ...row,
-                          [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
-                        })),
-                        mainDataState4
-                      )}
-                      {...mainDataState4}
-                      onDataStateChange={onMainDataStateChange4}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY4}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSelectionChange4}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult4.total}
-                      skip={page4.skip}
-                      take={page4.take}
-                      pageable={true}
-                      onPageChange={pageChange4}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange4}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                      onItemChange={onMainItemChange4}
-                      cellRender={customCellRender4}
-                      rowRender={customRowRender4}
-                      editField={EDIT_FIELD}
-                    >
-                      <GridColumn field="rowstatus" title=" " width="50px" />
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList4"]
-                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                          ?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    comboField.includes(item.fieldName)
-                                      ? CustomComboBoxCell
-                                      : undefined
-                                  }
-                                  headerCell={
-                                    requiredField.includes(item.fieldName)
-                                      ? RequiredHeader
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? mainTotalFooterCell4
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </TabStripTab>
             </TabStrip>
           </SwiperSlide>
         </Swiper>
@@ -4278,64 +4275,60 @@ const BA_A0020W_603: React.FC = () => {
                         {information.custcd != "자동생성" &&
                         information.auto == true ? (
                           <>
-                            <td>
-                              <Input
-                                name="custcd"
-                                type="text"
-                                value={information.custcd}
-                                className="readonly"
-                              />
-                            </td>
+                            <Input
+                              name="custcd"
+                              type="text"
+                              value={information.custcd}
+                              className="readonly"
+                            />
                           </>
                         ) : (
                           <>
-                            <td>
-                              {information.auto == true ? (
-                                <div className="filter-item-wrap">
-                                  <Input
-                                    name="custcd"
-                                    type="text"
-                                    value={"자동생성"}
-                                    className="readonly"
-                                    style={{ width: "100%" }}
-                                  />
-                                  <ButtonInInput>
-                                    <Checkbox
-                                      defaultChecked={true}
-                                      value={information.auto}
-                                      onChange={InputChange}
-                                      name="auto"
-                                      style={{
-                                        marginTop: "7px",
-                                        marginRight: "5px",
-                                      }}
-                                    />
-                                  </ButtonInInput>
-                                </div>
-                              ) : (
-                                <div className="filter-item-wrap">
-                                  <Input
-                                    name="custcd"
-                                    type="text"
-                                    value={information.custcd}
+                            {information.auto == true ? (
+                              <div className="filter-item-wrap">
+                                <Input
+                                  name="custcd"
+                                  type="text"
+                                  value={"자동생성"}
+                                  className="readonly"
+                                  style={{ width: "100%" }}
+                                />
+                                <ButtonInInput>
+                                  <Checkbox
+                                    defaultChecked={true}
+                                    value={information.auto}
                                     onChange={InputChange}
-                                    className="required"
+                                    name="auto"
+                                    style={{
+                                      marginTop: "7px",
+                                      marginRight: "5px",
+                                    }}
                                   />
-                                  <ButtonInInput>
-                                    <Checkbox
-                                      defaultChecked={true}
-                                      value={information.auto}
-                                      onChange={InputChange}
-                                      name="auto"
-                                      style={{
-                                        marginTop: "7px",
-                                        marginRight: "5px",
-                                      }}
-                                    />
-                                  </ButtonInInput>
-                                </div>
-                              )}
-                            </td>
+                                </ButtonInInput>
+                              </div>
+                            ) : (
+                              <div className="filter-item-wrap">
+                                <Input
+                                  name="custcd"
+                                  type="text"
+                                  value={information.custcd}
+                                  onChange={InputChange}
+                                  className="required"
+                                />
+                                <ButtonInInput>
+                                  <Checkbox
+                                    defaultChecked={true}
+                                    value={information.auto}
+                                    onChange={InputChange}
+                                    name="auto"
+                                    style={{
+                                      marginTop: "7px",
+                                      marginRight: "5px",
+                                    }}
+                                  />
+                                </ButtonInInput>
+                              </div>
+                            )}
                           </>
                         )}
                       </td>
@@ -4799,7 +4792,121 @@ const BA_A0020W_603: React.FC = () => {
               </FormBoxWrap>
             </TabStripTab>
             <TabStripTab
-              title="재무"
+              title="업체담당자"
+              disabled={
+                permissions.view ? (workType == "N" ? true : false) : true
+              }
+            >
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle></GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick4}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick4}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick4}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult4.data}
+                  ref={(exporter) => {
+                    _export4 = exporter;
+                  }}
+                  fileName="고객정보관리"
+                >
+                  <Grid
+                    style={{ height: webheight4 }}
+                    data={process(
+                      mainDataResult4.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                      })),
+                      mainDataState4
+                    )}
+                    {...mainDataState4}
+                    onDataStateChange={onMainDataStateChange4}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY4}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange4}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult4.total}
+                    skip={page4.skip}
+                    take={page4.take}
+                    pageable={true}
+                    onPageChange={pageChange4}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange4}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange4}
+                    cellRender={customCellRender4}
+                    rowRender={customRowRender4}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList4"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  comboField.includes(item.fieldName)
+                                    ? CustomComboBoxCell
+                                    : undefined
+                                }
+                                headerCell={
+                                  requiredField.includes(item.fieldName)
+                                    ? RequiredHeader
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell4
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </TabStripTab>
+            <TabStripTab
+              title="재무현황"
               disabled={
                 permissions.view ? (workType == "N" ? true : false) : true
               }
@@ -5045,120 +5152,6 @@ const BA_A0020W_603: React.FC = () => {
                                     ? mainTotalFooterCell3
                                     : numberField.includes(item.fieldName)
                                     ? editNumberFooterCell3
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </TabStripTab>
-            <TabStripTab
-              title="담당자"
-              disabled={
-                permissions.view ? (workType == "N" ? true : false) : true
-              }
-            >
-              <GridContainer>
-                <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle></GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick4}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick4}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick4}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={mainDataResult4.data}
-                  ref={(exporter) => {
-                    _export4 = exporter;
-                  }}
-                  fileName="고객정보관리"
-                >
-                  <Grid
-                    style={{ height: webheight4 }}
-                    data={process(
-                      mainDataResult4.data.map((row) => ({
-                        ...row,
-                        [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
-                      })),
-                      mainDataState4
-                    )}
-                    {...mainDataState4}
-                    onDataStateChange={onMainDataStateChange4}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY4}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange4}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult4.total}
-                    skip={page4.skip}
-                    take={page4.take}
-                    pageable={true}
-                    onPageChange={pageChange4}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange4}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onMainItemChange4}
-                    cellRender={customCellRender4}
-                    rowRender={customRowRender4}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn field="rowstatus" title=" " width="50px" />
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList4"]
-                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                        ?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  comboField.includes(item.fieldName)
-                                    ? CustomComboBoxCell
-                                    : undefined
-                                }
-                                headerCell={
-                                  requiredField.includes(item.fieldName)
-                                    ? RequiredHeader
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell4
                                     : undefined
                                 }
                               />

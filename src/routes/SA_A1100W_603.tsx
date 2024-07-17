@@ -2009,7 +2009,12 @@ const SA_A1100W_603: React.FC = () => {
       "@p_enddt": isValidDate(Information.enddt)
         ? convertDateToStr(Information.enddt)
         : "",
-      "@p_wonchgrat": Information.wonchgrat,
+      "@p_wonchgrat":
+        Information.wonchgrat == "" ||
+        Information.wonchgrat == undefined ||
+        Information.wonchgrat == null
+          ? 1
+          : Information.wonchgrat,
       "@p_amtunit": Information.amtunit,
       "@p_attdatnum": Information.attdatnum,
       "@p_rowstatus_s": ParaData.rowstatus_s,

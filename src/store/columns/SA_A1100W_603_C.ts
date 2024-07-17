@@ -267,7 +267,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_paydt",
         field: "paydt",
-        caption: "청구년월일",
+        caption: "청구예정일",
         width: 120,
       },
       {
