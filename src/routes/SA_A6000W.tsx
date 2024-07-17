@@ -2374,6 +2374,152 @@ const SA_A6000W: React.FC = () => {
     }
   };
 
+  const onAddClick2 = () => {
+    const datas: any[] = [
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "01",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 1,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "02",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 2,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "03",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 3,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "04",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 4,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "05",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 5,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "06",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 6,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "07",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 7,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "08",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 8,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "09",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 9,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "10",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 10,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "11",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 11,
+        rowstatus: "N",
+      },
+      {
+        targetnum: "",
+        yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+        mm: "12",
+        amt: 0,
+        conamt: 0,
+        rat: 0,
+        dif: 0,
+        num: 12,
+        rowstatus: "N",
+      },
+    ];
+    setMainDataResult2((prev) => {
+      return {
+        data: datas,
+        total: datas.length,
+      };
+    });
+    if (isMobile && swiper) {
+      swiper.slideTo(1);
+    }
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -2477,6 +2623,14 @@ const SA_A6000W: React.FC = () => {
                         {convertDateToStr(filters.yyyy).substring(0, 4)}년
                       </GridTitle>
                       <GridTitle>
+                        <Button
+                          onClick={onAddClick2}
+                          themeColor={"primary"}
+                          icon="file-add"
+                          disabled={permissions.save ? false : true}
+                        >
+                          신규
+                        </Button>
                         <Button
                           onClick={() => {
                             if (swiper && isMobile) {
@@ -2699,6 +2853,16 @@ const SA_A6000W: React.FC = () => {
                     <GridTitle>
                       {convertDateToStr(filters.yyyy).substring(0, 4)}년
                     </GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick2}
+                        themeColor={"primary"}
+                        icon="file-add"
+                        disabled={permissions.save ? false : true}
+                      >
+                        신규
+                      </Button>
+                    </ButtonContainer>
                   </GridTitleContainer>
                   <ExcelExport
                     data={mainDataResult.data}
