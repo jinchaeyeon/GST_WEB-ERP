@@ -57,6 +57,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   getYn,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -1405,7 +1406,7 @@ const Page: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>사용자 그룹</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

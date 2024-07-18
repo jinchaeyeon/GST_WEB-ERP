@@ -52,6 +52,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -3304,7 +3305,7 @@ const HU_A3060W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>정산기준</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

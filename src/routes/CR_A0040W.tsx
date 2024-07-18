@@ -41,6 +41,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -808,7 +809,7 @@ const CR_A0040W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>활성화 회원권 관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

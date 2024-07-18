@@ -47,6 +47,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
@@ -1227,7 +1228,7 @@ const BA_A0070W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>환율관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

@@ -47,6 +47,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -1208,7 +1209,7 @@ const HU_A2070W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>출퇴근관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

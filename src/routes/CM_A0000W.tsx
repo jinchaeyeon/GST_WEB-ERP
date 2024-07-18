@@ -41,6 +41,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -704,7 +705,7 @@ const CM_A0000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>공지사항</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

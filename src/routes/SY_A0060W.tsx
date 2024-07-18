@@ -31,6 +31,7 @@ import {
   dateformat7,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
@@ -291,7 +292,7 @@ const SY_A0060W: React.FC = () => {
       {isMobile ? (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>레이아웃 설정(NEW)</Title>
+            <Title>{getMenuName()}</Title>
             <ButtonContainer>
               {permissions && (
                 <TopButtons
@@ -417,7 +418,7 @@ const SY_A0060W: React.FC = () => {
       ) : (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>레이아웃 설정(NEW)</Title>
+            <Title>{getMenuName()}</Title>
 
             <ButtonContainer>
               {permissions && (

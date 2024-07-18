@@ -47,6 +47,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
@@ -1170,7 +1171,7 @@ const AC_B5040W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>전자세금계산서비교현황</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

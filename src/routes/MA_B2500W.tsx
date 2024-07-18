@@ -38,6 +38,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -569,7 +570,7 @@ const MA_B2500W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>매입현황조회</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

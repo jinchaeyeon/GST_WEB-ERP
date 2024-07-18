@@ -36,6 +36,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   GetPropertyValueByName,
   handleKeyPressSearch,
   UseBizComponent,
@@ -857,7 +858,7 @@ const HU_A2040W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>일근태업로드</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

@@ -37,6 +37,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -357,7 +358,7 @@ const HU_B3160W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>급상여이체명부</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

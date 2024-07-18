@@ -58,6 +58,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -602,12 +603,10 @@ const SY_A0120: React.FC = () => {
   }, [itemInfo]);
 
   useEffect(() => {
-    if(menuId != "reset") {
-      console.log(menuListData)
-      console.log(menuId)
-      console.log(menuListData.find(
-        (item: any) => item.sub_code == menuId
-      ))
+    if (menuId != "reset") {
+      console.log(menuListData);
+      console.log(menuId);
+      console.log(menuListData.find((item: any) => item.sub_code == menuId));
       const datas = mainDataResult.data.map((item: any) =>
         item.num == Object.getOwnPropertyNames(selectedState)[0]
           ? {
@@ -1365,7 +1364,7 @@ const SY_A0120: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>사용자 정보</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

@@ -30,6 +30,7 @@ import {
 import {
   getDeviceHeight,
   getHeight,
+  getMenuName,
   UseGetValueFromSessionItem,
   UsePermissions,
 } from "../components/CommonFunction";
@@ -450,7 +451,7 @@ const CHAT_BOT_MNG: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>Chatbot 관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           <Button
             onClick={onAddClick}

@@ -38,6 +38,7 @@ import {
   UsePermissions,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -941,7 +942,7 @@ const Page: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>공통코드정보</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           <TopButtons

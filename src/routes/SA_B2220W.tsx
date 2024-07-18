@@ -11,6 +11,7 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   getDeviceHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
@@ -621,7 +622,7 @@ const SA_B2220W: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>DASHBOARD(담당자별)</Title>
+            <Title>{getMenuName()}</Title>
             {isMobile ? (
               <ButtonContainer>
                 <Button

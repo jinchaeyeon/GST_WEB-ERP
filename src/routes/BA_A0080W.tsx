@@ -61,6 +61,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getItemQuery,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -485,7 +486,7 @@ const BA_A0080: React.FC = () => {
             itemno: itemInfo.itemno,
             itemnm: itemInfo.itemnm,
             insiz: itemInfo.insiz,
-            //itemacnt: itemInfo.itemacnt, 
+            //itemacnt: itemInfo.itemacnt,
             model: itemInfo.model,
             bnatur: itemInfo.bnatur,
             spec: itemInfo.spec,
@@ -1763,7 +1764,7 @@ const BA_A0080: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>단가관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

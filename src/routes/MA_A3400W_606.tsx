@@ -49,6 +49,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -1128,7 +1129,7 @@ const MA_A3400W_606: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>출고처리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

@@ -32,6 +32,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
@@ -534,11 +535,7 @@ const PR_A3000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        {isMobile ? (
-          <Title>생산실적</Title>
-        ) : (
-          <Title className="iot-title">생산실적</Title>
-        )}
+        <Title>{getMenuName()}</Title>
       </TitleContainer>
       {isMobile ? (
         <>

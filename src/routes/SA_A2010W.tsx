@@ -45,6 +45,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
@@ -1129,7 +1130,7 @@ const SA_A2010: React.FC = () => {
       {isMobile ? (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>수주처리</Title>
+            <Title>{getMenuName()}</Title>
 
             <ButtonContainer>
               {permissions && (
@@ -1580,7 +1581,7 @@ const SA_A2010: React.FC = () => {
       ) : (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>수주처리</Title>
+            <Title>{getMenuName()}</Title>
 
             <ButtonContainer>
               {permissions && (

@@ -17,6 +17,7 @@ import {
   convertDateToStr,
   getBizCom,
   getDeviceHeight,
+  getMenuName,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
@@ -541,7 +542,7 @@ const QC_B0100W: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>공정불량률</Title>
+            <Title>{getMenuName()}</Title>
             <ButtonContainer>
               <Button
                 icon="pi pi-search"

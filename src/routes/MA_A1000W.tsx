@@ -45,6 +45,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
@@ -1010,7 +1011,7 @@ const MA_A1000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>구매요청관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

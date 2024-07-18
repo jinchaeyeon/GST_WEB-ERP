@@ -17,6 +17,7 @@ import {
   dateformat2,
   getBizCom,
   getDeviceHeight,
+  getMenuName,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
@@ -462,7 +463,7 @@ const PR_B1104W: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>작업공수</Title>
+            <Title>{getMenuName()}</Title>
             <ButtonContainer>
               <Button
                 icon="pi pi-search"

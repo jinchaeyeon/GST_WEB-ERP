@@ -51,6 +51,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   setDefaultDate2,
@@ -1670,7 +1671,7 @@ const CM_A7000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>고객상담일지</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {tabSelected == 1 ? (
             <Button

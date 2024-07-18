@@ -55,6 +55,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   getPrsnnumQuery,
   handleKeyPressSearch,
   setDefaultDate,
@@ -1236,7 +1237,7 @@ const HU_A1060W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>증명서발급</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

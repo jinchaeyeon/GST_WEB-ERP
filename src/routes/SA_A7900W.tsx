@@ -53,6 +53,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -1369,7 +1370,7 @@ const SA_A7900W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>미수금/미지급 기초등록</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

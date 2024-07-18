@@ -58,6 +58,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getItemQuery,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -2629,7 +2630,7 @@ const PR_A9000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>재공품 기타입출고</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

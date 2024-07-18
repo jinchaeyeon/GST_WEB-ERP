@@ -48,6 +48,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -680,7 +681,7 @@ const App: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>데이터등록현황</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

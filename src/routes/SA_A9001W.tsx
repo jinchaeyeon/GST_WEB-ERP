@@ -55,6 +55,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
@@ -3146,7 +3147,7 @@ const SA_A9001W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>매출 E-TAX(전표)</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

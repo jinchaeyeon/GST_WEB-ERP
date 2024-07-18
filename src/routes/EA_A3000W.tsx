@@ -38,6 +38,7 @@ import {
   UseCustomOption,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import { GAP } from "../components/CommonString";
 
@@ -119,7 +120,7 @@ const EA_A3000W: React.FC = () => {
           className="TitleContainer"
           style={{ borderBottom: "1px solid #d3d3d3" }}
         >
-          <Title>전자결재</Title>
+          <Title>{getMenuName()}</Title>
         </TitleContainer>
 
         {isMobile ? (

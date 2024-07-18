@@ -68,6 +68,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
@@ -2160,7 +2161,7 @@ const CM_A4100W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>교육관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

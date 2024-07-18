@@ -36,6 +36,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -401,7 +402,7 @@ const SY_A0120: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>로그인 현황</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

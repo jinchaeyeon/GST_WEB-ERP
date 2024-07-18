@@ -37,6 +37,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
@@ -581,7 +582,7 @@ const AC_A1100W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>수입신고관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

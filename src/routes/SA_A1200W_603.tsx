@@ -51,6 +51,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas3,
   setDefaultDate,
@@ -1532,7 +1533,7 @@ const SA_A1200W_603: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>계약가능성관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {tabSelected == 1 && isMobile ? (
             <Button

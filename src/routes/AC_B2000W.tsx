@@ -46,6 +46,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -1262,7 +1263,7 @@ const AC_B2000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>경영정보조회</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

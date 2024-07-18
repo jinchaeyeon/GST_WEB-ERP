@@ -55,6 +55,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   useSysMessage,
@@ -1766,7 +1767,7 @@ const PR_A0040W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>표준공정도</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

@@ -43,6 +43,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
@@ -983,7 +984,7 @@ const PS_A0060W_301: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>휴일관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

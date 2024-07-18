@@ -35,6 +35,7 @@ import {
   UsePermissions,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -574,7 +575,7 @@ const AC_A3100W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>고정자산MASTER</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

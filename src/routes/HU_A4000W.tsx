@@ -69,6 +69,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   setDefaultDate,
   toDate,
   useSysMessage,
@@ -4860,7 +4861,7 @@ const HU_A4000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>인사고과관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

@@ -48,6 +48,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -1106,7 +1107,7 @@ const EA_A2000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>결재관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

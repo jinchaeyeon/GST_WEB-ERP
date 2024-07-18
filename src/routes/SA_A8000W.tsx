@@ -47,6 +47,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
@@ -949,7 +950,7 @@ const SA_A8000W: React.FC = () => {
       {isMobile ? (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>수금처리</Title>
+            <Title>{getMenuName()}</Title>
             <ButtonContainer>
               {permissions && (
                 <TopButtons
@@ -1267,7 +1268,7 @@ const SA_A8000W: React.FC = () => {
       ) : (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>수금처리</Title>
+            <Title>{getMenuName()}</Title>
             <ButtonContainer>
               {permissions && (
                 <TopButtons

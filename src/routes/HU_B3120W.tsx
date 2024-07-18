@@ -51,6 +51,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -1179,7 +1180,7 @@ const HU_B3120W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>개인별 명세</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

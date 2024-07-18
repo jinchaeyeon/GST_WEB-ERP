@@ -56,6 +56,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getItemQuery,
+  getMenuName,
   getSelectedFirstData,
   handleKeyPressSearch,
   numberWithCommas,
@@ -2171,7 +2172,7 @@ const BA_A0050: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>BOM관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

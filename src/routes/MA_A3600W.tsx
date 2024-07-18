@@ -57,6 +57,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getItemQuery,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -1741,7 +1742,7 @@ const MA_A3600W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>전용처리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

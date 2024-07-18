@@ -1,14 +1,3 @@
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Typography,
-} from "@mui/material";
 import {
   DataResult,
   GroupDescriptor,
@@ -60,6 +49,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
@@ -660,7 +650,7 @@ const CM_A3100W: React.FC = () => {
     setLoading(false);
   };
 
-  const hasInitialized = useRef(false); 
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
     if (!hasInitialized.current && resourceDataResult.data.length > 0) {
@@ -673,7 +663,7 @@ const CM_A3100W: React.FC = () => {
       setFilters3((prev) => ({
         ...prev,
         isSearch: true,
-        resource: firstItem.sub_code, 
+        resource: firstItem.sub_code,
       }));
       hasInitialized.current = true;
     }
@@ -751,7 +741,7 @@ const CM_A3100W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>자원예약</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -855,18 +845,18 @@ const CM_A3100W: React.FC = () => {
           <SwiperSlide key={2}>
             <GridContainer style={{ width: "100%", overflow: "auto" }}>
               <GridTitleContainer className="ButtonContainer">
-                <GridTitle>                 
-                    <Button
-                      onClick={() => {
-                        if (swiper && isMobile) {
-                          swiper.slideTo(1);
-                        }
-                      }}
-                      icon="chevron-left"
-                      themeColor={"primary"}
-                      fillMode={"flat"}
-                    ></Button>               
-                   회의실 예약
+                <GridTitle>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="chevron-left"
+                    themeColor={"primary"}
+                    fillMode={"flat"}
+                  ></Button>
+                  회의실 예약
                 </GridTitle>
               </GridTitleContainer>
               {osstate == true ? (
@@ -1023,7 +1013,7 @@ const CM_A3100W: React.FC = () => {
                         textField: "text",
                       },
                     ]}
-                    form={FormWithCustomEditor}                    
+                    form={FormWithCustomEditor}
                   >
                     <TimelineView showWorkHours={false} />
                     <DayView showWorkHours={false} />

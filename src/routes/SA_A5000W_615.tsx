@@ -32,6 +32,7 @@ import {
   UsePermissions,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -1000,7 +1001,7 @@ const SA_A5000W_615: React.FC = () => {
             {step == 0 ? (
               <>
                 <TitleContainer className="TitleContainer">
-                  <Title>판매처리</Title>
+                  <Title>{getMenuName()}</Title>
                   <ButtonContainer>
                     <Button
                       themeColor={"primary"}
@@ -1185,7 +1186,7 @@ const SA_A5000W_615: React.FC = () => {
             ) : (
               <>
                 <TitleContainer className="TitleContainer">
-                  <Title>판매처리</Title>
+                  <Title>{getMenuName()}</Title>
                   <ButtonContainer>
                     <Button
                       onClick={() => {

@@ -44,6 +44,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -967,7 +968,7 @@ const HU_A2000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>워크캘린더</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

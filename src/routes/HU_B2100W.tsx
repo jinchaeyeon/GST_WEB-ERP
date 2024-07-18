@@ -45,6 +45,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -613,7 +614,7 @@ const HU_B2100W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>일근태 월별조회</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

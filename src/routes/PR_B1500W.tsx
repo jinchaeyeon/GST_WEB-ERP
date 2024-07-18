@@ -31,6 +31,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../components/CommonString";
@@ -320,7 +321,7 @@ const PR_B1500W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>설비가동현황모니터링</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

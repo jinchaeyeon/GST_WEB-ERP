@@ -90,6 +90,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getItemQuery,
+  getMenuName,
   handleKeyPressSearch,
   isValidDate,
   numberWithCommas3,
@@ -1124,7 +1125,7 @@ const SA_A1000W_603: React.FC = () => {
       if (data.rowstatus == "N" || data.rowstatus == "U") {
         alert("저장 후 조회해주세요.");
       } else {
-        if(data.itemlvl1 == "L") {
+        if (data.itemlvl1 == "L") {
           if (data.type == "Basic") {
             setDesignWindowVisible(true);
           } else if (data.type == "Cheomdan") {
@@ -4528,7 +4529,7 @@ const SA_A1000W_603: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>프로젝트관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

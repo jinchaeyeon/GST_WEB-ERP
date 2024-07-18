@@ -42,6 +42,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
@@ -611,7 +612,7 @@ const CM_A1000W_617: React.FC = () => {
             className="TitleContainer"
             style={{ textAlign: "center" }}
           >
-            <Title>업무일지</Title>
+            <Title>{getMenuName()}</Title>
             <ButtonContainer>
               {permissions && (
                 <TopButtons
@@ -871,7 +872,7 @@ const CM_A1000W_617: React.FC = () => {
       ) : (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>업무일지</Title>
+            <Title>{getMenuName()}</Title>
 
             <ButtonContainer>
               {permissions && (

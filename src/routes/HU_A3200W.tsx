@@ -53,6 +53,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   getPrsnnumQuery,
   handleKeyPressSearch,
   numberWithCommas,
@@ -1108,7 +1109,7 @@ const HU_A3200W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>사회보험고지내역</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

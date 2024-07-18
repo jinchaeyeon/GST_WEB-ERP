@@ -33,6 +33,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
@@ -552,7 +553,7 @@ const BA_B0080W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>단가조회</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

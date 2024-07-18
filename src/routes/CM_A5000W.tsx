@@ -59,6 +59,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   isValidDate,
   setDefaultDate,
@@ -1863,7 +1864,7 @@ const CM_A5000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>컨설팅(문의·답변) 관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

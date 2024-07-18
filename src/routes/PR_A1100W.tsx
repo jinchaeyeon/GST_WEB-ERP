@@ -66,6 +66,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -2395,7 +2396,7 @@ const PR_A1100W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>계획생산</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

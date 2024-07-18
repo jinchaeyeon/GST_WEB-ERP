@@ -47,6 +47,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
@@ -184,7 +185,8 @@ const CM_A1000W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         kind1: defaultOption.find((item: any) => item.id == "kind1")?.valueCode,
-        person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
         planyn: defaultOption.find((item: any) => item.id == "planyn")
           ?.valueCode,
         isSearch: true,
@@ -1454,7 +1456,7 @@ const CM_A1000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>업무일지</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

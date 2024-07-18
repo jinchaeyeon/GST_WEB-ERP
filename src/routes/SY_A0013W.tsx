@@ -62,6 +62,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   getYn,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -2065,7 +2066,7 @@ const Page: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>사용자 권한</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

@@ -45,6 +45,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
 } from "../components/CommonFunction";
@@ -1684,7 +1685,7 @@ const CM_A8000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>ValueBox</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

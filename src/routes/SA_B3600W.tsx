@@ -15,6 +15,7 @@ import {
   UsePermissions,
   convertDateToStr,
   getDeviceHeight,
+  getMenuName,
   setDefaultDate,
 } from "../components/CommonFunction";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
@@ -494,7 +495,7 @@ const SA_B3600W: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>납기준수율</Title>
+            <Title>{getMenuName()}</Title>
             <ButtonContainer>
               <Button
                 icon="pi pi-search"

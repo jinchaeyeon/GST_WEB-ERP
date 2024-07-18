@@ -63,6 +63,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -602,7 +603,7 @@ const MA_B3100: React.FC = () => {
       {isMobile ? (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>매입집계(품목)</Title>
+            <Title>{getMenuName()}</Title>
 
             <ButtonContainer>
               {permissions && (
@@ -1442,7 +1443,7 @@ const MA_B3100: React.FC = () => {
       ) : (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>매입집계(품목)</Title>
+            <Title>{getMenuName()}</Title>
 
             <ButtonContainer>
               {permissions && (

@@ -44,6 +44,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
@@ -1128,7 +1129,7 @@ const SA_B2000: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>수주처리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

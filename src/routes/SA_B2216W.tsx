@@ -1,13 +1,12 @@
 import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
+import { Title, TitleContainer } from "../CommonStyled";
 import {
   GetPropertyValueByName,
   UseCustomOption,
@@ -17,6 +16,7 @@ import {
   convertDateToStr,
   findMessage,
   getDeviceHeight,
+  getMenuName,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
@@ -299,7 +299,7 @@ const SA_B2216W: React.FC = () => {
               setFilters((prev) => ({
                 ...prev,
                 frdt: e.value,
-                isSearch: true
+                isSearch: true,
               }))
             }
             dateFormat={"yy"}
@@ -317,7 +317,7 @@ const SA_B2216W: React.FC = () => {
               setFilters((prev) => ({
                 ...prev,
                 mm: e.value,
-                isSearch: true
+                isSearch: true,
               }))
             }
             dateFormat={"mm"}
@@ -340,7 +340,7 @@ const SA_B2216W: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>개인실적 DASHBOARD</Title>
+            <Title>{getMenuName()}</Title>
           </TitleContainer>
           <Toolbar start={startContent} />
           <Divider />

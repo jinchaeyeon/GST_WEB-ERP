@@ -40,6 +40,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -466,7 +467,7 @@ const AC_B1100W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>전표변경이력</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

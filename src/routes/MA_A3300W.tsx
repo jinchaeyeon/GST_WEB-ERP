@@ -44,6 +44,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
@@ -1076,7 +1077,7 @@ const MA_A3300W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>기타입고</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

@@ -60,6 +60,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getMasterUserQuery,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -2375,7 +2376,7 @@ const SA_A6000W: React.FC = () => {
   };
 
   const onAddClick2 = () => {
-    if(mainDataResult2.data.length > 0) {
+    if (mainDataResult2.data.length > 0) {
       if (!window.confirm("기존 자료가 초기화가 됩니다, 진행하시겠습니까?")) {
         return false;
       }
@@ -2529,7 +2530,7 @@ const SA_A6000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>판매계획관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

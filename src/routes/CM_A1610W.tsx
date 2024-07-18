@@ -25,6 +25,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import Calendar from "../components/CustomCalendar/Calendar";
@@ -448,7 +449,7 @@ const CM_A1610W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>Scheduler</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <>

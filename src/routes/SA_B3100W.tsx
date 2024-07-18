@@ -62,6 +62,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -704,7 +705,7 @@ const SA_B3100W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>매출집계(품목)</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

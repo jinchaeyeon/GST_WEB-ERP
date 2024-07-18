@@ -14,6 +14,7 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   getDeviceHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
@@ -246,7 +247,7 @@ const SA_B2227W: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <TitleContainer className="TitleContainer">
-            <Title>고객현황 DASHBOARD</Title>
+            <Title>{getMenuName()}</Title>
           </TitleContainer>
           <GridContainerWrap>
             <GridContainer width="40%">

@@ -61,6 +61,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -1176,14 +1177,16 @@ const CM_A1600: React.FC = () => {
 
       setSchedulerFilter((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
         rdoplandiv: defaultOption.find((item: any) => item.id == "rdoplandiv")
           ?.valueCode,
         isSearch: true,
       }));
       setSchedulerFilter2((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
         rdoplandiv2: defaultOption.find((item: any) => item.id == "rdoplandiv2")
           ?.valueCode,
         isSearch: true,
@@ -2221,7 +2224,7 @@ const CM_A1600: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>Scheduler</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

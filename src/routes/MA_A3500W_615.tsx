@@ -32,6 +32,7 @@ import {
   UsePermissions,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -720,7 +721,7 @@ const MA_A3500W_615: React.FC = () => {
         ) : (
           <>
             <TitleContainer className="TitleContainer">
-              <Title>생산투입</Title>
+              <Title>{getMenuName()}</Title>
               <ButtonContainer>
                 <Button
                   themeColor={"primary"}

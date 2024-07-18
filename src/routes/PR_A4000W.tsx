@@ -54,6 +54,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -1867,7 +1868,7 @@ const PR_A4000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>생산실적관리</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

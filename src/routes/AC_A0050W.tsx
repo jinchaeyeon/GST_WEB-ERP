@@ -51,6 +51,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   GetPropertyValueByName,
   handleKeyPressSearch,
   numberWithCommas,
@@ -3726,7 +3727,7 @@ const AC_A0050W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>자금관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -6957,8 +6958,7 @@ const AC_A0050W: React.FC = () => {
         <TabStripTab
           title="어음관리"
           disabled={permissions.view ? false : true}
-        >
-        </TabStripTab>
+        ></TabStripTab>
       </TabStrip>
       {accountWindowVisible && (
         <AccountWindow

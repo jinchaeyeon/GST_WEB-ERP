@@ -65,6 +65,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -2463,7 +2464,7 @@ const QC_A2000: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>수입검사</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

@@ -57,6 +57,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
@@ -1193,7 +1194,7 @@ const PR_A6000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>비가동관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

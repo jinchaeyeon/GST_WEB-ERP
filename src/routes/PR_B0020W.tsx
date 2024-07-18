@@ -62,6 +62,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -633,7 +634,7 @@ const PR_B0020W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>바코드 출력</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

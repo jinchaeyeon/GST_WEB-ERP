@@ -38,7 +38,8 @@ import {
   UsePermissions,
   getDeviceHeight,
   getGridItemChangedData,
-  getHeight
+  getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1438,7 +1439,7 @@ const HU_A3020W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>지급, 공제항목</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

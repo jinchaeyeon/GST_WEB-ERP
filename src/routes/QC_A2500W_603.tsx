@@ -52,6 +52,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   setDefaultDate,
   toDate,
   useSysMessage,
@@ -1729,7 +1730,7 @@ const QC_A2500W_603: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>컴플레인관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

@@ -52,6 +52,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -2495,7 +2496,7 @@ const MA_A3500W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>자재불출</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

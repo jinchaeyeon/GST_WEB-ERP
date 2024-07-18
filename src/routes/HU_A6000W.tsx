@@ -35,6 +35,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -578,7 +579,7 @@ const HU_A6000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>일용직 인사관리</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

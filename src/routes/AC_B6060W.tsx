@@ -36,6 +36,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -1818,7 +1819,7 @@ const AC_B6060W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>집행현황</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

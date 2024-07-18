@@ -60,6 +60,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   getPrsnnum2Query,
   handleKeyPressSearch,
   setDefaultDate,
@@ -2883,7 +2884,7 @@ FROM HU072T WHERE paycd = '4'`;
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>일용직 일근태</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

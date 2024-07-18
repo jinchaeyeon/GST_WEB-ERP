@@ -41,6 +41,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -580,7 +581,7 @@ const AC_A3000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>감가상각비현황</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

@@ -13,6 +13,7 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   getBizCom,
+  getMenuName,
 } from "./CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "./CommonString";
 
@@ -350,7 +351,7 @@ const ORG: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>부서관리</Title>
+        <Title>{getMenuName()}</Title>
       </TitleContainer>
       <TabStrip selected={selected} onSelect={handleSelect}>
         <TabStripTab title="조직도">

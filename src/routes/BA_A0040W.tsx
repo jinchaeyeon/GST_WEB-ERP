@@ -59,6 +59,7 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -2368,7 +2369,7 @@ const BA_A0040: React.FC = () => {
       {isMobile ? (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>품목관리</Title>
+            <Title>{getMenuName()}</Title>
 
             <ButtonContainer>
               {permissions && (
@@ -3093,7 +3094,7 @@ const BA_A0040: React.FC = () => {
       ) : (
         <>
           <TitleContainer className="TitleContainer">
-            <Title>품목관리</Title>
+            <Title>{getMenuName()}</Title>
 
             <ButtonContainer>
               {permissions && (

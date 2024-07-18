@@ -47,6 +47,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -438,7 +439,7 @@ const QC_B9020W_615: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>온습도 모니터링</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

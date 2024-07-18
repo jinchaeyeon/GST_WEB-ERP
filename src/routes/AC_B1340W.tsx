@@ -34,6 +34,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -310,7 +311,7 @@ const AC_B1340W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>현금출납장</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

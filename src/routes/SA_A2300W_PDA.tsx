@@ -32,6 +32,7 @@ import {
   UsePermissions,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
@@ -217,7 +218,7 @@ const SA_A2300_PDA: React.FC = () => {
   const tabPage1 = (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>출고처리(PDA)</Title>
+        <Title>{getMenuName()}</Title>
       </TitleContainer>
       {osstate == true ? (
         <div
@@ -517,7 +518,7 @@ const SA_A2300_PDA: React.FC = () => {
   const tabPage2 = (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>업체 선택</Title>
+        <Title>{getMenuName()}</Title>
       </TitleContainer>
       <GridContainer>
         <ButtonContainer
@@ -797,7 +798,7 @@ const SA_A2300_PDA: React.FC = () => {
   const tabPage3 = (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>품목 리스트</Title>
+        <Title>{getMenuName()}</Title>
       </TitleContainer>
       <GridContainer>
         <ButtonContainer
@@ -1197,7 +1198,7 @@ const SA_A2300_PDA: React.FC = () => {
   const tabPage4 = (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>LOT 목록</Title>
+        <Title>{getMenuName()}</Title>
       </TitleContainer>
       <GridContainer>
         <ButtonContainer

@@ -48,6 +48,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas3,
   setDefaultDate,
@@ -952,7 +953,7 @@ const HU_A4110W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>POINT ZONE</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

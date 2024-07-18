@@ -38,6 +38,7 @@ import {
   convertDateToStr,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -1188,7 +1189,7 @@ const AC_B5060W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>세금계산서합계표</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

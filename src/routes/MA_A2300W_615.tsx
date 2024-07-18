@@ -44,6 +44,7 @@ import {
   UsePermissions,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
@@ -821,7 +822,7 @@ const MA_A2300W_615: React.FC = () => {
             <SwiperSlide key={0}>
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <TitleContainer className="TitleContainer">
-                  <Title>원료육입고</Title>
+                  <Title>{getMenuName()}</Title>
                   <ButtonContainer>
                     <Button
                       themeColor={"primary"}
@@ -1076,7 +1077,7 @@ const MA_A2300W_615: React.FC = () => {
                 <SwiperSlide key={1}>
                   <GridContainer>
                     <TitleContainer className="TitleContainer">
-                      <Title>원료육입고</Title>
+                      <Title>{getMenuName()}</Title>
                       <ButtonContainer>
                         <Button
                           onClick={() => {
@@ -1174,7 +1175,7 @@ const MA_A2300W_615: React.FC = () => {
                 <SwiperSlide key={2}>
                   <GridContainer>
                     <TitleContainer className="TitleContainer">
-                      <Title>원료육입고</Title>
+                      <Title>{getMenuName()}</Title>
                       <ButtonContainer>
                         <Button
                           onClick={() => onSaveClick()}
@@ -1267,7 +1268,7 @@ const MA_A2300W_615: React.FC = () => {
         ) : (
           <>
             <TitleContainer className="TitleContainer">
-              <Title>원료육입고</Title>
+              <Title>{getMenuName()}</Title>
               <ButtonContainer>
                 <Button
                   id="allreset"

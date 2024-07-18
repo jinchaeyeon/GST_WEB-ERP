@@ -23,7 +23,7 @@ import React, {
   useEffect,
   useLayoutEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -61,10 +61,11 @@ import {
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1152,9 +1153,7 @@ const CM_A7010W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>
-          {loginResult.companyCode == "2302BA03" ? "상담일지" : "회의록관리"}
-        </Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

@@ -57,6 +57,7 @@ import {
   findMessage,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -1108,7 +1109,7 @@ const AC_B6080W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>미수금/미지급현황</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (

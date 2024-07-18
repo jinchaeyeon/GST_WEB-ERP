@@ -1,17 +1,15 @@
 import { Grid, Typography } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "hammerjs";
-import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  ButtonContainer,
   GridTitle,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import {
   GetPropertyValueByName,
@@ -22,6 +20,7 @@ import {
   convertDateToStr,
   findMessage,
   getDeviceHeight,
+  getMenuName,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
@@ -119,7 +118,7 @@ const SA_B2211W_603: React.FC = () => {
               setFilters((prev) => ({
                 ...prev,
                 frdt: e.value,
-                isSearch: true
+                isSearch: true,
               }))
             }
             dateFormat={"yy"}
@@ -535,9 +534,9 @@ const SA_B2211W_603: React.FC = () => {
       >
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>고객사별 실적 집계</Title>
+            <Title>{getMenuName()}</Title>
           </TitleContainer>
-          <Toolbar start={startContent}/>
+          <Toolbar start={startContent} />
           <Divider />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={6} xl={4}>

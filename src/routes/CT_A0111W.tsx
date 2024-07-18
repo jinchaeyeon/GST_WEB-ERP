@@ -35,6 +35,7 @@ import {
   dateformat2,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
 } from "../components/CommonFunction";
@@ -274,7 +275,7 @@ const CT_A0111W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title>품목별 표준원가 분석표</Title>
+        <Title>{getMenuName()}</Title>
 
         <ButtonContainer>
           {permissions && (
