@@ -415,7 +415,6 @@ const AC_B3000W: React.FC = () => {
               search={search}
               disable={true}
               permissions={permissions}
-              pathname="AC_B3000W"
             />
           )}
 

@@ -283,7 +283,6 @@ const CT_A0111W: React.FC = () => {
               search={search}
               disable={true}
               permissions={permissions}
-              pathname="CT_A0111W"
             />
           )}
 

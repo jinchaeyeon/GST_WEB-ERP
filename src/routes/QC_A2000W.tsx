@@ -2472,7 +2472,6 @@ const QC_A2000: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="QC_A2000W"
             />
           )}
         </ButtonContainer>

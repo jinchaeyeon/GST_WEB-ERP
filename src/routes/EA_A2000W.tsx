@@ -1114,7 +1114,6 @@ const EA_A2000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="EA_A2000W"
             />
           )}
         </ButtonContainer>

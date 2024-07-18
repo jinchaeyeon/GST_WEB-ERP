@@ -611,7 +611,6 @@ const MA_B3100: React.FC = () => {
                   search={search}
                   exportExcel={exportExcel}
                   permissions={permissions}
-                  pathname="MA_B3100W"
                 />
               )}
             </ButtonContainer>
@@ -1451,7 +1450,6 @@ const MA_B3100: React.FC = () => {
                   search={search}
                   exportExcel={exportExcel}
                   permissions={permissions}
-                  pathname="MA_B3100W"
                 />
               )}
             </ButtonContainer>

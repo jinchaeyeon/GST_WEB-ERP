@@ -717,7 +717,6 @@ const QC_A0120: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="QC_A0120W"
             />
           )}
         </ButtonContainer>

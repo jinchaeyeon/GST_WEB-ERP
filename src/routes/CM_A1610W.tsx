@@ -456,7 +456,6 @@ const CM_A1610W: React.FC = () => {
               <TopButtons
                 search={search}
                 permissions={permissions}
-                pathname="CM_A1610W"
                 disable={true}
               />
               <Button

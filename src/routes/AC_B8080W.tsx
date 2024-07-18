@@ -345,7 +345,6 @@ const AC_B8080W: React.FC = () => {
               search={search}
               disable={true}
               permissions={permissions}
-              pathname="AC_B8080W"
             />
           )}
         </ButtonContainer>

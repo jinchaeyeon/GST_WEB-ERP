@@ -1225,7 +1225,6 @@ const PR_A5000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="PR_A5000W"
             />
           )}
         </ButtonContainer>

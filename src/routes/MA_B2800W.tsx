@@ -881,7 +881,6 @@ const MA_B2800W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="MA_B2800W"
             />
           )}
         </ButtonContainer>

@@ -478,7 +478,6 @@ const TO_B0011W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="TO_B0011W"
             />
           )}
         </ButtonContainer>

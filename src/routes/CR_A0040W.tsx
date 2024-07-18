@@ -817,7 +817,6 @@ const CR_A0040W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="CR_A0040W"
             />
           )}
         </ButtonContainer>

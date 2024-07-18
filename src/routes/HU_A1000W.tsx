@@ -1083,7 +1083,6 @@ const HU_A1000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="HU_A1000W"
             />
           )}
         </ButtonContainer>

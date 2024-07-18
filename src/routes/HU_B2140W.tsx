@@ -839,7 +839,6 @@ const HU_B2140W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="HU_B2140W"
             />
           )}
         </ButtonContainer>

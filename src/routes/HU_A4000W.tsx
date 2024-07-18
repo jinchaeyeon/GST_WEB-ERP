@@ -4869,7 +4869,6 @@ const HU_A4000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="HU_A4000W"
             />
           )}
         </ButtonContainer>

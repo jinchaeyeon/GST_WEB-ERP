@@ -1692,7 +1692,6 @@ const CM_A7000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="CM_A7000W"
             />
           )}
         </ButtonContainer>

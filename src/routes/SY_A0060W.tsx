@@ -299,7 +299,6 @@ const SY_A0060W: React.FC = () => {
                   search={search}
                   permissions={permissions}
                   disable={true}
-                  pathname="SY_A0060W"
                 />
               )}
             </ButtonContainer>
@@ -426,7 +425,6 @@ const SY_A0060W: React.FC = () => {
                   search={search}
                   permissions={permissions}
                   disable={true}
-                  pathname="SY_A0060W"
                 />
               )}
             </ButtonContainer>

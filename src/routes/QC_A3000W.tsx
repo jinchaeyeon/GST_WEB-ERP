@@ -2023,7 +2023,6 @@ const QC_A3000: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="QC_A3000W"
             />
           )}
         </ButtonContainer>

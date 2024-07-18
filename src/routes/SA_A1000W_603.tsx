@@ -4537,7 +4537,6 @@ const SA_A1000W_603: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_A1000W_603"
             />
           )}
         </ButtonContainer>

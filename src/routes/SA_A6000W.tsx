@@ -2538,7 +2538,6 @@ const SA_A6000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_A6000W"
             />
           )}
         </ButtonContainer>

@@ -1138,7 +1138,6 @@ const SA_A2010: React.FC = () => {
                   search={search}
                   exportExcel={exportExcel}
                   permissions={permissions}
-                  pathname="SA_A2010W"
                 />
               )}
             </ButtonContainer>
@@ -1589,7 +1588,6 @@ const SA_A2010: React.FC = () => {
                   search={search}
                   exportExcel={exportExcel}
                   permissions={permissions}
-                  pathname="SA_A2010W"
                 />
               )}
             </ButtonContainer>

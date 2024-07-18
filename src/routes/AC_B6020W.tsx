@@ -312,7 +312,6 @@ const AC_B6020W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="AC_B6020W"
             />
           )}
         </ButtonContainer>

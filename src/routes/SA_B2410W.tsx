@@ -573,7 +573,6 @@ const SA_B2410: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_B2410W"
             />
           )}
         </ButtonContainer>

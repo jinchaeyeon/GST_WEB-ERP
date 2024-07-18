@@ -11,7 +11,6 @@ interface ITopButtons {
   exportExcel?: () => void;
   permissions: TPermissions;
   disable?: boolean;
-  pathname: string;
 }
 
 const TopButtons = ({
@@ -19,7 +18,6 @@ const TopButtons = ({
   exportExcel,
   permissions,
   disable = false,
-  pathname,
 }: ITopButtons) => {
   const processApi = useApi();
   const [menus, setMenus] = useRecoilState(menusState);
@@ -28,7 +26,11 @@ const TopButtons = ({
 
   useEffect(() => {
     if (menus) {
-      const menu = menus.find((menu) => menu.formId == pathname);
+      const menu = menus.find(
+        (menu) =>
+          menu.formId ==
+          window.location.href.split("?")[0].split("/")[3].toUpperCase()
+      );
       if (menu) {
         setIsFav(menu.isFavorite);
       }
@@ -42,7 +44,7 @@ const TopButtons = ({
   const fetchFavSaved = async (val: boolean) => {
     let data: any;
     const para = {
-      formId: pathname,
+      formId: window.location.href.split("?")[0].split("/")[3].toUpperCase(),
     };
     try {
       data = await processApi<any>(val ? "fav" : "del-fav", para);

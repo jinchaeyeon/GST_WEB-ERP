@@ -1738,7 +1738,6 @@ const QC_A2500W_603: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="QC_A2500W_603"
             />
           )}
         </ButtonContainer>

@@ -2073,7 +2073,6 @@ const Page: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SY_A0013W"
             />
           )}
         </ButtonContainer>

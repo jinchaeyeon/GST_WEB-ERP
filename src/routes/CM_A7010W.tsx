@@ -1160,7 +1160,6 @@ const CM_A7010W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="CM_A7010W"
             />
           )}
         </ButtonContainer>

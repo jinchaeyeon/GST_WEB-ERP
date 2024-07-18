@@ -991,7 +991,6 @@ const PS_A0060W_301: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="PS_A0060W_301"
             />
           )}
         </ButtonContainer>

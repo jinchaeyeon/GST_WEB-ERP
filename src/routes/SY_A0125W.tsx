@@ -1321,7 +1321,6 @@ const SY_A0125W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SY_A0125W"
             />
           )}
         </ButtonContainer>

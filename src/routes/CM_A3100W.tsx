@@ -749,7 +749,6 @@ const CM_A3100W: React.FC = () => {
               search={search}
               disable={true}
               permissions={permissions}
-              pathname="CM_A3100W"
             />
           )}
         </ButtonContainer>

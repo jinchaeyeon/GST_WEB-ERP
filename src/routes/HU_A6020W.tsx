@@ -2893,7 +2893,6 @@ FROM HU072T WHERE paycd = '4'`;
               exportExcel={tabSelected == 0 ? exportExcel : undefined}
               permissions={permissions}
               disable={tabSelected == 0 ? false : true}
-              pathname="HU_A6020W"
             />
           )}
         </ButtonContainer>

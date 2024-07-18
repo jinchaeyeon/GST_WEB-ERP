@@ -1252,7 +1252,6 @@ const MA_A2700W: React.FC = () => {
                   search={search}
                   exportExcel={exportExcel}
                   permissions={permissions}
-                  pathname="MA_A2700W"
                 />
               )}
             </ButtonContainer>
@@ -1724,7 +1723,6 @@ const MA_A2700W: React.FC = () => {
                   search={search}
                   exportExcel={exportExcel}
                   permissions={permissions}
-                  pathname="MA_A2700W"
                 />
               )}
             </ButtonContainer>

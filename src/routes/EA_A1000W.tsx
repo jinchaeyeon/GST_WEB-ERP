@@ -2091,7 +2091,6 @@ const EA_A1000: React.FC = () => {
                 search={search}
                 exportExcel={exportExcel}
                 permissions={permissions}
-                pathname="EA_A1000W"
               />
             </>
           )}
