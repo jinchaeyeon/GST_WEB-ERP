@@ -1124,16 +1124,20 @@ const SA_A1000W_603: React.FC = () => {
       if (data.rowstatus == "N" || data.rowstatus == "U") {
         alert("저장 후 조회해주세요.");
       } else {
-        if (data.type == "Basic") {
-          setDesignWindowVisible(true);
-        } else if (data.type == "Cheomdan") {
-          setDesignWindowVisible2(true);
-        } else if (data.type == "Invitro") {
-          setDesignWindowVisible3(true);
-        } else if (data.type == "Analyze") {
-          setDesignWindowVisible4(true);
+        if(data.itemlvl1 == "L") {
+          if (data.type == "Basic") {
+            setDesignWindowVisible(true);
+          } else if (data.type == "Cheomdan") {
+            setDesignWindowVisible2(true);
+          } else if (data.type == "Invitro") {
+            setDesignWindowVisible3(true);
+          } else if (data.type == "Analyze") {
+            setDesignWindowVisible4(true);
+          } else {
+            alert("해당되는 디자인 타입이 없습니다.");
+          }
         } else {
-          alert("해당되는 디자인 타입이 없습니다.");
+          alert("품목계정이 제품이 아니면 디자인상세가 존재하지 않습니다.");
         }
       }
     } else {
