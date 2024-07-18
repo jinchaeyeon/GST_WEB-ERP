@@ -38,6 +38,8 @@ import MenuWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 type TItemInfo = {
   files: string;
@@ -114,7 +116,7 @@ const SY_A0009W: React.FC = () => {
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
-        setMobileHeight(getDeviceHeight(false));
+        setMobileHeight(getDeviceHeight(false) - height2);
         setWebHeight(getDeviceHeight(false) - height2 - 30);
       };
       handleWindowResize();
@@ -207,6 +209,9 @@ const SY_A0009W: React.FC = () => {
   const mobile2Ref = useRef<HTMLInputElement>(null);
   const mobile3Ref = useRef<HTMLInputElement>(null);
 
+  const tel2Ref = useRef<HTMLInputElement>(null);
+  const tel3Ref = useRef<HTMLInputElement>(null);
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -259,7 +264,6 @@ const SY_A0009W: React.FC = () => {
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log(rows);
       if (totalRowCnt > 0) {
         const userData = {
           ...rows[0],
@@ -267,6 +271,20 @@ const SY_A0009W: React.FC = () => {
         };
         setUser(userData);
         setImgBase64("data:image/png;base64," + userData.profile_image);
+        const [email1, email2] = (user.email || "").split("@");
+        setEmailParts({ email1, email2 });
+        const mobile = user.mobile_no || "";
+        setMobileParts({
+          mobile1: rows[0].mobile_no.substring(0, 3),
+          mobile2: rows[0].mobile_no.substring(3, 7),
+          mobile3: rows[0].mobile_no.substring(7),
+        });
+        const tel = user.tel_no || "";
+        setTelParts({
+          tel1: rows[0].tel_no.substring(0, 3),
+          tel2: rows[0].tel_no.substring(3, 7),
+          tel3: rows[0].tel_no.substring(7),
+        });
       } else {
         console.log("[에러발생]");
         console.log(data);
@@ -445,6 +463,9 @@ const SY_A0009W: React.FC = () => {
           ...prev,
           [name]: numberText,
         }));
+        if (value.length === 3 && tel2Ref.current) {
+          tel2Ref.current.focus();
+        }
         break;
       case "tel2":
         numberText = value.replace(/[^0-9]/g, "");
@@ -452,6 +473,9 @@ const SY_A0009W: React.FC = () => {
           ...prev,
           [name]: numberText,
         }));
+        if (value.length === 4 && tel3Ref.current) {
+          tel3Ref.current.focus();
+        }
         break;
       case "tel3":
         numberText = value.replace(/[^0-9]/g, "");
@@ -466,19 +490,19 @@ const SY_A0009W: React.FC = () => {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
+    if (!permissions.save) return;
     e.preventDefault();
     const email = `${emailParts.email1}@${emailParts.email2}`;
     const mobile = `${mobileParts.mobile1}${mobileParts.mobile2}${mobileParts.mobile3}`;
     const tel = `${telParts.tel1}${telParts.tel2}${telParts.tel3}`;
     const birdt = user.birdt;
-
     if (
       emailParts.email1 === "" ||
       emailParts.email2 === "" ||
       emailParts.email1 === undefined ||
       emailParts.email2 === undefined
     ) {
-      alert("이메일 주소를 확인해주세요.");
+      alert("이메일 주소를 입력해주세요.");
     } else if (
       mobileParts.mobile1 === "" ||
       mobileParts.mobile2 === "" ||
@@ -487,7 +511,7 @@ const SY_A0009W: React.FC = () => {
       mobileParts.mobile2 === undefined ||
       mobileParts.mobile3 === undefined
     ) {
-      alert("휴대폰 번호를 확인해주세요.");
+      alert("휴대폰 번호를 입력해주세요.");
     } else if (
       telParts.tel1 === "" ||
       telParts.tel2 === "" ||
@@ -496,7 +520,7 @@ const SY_A0009W: React.FC = () => {
       telParts.tel2 === undefined ||
       telParts.tel3 === undefined
     ) {
-      alert("사내전화 번호를 확인해주세요.");
+      alert("사내전화 번호를 입력해주세요.");
     } else if (
       convertDateToStr(birdt).substring(0, 4) < "1997" ||
       convertDateToStr(birdt).substring(6, 8) > "31" ||
@@ -505,19 +529,14 @@ const SY_A0009W: React.FC = () => {
     ) {
       alert("생일을 입력해주세요.");
     } else {
-      if (!isMobile) {
-        const updatedUser = {
-          ...user,
-          email: email,
-          mobile_no: mobile,
-          tel_no: tel,
-        };
-        setUser(updatedUser);
-
-        fetchSaved(updatedUser);
-      } else {
-        fetchSaved(user);
-      }
+      const updatedUser = {
+        ...user,
+        email: email,
+        mobile_no: mobile,
+        tel_no: tel,
+      };
+      setUser(updatedUser);
+      fetchSaved(updatedUser);
       handleEditClick();
     }
   };
@@ -585,7 +604,7 @@ const SY_A0009W: React.FC = () => {
 
   // 회원정보 수정
   const fetchSaved = async (updatedUser: User) => {
-    if (!permissions.view) return;
+    if (!permissions.save) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -632,397 +651,403 @@ const SY_A0009W: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <Swiper
-          onSwiper={(swiper) => {
-            setSwiper(swiper);
-          }}
-          onActiveIndexChange={(swiper) => {
-            index = swiper.activeIndex;
-          }}
-        >
-          <SwiperSlide key={0}>
-            <Grid item xs={12} md={12} className="ButtonContainer">
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "100%",
-                  p: 2,
-                  borderRadius: 2,
-                }}
-              >
-                <Badge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                  badgeContent={
-                    <IconButton
-                      onClick={onAttWndClick}
-                      sx={{
-                        backgroundColor: "white",
-                        boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-                        width: "36px",
-                        height: "36px",
-                        p: 0,
-                        transform: "translate(0, 0%)",
-                      }}
-                    >
-                      <SettingsIcon />
-                      <input
-                        id="uploadAttachment"
-                        style={{ display: "none" }}
-                        type="file"
-                        accept="image/*"
-                        ref={excelInput}
-                        onChange={(
-                          event: React.ChangeEvent<HTMLInputElement>
-                        ) => {
-                          getAttachmentsData(event.target.files);
-                        }}
-                      />
-                    </IconButton>
-                  }
-                >
-                  <AvatarMUI
+        <Grid container direction="column" spacing={1}>
+          <Grid item xs={12} md={12} className="ButtonContainer">
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+                p: 2,
+                borderRadius: 2,
+              }}
+            >
+              <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                badgeContent={
+                  <IconButton
+                    onClick={onAttWndClick}
                     sx={{
-                      width: 80,
-                      height: 80,
-                      border: "2px solid #ddd",
-                      padding: "4px",
-                      boxSizing: "border-box",
+                      backgroundColor: "white",
+                      boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                      width: "36px",
+                      height: "36px",
+                      p: 0,
+                      transform: "translate(0, 0%)",
                     }}
-                    src={user.profile_image ? imgBase64 : "GST"}
-                  ></AvatarMUI>
-                </Badge>
-                <Grid container sx={{ mt: 2, mb: 2, justifyContent: "center" }}>
-                  <Typography variant="h5" sx={{ ml: 3, fontWeight: "bold" }}>
-                    {user.user_name}
-                  </Typography>
-                  <Typography variant="h5">님의 마이페이지</Typography>
-                </Grid>
-                <Grid container sx={{ justifyContent: "center", gap: 2 }}>
-                  <Grid>
-                    <Box
-                      sx={{
-                        borderRadius: 2,
-                        textAlign: "center",
-                        backgroundColor: "#DCEFFA",
-                        p: 2,
-                        width: "170px",
+                  >
+                    <SettingsIcon />
+                    <input
+                      id="uploadAttachment"
+                      style={{ display: "none" }}
+                      type="file"
+                      accept="image/*"
+                      ref={excelInput}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        getAttachmentsData(event.target.files);
                       }}
-                    >
-                      <Typography
-                        variant="h5"
-                        sx={{ fontWeight: "bold", color: "#258DC4", mb: 1 }}
-                      >
-                        {pto.totalday}일
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        현재 연차 수량
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid>
-                    <Box
-                      sx={{
-                        borderRadius: 2,
-                        textAlign: "center",
-                        backgroundColor: "#DCEFFA",
-                        p: 2,
-                        width: "170px",
-                      }}
-                    >
-                      <Typography
-                        variant="h5"
-                        sx={{ fontWeight: "bold", color: "#258DC4", mb: 1 }}
-                      >
-                        {pto.usedday}일
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        연차 사용량
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid>
-                    <Box
-                      sx={{
-                        borderRadius: 2,
-                        textAlign: "center",
-                        backgroundColor: "#DCEFFA",
-                        p: 2,
-                        width: "170px",
-                      }}
-                    >
-                      <Typography
-                        variant="h5"
-                        sx={{ fontWeight: "bold", color: "#258DC4", mb: 1 }}
-                      >
-                        {pto.ramainday}일
-                      </Typography>
-                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                        연차 잔량
-                      </Typography>
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Box>
-            </Grid>
-          </SwiperSlide>
-          <SwiperSlide key={1}>
-            <Grid item xs={12} md={12}>
-              <Card
+                    />
+                  </IconButton>
+                }
+              >
+                <AvatarMUI
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    border: "2px solid #ddd",
+                    padding: "4px",
+                    boxSizing: "border-box",
+                  }}
+                  src={user.profile_image ? imgBase64 : "GST"}
+                ></AvatarMUI>
+              </Badge>
+              <Grid container sx={{ mt: 2, mb: 2, justifyContent: "center" }}>
+                <Typography variant="h5" sx={{ ml: 3, fontWeight: "bold" }}>
+                  {user.user_name}
+                </Typography>
+                <Typography variant="h5">님의 마이페이지</Typography>
+              </Grid>
+              <Grid
+                container
                 sx={{
-                  borderRadius: 2,
-                  border: "1px solid #ddd",
-                  height: mobileheight,
-                  ml: 1,
+                  alignItems: "center",
+                  gap: 2,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
                 }}
               >
                 <Box
                   sx={{
-                    padding: 2,
+                    borderRadius: 2,
+                    backgroundColor: "#DCEFFA",
+                    p: 2,
+                    width: "85vw",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    textAlign: "center",
                   }}
                 >
-                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                    회원정보
-                  </Typography>
-                  <Button
-                    themeColor="primary"
-                    onClick={!editMode ? handleEditClick : handleSubmit}
-                    icon={!editMode ? "edit" : "save"}
-                    fillMode={!editMode ? "outline" : "solid"}
+                  <Box
+                    sx={{
+                      width: "33%",
+                    }}
                   >
-                    {editMode ? "저장" : "수정"}
-                  </Button>
+                    <Typography
+                      variant="h5"
+                      sx={{ fontWeight: "bold", color: "#258DC4", mb: 1 }}
+                    >
+                      {pto.totalday}일
+                    </Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      연차 수량
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      width: "33%",
+                    }}
+                  >
+                    <Typography
+                      variant="h5"
+                      sx={{ fontWeight: "bold", color: "#258DC4", mb: 1 }}
+                    >
+                      {pto.usedday}일
+                    </Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      연차 사용량
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      width: "33%",
+                    }}
+                  >
+                    <Typography
+                      variant="h5"
+                      sx={{ fontWeight: "bold", color: "#258DC4", mb: 1 }}
+                    >
+                      {pto.ramainday}일
+                    </Typography>
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                      연차 잔량
+                    </Typography>
+                  </Box>
                 </Box>
-                <CardContent
-                  sx={{ overflow: "auto", height: mobileheight - 80 }}
+              </Grid>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <Card
+              sx={{
+                borderRadius: 2,
+                border: "1px solid #ddd",
+                height: mobileheight,
+                ml: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  padding: 2,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  회원정보
+                </Typography>
+                <Button
+                  themeColor="primary"
+                  onClick={!editMode ? handleEditClick : handleSubmit}
+                  icon={!editMode ? "edit" : "save"}
+                  fillMode={!editMode ? "outline" : "solid"}
+                  disabled={permissions.save ? false : true}
                 >
-                  <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                      <Box display="flex" alignItems="center">
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            width: "90px",
-                            textAlign: "right",
-                            marginRight: 2,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          이름
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            padding: "3px 8px",
-                            display: "flex",
-                            alignItems: "center",
-                            maxWidth: 400,
-                            height: "35px",
-                          }}
-                        >
-                          {user.user_name}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box display="flex" alignItems="center">
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            width: "90px",
-                            textAlign: "right",
-                            marginRight: 2,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          직위
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            padding: "3px 8px",
-                            display: "flex",
-                            alignItems: "center",
-                            maxWidth: 400,
-                            height: "35px",
-                          }}
-                        >
-                          {
-                            postcdListData.find(
-                              (items: any) => items.sub_code == user.postcd
-                            )?.code_name
-                          }
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box display="flex" alignItems="center">
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            width: "90px",
-                            textAlign: "right",
-                            marginRight: 2,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          부서
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            padding: "3px 8px",
-                            display: "flex",
-                            alignItems: "center",
-                            maxWidth: 400,
-                            height: "35px",
-                          }}
-                        >
-                          {
-                            dptcdListData.find(
-                              (items: any) => items.dptcd == user.dptcd
-                            )?.dptnm
-                          }
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box display="flex" alignItems="center">
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            width: "90px",
-                            textAlign: "right",
-                            marginRight: 2,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          입사일
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            padding: "3px 8px",
-                            display: "flex",
-                            alignItems: "center",
-                            maxWidth: 400,
-                            height: "35px",
-                          }}
-                        >
-                          {dateformat3(user.apply_start_date)}
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box display="flex" alignItems="center">
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            width: "90px",
-                            textAlign: "right",
-                            marginRight: 2,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          비밀번호
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            padding: "3px 5px",
-                            display: "flex",
-                            alignItems: "center",
-                            maxWidth: 400,
-                            height: "35px",
-                          }}
-                        >
-                          <Button
-                            fillMode={"outline"}
-                            themeColor={"primary"}
-                            onClick={() => setChangePasswordWindowVisible(true)}
-                          >
-                            비밀번호변경
-                          </Button>
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
+                  {editMode ? "저장" : "수정"}
+                </Button>
+              </Box>
+              <CardContent sx={{ overflow: "auto", height: mobileheight - 80 }}>
+                <Grid container spacing={1}>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          width: "70px",
+                          textAlign: "right",
+                          marginRight: 2,
+                          fontWeight: "bold",
+                        }}
                       >
-                        <Box display="flex" alignItems="center">
+                        이름
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          padding: "3px 8px",
+                          display: "flex",
+                          alignItems: "center",
+                          maxWidth: 400,
+                          height: "35px",
+                        }}
+                      >
+                        {user.user_name}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          width: "70px",
+                          textAlign: "right",
+                          marginRight: 2,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        직위
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          padding: "3px 8px",
+                          display: "flex",
+                          alignItems: "center",
+                          maxWidth: 400,
+                          height: "35px",
+                        }}
+                      >
+                        {
+                          postcdListData.find(
+                            (items: any) => items.sub_code == user.postcd
+                          )?.code_name
+                        }
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          width: "70px",
+                          textAlign: "right",
+                          marginRight: 2,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        부서
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          padding: "3px 8px",
+                          display: "flex",
+                          alignItems: "center",
+                          maxWidth: 400,
+                          height: "35px",
+                        }}
+                      >
+                        {
+                          dptcdListData.find(
+                            (items: any) => items.dptcd == user.dptcd
+                          )?.dptnm
+                        }
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          width: "70px",
+                          textAlign: "right",
+                          marginRight: 2,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        입사일
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          padding: "3px 8px",
+                          display: "flex",
+                          alignItems: "center",
+                          maxWidth: 400,
+                          height: "35px",
+                        }}
+                      >
+                        {dateformat3(user.apply_start_date)}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          width: "70px",
+                          textAlign: "right",
+                          marginRight: 2,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        비밀번호
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          padding: "3px 5px",
+                          display: "flex",
+                          alignItems: "center",
+                          maxWidth: 400,
+                          height: "35px",
+                        }}
+                      >
+                        <Button
+                          fillMode={"outline"}
+                          themeColor={"primary"}
+                          onClick={() => setChangePasswordWindowVisible(true)}
+                        >
+                          비밀번호변경
+                        </Button>
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      <Box display="flex" alignItems="center">
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            width: "70px",
+                            textAlign: "right",
+                            marginRight: 2,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          이메일
+                        </Typography>
+                        {editMode ? (
+                          <>
+                            <TextField
+                              name="email1"
+                              value={emailParts.email1}
+                              onChange={handleChange}
+                              InputProps={{
+                                sx: {
+                                  height: "32px",
+                                  margin: "2px 0 1px 7px",
+                                },
+                              }}
+                              sx={{
+                                maxWidth: 85,
+                                marginRight: 1,
+                                backgroundColor: "white",
+                              }}
+                              autoComplete="off"
+                            />
+                            @
+                            <TextField
+                              name="email2"
+                              value={emailParts.email2}
+                              onChange={handleChange}
+                              InputProps={{
+                                sx: {
+                                  height: "32px",
+                                  margin: "2px 0 1px 0",
+                                },
+                              }}
+                              sx={{ maxWidth: 90, marginLeft: 1 }}
+                              autoComplete="off"
+                            />
+                          </>
+                        ) : (
                           <Typography
                             variant="body1"
                             sx={{
-                              width: "90px",
-                              textAlign: "right",
-                              marginRight: 2,
-                              fontWeight: "bold",
+                              padding: "3px 8px",
+                              display: "flex",
+                              alignItems: "center",
+                              maxWidth: 400,
+                              height: "35px",
                             }}
                           >
-                            이메일
+                            {user.email}
                           </Typography>
-                          {editMode ? (
-                            <>
-                              <TextField
-                                name="email"
-                                type="email"
-                                value={user.email}
-                                onChange={filterInputChange}
-                                InputProps={{
-                                  sx: {
-                                    height: "32px",
-                                    margin: "2px 0 1px 5px",
-                                  },
-                                }}
-                                sx={{
-                                  maxWidth: 170,
-                                  marginRight: 2,
-                                  backgroundColor: "white",
-                                }}
-                                autoComplete="off"
-                              />
-                            </>
-                          ) : (
-                            <Typography
-                              variant="body1"
-                              sx={{
-                                padding: "3px 8px",
-                                display: "flex",
-                                alignItems: "center",
-                                maxWidth: 400,
-                                height: "35px",
-                              }}
-                            >
-                              {user.email}
-                            </Typography>
-                          )}
-                        </Box>
+                        )}
                       </Box>
-                    </Grid>
-                    {/* <Grid item xs={12}>
+                    </Box>
+                  </Grid>
+                  {/* <Grid item xs={12}>
                     <Divider sx={{ mx: 2 }} />
                   </Grid>
                   <Grid item xs={12}>
@@ -1030,7 +1055,7 @@ const SY_A0009W: React.FC = () => {
                       <Typography
                         variant="body1"
                         sx={{
-                          width: "90px",
+                          width: "70px",
                           textAlign: "right",
                           marginRight: 2,
                           fontWeight: "bold",
@@ -1070,140 +1095,127 @@ const SY_A0009W: React.FC = () => {
                       </Typography>
                     </Box>
                   </Grid> */}
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box display="flex" alignItems="center">
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            width: "90px",
-                            textAlign: "right",
-                            marginRight: 2,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          생일
-                        </Typography>
-                        {editMode ? (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              height: "35px",
-                              marginLeft: "5px",
-                            }}
-                          >
-                            <DatePicker
-                              value={user.birdt}
-                              onChange={filterInputChange}
-                              format="yyyy-MM-dd"
-                              width={165}
-                              name="birdt"
-                            />
-                          </Box>
-                        ) : (
-                          <Typography
-                            variant="body1"
-                            sx={{
-                              padding: "3px 8px",
-                              display: "flex",
-                              alignItems: "center",
-                              maxWidth: 400,
-                              height: "35px",
-                            }}
-                          >
-                            {dateformat3(convertDateToStr(user.birdt))}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          width: "70px",
+                          textAlign: "right",
+                          marginRight: 2,
+                          fontWeight: "bold",
+                        }}
                       >
-                        <Box display="flex" alignItems="center">
-                          <Typography
-                            variant="body1"
-                            sx={{
-                              width: "90px",
-                              textAlign: "right",
-                              marginRight: 2,
-                              fontWeight: "bold",
-                            }}
-                          >
-                            휴대전화
-                          </Typography>
-                          {editMode ? (
-                            <>
-                              <TextField
-                                name="mobile1"
-                                value={user.mobile_no}
-                                onChange={handleChange}
-                                InputProps={{
-                                  sx: {
-                                    height: "32px",
-                                    margin: "2px 0 1px 5px",
-                                  },
-                                }}
-                                sx={{ maxWidth: 170, marginRight: 2 }}
-                                autoComplete="off"
-                                type="tel"
-                              />
-                            </>
-                          ) : (
-                            <Typography
-                              variant="body1"
-                              sx={{
-                                padding: "3px 8px",
-                                display: "flex",
-                                alignItems: "center",
-                                maxWidth: 400,
-                                height: "35px",
-                              }}
-                            >
-                              {user.mobile_no}
-                            </Typography>
-                          )}
+                        생일
+                      </Typography>
+                      {editMode ? (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            height: "35px",
+                            marginLeft: "6px",
+                          }}
+                        >
+                          <DatePicker
+                            value={user.birdt}
+                            onChange={filterInputChange}
+                            format="yyyy-MM-dd"
+                            width={165}
+                            name="birdt"
+                          />
                         </Box>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
+                      ) : (
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            padding: "3px 8px",
+                            display: "flex",
+                            alignItems: "center",
+                            maxWidth: 400,
+                            height: "35px",
+                          }}
+                        >
+                          {dateformat3(convertDateToStr(user.birdt))}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
                       <Box display="flex" alignItems="center">
                         <Typography
                           variant="body1"
                           sx={{
-                            width: "90px",
+                            width: "70px",
                             textAlign: "right",
                             marginRight: 2,
                             fontWeight: "bold",
                           }}
                         >
-                          사내전화
+                          휴대전화
                         </Typography>
                         {editMode ? (
                           <>
                             <TextField
-                              name="tel"
-                              value={user.tel_no}
+                              name="mobile1"
+                              value={mobileParts.mobile1}
                               onChange={handleChange}
                               InputProps={{
                                 sx: {
                                   height: "32px",
-                                  margin: "2px 0 1px 5px",
+                                  margin: "2px 0 1px 7px",
                                 },
+                                inputProps: { maxLength: 3 },
                               }}
-                              sx={{ maxWidth: 170 }}
+                              sx={{ maxWidth: 62, marginRight: 1 }}
                               autoComplete="off"
+                              type="tel"
+                            />
+                            <TextField
+                              name="mobile2"
+                              value={mobileParts.mobile2}
+                              onChange={handleChange}
+                              InputProps={{
+                                sx: {
+                                  height: "32px",
+                                  margin: "2px 0 1px 0",
+                                },
+                                inputProps: { maxLength: 4 },
+                              }}
+                              sx={{
+                                maxWidth: 65,
+                                marginRight: 1,
+                              }}
+                              autoComplete="off"
+                              inputRef={mobile2Ref}
+                              type="tel"
+                            />
+                            <TextField
+                              name="mobile3"
+                              value={mobileParts.mobile3}
+                              onChange={handleChange}
+                              InputProps={{
+                                sx: {
+                                  height: "32px",
+                                  margin: "2px 0 1px 0",
+                                },
+                                inputProps: { maxLength: 4 },
+                              }}
+                              sx={{ maxWidth: 65 }}
+                              autoComplete="off"
+                              inputRef={mobile3Ref}
+                              type="tel"
                             />
                           </>
                         ) : (
@@ -1217,73 +1229,159 @@ const SY_A0009W: React.FC = () => {
                               height: "35px",
                             }}
                           >
-                            {user.tel_no}
+                            {mobileParts.mobile1} - {mobileParts.mobile2} -{" "}
+                            {mobileParts.mobile3}
                           </Typography>
                         )}
                       </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Box display="flex" alignItems="center">
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          width: "70px",
+                          textAlign: "right",
+                          marginRight: 2,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        사내전화
+                      </Typography>
+                      {editMode ? (
+                        <>
+                          <TextField
+                            name="tel1"
+                            value={telParts.tel1}
+                            onChange={handleChange}
+                            InputProps={{
+                              sx: {
+                                height: "32px",
+                                margin: "2px 0 1px 7px",
+                              },
+                              inputProps: { maxLength: 3 },
+                            }}
+                            sx={{ maxWidth: 62, marginRight: 1 }}
+                            autoComplete="off"
+                            type="tel"
+                          />
+                          <TextField
+                            name="tel2"
+                            value={telParts.tel2}
+                            onChange={handleChange}
+                            InputProps={{
+                              sx: {
+                                height: "32px",
+                                margin: "2px 0 1px 0",
+                                inputProps: { maxLength: 4 },
+                              },
+                            }}
+                            sx={{
+                              maxWidth: 65,
+                              marginRight: 1,
+                            }}
+                            autoComplete="off"
+                            type="tel"
+                            inputRef={tel2Ref}
+                          />
+                          <TextField
+                            name="tel3"
+                            value={telParts.tel3}
+                            onChange={handleChange}
+                            InputProps={{
+                              sx: {
+                                height: "32px",
+                                margin: "2px 0 1px 0",
+                              },
+                              inputProps: { maxLength: 4 },
+                            }}
+                            sx={{ maxWidth: 65 }}
+                            autoComplete="off"
+                            type="tel"
+                            inputRef={tel3Ref}
+                          />
+                        </>
+                      ) : (
                         <Typography
                           variant="body1"
                           sx={{
-                            width: "90px",
-                            textAlign: "right",
-                            marginRight: 2,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          홈메뉴(웹)
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            padding: "3px 5px",
+                            padding: "3px 8px",
                             display: "flex",
                             alignItems: "center",
                             maxWidth: 400,
                             height: "35px",
                           }}
                         >
-                          {editMode ? (
-                            <Button
-                              fillMode={"outline"}
-                              themeColor={"primary"}
-                              onClick={onMenuWindowClick}
-                            >
-                              홈메뉴변경
-                            </Button>
-                          ) : (
-                            <Typography
-                              variant="body1"
-                              sx={{
-                                padding: "3px 8px",
-                                display: "flex",
-                                alignItems: "center",
-                                maxWidth: 400,
-                                height: "35px",
-                              }}
-                            >
-                              {
-                                menuListData.find(
-                                  (items: any) =>
-                                    items.sub_code == user.home_menu_id_web
-                                )?.code_name
-                              }
-                            </Typography>
-                          )}
+                          {telParts.tel1} - {telParts.tel2} - {telParts.tel3}
                         </Typography>
-                      </Box>
-                    </Grid>
+                      )}
+                    </Box>
                   </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
-          </SwiperSlide>
-        </Swiper>
+                  <Grid item xs={12}>
+                    <Divider />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          width: "70px",
+                          textAlign: "right",
+                          marginRight: 2,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        홈메뉴(웹)
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          padding: "3px 5px",
+                          display: "flex",
+                          alignItems: "center",
+                          maxWidth: 400,
+                          height: "35px",
+                        }}
+                      >
+                        {editMode ? (
+                          <Button
+                            fillMode={"outline"}
+                            themeColor={"primary"}
+                            onClick={onMenuWindowClick}
+                          >
+                            홈메뉴변경
+                          </Button>
+                        ) : (
+                          <Typography
+                            variant="body1"
+                            sx={{
+                              padding: "3px 8px",
+                              display: "flex",
+                              alignItems: "center",
+                              maxWidth: 400,
+                              height: "35px",
+                            }}
+                          >
+                            {
+                              menuListData.find(
+                                (items: any) =>
+                                  items.sub_code == user.home_menu_id_web
+                              )?.code_name
+                            }
+                          </Typography>
+                        )}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       ) : (
         <>
           <Box sx={{ flexGrow: 1, padding: 3 }}>
@@ -1818,7 +1916,7 @@ const SY_A0009W: React.FC = () => {
                                   InputProps={{
                                     sx: {
                                       height: "32px",
-                                      margin: "2px 0 1px 0",
+                                      margin: "2px 0 1px 7px",
                                     },
                                     inputProps: { maxLength: 3 },
                                   }}
@@ -1835,12 +1933,11 @@ const SY_A0009W: React.FC = () => {
                                       height: "32px",
                                       margin: "2px 0 1px 0",
                                     },
-                                    inputProps: { maxLength: 1 },
+                                    inputProps: { maxLength: 4 },
                                   }}
                                   sx={{
                                     maxWidth: 80,
-                                    marginLeft: 2,
-                                    marginRight: 2,
+                                    marginRight: 1,
                                   }}
                                   autoComplete="off"
                                   inputRef={mobile2Ref}
@@ -1857,7 +1954,7 @@ const SY_A0009W: React.FC = () => {
                                     },
                                     inputProps: { maxLength: 4 },
                                   }}
-                                  sx={{ maxWidth: 80, marginLeft: 2 }}
+                                  sx={{ maxWidth: 80 }}
                                   autoComplete="off"
                                   inputRef={mobile3Ref}
                                   type="tel"
@@ -1883,7 +1980,8 @@ const SY_A0009W: React.FC = () => {
                                   height: "35px",
                                 }}
                               >
-                                {user.mobile_no}
+                                {mobileParts.mobile1} - {mobileParts.mobile2} -{" "}
+                                {mobileParts.mobile3}
                               </Typography>
                             )}
                           </Box>
@@ -1916,11 +2014,12 @@ const SY_A0009W: React.FC = () => {
                                     height: "32px",
                                     margin: "2px 0 1px 7px",
                                   },
+                                  inputProps: { maxLength: 3 },
                                 }}
-                                sx={{ maxWidth: 80, marginRight: 2 }}
+                                sx={{ maxWidth: 80, marginRight: 1 }}
                                 autoComplete="off"
+                                type="tel"
                               />
-                              -
                               <TextField
                                 name="tel2"
                                 value={telParts.tel2}
@@ -1928,17 +2027,18 @@ const SY_A0009W: React.FC = () => {
                                 InputProps={{
                                   sx: {
                                     height: "32px",
-                                    margin: "2px 0 1px 7px",
+                                    margin: "2px 0 1px 0",
+                                    inputProps: { maxLength: 4 },
                                   },
                                 }}
                                 sx={{
                                   maxWidth: 80,
-                                  marginLeft: 2,
-                                  marginRight: 2,
+                                  marginRight: 1,
                                 }}
                                 autoComplete="off"
+                                type="tel"
+                                inputRef={tel2Ref}
                               />
-                              -
                               <TextField
                                 name="tel3"
                                 value={telParts.tel3}
@@ -1946,11 +2046,14 @@ const SY_A0009W: React.FC = () => {
                                 InputProps={{
                                   sx: {
                                     height: "32px",
-                                    margin: "2px 0 1px 7px",
+                                    margin: "2px 0 1px 0",
                                   },
+                                  inputProps: { maxLength: 4 },
                                 }}
-                                sx={{ maxWidth: 80, marginLeft: 2 }}
+                                sx={{ maxWidth: 80 }}
                                 autoComplete="off"
+                                type="tel"
+                                inputRef={tel3Ref}
                               />
                               <Typography
                                 variant="body1"
@@ -1973,7 +2076,8 @@ const SY_A0009W: React.FC = () => {
                                 height: "35px",
                               }}
                             >
-                              {user.tel_no}
+                              {telParts.tel1} - {telParts.tel2} -{" "}
+                              {telParts.tel3}
                             </Typography>
                           )}
                         </Box>
