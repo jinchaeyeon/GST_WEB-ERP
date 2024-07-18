@@ -2098,17 +2098,17 @@ const SY_A0009W: React.FC = () => {
                           >
                             홈메뉴(웹)
                           </Typography>
-                          <Typography
-                            variant="body1"
-                            sx={{
-                              padding: "3px 8px",
-                              display: "flex",
-                              alignItems: "center",
-                              maxWidth: 400,
-                              height: "35px",
-                            }}
-                          >
-                            {editMode ? (
+                          {editMode ? (
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                padding: "3px 7px",
+                                display: "flex",
+                                alignItems: "center",
+                                maxWidth: 400,
+                                height: "35px",
+                              }}
+                            >
                               <Button
                                 fillMode={"outline"}
                                 themeColor={"primary"}
@@ -2116,26 +2116,26 @@ const SY_A0009W: React.FC = () => {
                               >
                                 홈메뉴변경
                               </Button>
-                            ) : (
-                              <Typography
-                                variant="body1"
-                                sx={{
-                                  padding: "3px 8px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  maxWidth: 400,
-                                  height: "35px",
-                                }}
-                              >
-                                {
-                                  menuListData.find(
-                                    (items: any) =>
-                                      items.sub_code == user.home_menu_id_web
-                                  )?.code_name
-                                }
-                              </Typography>
-                            )}
-                          </Typography>
+                            </Typography>
+                          ) : (
+                            <Typography
+                              variant="body1"
+                              sx={{
+                                padding: "3px 4px",
+                                display: "flex",
+                                alignItems: "center",
+                                maxWidth: 400,
+                                height: "35px",
+                              }}
+                            >
+                              {
+                                menuListData.find(
+                                  (items: any) =>
+                                    items.sub_code == user.home_menu_id_web
+                                )?.code_name
+                              }
+                            </Typography>
+                          )}
                         </Box>
                       </Grid>
                     </Grid>
