@@ -219,7 +219,7 @@ const CM_A7010W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A7010W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
 
   useLayoutEffect(() => {

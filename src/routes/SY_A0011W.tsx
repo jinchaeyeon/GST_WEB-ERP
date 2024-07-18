@@ -192,7 +192,7 @@ const Page: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SY_A0011W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);

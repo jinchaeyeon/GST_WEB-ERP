@@ -102,7 +102,7 @@ const HU_A4110W: React.FC = () => {
   const [webheight3, setWebHeight3] = useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A4110W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
@@ -1825,7 +1825,6 @@ const HU_A4110W: React.FC = () => {
                 )[0]
               : ""
           }
-          pathname="HU_A4110W"
           pgmgb="P"
           setData={(str) =>
             setFilters((prev) => ({

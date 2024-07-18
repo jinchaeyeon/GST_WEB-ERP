@@ -50,7 +50,6 @@ interface IFilter {
 type IKendoWindow = {
   setVisible(t: boolean): void;
   para: IFilter;
-  pathname: string;
   modal?: boolean;
 };
 
@@ -86,7 +85,6 @@ var height2 = 0;
 const KendoWindow = ({
   setVisible,
   para,
-  pathname,
   modal = false,
 }: IKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -109,7 +107,7 @@ const KendoWindow = ({
   const [webheight, setWebHeight] = useState(0);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

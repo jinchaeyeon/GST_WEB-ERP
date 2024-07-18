@@ -186,7 +186,7 @@ const PR_A6000W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("PR_A6000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
@@ -1921,7 +1921,6 @@ const PR_A6000W: React.FC = () => {
           stopcd={stopcdListData}
           prodemp={usersListData}
           modal={true}
-          pathname="PR_A6000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

@@ -63,7 +63,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(str: string): void;
   modal?: boolean;
-  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -154,8 +153,7 @@ const CopyWindow = ({
   data,
   setVisible,
   setData,
-  modal = false,
-  pathname,
+  modal = false
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -202,7 +200,7 @@ const CopyWindow = ({
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

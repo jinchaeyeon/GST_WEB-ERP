@@ -152,7 +152,7 @@ const HU_A2070W: React.FC = () => {
   const [webheight2, setWebHeight2] = useState(0);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A2070W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");

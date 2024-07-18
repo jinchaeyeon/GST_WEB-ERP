@@ -378,7 +378,7 @@ const MA_A3600W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_A3600W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   let deviceWidth = document.documentElement.clientWidth;
@@ -2544,7 +2544,6 @@ const MA_A3600W: React.FC = () => {
           setVisible={setMA_A3600W_WindowVisible}
           setData={(data) => setData(data)}
           modal={true}
-          pathname="MA_A3600W"
         />
       )}
       {gridList.map((grid: TGrid) =>

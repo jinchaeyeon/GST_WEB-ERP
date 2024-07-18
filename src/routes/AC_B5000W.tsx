@@ -73,7 +73,7 @@ const AC_B5000W: React.FC = () => {
   let deviceHeight = document.documentElement.clientHeight;
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B5000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");

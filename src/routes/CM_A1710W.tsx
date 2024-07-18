@@ -103,7 +103,7 @@ const CM_A1710W: React.FC = () => {
   const [webheight, setWebHeight] = useState(0);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A1710W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

@@ -116,7 +116,7 @@ const SY_A0500W: React.FC = () => {
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption("SY_A0500W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);

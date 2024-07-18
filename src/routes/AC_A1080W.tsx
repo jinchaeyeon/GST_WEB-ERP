@@ -146,7 +146,7 @@ const AC_A1080W: React.FC = () => {
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A1080W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");

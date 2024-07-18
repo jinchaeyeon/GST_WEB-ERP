@@ -50,7 +50,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 var height = 0;
 var height2 = 0;
@@ -60,8 +59,7 @@ const AC_A1000W_Note_Window = ({
   workType,
   setVisible,
   setData,
-  modal = false,
-  pathname,
+  modal = false
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -85,7 +83,7 @@ const AC_A1000W_Note_Window = ({
     useRecoilState(isFilterHideState2);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더

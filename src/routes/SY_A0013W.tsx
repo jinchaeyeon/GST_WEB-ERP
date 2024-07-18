@@ -249,7 +249,7 @@ const Page: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption("SY_A0013W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 

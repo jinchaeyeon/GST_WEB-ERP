@@ -148,7 +148,7 @@ const QC_A2500W_603: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("QC_A2500W_603", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("QC_A2500W_603", setMessagesData);

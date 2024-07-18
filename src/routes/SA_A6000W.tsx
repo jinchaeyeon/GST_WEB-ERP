@@ -378,7 +378,7 @@ const SA_A6000W: React.FC = () => {
   UseMessages("SA_A6000W", setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_A6000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);

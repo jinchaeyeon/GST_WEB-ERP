@@ -79,7 +79,7 @@ const AC_B5060W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B5060W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);

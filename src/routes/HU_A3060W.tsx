@@ -198,7 +198,7 @@ const HU_A3060W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A3060W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);

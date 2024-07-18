@@ -110,7 +110,7 @@ const AC_B1260W: React.FC = () => {
   UseMessages("AC_B1260W", setMessagesData);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B1260W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
   useLayoutEffect(() => {
     if (customOptionData !== null) {

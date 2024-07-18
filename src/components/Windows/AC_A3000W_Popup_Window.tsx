@@ -30,7 +30,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(arr: any): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 
 const lastMonth = (date: Date) => {
@@ -43,8 +42,7 @@ var height2 = 0;
 const CopyWindow = ({
   setVisible,
   reload,
-  modal = false,
-  pathname,
+  modal = false
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -69,7 +67,7 @@ const CopyWindow = ({
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

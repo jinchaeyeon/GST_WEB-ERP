@@ -59,7 +59,7 @@ const SY_A0060W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SY_A0060W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);

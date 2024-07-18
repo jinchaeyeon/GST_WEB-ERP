@@ -87,7 +87,7 @@ const SA_B2201W_603: React.FC = () => {
   var index = 0;
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B2201W_603", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);

@@ -247,7 +247,7 @@ const SA_A7900W: React.FC = () => {
   UseMessages("SA_A7900W", setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_A7900W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [custcd, setCustcd] = useState<string>("");
   const [custnm, setCustnm] = useState<string>("");
 

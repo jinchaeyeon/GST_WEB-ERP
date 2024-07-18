@@ -122,7 +122,7 @@ const AC_B2080W: React.FC = () => {
   const [webheight12, setWebHeight12] = useState(0);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B2080W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
 
   useLayoutEffect(() => {

@@ -37,7 +37,6 @@ type IWindow = {
   stopcd: Idata3[];
   prodemp: Idata4[];
   modal?: boolean;
-  pathname: string;
 };
 
 type Idata = {
@@ -77,7 +76,6 @@ const CopyWindow = ({
   stopcd,
   prodemp,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -102,7 +100,7 @@ const CopyWindow = ({
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

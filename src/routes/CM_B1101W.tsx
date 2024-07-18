@@ -120,7 +120,7 @@ const CM_B1101W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_B1101W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

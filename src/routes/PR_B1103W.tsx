@@ -67,7 +67,7 @@ const PR_B1103W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("PR_B1103W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);

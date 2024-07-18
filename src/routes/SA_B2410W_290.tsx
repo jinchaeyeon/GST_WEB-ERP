@@ -98,7 +98,7 @@ const SA_B2410: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B2410W_290", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
 
   let deviceWidth = document.documentElement.clientWidth;

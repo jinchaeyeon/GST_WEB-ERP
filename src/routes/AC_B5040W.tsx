@@ -118,7 +118,7 @@ const AC_B5040W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B5040W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);

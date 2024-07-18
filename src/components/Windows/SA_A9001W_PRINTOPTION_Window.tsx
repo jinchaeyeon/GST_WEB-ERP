@@ -21,7 +21,6 @@ type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: any): void;
   filters: any;
-  pathname: string;
   modal?: boolean;
 };
 
@@ -32,7 +31,6 @@ const KendoWindow = ({
   setVisible,
   setData,
   filters,
-  pathname,
   modal = false,
 }: IKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -44,7 +42,7 @@ const KendoWindow = ({
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;

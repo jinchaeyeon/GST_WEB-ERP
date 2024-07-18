@@ -425,7 +425,7 @@ export const GetPropertyValueByName = (target: any, name: string) => {
 };
 
 //현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
-export const UseCustomOption = (pathname: string, setListData: any) => {
+export const UseCustomOption = (setListData: any) => {
   const processApi = useApi();
   const [sessionItem] = useRecoilState(sessionItemState);
   const [loginResult] = useRecoilState(loginResultState);
@@ -448,7 +448,11 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
     }
     try {
       data = await processApi<any>("custom-option", {
-        formId: pathname.replace("/", ""),
+        formId: window.location.href
+          .split("?")[0]
+          .split("/")[3]
+          .toUpperCase()
+          .replace("/", ""),
         para: "custom-option?userId=" + userId,
       });
     } catch (error) {

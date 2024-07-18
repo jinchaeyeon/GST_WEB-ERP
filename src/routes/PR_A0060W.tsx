@@ -354,7 +354,7 @@ const PR_A0060: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("PR_A0060W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
   let deviceWidth = document.documentElement.clientWidth;
 

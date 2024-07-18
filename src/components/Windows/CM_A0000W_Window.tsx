@@ -127,7 +127,7 @@ const KendoWindow = ({
   const pc = UseGetValueFromSessionItem("pc");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const idGetter = getter(DATA_ITEM_KEY);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);

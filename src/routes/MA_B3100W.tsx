@@ -122,7 +122,7 @@ const MA_B3100: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_B3100W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);

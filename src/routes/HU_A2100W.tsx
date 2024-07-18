@@ -118,7 +118,7 @@ const HU_A2100W: React.FC = () => {
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A2100W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

@@ -459,7 +459,7 @@ const KendoWindow = ({
   const idGetter2 = getter(DATA_ITEM_KEY2);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
 

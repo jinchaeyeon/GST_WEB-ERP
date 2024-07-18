@@ -106,7 +106,7 @@ const PR_A2000W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("PR_A2000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1175,7 +1175,6 @@ const PR_A2000W: React.FC = () => {
           plankey={filters.plankey}
           setData={setInLotData}
           modal={true}
-          pathname="PR_A2000W"
         />
       )}
       {stopWindowVisible && (

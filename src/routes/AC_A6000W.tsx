@@ -352,7 +352,7 @@ const AC_A6000W: React.FC = () => {
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A6000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");

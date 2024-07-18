@@ -69,7 +69,6 @@ type TKendoWindow = {
   setData(data: object, itemcd: string): void;
   para: any;
   modal?: boolean;
-  pathname: string;
 };
 
 let targetRowIndex: null | number = null;
@@ -88,7 +87,6 @@ const KendoWindow = ({
   para = "",
   setData,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -101,7 +99,7 @@ const KendoWindow = ({
 
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";

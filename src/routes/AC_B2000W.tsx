@@ -114,7 +114,7 @@ const AC_B2000W: React.FC = () => {
   const [webheight17, setWebHeight17] = useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B2000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
   useLayoutEffect(() => {
     if (customOptionData !== null) {

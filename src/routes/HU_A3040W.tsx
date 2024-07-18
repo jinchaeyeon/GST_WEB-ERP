@@ -479,7 +479,7 @@ const HU_A3040W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A3040W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

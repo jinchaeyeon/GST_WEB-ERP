@@ -248,7 +248,7 @@ const HU_B4000W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B4000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [tabSelected, setTabSelected] = React.useState(0);

@@ -81,7 +81,7 @@ const MA_B2700W: React.FC = () => {
   UseMessages("MA_B2700W", setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_B2700W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);

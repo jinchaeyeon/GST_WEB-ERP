@@ -75,7 +75,6 @@ import Window from "./WindowComponent/Window";
 type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: string): void;
-  pathname: string;
   workType: "N" | "U" | "C";
   para?: any;
   modal?: boolean;
@@ -162,7 +161,6 @@ const KendoWindow = ({
   setData,
   para,
   workType,
-  pathname,
   modal = false,
 }: IKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -190,7 +188,7 @@ const KendoWindow = ({
   const [swiper, setSwiper] = useState<SwiperCore>();
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

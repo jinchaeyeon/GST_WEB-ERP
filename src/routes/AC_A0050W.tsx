@@ -147,7 +147,7 @@ const AC_A0050W: React.FC = () => {
   UsePermissions(setPermissions);
   const [osstate, setOSState] = useRecoilState(OSState);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A0050W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);

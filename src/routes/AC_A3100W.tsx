@@ -71,7 +71,7 @@ const AC_A3100W: React.FC = () => {
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A3100W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");
@@ -792,7 +792,6 @@ const AC_A3100W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="AC_A3100W"
         />
       )}
       {gridList.map((grid: TGrid) =>

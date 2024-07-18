@@ -75,7 +75,7 @@ const HU_A6000W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A6000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
@@ -759,7 +759,6 @@ const HU_A6000W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="HU_A6000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

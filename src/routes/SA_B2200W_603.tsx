@@ -89,7 +89,7 @@ const SA_B2200W_603: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B2200W_603", setMessagesData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B2200W_603", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_SA002,L_BA061",

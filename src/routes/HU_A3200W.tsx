@@ -241,7 +241,7 @@ const HU_A3200W: React.FC = () => {
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A3200W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   useLayoutEffect(() => {

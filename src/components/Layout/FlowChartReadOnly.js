@@ -32,7 +32,7 @@ const FlowChartReadOnly = (props) => {
     setBizComponentData
   );
   const [customOptionData, setCustomOptionData] = useState(null);
-  UseCustomOption("SY_A0060W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
   const { setViewport } = useReactFlow();

@@ -90,7 +90,7 @@ const AC_A1020W: React.FC = () => {
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A1020W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   useLayoutEffect(() => {
@@ -992,7 +992,6 @@ const AC_A1020W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="AC_A1020W"
         />
       )}
       {detailWindowVisible2 && (

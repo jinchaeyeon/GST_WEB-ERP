@@ -236,7 +236,7 @@ const HU_A4100W: React.FC = () => {
   const [editedField, setEditedField] = useState("");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A4100W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

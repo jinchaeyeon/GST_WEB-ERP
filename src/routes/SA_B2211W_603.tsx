@@ -68,7 +68,7 @@ const SA_B2211W_603: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B2211W_603", setMessagesData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B2211W_603", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = GetPropertyValueByName(

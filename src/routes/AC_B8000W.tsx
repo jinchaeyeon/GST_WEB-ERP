@@ -143,7 +143,7 @@ const AC_B8000W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_B8000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
 

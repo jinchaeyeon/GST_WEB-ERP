@@ -448,7 +448,7 @@ const CR_A0010W: React.FC = () => {
   const [webheight, setWebHeight] = useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CR_A0010W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {

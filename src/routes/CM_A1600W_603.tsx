@@ -178,7 +178,7 @@ const CM_A1600W_603: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UsePermissions(setPermissions);
-  UseCustomOption("CM_A1600W_603", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = useState<number>(0);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);

@@ -125,7 +125,7 @@ const SA_B2211W: React.FC = () => {
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B2211W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);

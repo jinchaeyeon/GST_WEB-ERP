@@ -148,7 +148,7 @@ const SA_A1001W_603: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_A1001W_603", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);

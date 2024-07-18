@@ -121,7 +121,7 @@ const CopyWindow = ({
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 

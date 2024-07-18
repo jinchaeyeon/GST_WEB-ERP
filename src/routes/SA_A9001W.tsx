@@ -164,7 +164,7 @@ const SA_A9001W: React.FC = () => {
   const [workType, setWorkType] = useState<"N" | "U">("N");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_A9001W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [mobileheight, setMobileHeight] = useState(0);
@@ -4942,7 +4942,6 @@ const SA_A9001W: React.FC = () => {
           setVisible={setPrintOptionWindowVisible}
           setData={setPrintData}
           filters={filters}
-          pathname="SA_A9001W"
           modal={true}
         />
       )}
@@ -4973,7 +4972,6 @@ const SA_A9001W: React.FC = () => {
         <SA_A9001W_Transaction_Window
           setVisible={setTransactionWindowClick}
           setData={setPrintData2}
-          pathname="SA_A9001W"
           modal={true}
         />
       )}
@@ -4981,7 +4979,6 @@ const SA_A9001W: React.FC = () => {
         <SA_A9001W_Update_Window
           setVisible={setUpdateWindowClick}
           setData={setPrintData3}
-          pathname="SA_A9001W"
           modal={true}
         />
       )}

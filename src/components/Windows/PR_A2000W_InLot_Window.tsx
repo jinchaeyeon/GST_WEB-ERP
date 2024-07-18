@@ -53,7 +53,6 @@ type TKendoWindow = {
   plankey: string;
   setData(data: object): void;
   modal?: boolean;
-  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -67,7 +66,6 @@ const KendoWindow = ({
   plankey,
   setData,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -100,7 +98,7 @@ const KendoWindow = ({
   const [webheight, setWebHeight] = useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData != null) {

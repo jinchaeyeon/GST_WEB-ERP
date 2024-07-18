@@ -338,7 +338,7 @@ const BA_A0080: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("BA_A0080W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
@@ -2437,7 +2437,6 @@ const BA_A0080: React.FC = () => {
           setData={setCopyData}
           itemacnt={filters.itemacnt}
           modal={true}
-          pathname="BA_A0080W"
         />
       )}
       {CopyWindowVisible2 && (

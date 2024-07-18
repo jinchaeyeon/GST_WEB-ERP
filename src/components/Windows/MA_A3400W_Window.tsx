@@ -180,7 +180,7 @@ const CopyWindow = ({
   const [swiper, setSwiper] = useState<SwiperCore>();
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
@@ -2100,7 +2100,6 @@ const CopyWindow = ({
           setVisible={setCopyWindowVisible}
           setData={setCopyData}
           itemacnt={""}
-          pathname={pathname}
         />
       )}
       {CopyWindowVisible2 && (

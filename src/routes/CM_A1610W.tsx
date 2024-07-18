@@ -50,7 +50,7 @@ const CM_A1610W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UsePermissions(setPermissions);
-  UseCustomOption("CM_A1610W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
 

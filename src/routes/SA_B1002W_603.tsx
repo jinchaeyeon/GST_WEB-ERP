@@ -90,7 +90,7 @@ const SA_B1002W_603: React.FC = () => {
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B1002W_603", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B1002W_603", setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };

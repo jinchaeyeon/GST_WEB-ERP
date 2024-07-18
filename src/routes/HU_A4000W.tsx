@@ -477,7 +477,7 @@ const HU_A4000W: React.FC = () => {
   const [webheight8, setWebHeight8] = useState(0);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A4000W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = React.useState(0);
   const [tabSelected2, setTabSelected2] = React.useState(0);
   const [tabSelected3, setTabSelected3] = React.useState(0);

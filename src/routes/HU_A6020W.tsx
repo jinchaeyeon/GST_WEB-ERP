@@ -404,7 +404,7 @@ const HU_A6020W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_A6020W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [isFilterHideStates, setIsFilterHideStates] =
     useRecoilState(isFilterHideState);
   const [tabSelected, setTabSelected] = useState(0);

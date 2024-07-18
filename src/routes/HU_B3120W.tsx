@@ -118,7 +118,7 @@ const HU_B3120W: React.FC = () => {
   const [webheight4, setWebHeight4] = useState(0);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("HU_B3120W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [tabSelected, setTabSelected] = useState(0);
 
   useLayoutEffect(() => {

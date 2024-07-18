@@ -93,7 +93,7 @@ const FlowChart = (props) => {
 
   const processApi = useApi();
   const [customOptionData, setCustomOptionData] = useState(null);
-  UseCustomOption("SY_A0060W", setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [copyNode, setCopyNode] = useState([]);

@@ -105,7 +105,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
     useRecoilState(isFilterHideState2);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption(setCustomOptionData);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
