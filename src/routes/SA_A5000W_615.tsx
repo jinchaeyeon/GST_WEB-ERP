@@ -659,7 +659,7 @@ const SA_A5000W_615: React.FC = () => {
               <SwiperSlide key={0}>
                 <GridContainer style={{ width: "100%", overflow: "auto" }}>
                   <TitleContainer className="TitleContainer">
-                    <Title style={{ textAlign: "center" }}>판매처리</Title>
+                    <Title>{getMenuName()}</Title>
                     <ButtonContainer>
                       <Button
                         themeColor={"primary"}
@@ -869,7 +869,7 @@ const SA_A5000W_615: React.FC = () => {
                 <SwiperSlide key={1}>
                   <GridContainer style={{ width: "100%", overflow: "auto" }}>
                     <TitleContainer className="TitleContainer">
-                      <Title style={{ textAlign: "center" }}>판매처리</Title>
+                      <Title>{getMenuName()}</Title>
                       <ButtonContainer>
                         <Button
                           onClick={() => {

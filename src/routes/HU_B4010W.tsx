@@ -62,6 +62,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
@@ -1577,7 +1578,7 @@ const HU_B4010W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title style={{ height: "10%" }}>인사고과 모니터링</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

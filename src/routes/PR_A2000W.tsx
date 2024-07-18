@@ -32,6 +32,7 @@ import {
   convertMilliSecondsToTimeStr,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DefectWindow from "../components/Windows/PR_A2000W_Defective_Window";
@@ -638,7 +639,7 @@ const PR_A2000W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title className="iot-title">생산실적(투입)</Title>
+        <Title className="iot-title">{getMenuName()}</Title>
         <ButtonContainer>
           <Button
             onClick={onPlanWndClick}

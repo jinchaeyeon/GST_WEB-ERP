@@ -50,6 +50,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
   isValidDate,
 } from "../components/CommonFunction";
 import {
@@ -762,7 +763,7 @@ const HU_B4001W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title style={{ height: "10%" }}>연차사용현황(개인)</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

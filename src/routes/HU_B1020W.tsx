@@ -34,6 +34,7 @@ import {
   getBizCom,
   getDeviceHeight,
   getHeight,
+  getMenuName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -344,7 +345,7 @@ const HU_B1020W: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title style={{ height: "10%" }}>인원명부</Title>
+        <Title>{getMenuName()}</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

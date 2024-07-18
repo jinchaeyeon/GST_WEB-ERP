@@ -480,7 +480,7 @@ const MA_A3500W_615: React.FC = () => {
         {isMobile ? (
           <>
             <TitleContainer className="TitleContainer">
-              <Title style={{ textAlign: "center" }}>생산투입</Title>
+              <Title>{getMenuName()}</Title>
               <ButtonContainer>
                 <Button
                   themeColor={"primary"}
