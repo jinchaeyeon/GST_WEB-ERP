@@ -7,13 +7,24 @@ import { detect } from "detect-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
+import { loginResultState, menusState, sessionItemState } from "../store/atoms";
 import captionEnUs from "../store/cultures/Captions.en-US.json";
 import captionKoKr from "../store/cultures/Captions.ko-KR.json";
 import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
+
+export const getMenuName = () => {
+  const [menus, setMenus] = useRecoilState(menusState);
+  return menus != null
+    ? menus.find(
+        (item: any) =>
+          item.formId.toUpperCase() ==
+          window.location.href.split("?")[0].split("/")[3].toUpperCase()
+      )?.menuName
+    : "";
+};
 
 export const getDateRange = (startDate: any, endDate: any) => {
   const start = new Date(startDate);
