@@ -1,9 +1,11 @@
 import {
   ComboBoxChangeEvent,
+  ComboBoxFilterChangeEvent,
   MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
 import { useState } from "react";
 
+import { filterBy, FilterDescriptor } from "@progress/kendo-data-query";
 import { useApi } from "../../hooks/api";
 
 type TCommonComboBox = {
@@ -108,11 +110,19 @@ const CommonComboBox = ({
     setState(false);
   });
 
+  const [filter, setFilter] = useState<FilterDescriptor>();
+
+  const handleFilterChange = (event: ComboBoxFilterChangeEvent) => {
+    if (event) {
+      setFilter(event.filter);
+    }
+  };
+
   return (
     <>
       <MultiColumnComboBox
         id={name}
-        data={listData}
+        data={filter ? filterBy(listData, filter) : listData}
         value={
           value ? listData.find((item: any) => item[valueField] == value) : ""
         }
@@ -125,6 +135,8 @@ const CommonComboBox = ({
         opened={state}
         onOpen={() => setState(true)}
         onClose={() => setState(false)}
+        filterable={true}
+        onFilterChange={handleFilterChange}
       />
     </>
   );

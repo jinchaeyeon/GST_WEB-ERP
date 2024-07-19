@@ -1,9 +1,11 @@
 import {
   ComboBoxChangeEvent,
+  ComboBoxFilterChangeEvent,
   MultiColumnComboBox as KendoMultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
 import { useCallback, useEffect, useState } from "react";
 
+import { filterBy, FilterDescriptor } from "@progress/kendo-data-query";
 import { bytesToBase64 } from "byte-base64";
 import { useApi } from "../../hooks/api";
 
@@ -82,11 +84,19 @@ const MultiColumnComboBoxWithQuery = ({
     setState(false);
   });
 
+  const [filter, setFilter] = useState<FilterDescriptor>();
+
+  const handleFilterChange = (event: ComboBoxFilterChangeEvent) => {
+    if (event) {
+      setFilter(event.filter);
+    }
+  };
+
   return (
     <>
       <KendoMultiColumnComboBox
         id={name}
-        data={listData}
+        data={filter ? filterBy(listData, filter) : listData}
         value={
           value ? listData.find((item: any) => item[valueField] == value) : ""
         }
@@ -96,6 +106,8 @@ const MultiColumnComboBoxWithQuery = ({
         opened={state}
         onOpen={() => setState(true)}
         onClose={() => setState(false)}
+        filterable={true}
+        onFilterChange={handleFilterChange}
       />
     </>
   );

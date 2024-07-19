@@ -1,4 +1,8 @@
-import { MultiColumnComboBox } from "@progress/kendo-react-dropdowns";
+import { filterBy, FilterDescriptor } from "@progress/kendo-data-query";
+import {
+  ComboBoxFilterChangeEvent,
+  MultiColumnComboBox,
+} from "@progress/kendo-react-dropdowns";
 import { FieldRenderProps } from "@progress/kendo-react-form";
 import React, { useState } from "react";
 import { checkIsObjValid } from "../CommonFunction";
@@ -56,10 +60,18 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
     setState(false);
   }
 
+  const [filter, setFilter] = useState<FilterDescriptor>();
+
+  const handleFilterChange = (event: ComboBoxFilterChangeEvent) => {
+    if (event) {
+      setFilter(event.filter);
+    }
+  };
+
   return (
     <>
       <MultiColumnComboBox
-        data={listData}
+        data={filter ? filterBy(listData, filter) : listData}
         textField={textField}
         value={
           typeof value == "string"
@@ -70,10 +82,12 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
         className={className}
         valid={isValid}
         id={id}
-        onChange={(event) => readonly ? undefined : change(event)}
+        onChange={(event) => (readonly ? undefined : change(event))}
         opened={state}
         onOpen={() => setState(true)}
         onClose={() => setState(false)}
+        filterable={true}
+        onFilterChange={handleFilterChange}
         {...others}
       />
     </>

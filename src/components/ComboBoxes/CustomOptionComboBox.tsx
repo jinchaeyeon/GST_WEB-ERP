@@ -1,9 +1,11 @@
 import {
   ComboBoxChangeEvent,
+  ComboBoxFilterChangeEvent,
   MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
 import { useState } from "react";
 import { GetPropertyValueByName } from "../CommonFunction";
+import { filterBy, FilterDescriptor } from "@progress/kendo-data-query";
 
 type TCustomOptionComboBox = {
   type?: "new" | "query";
@@ -76,10 +78,17 @@ const CustomOptionComboBox = ({
     setState(false);
   });
 
+  const [filter, setFilter] = useState<FilterDescriptor>();
+
+  const handleFilterChange = (event: ComboBoxFilterChangeEvent) => {
+    if (event) {
+      setFilter(event.filter);
+    }
+  };
   return (
     <>
       <MultiColumnComboBox
-        data={listData}
+        data={filter ? filterBy(listData, filter) : listData}
         textField={textField}
         value={
           value ? listData.find((item: any) => item[valueField] == value) : ""
@@ -93,6 +102,8 @@ const CustomOptionComboBox = ({
         opened={state}
         onOpen={() => setState(true)}
         onClose={() => setState(false)}
+        filterable={true}
+        onFilterChange={handleFilterChange}
       />
     </>
   );
