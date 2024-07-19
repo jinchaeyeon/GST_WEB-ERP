@@ -1143,6 +1143,8 @@ const SY_A0120: React.FC = () => {
 
     if (!valid) return false;
     setLoading(true);
+    let array = [];
+
     try {
       for (const item of deletedMainRows) {
         const { user_id } = item;
@@ -1187,48 +1189,7 @@ const SY_A0120: React.FC = () => {
           },
         };
 
-        let data: any;
-
-        try {
-          data = await processApi<any>("procedure", para);
-        } catch (error) {
-          data = null;
-        }
-
-        if (data.isSuccess !== true) {
-          console.log("[오류 발생]");
-          console.log(data);
-          throw data.resultMessage;
-        } else {
-          const isLastDataDeleted =
-            mainDataResult.data.length == 0 && filters.pgNum > 0;
-          if (isLastDataDeleted) {
-            setPage({
-              skip:
-                filters.pgNum == 1 || filters.pgNum == 0
-                  ? 0
-                  : PAGE_SIZE * (filters.pgNum - 2),
-              take: PAGE_SIZE,
-            });
-            setFilters((prev) => ({
-              ...prev,
-              find_row_value: "",
-              pgNum: isLastDataDeleted
-                ? prev.pgNum != 1
-                  ? prev.pgNum - 1
-                  : prev.pgNum
-                : prev.pgNum,
-              isSearch: true,
-            }));
-          } else {
-            setFilters((prev) => ({
-              ...prev,
-              find_row_value: data.returnString,
-              pgNum: prev.pgNum,
-              isSearch: true,
-            }));
-          }
-        }
+        array.push(para);
       }
 
       deletedMainRows = [];
@@ -1319,25 +1280,25 @@ const SY_A0120: React.FC = () => {
           },
         };
 
-        let data: any;
+        array.push(para);
+      }
+      let data: any;
+      try {
+        data = await processApi<any>("procedures", array);
+      } catch (error) {
+        data = null;
+      }
 
-        try {
-          data = await processApi<any>("procedure", para);
-        } catch (error) {
-          data = null;
-        }
-
-        if (data.isSuccess !== true) {
-          console.log("[오류 발생]");
-          console.log(data);
-          throw data.resultMessage;
-        } else {
-          setFilters((prev) => ({
-            ...prev,
-            find_row_value: data.returnString,
-            isSearch: true,
-          }));
-        }
+      if (data.isSuccess !== true) {
+        console.log("[오류 발생]");
+        console.log(data);
+        throw data.resultMessage;
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        }));
       }
     } catch (e) {
       alert(e);
