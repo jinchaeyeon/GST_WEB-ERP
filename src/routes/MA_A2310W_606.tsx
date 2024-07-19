@@ -151,7 +151,7 @@ const MA_A2310W_606: React.FC = () => {
   };
   const pc = UseGetValueFromSessionItem("pc");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A2310W_606", setMessagesData);
+  UseMessages(setMessagesData);
   const processApi = useApi();
 
   // 비즈니스 컴포넌트 조회

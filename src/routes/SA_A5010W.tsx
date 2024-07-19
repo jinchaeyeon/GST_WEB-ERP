@@ -129,7 +129,7 @@ const SA_A5010W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A5010W", setMessagesData);
+  UseMessages(setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -1700,7 +1700,6 @@ const SA_A5010W: React.FC = () => {
             }));
           }}
           modal={true}
-          pathname="SA_A5010W"
         />
       )}
       {custWindowVisible && (

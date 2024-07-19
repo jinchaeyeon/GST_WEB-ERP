@@ -10,7 +10,6 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import * as React from "react";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -32,12 +31,11 @@ import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   getHeight,
   getWindowDeviceHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import WindowFilterContainer from "../Containers/WindowFilterContainer";
@@ -48,7 +46,6 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   importnum: string;
   modal?: boolean;
-  pathname: string;
 };
 
 var height = 0;
@@ -60,7 +57,6 @@ const CopyWindow = ({
   setData,
   importnum,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -109,10 +105,7 @@ const CopyWindow = ({
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
 
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 

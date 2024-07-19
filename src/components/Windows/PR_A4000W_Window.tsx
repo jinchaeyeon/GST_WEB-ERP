@@ -36,13 +36,12 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -100,7 +99,6 @@ type TKendoWindow = {
   rekey?: string;
   reloadData(saveyn: string): void; // 저장 유무
   modal?: boolean;
-  pathname: string;
 };
 
 type TInData = {
@@ -136,7 +134,6 @@ const DetailWindow = ({
   rekey,
   reloadData,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -162,10 +159,6 @@ const DetailWindow = ({
   let grdRef2: any = useRef(null);
   let targetRowIndex: null | number = null;
   let targetRowIndex2: null | number = null;
-
-  // 메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -1575,11 +1568,7 @@ const DetailWindow = ({
       </BottomContainer>
 
       {stockWindowVisible && (
-        <StockWindow
-          setVisible={setStockWindowVisible}
-          setData={setCopyData}
-          pathname={pathname}
-        />
+        <StockWindow setVisible={setStockWindowVisible} setData={setCopyData} />
       )}
     </Window>
   );

@@ -96,7 +96,7 @@ const Page: React.FC = () => {
   }, [customOptionData, webheight]);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CR_A1001W", setMessagesData);
+  UseMessages(setMessagesData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA310",

@@ -24,13 +24,11 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
-  findMessage,
   getHeight,
   getWindowDeviceHeight,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -45,7 +43,6 @@ type IWindow = {
   reloadData(workType: string): void;
   basicdata?: Idata2;
   modal?: boolean;
-  pathname: string;
 };
 
 type Idata = {
@@ -98,7 +95,6 @@ const CopyWindow = ({
   reloadData,
   basicdata,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -148,10 +144,6 @@ const CopyWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
 
   const processApi = useApi();
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
@@ -385,61 +377,61 @@ const CopyWindow = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     if (!permissions.save) return;
-    try {
-      if (
-        convertDateToStr(filters.qcdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.qcdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.qcdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.qcdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "QC_A2500W_001");
-      } else if (
-        convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.recdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "QC_A2500W_001");
-      } else if (
-        filters.causedcd == null ||
-        filters.causedcd == "" ||
-        filters.causedcd == undefined
-      ) {
-        throw findMessage(messagesData, "QC_A2500W_002");
-      } else {
-        setParaData((prev) => ({
-          ...prev,
-          workType: workType,
-          orgdiv: sessionOrgdiv,
-          location: sessionLocation,
-          datnum: filters.datnum,
-          attdatnum: filters.attdatnum,
-          baddt: filters.baddt == null ? "" : convertDateToStr(filters.baddt),
-          badnum: filters.badnum,
-          badseq: filters.badseq,
-          causedcd: filters.causedcd,
-          contents: filters.contents,
-          crsdiv1: filters.crsdiv1,
-          custcd: filters.custcd,
-          custnm: filters.custnm,
-          errtext: filters.errtext,
-          files: filters.files,
-          itemcd: filters.itemcd,
-          itemnm: filters.itemnm,
-          lotnum: filters.lotnum,
-          person: filters.person,
-          proccd: filters.proccd,
-          protext: filters.protext,
-          qcdt: convertDateToStr(filters.qcdt),
-          qty: filters.qty,
-          recdt: convertDateToStr(filters.recdt),
-          renum: filters.renum,
-          reseq: filters.reseq,
-          title: filters.title,
-        }));
-      }
-    } catch (e) {
-      alert(e);
+
+    if (
+      convertDateToStr(filters.qcdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.qcdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.qcdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.qcdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else if (
+      convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.recdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else if (
+      filters.causedcd == null ||
+      filters.causedcd == "" ||
+      filters.causedcd == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else {
+      setParaData((prev) => ({
+        ...prev,
+        workType: workType,
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
+        datnum: filters.datnum,
+        attdatnum: filters.attdatnum,
+        baddt: filters.baddt == null ? "" : convertDateToStr(filters.baddt),
+        badnum: filters.badnum,
+        badseq: filters.badseq,
+        causedcd: filters.causedcd,
+        contents: filters.contents,
+        crsdiv1: filters.crsdiv1,
+        custcd: filters.custcd,
+        custnm: filters.custnm,
+        errtext: filters.errtext,
+        files: filters.files,
+        itemcd: filters.itemcd,
+        itemnm: filters.itemnm,
+        lotnum: filters.lotnum,
+        person: filters.person,
+        proccd: filters.proccd,
+        protext: filters.protext,
+        qcdt: convertDateToStr(filters.qcdt),
+        qty: filters.qty,
+        recdt: convertDateToStr(filters.recdt),
+        renum: filters.renum,
+        reseq: filters.reseq,
+        title: filters.title,
+      }));
     }
   };
 

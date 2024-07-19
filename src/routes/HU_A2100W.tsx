@@ -170,7 +170,7 @@ const HU_A2100W: React.FC = () => {
   };
   const [page, setPage] = useState(initialPageState);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A2100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";

@@ -199,7 +199,7 @@ const MA_A8000W: React.FC = () => {
   }, [customOptionData, webheight, webheight2]);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A8000W", setMessagesData);
+  UseMessages(setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1460,7 +1460,6 @@ const MA_A8000W: React.FC = () => {
           setVisible={setDetailWindowVisible}
           reload={(arr) => ListSetting(arr)}
           modal={true}
-          pathname="MA_A8000W"
         />
       )}
       {detailWindowVisible2 && (
@@ -1485,7 +1484,6 @@ const MA_A8000W: React.FC = () => {
           }
           list={List}
           modal={true}
-          pathname="MA_A8000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

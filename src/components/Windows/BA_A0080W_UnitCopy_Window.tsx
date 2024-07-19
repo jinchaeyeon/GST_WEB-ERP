@@ -38,14 +38,12 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   convertDateToStr,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -60,7 +58,6 @@ import Window from "./WindowComponent/Window";
 type IWindow = {
   setVisible(t: boolean): void;
   modal?: boolean;
-  pathname: string;
 };
 
 type TdataArr = {
@@ -89,7 +86,7 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 let targetRowIndex: null | number = null;
-const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -138,11 +135,6 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
-
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -572,48 +564,46 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
         newData.push(item);
       }
     });
-    try {
-      if (newData.length == 0) {
-        throw findMessage(messagesData, "BA_A0080W_008");
-      } else {
-        let dataArr: TdataArr = {
-          itemcd_s: [],
-          itemacnt_s: [],
-          recdt_s: [],
-          amtunit_s: [],
-          unp_s: [],
-          remark_s: [],
-        };
-        newData.forEach((item: any, idx: number) => {
-          const {
-            itemcd = "",
-            itemacnt = "",
-            recdt = "",
-            amtunit = "",
-            unp = "",
-            remark = "",
-          } = item;
 
-          dataArr.itemcd_s.push(itemcd);
-          dataArr.itemacnt_s.push(itemacnt);
-          dataArr.recdt_s.push(recdt);
-          dataArr.amtunit_s.push(amtunit);
-          dataArr.unp_s.push(unp);
-          dataArr.remark_s.push(remark);
-        });
+    if (newData.length == 0) {
+      alert("데이터를 선택해주세요.");
+      return false;
+    } else {
+      let dataArr: TdataArr = {
+        itemcd_s: [],
+        itemacnt_s: [],
+        recdt_s: [],
+        amtunit_s: [],
+        unp_s: [],
+        remark_s: [],
+      };
+      newData.forEach((item: any, idx: number) => {
+        const {
+          itemcd = "",
+          itemacnt = "",
+          recdt = "",
+          amtunit = "",
+          unp = "",
+          remark = "",
+        } = item;
 
-        setParaData((prev) => ({
-          ...prev,
-          itemcd_s: dataArr.itemcd_s.join("|"),
-          unp_s: dataArr.unp_s.join("|"),
-          itemacnt_s: dataArr.itemacnt_s.join("|"),
-          remark_s: dataArr.remark_s.join("|"),
-          recdt_s: dataArr.recdt_s.join("|"),
-          amtunit_s: dataArr.amtunit_s.join("|"),
-        }));
-      }
-    } catch (e) {
-      alert(e);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.itemacnt_s.push(itemacnt);
+        dataArr.recdt_s.push(recdt);
+        dataArr.amtunit_s.push(amtunit);
+        dataArr.unp_s.push(unp);
+        dataArr.remark_s.push(remark);
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        itemcd_s: dataArr.itemcd_s.join("|"),
+        unp_s: dataArr.unp_s.join("|"),
+        itemacnt_s: dataArr.itemacnt_s.join("|"),
+        remark_s: dataArr.remark_s.join("|"),
+        recdt_s: dataArr.recdt_s.join("|"),
+        amtunit_s: dataArr.amtunit_s.join("|"),
+      }));
     }
   };
 

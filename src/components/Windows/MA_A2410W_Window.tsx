@@ -47,18 +47,16 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   isValidDate,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -79,7 +77,6 @@ type TKendoWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -147,7 +144,6 @@ const DetailWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -168,10 +164,6 @@ const DetailWindow = ({
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
   const processApi = useApi();
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -808,203 +800,201 @@ const DetailWindow = ({
       }
     }
 
-    try {
-      if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "MA_A2410W_003");
-      } else if (
-        filters.custcd == null ||
-        filters.custcd == "" ||
-        filters.custcd == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2410W_004");
-      } else {
-        if (valid == true) {
-          const dataItem = mainDataResult.data.filter((item: any) => {
-            return (
-              (item.rowstatus == "N" || item.rowstatus == "U") &&
-              item.rowstatus !== undefined
-            );
-          });
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+      return false;
+    } else if (
+      filters.custcd == null ||
+      filters.custcd == "" ||
+      filters.custcd == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else {
+      if (valid == true) {
+        const dataItem = mainDataResult.data.filter((item: any) => {
+          return (
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
+            item.rowstatus !== undefined
+          );
+        });
 
-          setParaSaved((prev) => ({
-            ...prev,
-            workType: workType,
-            outdiv: "A",
-            purnum: filters.purnum,
-            purdt: convertDateToStr(filters.purdt),
-            inexpdt: convertDateToStr(filters.inexpdt),
-            person: filters.person,
-            custcd: filters.custcd,
-            custnm: filters.custnm,
-            custprsncd: "",
-            doexdiv: filters.doexdiv,
-            taxdiv: filters.taxdiv,
-            amtunit: filters.amtunit,
-            wonchgrat: filters.wonchgrat,
-            uschgrat: filters.uschgrat,
-            baseamt: filters.baseamt,
-            attdatnum: filters.attdatnum,
-            files: filters.files,
-            remark: filters.remark,
-          }));
+        setParaSaved((prev) => ({
+          ...prev,
+          workType: workType,
+          outdiv: "A",
+          purnum: filters.purnum,
+          purdt: convertDateToStr(filters.purdt),
+          inexpdt: convertDateToStr(filters.inexpdt),
+          person: filters.person,
+          custcd: filters.custcd,
+          custnm: filters.custnm,
+          custprsncd: "",
+          doexdiv: filters.doexdiv,
+          taxdiv: filters.taxdiv,
+          amtunit: filters.amtunit,
+          wonchgrat: filters.wonchgrat,
+          uschgrat: filters.uschgrat,
+          baseamt: filters.baseamt,
+          attdatnum: filters.attdatnum,
+          files: filters.files,
+          remark: filters.remark,
+        }));
 
-          if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
+        if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
-          let rowsArr: TRowsArr = {
-            rowstatus: [],
-            purseq: [],
-            proccd: [],
-            planno: [],
-            planseq: [],
-            ordnum: [],
-            ordseq: [],
-            itemcd: [],
-            itemnm: [],
-            qty: [],
-            qtyunit: [],
-            unitwgt: [],
-            wgt: [],
-            wgtunit: [],
-            unp: [],
-            amt: [],
-            wonamt: [],
-            taxamt: [],
-            dlramt: [],
-            remark: [],
-            lotnum: [],
-            div: [],
-          };
+        let rowsArr: TRowsArr = {
+          rowstatus: [],
+          purseq: [],
+          proccd: [],
+          planno: [],
+          planseq: [],
+          ordnum: [],
+          ordseq: [],
+          itemcd: [],
+          itemnm: [],
+          qty: [],
+          qtyunit: [],
+          unitwgt: [],
+          wgt: [],
+          wgtunit: [],
+          unp: [],
+          amt: [],
+          wonamt: [],
+          taxamt: [],
+          dlramt: [],
+          remark: [],
+          lotnum: [],
+          div: [],
+        };
 
-          dataItem.forEach((item: any) => {
-            const {
-              rowstatus,
-              purseq,
-              proccd,
-              planno,
-              planseq,
-              ordnum,
-              ordseq,
-              itemcd,
-              itemnm,
-              qty,
-              qtyunit,
-              unitwgt,
-              wgt,
-              wgtunit,
-              unp,
-              amt,
-              wonamt,
-              taxamt,
-              dlramt,
-              remark,
-              lotnum,
-              div,
-            } = item;
+        dataItem.forEach((item: any) => {
+          const {
+            rowstatus,
+            purseq,
+            proccd,
+            planno,
+            planseq,
+            ordnum,
+            ordseq,
+            itemcd,
+            itemnm,
+            qty,
+            qtyunit,
+            unitwgt,
+            wgt,
+            wgtunit,
+            unp,
+            amt,
+            wonamt,
+            taxamt,
+            dlramt,
+            remark,
+            lotnum,
+            div,
+          } = item;
 
-            rowsArr.rowstatus.push(rowstatus);
-            rowsArr.purseq.push(purseq);
-            rowsArr.proccd.push(proccd);
-            rowsArr.planno.push(planno);
-            rowsArr.planseq.push(planseq);
-            rowsArr.ordnum.push(ordnum);
-            rowsArr.ordseq.push(ordseq);
-            rowsArr.itemcd.push(itemcd);
-            rowsArr.itemnm.push(itemnm);
-            rowsArr.qty.push(qty);
-            rowsArr.qtyunit.push(qtyunit);
-            rowsArr.unitwgt.push(unitwgt);
-            rowsArr.wgt.push(wgt);
-            rowsArr.wgtunit.push(wgtunit);
-            rowsArr.unp.push(unp);
-            rowsArr.amt.push(amt);
-            rowsArr.wonamt.push(wonamt);
-            rowsArr.taxamt.push(taxamt);
-            rowsArr.dlramt.push(dlramt);
-            rowsArr.remark.push(remark);
-            rowsArr.lotnum.push(lotnum);
-            rowsArr.div.push(div);
-          });
+          rowsArr.rowstatus.push(rowstatus);
+          rowsArr.purseq.push(purseq);
+          rowsArr.proccd.push(proccd);
+          rowsArr.planno.push(planno);
+          rowsArr.planseq.push(planseq);
+          rowsArr.ordnum.push(ordnum);
+          rowsArr.ordseq.push(ordseq);
+          rowsArr.itemcd.push(itemcd);
+          rowsArr.itemnm.push(itemnm);
+          rowsArr.qty.push(qty);
+          rowsArr.qtyunit.push(qtyunit);
+          rowsArr.unitwgt.push(unitwgt);
+          rowsArr.wgt.push(wgt);
+          rowsArr.wgtunit.push(wgtunit);
+          rowsArr.unp.push(unp);
+          rowsArr.amt.push(amt);
+          rowsArr.wonamt.push(wonamt);
+          rowsArr.taxamt.push(taxamt);
+          rowsArr.dlramt.push(dlramt);
+          rowsArr.remark.push(remark);
+          rowsArr.lotnum.push(lotnum);
+          rowsArr.div.push(div);
+        });
 
-          deletedMainRows.forEach((item: any) => {
-            const {
-              rowstatus,
-              purseq,
-              proccd,
-              planno,
-              planseq,
-              ordnum,
-              ordseq,
-              itemcd,
-              itemnm,
-              qty,
-              qtyunit,
-              unitwgt,
-              wgt,
-              wgtunit,
-              unp,
-              amt,
-              wonamt,
-              taxamt,
-              dlramt,
-              remark,
-              lotnum,
-              div,
-            } = item;
+        deletedMainRows.forEach((item: any) => {
+          const {
+            rowstatus,
+            purseq,
+            proccd,
+            planno,
+            planseq,
+            ordnum,
+            ordseq,
+            itemcd,
+            itemnm,
+            qty,
+            qtyunit,
+            unitwgt,
+            wgt,
+            wgtunit,
+            unp,
+            amt,
+            wonamt,
+            taxamt,
+            dlramt,
+            remark,
+            lotnum,
+            div,
+          } = item;
 
-            rowsArr.rowstatus.push(rowstatus);
-            rowsArr.purseq.push(purseq);
-            rowsArr.proccd.push(proccd);
-            rowsArr.planno.push(planno);
-            rowsArr.planseq.push(planseq);
-            rowsArr.ordnum.push(ordnum);
-            rowsArr.ordseq.push(ordseq);
-            rowsArr.itemcd.push(itemcd);
-            rowsArr.itemnm.push(itemnm);
-            rowsArr.qty.push(qty);
-            rowsArr.qtyunit.push(qtyunit);
-            rowsArr.unitwgt.push(unitwgt);
-            rowsArr.wgt.push(wgt);
-            rowsArr.wgtunit.push(wgtunit);
-            rowsArr.unp.push(unp);
-            rowsArr.amt.push(amt);
-            rowsArr.wonamt.push(wonamt);
-            rowsArr.taxamt.push(taxamt);
-            rowsArr.dlramt.push(dlramt);
-            rowsArr.remark.push(remark);
-            rowsArr.lotnum.push(lotnum);
-            rowsArr.div.push(div);
-          });
+          rowsArr.rowstatus.push(rowstatus);
+          rowsArr.purseq.push(purseq);
+          rowsArr.proccd.push(proccd);
+          rowsArr.planno.push(planno);
+          rowsArr.planseq.push(planseq);
+          rowsArr.ordnum.push(ordnum);
+          rowsArr.ordseq.push(ordseq);
+          rowsArr.itemcd.push(itemcd);
+          rowsArr.itemnm.push(itemnm);
+          rowsArr.qty.push(qty);
+          rowsArr.qtyunit.push(qtyunit);
+          rowsArr.unitwgt.push(unitwgt);
+          rowsArr.wgt.push(wgt);
+          rowsArr.wgtunit.push(wgtunit);
+          rowsArr.unp.push(unp);
+          rowsArr.amt.push(amt);
+          rowsArr.wonamt.push(wonamt);
+          rowsArr.taxamt.push(taxamt);
+          rowsArr.dlramt.push(dlramt);
+          rowsArr.remark.push(remark);
+          rowsArr.lotnum.push(lotnum);
+          rowsArr.div.push(div);
+        });
 
-          setParaSaved((prev) => ({
-            ...prev,
-            workType: workType,
-            rowstatus_s: rowsArr.rowstatus.join("|"),
-            purseq_s: rowsArr.purseq.join("|"),
-            proccd_s: rowsArr.proccd.join("|"),
-            planno_s: rowsArr.planno.join("|"),
-            planseq_s: rowsArr.planseq.join("|"),
-            ordnum_s: rowsArr.ordnum.join("|"),
-            ordseq_s: rowsArr.ordseq.join("|"),
-            itemcd_s: rowsArr.itemcd.join("|"),
-            itemnm_s: rowsArr.itemnm.join("|"),
-            qty_s: rowsArr.qty.join("|"),
-            qtyunit_s: rowsArr.qtyunit.join("|"),
-            unitwgt_s: rowsArr.unitwgt.join("|"),
-            wgt_s: rowsArr.wgt.join("|"),
-            wgtunit_s: rowsArr.wgtunit.join("|"),
-            unp_s: rowsArr.unp.join("|"),
-            amt_s: rowsArr.amt.join("|"),
-            wonamt_s: rowsArr.wonamt.join("|"),
-            taxamt_s: rowsArr.taxamt.join("|"),
-            dlramt_s: rowsArr.dlramt.join("|"),
-            remark_s: rowsArr.remark.join("|"),
-            lotnum_s: rowsArr.lotnum.join("|"),
-            div_s: rowsArr.div.join("|"),
-          }));
-        }
+        setParaSaved((prev) => ({
+          ...prev,
+          workType: workType,
+          rowstatus_s: rowsArr.rowstatus.join("|"),
+          purseq_s: rowsArr.purseq.join("|"),
+          proccd_s: rowsArr.proccd.join("|"),
+          planno_s: rowsArr.planno.join("|"),
+          planseq_s: rowsArr.planseq.join("|"),
+          ordnum_s: rowsArr.ordnum.join("|"),
+          ordseq_s: rowsArr.ordseq.join("|"),
+          itemcd_s: rowsArr.itemcd.join("|"),
+          itemnm_s: rowsArr.itemnm.join("|"),
+          qty_s: rowsArr.qty.join("|"),
+          qtyunit_s: rowsArr.qtyunit.join("|"),
+          unitwgt_s: rowsArr.unitwgt.join("|"),
+          wgt_s: rowsArr.wgt.join("|"),
+          wgtunit_s: rowsArr.wgtunit.join("|"),
+          unp_s: rowsArr.unp.join("|"),
+          amt_s: rowsArr.amt.join("|"),
+          wonamt_s: rowsArr.wonamt.join("|"),
+          taxamt_s: rowsArr.taxamt.join("|"),
+          dlramt_s: rowsArr.dlramt.join("|"),
+          remark_s: rowsArr.remark.join("|"),
+          lotnum_s: rowsArr.lotnum.join("|"),
+          div_s: rowsArr.div.join("|"),
+        }));
       }
-    } catch (e) {
-      alert(e);
     }
   };
 
@@ -1897,17 +1887,12 @@ const DetailWindow = ({
         )}
       </Window>
       {planWindowVisible && (
-        <PlanWindow
-          setVisible={setPlanWindowVisible}
-          setData={setPlanData}
-          pathname={pathname}
-        />
+        <PlanWindow setVisible={setPlanWindowVisible} setData={setPlanData} />
       )}
       {stockWindowVisible && (
         <StockWindow
           setVisible={setStockWindowVisible}
           setData={setStockData}
-          pathname={pathname}
         />
       )}
       {custWindowVisible && (

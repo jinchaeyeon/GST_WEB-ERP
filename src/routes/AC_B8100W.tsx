@@ -53,7 +53,7 @@ const AC_B8100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B8100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

@@ -39,18 +39,16 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   isValidDate,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -69,7 +67,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void;
   modal?: boolean;
-  pathname: string;
 };
 
 type TdataArr = {
@@ -184,7 +181,6 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -251,10 +247,6 @@ const CopyWindow = ({
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -700,254 +692,252 @@ const CopyWindow = ({
       }
     });
 
-    try {
-      if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "SA_A3000W_002");
-      } else if (
-        filters.custcd == "" ||
-        filters.custcd == undefined ||
-        filters.custcd == null
-      ) {
-        throw findMessage(messagesData, "SA_A3000W_004");
-      } else if (
-        filters.rcvcustcd == "" ||
-        filters.rcvcustcd == undefined ||
-        filters.rcvcustcd == null
-      ) {
-        throw findMessage(messagesData, "SA_A3000W_005");
-      } else {
-        if (valid == true) {
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+      return false;
+    } else if (
+      filters.custcd == "" ||
+      filters.custcd == undefined ||
+      filters.custcd == null
+    ) {
+      alert("필수값을 채워주세요.");
+      return false;
+    } else if (
+      filters.rcvcustcd == "" ||
+      filters.rcvcustcd == undefined ||
+      filters.rcvcustcd == null
+    ) {
+      alert("필수값을 채워주세요.");
+      return false;
+    } else {
+      if (valid == true) {
+        const dataItem = mainDataResult.data.filter((item: any) => {
+          return (
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
+            item.rowstatus !== undefined
+          );
+        });
+        if (dataItem.length == 0 && deletedMainRows.length == 0) {
+          setParaData((prev) => ({
+            ...prev,
+            workType: workType,
+            reqnum: filters.reqnum,
+            location: filters.location,
+            reqdt: filters.reqdt,
+            shipdt:
+              filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
+            person: filters.person,
+            custcd: filters.custcd,
+            custnm: filters.custnm,
+            rcvcustcd: filters.rcvcustcd,
+            poregnum: filters.poregnum,
+            portnm: filters.portnm,
+            finaldes: filters.finaldes,
+            carno: filters.carno,
+            cargocd: filters.cargocd,
+            cargb: filters.cargb,
+            dvnm: filters.dvnm,
+            dvnum: filters.dvnum,
+            gugancd: filters.gugancd,
+            trcost: parseInt(filters.trcost),
+            remark: filters.remark,
+            rcvperson: filters.rcvperson,
+            rcvnum: filters.rcvnum,
+          }));
+        } else {
           const dataItem = mainDataResult.data.filter((item: any) => {
             return (
               (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
-          if (dataItem.length == 0 && deletedMainRows.length == 0) {
-            setParaData((prev) => ({
-              ...prev,
-              workType: workType,
-              reqnum: filters.reqnum,
-              location: filters.location,
-              reqdt: filters.reqdt,
-              shipdt:
-                filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
-              person: filters.person,
-              custcd: filters.custcd,
-              custnm: filters.custnm,
-              rcvcustcd: filters.rcvcustcd,
-              poregnum: filters.poregnum,
-              portnm: filters.portnm,
-              finaldes: filters.finaldes,
-              carno: filters.carno,
-              cargocd: filters.cargocd,
-              cargb: filters.cargb,
-              dvnm: filters.dvnm,
-              dvnum: filters.dvnum,
-              gugancd: filters.gugancd,
-              trcost: parseInt(filters.trcost),
-              remark: filters.remark,
-              rcvperson: filters.rcvperson,
-              rcvnum: filters.rcvnum,
-            }));
-          } else {
-            const dataItem = mainDataResult.data.filter((item: any) => {
-              return (
-                (item.rowstatus == "N" || item.rowstatus == "U") &&
-                item.rowstatus !== undefined
-              );
-            });
-            if (dataItem.length == 0 && deletedMainRows.length == 0)
-              return false;
-            let dataArr: TdataArr = {
-              rowstatus: [],
-              custcd: [],
-              custnm: [],
-              doqty: [],
-              dptcd: [],
-              itemacnt: [],
-              itemcd: [],
-              itemnm: [],
-              itemno: [],
-              len: [],
-              ordbnatur: [],
-              orddt: [],
-              ordinsiz: [],
-              ordkey: [],
-              ordnum: [],
-              ordseq: [],
-              ordsts: [],
-              person: [],
-              qty: [],
-              qtyunit: [],
-              rcvcustcd: [],
-              rcvcustnm: [],
-              remark: [],
-              reqqty: [],
-              unp: [],
-              reqseq: [],
-              unitwgt: [],
-              wgt: [],
-              wgtunit: [],
-              totwgt: [],
-              finyn: [],
-              spqty: [],
-              boxqty_w: [],
-              boxqty_h: [],
-              boxjanqty: [],
-              boxqty: [],
-              outlot: [],
-            };
+          if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
+          let dataArr: TdataArr = {
+            rowstatus: [],
+            custcd: [],
+            custnm: [],
+            doqty: [],
+            dptcd: [],
+            itemacnt: [],
+            itemcd: [],
+            itemnm: [],
+            itemno: [],
+            len: [],
+            ordbnatur: [],
+            orddt: [],
+            ordinsiz: [],
+            ordkey: [],
+            ordnum: [],
+            ordseq: [],
+            ordsts: [],
+            person: [],
+            qty: [],
+            qtyunit: [],
+            rcvcustcd: [],
+            rcvcustnm: [],
+            remark: [],
+            reqqty: [],
+            unp: [],
+            reqseq: [],
+            unitwgt: [],
+            wgt: [],
+            wgtunit: [],
+            totwgt: [],
+            finyn: [],
+            spqty: [],
+            boxqty_w: [],
+            boxqty_h: [],
+            boxjanqty: [],
+            boxqty: [],
+            outlot: [],
+          };
 
-            dataItem.forEach((item: any, idx: number) => {
-              const {
-                rowstatus = "",
-                itemacnt = "",
-                itemcd = "",
-                itemnm = "",
-                len = "",
-                ordnum = "",
-                ordseq = "",
-                qty = "",
-                remark = "",
-                unp = "",
-                reqseq = "",
-                unitwgt = "",
-                wgt = "",
-                wgtunit = "",
-                totwgt = "",
-                finyn = "",
-                spqty = "",
-                boxqty_w = "",
-                boxqty_h = "",
-                boxjanqty = "",
-                boxqty = "",
-              } = item;
+          dataItem.forEach((item: any, idx: number) => {
+            const {
+              rowstatus = "",
+              itemacnt = "",
+              itemcd = "",
+              itemnm = "",
+              len = "",
+              ordnum = "",
+              ordseq = "",
+              qty = "",
+              remark = "",
+              unp = "",
+              reqseq = "",
+              unitwgt = "",
+              wgt = "",
+              wgtunit = "",
+              totwgt = "",
+              finyn = "",
+              spqty = "",
+              boxqty_w = "",
+              boxqty_h = "",
+              boxjanqty = "",
+              boxqty = "",
+            } = item;
 
-              dataArr.rowstatus.push(rowstatus);
-              dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
-              dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
-              dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
-              dataArr.itemcd.push(itemcd);
-              dataArr.itemnm.push(itemnm);
-              dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
-              dataArr.qty.push(qty == "" ? 0 : qty);
-              dataArr.len.push(len == "" ? 0 : len);
-              dataArr.unitwgt.push(unitwgt == "" ? 0 : unitwgt);
-              dataArr.wgt.push(wgt == "" ? 0 : wgt);
-              dataArr.wgtunit.push(wgtunit == "" ? 0 : wgtunit);
-              dataArr.totwgt.push(totwgt == "" ? 0 : totwgt);
-              dataArr.remark.push(remark == undefined ? "" : remark);
-              dataArr.finyn.push(finyn == undefined ? "" : finyn);
-              dataArr.unp.push(unp == "" ? 0 : unp);
-              dataArr.spqty.push(spqty == "" ? 0 : spqty);
-              dataArr.boxqty_w.push(boxqty_w == "" ? 0 : boxqty_w);
-              dataArr.boxqty_h.push(boxqty_h == "" ? 0 : boxqty_h);
-              dataArr.boxjanqty.push(boxjanqty == "" ? 0 : boxjanqty);
-              dataArr.boxqty.push(boxqty == "" ? 0 : boxqty);
-              dataArr.outlot.push("");
-            });
-            deletedMainRows.forEach((item: any, idx: number) => {
-              const {
-                rowstatus = "",
-                itemacnt = "",
-                itemcd = "",
-                itemnm = "",
-                len = "",
-                ordnum = "",
-                ordseq = "",
-                qty = "",
-                remark = "",
-                unp = "",
-                reqseq = "",
-                unitwgt = "",
-                wgt = "",
-                wgtunit = "",
-                totwgt = "",
-                finyn = "",
-                spqty = "",
-                boxqty_w = "",
-                boxqty_h = "",
-                boxjanqty = "",
-                boxqty = "",
-              } = item;
+            dataArr.rowstatus.push(rowstatus);
+            dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+            dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
+            dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+            dataArr.itemcd.push(itemcd);
+            dataArr.itemnm.push(itemnm);
+            dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
+            dataArr.qty.push(qty == "" ? 0 : qty);
+            dataArr.len.push(len == "" ? 0 : len);
+            dataArr.unitwgt.push(unitwgt == "" ? 0 : unitwgt);
+            dataArr.wgt.push(wgt == "" ? 0 : wgt);
+            dataArr.wgtunit.push(wgtunit == "" ? 0 : wgtunit);
+            dataArr.totwgt.push(totwgt == "" ? 0 : totwgt);
+            dataArr.remark.push(remark == undefined ? "" : remark);
+            dataArr.finyn.push(finyn == undefined ? "" : finyn);
+            dataArr.unp.push(unp == "" ? 0 : unp);
+            dataArr.spqty.push(spqty == "" ? 0 : spqty);
+            dataArr.boxqty_w.push(boxqty_w == "" ? 0 : boxqty_w);
+            dataArr.boxqty_h.push(boxqty_h == "" ? 0 : boxqty_h);
+            dataArr.boxjanqty.push(boxjanqty == "" ? 0 : boxjanqty);
+            dataArr.boxqty.push(boxqty == "" ? 0 : boxqty);
+            dataArr.outlot.push("");
+          });
+          deletedMainRows.forEach((item: any, idx: number) => {
+            const {
+              rowstatus = "",
+              itemacnt = "",
+              itemcd = "",
+              itemnm = "",
+              len = "",
+              ordnum = "",
+              ordseq = "",
+              qty = "",
+              remark = "",
+              unp = "",
+              reqseq = "",
+              unitwgt = "",
+              wgt = "",
+              wgtunit = "",
+              totwgt = "",
+              finyn = "",
+              spqty = "",
+              boxqty_w = "",
+              boxqty_h = "",
+              boxjanqty = "",
+              boxqty = "",
+            } = item;
 
-              dataArr.rowstatus.push(rowstatus);
-              dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
-              dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
-              dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
-              dataArr.itemcd.push(itemcd);
-              dataArr.itemnm.push(itemnm);
-              dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
-              dataArr.qty.push(qty == "" ? 0 : qty);
-              dataArr.len.push(len == "" ? 0 : len);
-              dataArr.unitwgt.push(unitwgt == "" ? 0 : unitwgt);
-              dataArr.wgt.push(wgt == "" ? 0 : wgt);
-              dataArr.wgtunit.push(wgtunit == "" ? 0 : wgtunit);
-              dataArr.totwgt.push(totwgt == "" ? 0 : totwgt);
-              dataArr.remark.push(remark == undefined ? "" : remark);
-              dataArr.finyn.push(finyn == undefined ? "" : finyn);
-              dataArr.unp.push(unp == "" ? 0 : unp);
-              dataArr.spqty.push(spqty == "" ? 0 : spqty);
-              dataArr.boxqty_w.push(boxqty_w == "" ? 0 : boxqty_w);
-              dataArr.boxqty_h.push(boxqty_h == "" ? 0 : boxqty_h);
-              dataArr.boxjanqty.push(boxjanqty == "" ? 0 : boxjanqty);
-              dataArr.boxqty.push(boxqty == "" ? 0 : boxqty);
-              dataArr.outlot.push("");
-            });
-            setParaData((prev) => ({
-              ...prev,
-              workType: workType,
-              reqnum: filters.reqnum,
-              location: filters.location,
-              reqdt: filters.reqdt,
-              shipdt:
-                filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
-              person: filters.person,
-              custcd: filters.custcd,
-              custnm: filters.custnm,
-              rcvcustcd: filters.rcvcustcd,
-              poregnum: filters.poregnum,
-              portnm: filters.portnm,
-              finaldes: filters.finaldes,
-              carno: filters.carno,
-              cargocd: filters.cargocd,
-              cargb: filters.cargb,
-              dvnm: filters.dvnm,
-              dvnum: filters.dvnum,
-              gugancd: filters.gugancd,
-              trcost: parseInt(filters.trcost),
-              remark: filters.remark,
-              rcvperson: filters.rcvperson,
-              rcvnum: filters.rcvnum,
-              rowstatus: dataArr.rowstatus.join("|"),
-              reqseq_s: dataArr.reqseq.join("|"),
-              ordnum_s: dataArr.ordnum.join("|"),
-              ordseq_s: dataArr.ordseq.join("|"),
-              itemcd_s: dataArr.itemcd.join("|"),
-              itemnm_s: dataArr.itemnm.join("|"),
-              itemacnt_s: dataArr.itemacnt.join("|"),
-              qty_s: dataArr.qty.join("|"),
-              len_s: dataArr.len.join("|"),
-              unitwgt_s: dataArr.unitwgt.join("|"),
-              wgt_s: dataArr.wgt.join("|"),
-              wgtunit_s: dataArr.wgtunit.join("|"),
-              totwgt_s: dataArr.totwgt.join("|"),
-              remark_s: dataArr.remark.join("|"),
-              finyn_s: dataArr.finyn.join("|"),
-              unp_s: dataArr.unp.join("|"),
-              spqty_s: dataArr.spqty.join("|"),
-              boxqty_w_s: dataArr.boxqty_w.join("|"),
-              boxqty_h_s: dataArr.boxqty_h.join("|"),
-              boxjanqty_s: dataArr.boxjanqty.join("|"),
-              boxqty_s: dataArr.boxqty.join("|"),
-              outlot_s: dataArr.outlot.join("|"),
-            }));
-          }
+            dataArr.rowstatus.push(rowstatus);
+            dataArr.reqseq.push(reqseq == "" ? 0 : reqseq);
+            dataArr.ordnum.push(ordnum == undefined ? "" : ordnum);
+            dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+            dataArr.itemcd.push(itemcd);
+            dataArr.itemnm.push(itemnm);
+            dataArr.itemacnt.push(itemacnt == undefined ? "" : itemacnt);
+            dataArr.qty.push(qty == "" ? 0 : qty);
+            dataArr.len.push(len == "" ? 0 : len);
+            dataArr.unitwgt.push(unitwgt == "" ? 0 : unitwgt);
+            dataArr.wgt.push(wgt == "" ? 0 : wgt);
+            dataArr.wgtunit.push(wgtunit == "" ? 0 : wgtunit);
+            dataArr.totwgt.push(totwgt == "" ? 0 : totwgt);
+            dataArr.remark.push(remark == undefined ? "" : remark);
+            dataArr.finyn.push(finyn == undefined ? "" : finyn);
+            dataArr.unp.push(unp == "" ? 0 : unp);
+            dataArr.spqty.push(spqty == "" ? 0 : spqty);
+            dataArr.boxqty_w.push(boxqty_w == "" ? 0 : boxqty_w);
+            dataArr.boxqty_h.push(boxqty_h == "" ? 0 : boxqty_h);
+            dataArr.boxjanqty.push(boxjanqty == "" ? 0 : boxjanqty);
+            dataArr.boxqty.push(boxqty == "" ? 0 : boxqty);
+            dataArr.outlot.push("");
+          });
+          setParaData((prev) => ({
+            ...prev,
+            workType: workType,
+            reqnum: filters.reqnum,
+            location: filters.location,
+            reqdt: filters.reqdt,
+            shipdt:
+              filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
+            person: filters.person,
+            custcd: filters.custcd,
+            custnm: filters.custnm,
+            rcvcustcd: filters.rcvcustcd,
+            poregnum: filters.poregnum,
+            portnm: filters.portnm,
+            finaldes: filters.finaldes,
+            carno: filters.carno,
+            cargocd: filters.cargocd,
+            cargb: filters.cargb,
+            dvnm: filters.dvnm,
+            dvnum: filters.dvnum,
+            gugancd: filters.gugancd,
+            trcost: parseInt(filters.trcost),
+            remark: filters.remark,
+            rcvperson: filters.rcvperson,
+            rcvnum: filters.rcvnum,
+            rowstatus: dataArr.rowstatus.join("|"),
+            reqseq_s: dataArr.reqseq.join("|"),
+            ordnum_s: dataArr.ordnum.join("|"),
+            ordseq_s: dataArr.ordseq.join("|"),
+            itemcd_s: dataArr.itemcd.join("|"),
+            itemnm_s: dataArr.itemnm.join("|"),
+            itemacnt_s: dataArr.itemacnt.join("|"),
+            qty_s: dataArr.qty.join("|"),
+            len_s: dataArr.len.join("|"),
+            unitwgt_s: dataArr.unitwgt.join("|"),
+            wgt_s: dataArr.wgt.join("|"),
+            wgtunit_s: dataArr.wgtunit.join("|"),
+            totwgt_s: dataArr.totwgt.join("|"),
+            remark_s: dataArr.remark.join("|"),
+            finyn_s: dataArr.finyn.join("|"),
+            unp_s: dataArr.unp.join("|"),
+            spqty_s: dataArr.spqty.join("|"),
+            boxqty_w_s: dataArr.boxqty_w.join("|"),
+            boxqty_h_s: dataArr.boxqty_h.join("|"),
+            boxjanqty_s: dataArr.boxjanqty.join("|"),
+            boxqty_s: dataArr.boxqty.join("|"),
+            outlot_s: dataArr.outlot.join("|"),
+          }));
         }
       }
-    } catch (e) {
-      alert(e);
     }
   };
 
@@ -2131,7 +2121,6 @@ const CopyWindow = ({
           setData={setCopyData}
           custcd={filters.custcd}
           custnm={filters.custnm}
-          pathname={pathname}
         />
       )}
     </>

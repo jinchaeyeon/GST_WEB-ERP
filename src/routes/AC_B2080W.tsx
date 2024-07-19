@@ -200,7 +200,7 @@ const AC_B2080W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B2080W", setMessagesData);
+  UseMessages(setMessagesData);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -858,14 +858,14 @@ const AC_B2080W: React.FC = () => {
         convertDateToStr(filters.startdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.startdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "AC_B6080W_001");
+        throw findMessage(messagesData, "AC_B2080W_001");
       } else if (
         convertDateToStr(filters.enddt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.enddt).substring(6, 8) > "31" ||
         convertDateToStr(filters.enddt).substring(6, 8) < "01" ||
         convertDateToStr(filters.enddt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "AC_B6080W_001");
+        throw findMessage(messagesData, "AC_B2080W_001");
       } else {
         resetAllGrid();
         if (tabSelected == 0) {

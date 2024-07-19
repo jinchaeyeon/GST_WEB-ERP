@@ -128,7 +128,7 @@ const CM_A1610W: React.FC = () => {
   UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_A1610W", setMessagesData);
+  UseMessages(setMessagesData);
 
   useEffect(() => {
     if (bizComponentData !== null) {

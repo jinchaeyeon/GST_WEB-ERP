@@ -1924,7 +1924,6 @@ const Page: React.FC = () => {
             },
           }}
           modal={true}
-          pathname="SY_A0011W"
         />
       )}
       {/* 컨트롤 네임 불러오기 용 */}

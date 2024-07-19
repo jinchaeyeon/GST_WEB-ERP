@@ -167,7 +167,7 @@ const SY_A0500W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SY_A0500W", setMessagesData);
+  UseMessages(setMessagesData);
 
   useEffect(() => {
     if (bizComponentData !== null) {

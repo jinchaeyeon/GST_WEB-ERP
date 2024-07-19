@@ -151,7 +151,7 @@ const QC_A2500W_603: React.FC = () => {
   UseCustomOption(setCustomOptionData);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("QC_A2500W_603", setMessagesData);
+  UseMessages(setMessagesData);
 
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
@@ -3438,7 +3438,6 @@ const QC_A2500W_603: React.FC = () => {
           setVisible={setDetailWindowVisible}
           setData={setData}
           modal={true}
-          pathname="QC_A2500W_603"
         />
       )}
       {projectWindowVisible && (
@@ -3446,7 +3445,6 @@ const QC_A2500W_603: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="QC_A2500W_603"
         />
       )}
       {PrsnnumWindowVisible && (

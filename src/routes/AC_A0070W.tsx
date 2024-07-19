@@ -319,7 +319,7 @@ const AC_A0070W: React.FC = () => {
 
   //폼 메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A0070W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(

@@ -15,6 +15,16 @@ import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
+export const getFormId = () => {
+  return (
+    window.location.href
+    .split("?")[0]
+    .split("/")[3]
+    .toUpperCase()
+    .replace("/", "")
+  )
+};
+
 export const getMenuName = () => {
   const [menus, setMenus] = useRecoilState(menusState);
   return menus != null
@@ -386,7 +396,7 @@ export const findMessage = (messagesData: any, id: string) => {
 };
 
 //현재 경로를 받아서 메시지 조회 후 결과값을 반환
-export const UseMessages = (pathname: string, setListData: any) => {
+export const UseMessages = (setListData: any) => {
   const processApi = useApi();
 
   React.useEffect(() => {
@@ -398,7 +408,11 @@ export const UseMessages = (pathname: string, setListData: any) => {
     let data: any;
     try {
       data = await processApi<any>("messages", {
-        formId: pathname.replace("/", ""),
+        formId: window.location.href
+        .split("?")[0]
+        .split("/")[3]
+        .toUpperCase()
+        .replace("/", ""),
       });
     } catch (error) {
       data = null;

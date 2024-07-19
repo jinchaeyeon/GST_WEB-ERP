@@ -77,7 +77,7 @@ const SA_B1101W_603: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B1101W_603", setMessagesData);
+  UseMessages(setMessagesData);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 
@@ -661,7 +661,6 @@ const SA_B1101W_603: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_B1101W_603"
         />
       )}
       {gridList.map((grid: TGrid) =>

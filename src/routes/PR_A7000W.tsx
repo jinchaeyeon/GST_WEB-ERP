@@ -301,7 +301,7 @@ const PR_A7000W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("PR_A7000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

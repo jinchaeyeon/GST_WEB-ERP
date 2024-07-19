@@ -948,7 +948,6 @@ const PR_A3000W: React.FC = () => {
             setStopStartOrEnd("end");
             fetchStopData();
           }}
-          pathname="PR_A3000W"
         />
       )}
       {defectWindowVisible && (
@@ -956,7 +955,6 @@ const PR_A3000W: React.FC = () => {
           setVisible={setDefectWindowVisible}
           rekey={masterDataResult.rekey}
           setData={(badqty) => setFiltersSaved((prev) => ({ ...prev, badqty }))}
-          pathname="PR_A3000W"
         />
       )}
     </>

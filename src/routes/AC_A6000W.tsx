@@ -404,7 +404,7 @@ const AC_A6000W: React.FC = () => {
   const [editedField, setEditedField] = useState("");
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("AC_A6000W", setMessagesData);
+  UseMessages(setMessagesData);
   const [osstate, setOSState] = useRecoilState(OSState);
   const [custcd, setCustcd] = useState<string>("");
   const [custnm, setCustnm] = useState<string>("");

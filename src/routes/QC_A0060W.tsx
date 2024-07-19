@@ -142,7 +142,7 @@ const QC_A0060W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("QC_A0060W", setMessagesData);
+  UseMessages(setMessagesData);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -1477,7 +1477,6 @@ const QC_A0060W: React.FC = () => {
           }
           rev={rev}
           modal={true}
-          pathname="QC_A0060W"
         />
       )}
       {itemWindowVisible && (

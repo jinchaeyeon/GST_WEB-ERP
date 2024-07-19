@@ -71,7 +71,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(str: string): void;
   modal?: boolean;
-  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -420,7 +419,6 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,

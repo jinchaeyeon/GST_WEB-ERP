@@ -244,7 +244,7 @@ const SA_A7900W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A7900W", setMessagesData);
+  UseMessages(setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);

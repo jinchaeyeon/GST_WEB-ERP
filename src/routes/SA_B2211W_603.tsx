@@ -66,7 +66,7 @@ const SA_B2211W_603: React.FC = () => {
 
   //폼 메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B2211W_603", setMessagesData);
+  UseMessages(setMessagesData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
   useEffect(() => {

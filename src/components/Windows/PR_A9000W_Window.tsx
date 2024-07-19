@@ -40,7 +40,6 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   getBizCom,
@@ -48,7 +47,7 @@ import {
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -67,19 +66,13 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal: boolean;
-  pathname: string;
 };
 
 var height = 0;
 var height2 = 0;
 var height3 = 0;
 
-const CopyWindow = ({
-  setVisible,
-  setData,
-  modal = false,
-  pathname,
-}: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -134,11 +127,6 @@ const CopyWindow = ({
 
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

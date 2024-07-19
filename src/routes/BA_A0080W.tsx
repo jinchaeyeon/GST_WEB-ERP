@@ -428,7 +428,7 @@ const BA_A0080: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("BA_A0080W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -2443,7 +2443,6 @@ const BA_A0080: React.FC = () => {
         <CopyWindow2
           setVisible={setCopyWindowVisible2}
           modal={true}
-          pathname="BA_A0080W"
         />
       )}
       {gridList.map((grid: TGrid) =>

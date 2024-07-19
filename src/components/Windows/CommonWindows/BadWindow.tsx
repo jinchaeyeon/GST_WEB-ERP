@@ -26,13 +26,11 @@ import NumberCell from "../../Cells/NumberCell";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  getWindowDeviceHeight,
+  getWindowDeviceHeight
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -56,17 +54,10 @@ type IWindow = {
   setData(str: any): void;
   renum: string;
   modal?: boolean;
-  pathname: string;
 };
 var height = 0;
 var height3 = 0;
-const Badwindow = ({
-  setVisible,
-  setData,
-  renum,
-  modal = false,
-  pathname,
-}: IWindow) => {
+const Badwindow = ({ setVisible, setData, renum, modal = false }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -78,8 +69,6 @@ const Badwindow = ({
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   const [mobileheight, setMobileHeight] = useState(0);
@@ -334,50 +323,46 @@ const Badwindow = ({
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
     if (data != null) {
-      try {
-        if (data.qty < 0) {
-          throw findMessage(messagesData, "QC_A6000W_003");
-        } else {
-          const dataItem = mainDataResult.data.filter((item: any) => {
-            return (
-              (item.rowstatus == "N" || item.rowstatus == "U") &&
-              item.rowstatus !== undefined
-            );
-          });
-          if (dataItem.length == 0) return false;
-          let dataArr: TdataArr = {
-            rowstatus_s: [],
-            badqty_s: [],
-            badcd_s: [],
-            badnum_s: [],
-            badseq_s: [],
-          };
-          dataItem.forEach((item: any, idx: number) => {
-            const {
-              rowstatus = "",
-              qty = "",
-              badcd = "",
-              badnum = "",
-              badseq = "",
-            } = item;
-            dataArr.rowstatus_s.push(rowstatus);
-            dataArr.badcd_s.push(badcd == undefined ? "" : badcd);
-            dataArr.badqty_s.push(qty == undefined ? "" : qty);
-            dataArr.badnum_s.push(badnum == undefined ? "" : badnum);
-            dataArr.badseq_s.push(badseq == undefined ? "" : badseq);
-          });
+      if (data.qty < 0) {
+        alert("수량을 입력해주세요.");
+      } else {
+        const dataItem = mainDataResult.data.filter((item: any) => {
+          return (
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
+            item.rowstatus !== undefined
+          );
+        });
+        if (dataItem.length == 0) return false;
+        let dataArr: TdataArr = {
+          rowstatus_s: [],
+          badqty_s: [],
+          badcd_s: [],
+          badnum_s: [],
+          badseq_s: [],
+        };
+        dataItem.forEach((item: any, idx: number) => {
+          const {
+            rowstatus = "",
+            qty = "",
+            badcd = "",
+            badnum = "",
+            badseq = "",
+          } = item;
+          dataArr.rowstatus_s.push(rowstatus);
+          dataArr.badcd_s.push(badcd == undefined ? "" : badcd);
+          dataArr.badqty_s.push(qty == undefined ? "" : qty);
+          dataArr.badnum_s.push(badnum == undefined ? "" : badnum);
+          dataArr.badseq_s.push(badseq == undefined ? "" : badseq);
+        });
 
-          setParaData((prev) => ({
-            ...prev,
-            rowstatus_s: dataArr.rowstatus_s.join("|"),
-            badqty_s: dataArr.badqty_s.join("|"),
-            badcd_s: dataArr.badcd_s.join("|"),
-            badnum_s: dataArr.badnum_s.join("|"),
-            badseq_s: dataArr.badseq_s.join("|"),
-          }));
-        }
-      } catch (e) {
-        alert(e);
+        setParaData((prev) => ({
+          ...prev,
+          rowstatus_s: dataArr.rowstatus_s.join("|"),
+          badqty_s: dataArr.badqty_s.join("|"),
+          badcd_s: dataArr.badcd_s.join("|"),
+          badnum_s: dataArr.badnum_s.join("|"),
+          badseq_s: dataArr.badseq_s.join("|"),
+        }));
       }
     } else {
       onClose();

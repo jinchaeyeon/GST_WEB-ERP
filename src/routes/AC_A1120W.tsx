@@ -128,7 +128,7 @@ const AC_A1120W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A1120W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //엑셀 내보내기
   let _export: any;

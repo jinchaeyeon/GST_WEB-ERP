@@ -233,7 +233,7 @@ const HU_A2070W: React.FC = () => {
   //커스텀 옵션 조회
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A2070W", setMessagesData);
+  UseMessages(setMessagesData);
 
   useEffect(() => {
     if (customOptionData !== null) {

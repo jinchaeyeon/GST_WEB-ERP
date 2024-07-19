@@ -81,7 +81,7 @@ const MA_B2100W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_B2100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

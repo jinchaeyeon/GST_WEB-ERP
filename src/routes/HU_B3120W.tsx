@@ -272,7 +272,7 @@ const HU_B3120W: React.FC = () => {
   const [url, setUrl] = useState<string>("");
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_B3120W", setMessagesData);
+  UseMessages(setMessagesData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_HU032, L_dptcd_001",

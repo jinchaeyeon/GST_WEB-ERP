@@ -283,7 +283,7 @@ const CM_A1600W_603: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_A1600W_603", setMessagesData);
+  UseMessages(setMessagesData);
   const [osstate, setOSState] = useRecoilState(OSState);
 
   const [colorData, setColorData] = useState<any[]>([]);

@@ -43,19 +43,17 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   chkScrollHandler,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
   isValidDate,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -83,7 +81,6 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   custcd: string;
   custnm: string;
-  pathname: string;
   modal?: boolean;
 };
 
@@ -92,7 +89,6 @@ const CopyWindow = ({
   setData,
   custcd,
   custnm,
-  pathname,
   modal = false,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -205,10 +201,6 @@ const CopyWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -622,38 +614,37 @@ const CopyWindow = ({
   };
 
   const search = () => {
-    try {
-      if (
-        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.frdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A3000W_001");
-      } else if (
-        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.todt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A3000W_001");
-      } else if (
-        filters.dtgb == "" ||
-        filters.dtgb == undefined ||
-        filters.dtgb == null
-      ) {
-        throw findMessage(messagesData, "SA_A3000W_003");
-      } else {
-        resetAllGrid();
-        setPage(initialPageState); // 페이지 초기화
-        setFilters((prev: any) => ({
-          ...prev,
-          pgNum: 1,
-          isSearch: true,
-        }));
-      }
-    } catch (e) {
-      alert(e);
+    if (
+      convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.frdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else if (
+      convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.todt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else if (
+      filters.dtgb == "" ||
+      filters.dtgb == undefined ||
+      filters.dtgb == null
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else {
+      resetAllGrid();
+      setPage(initialPageState); // 페이지 초기화
+      setFilters((prev: any) => ({
+        ...prev,
+        pgNum: 1,
+        isSearch: true,
+      }));
     }
   };
 

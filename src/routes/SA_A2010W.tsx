@@ -160,7 +160,7 @@ const SA_A2010: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A2010W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -2038,7 +2038,6 @@ const SA_A2010: React.FC = () => {
             },
           }}
           modal={true}
-          pathname="SA_A2000W"
         />
       )}
       {custWindowVisible && (

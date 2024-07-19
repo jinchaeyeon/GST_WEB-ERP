@@ -78,7 +78,7 @@ const CR_A1101W: React.FC = () => {
   const [count, setCount] = useState(30);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CR_A1101W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

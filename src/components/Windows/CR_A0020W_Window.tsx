@@ -21,6 +21,7 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
+  getFormId,
   getHeight,
   getWindowDeviceHeight,
 } from "../CommonFunction";
@@ -33,7 +34,6 @@ type TKendoWindow = {
   orgdiv: string;
   custcd?: string;
   modal?: boolean;
-  pathname: string;
 };
 
 var height = 0;
@@ -46,7 +46,6 @@ const KendoWindow = ({
   orgdiv,
   custcd,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -235,10 +234,6 @@ const KendoWindow = ({
     setLoading(false);
   };
 
-  // //메시지 조회
-  // const [messagesData, setMessagesData] = useState<any>(null);
-  // UseMessages(pathname, setMessagesData);
-
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -258,7 +253,7 @@ const KendoWindow = ({
     useyn: "Y",
     userid: userId,
     pc: pc,
-    form_id: pathname,
+    form_id: getFormId(),
   });
 
   //프로시저 파라미터

@@ -220,7 +220,7 @@ const HU_A2000W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("HU_A2000W", setMessagesData);
+  UseMessages(setMessagesData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_HU076, L_HU075",

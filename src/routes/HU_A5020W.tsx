@@ -375,7 +375,7 @@ const HU_A5020W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A5020W", setMessagesData);
+  UseMessages(setMessagesData);
 
   useEffect(() => {
     if (customOptionData !== null) {

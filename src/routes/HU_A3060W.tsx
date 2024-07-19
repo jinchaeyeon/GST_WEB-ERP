@@ -260,7 +260,7 @@ const HU_A3060W: React.FC = () => {
   const idGetter3_1 = getter(DATA_ITEM_KEY3_1);
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A3060W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");

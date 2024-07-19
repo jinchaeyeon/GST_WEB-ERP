@@ -45,17 +45,15 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -75,7 +73,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 let temp = 0;
 let targetRowIndex: null | number = null;
@@ -216,7 +213,6 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -283,10 +279,6 @@ const CopyWindow = ({
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
@@ -1345,456 +1337,457 @@ const CopyWindow = ({
       }
     }
 
-    try {
-      if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "SA_A5000W_003");
-      } else if (
-        convertDateToStr(filters.outdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.outdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.outdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.outdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A5001W_001");
-      } else if (
-        filters.amtunit == null ||
-        filters.amtunit == "" ||
-        filters.amtunit == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A5001W_002");
-      } else if (
-        filters.custcd == null ||
-        filters.custcd == "" ||
-        filters.custcd == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A5001W_002");
-      } else if (
-        filters.rcvcustcd == null ||
-        filters.rcvcustcd == "" ||
-        filters.rcvcustcd == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A5001W_002");
-      } else {
-        if (valid == true) {
-          const dataItem = mainDataResult.data.filter((item: any) => {
-            return (
-              (item.rowstatus == "N" || item.rowstatus == "U") &&
-              item.rowstatus !== undefined
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+      return false;
+    } else if (
+      convertDateToStr(filters.outdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.outdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.outdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.outdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else if (
+      filters.amtunit == null ||
+      filters.amtunit == "" ||
+      filters.amtunit == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.custcd == null ||
+      filters.custcd == "" ||
+      filters.custcd == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.rcvcustcd == null ||
+      filters.rcvcustcd == "" ||
+      filters.rcvcustcd == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else {
+      if (valid == true) {
+        const dataItem = mainDataResult.data.filter((item: any) => {
+          return (
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
+            item.rowstatus !== undefined
+          );
+        });
+
+        if (dataItem.length == 0) {
+          setParaData((prev) => ({
+            ...prev,
+            workType: workType,
+            orgdiv: filters.orgdiv,
+            recdt: filters.recdt,
+            seq1: filters.seq1,
+            busadiv: "",
+            location: filters.location,
+            doexdiv: filters.doexdiv,
+            outkind: "",
+            outtype: filters.outtype,
+            outdt: filters.outdt,
+            shipdt:
+              filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
+            person: filters.person,
+            custcd: filters.custcd,
+            rcvcustcd: filters.rcvcustcd,
+            taxdiv: filters.taxdiv,
+            amtunit: filters.amtunit,
+            baseamt: filters.baseamt,
+            wonchgrat: filters.wonchgrat,
+            uschgrat: filters.uschgrat,
+            contractno: "",
+            remark: filters.remark,
+            cargb: "",
+            dvnm: "",
+            dvnum: "",
+            port: "",
+            lcno: "",
+            lcdt: "",
+            actloca: "",
+            actdt: "",
+            acseq1: filters.acseq1,
+            acseq2: filters.acseq2,
+            eregno: filters.eregno,
+            custprsncd: filters.custprsncd,
+            unprate: filters.unprate,
+            countrycd: "",
+            custnm: filters.custnm,
+            rcvcustnm: filters.rcvcustnm,
+            attdatnum: filters.attdatnum,
+            boxnm: "",
+            wgt: "",
+            userid: userId,
+            pc: pc,
+            form_id: "SA_A5001W",
+            serviceid: companyCode,
+          }));
+        } else {
+          let dataArr: TdataArr = {
+            rowstatus_s: [],
+            seq2_s: [],
+            rtnyn_s: [],
+            rtntype_s: [],
+            ordnum_s: [],
+            ordseq_s: [],
+            portcd_s: [],
+            portnm_s: [],
+            shipnm_s: [],
+            pacmeth_s: [],
+            paymeth1_s: [],
+            prcterms_s: [],
+            poregnum_s: [],
+            itemgrade_s: [],
+            itemcd_s: [],
+            itemnm_s: [],
+            itemacnt_s: [],
+            qty_s: [],
+            qtyunit_s: [],
+            lenunit_s: [],
+            totlen_s: [],
+            unitwgt_s: [],
+            totwgt_s: [],
+            wgtunit_s: [],
+            unpcalmeth_s: [],
+            unp_s: [],
+            amt_s: [],
+            wonamt_s: [],
+            taxamt_s: [],
+            dlramt_s: [],
+            lotnum_s: [],
+            orglot_s: [],
+            heatno_s: [],
+            pcncd_s: [],
+            remark_s: [],
+            inrecdt_s: [],
+            inseq1_s: [],
+            inseq2_s: [],
+            gonum_s: [],
+            goseq_s: [],
+            connum_s: [],
+            conseq_s: [],
+            spno_s: [],
+            boxno_s: [],
+            endyn_s: [],
+            reqnum_s: [],
+            reqseq_s: [],
+            boxcd_s: [],
+            specialunp_s: [],
+          };
+
+          dataItem.forEach((item: any, idx: number) => {
+            const {
+              rowstatus = "",
+              seq2 = "",
+              rtnyn = "",
+              rtntype = "",
+              ordnum = "",
+              ordseq = "",
+              portcd = "",
+              portnm = "",
+              shipnm = "",
+              pacmeth = "",
+              paymeth1 = "",
+              prcterms = "",
+              poregnum = "",
+              itemgrade = "",
+              itemcd = "",
+              itemnm = "",
+              itemacnt = "",
+              qty = "",
+              qtyunit = "",
+              lenunit = "",
+              totlen = "",
+              unitwgt = "",
+              totwgt = "",
+              wgtunit = "",
+              unpcalmeth = "",
+              unp = "",
+              amt = "",
+              wonamt = "",
+              taxamt = "",
+              dlramt = "",
+              lotnum = "",
+              orglot = "",
+              heatno = "",
+              pcncd = "",
+              remark = "",
+              inrecdt = "",
+              inseq1 = "",
+              inseq2 = "",
+              gonum = "",
+              goseq = "",
+              connum = "",
+              conseq = "",
+              spno = "",
+              boxno = "",
+              endyn = "",
+              reqnum = "",
+              reqseq = "",
+              boxcd = "",
+              specialunp = "",
+            } = item;
+            dataArr.rowstatus_s.push(rowstatus);
+            dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
+            dataArr.rtnyn_s.push(rtnyn);
+            dataArr.rtntype_s.push(rtntype);
+            dataArr.ordnum_s.push(ordnum);
+            dataArr.ordseq_s.push(ordseq);
+            dataArr.portcd_s.push(portcd);
+            dataArr.portnm_s.push(portnm);
+            dataArr.shipnm_s.push(shipnm);
+            dataArr.pacmeth_s.push(pacmeth);
+            dataArr.paymeth1_s.push(paymeth1);
+            dataArr.prcterms_s.push(prcterms);
+            dataArr.poregnum_s.push(poregnum);
+            dataArr.itemgrade_s.push(itemgrade);
+            dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+            dataArr.itemnm_s.push(itemnm);
+            dataArr.itemacnt_s.push(itemacnt == "" ? "" : itemacnt);
+            dataArr.qty_s.push(qty == "" ? 0 : qty);
+            dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+            dataArr.lenunit_s.push(lenunit);
+            dataArr.totlen_s.push(totlen);
+            dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
+            dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+            dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+            dataArr.unpcalmeth_s.push(
+              unpcalmeth == undefined ? "Q" : unpcalmeth
             );
+            dataArr.unp_s.push(unp == "" ? 0 : unp);
+            dataArr.amt_s.push(amt == "" ? 0 : amt);
+            dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+            dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+            dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+            dataArr.lotnum_s.push(lotnum);
+            dataArr.orglot_s.push(orglot);
+            dataArr.heatno_s.push(heatno);
+            dataArr.pcncd_s.push(pcncd);
+            dataArr.remark_s.push(remark == undefined ? "" : remark);
+            dataArr.inrecdt_s.push(inrecdt);
+            dataArr.inseq1_s.push(inseq1);
+            dataArr.inseq2_s.push(inseq2);
+            dataArr.gonum_s.push(gonum);
+            dataArr.goseq_s.push(goseq);
+            dataArr.connum_s.push(connum);
+            dataArr.conseq_s.push(conseq);
+            dataArr.spno_s.push(spno);
+            dataArr.boxno_s.push(boxno);
+            dataArr.endyn_s.push(endyn);
+            dataArr.reqnum_s.push(reqnum);
+            dataArr.reqseq_s.push(reqseq);
+            dataArr.boxcd_s.push(boxcd);
+            dataArr.specialunp_s.push(specialunp);
+          });
+          deletedMainRows.forEach((item: any, idx: number) => {
+            const {
+              rowstatus = "",
+              seq2 = "",
+              rtnyn = "",
+              rtntype = "",
+              ordnum = "",
+              ordseq = "",
+              portcd = "",
+              portnm = "",
+              shipnm = "",
+              pacmeth = "",
+              paymeth1 = "",
+              prcterms = "",
+              poregnum = "",
+              itemgrade = "",
+              itemcd = "",
+              itemnm = "",
+              itemacnt = "",
+              qty = "",
+              qtyunit = "",
+              lenunit = "",
+              totlen = "",
+              unitwgt = "",
+              totwgt = "",
+              wgtunit = "",
+              unpcalmeth = "",
+              unp = "",
+              amt = "",
+              wonamt = "",
+              taxamt = "",
+              dlramt = "",
+              lotnum = "",
+              orglot = "",
+              heatno = "",
+              pcncd = "",
+              remark = "",
+              inrecdt = "",
+              inseq1 = "",
+              inseq2 = "",
+              gonum = "",
+              goseq = "",
+              connum = "",
+              conseq = "",
+              spno = "",
+              boxno = "",
+              endyn = "",
+              reqnum = "",
+              reqseq = "",
+              boxcd = "",
+              specialunp = "",
+            } = item;
+            dataArr.rowstatus_s.push(rowstatus);
+            dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
+            dataArr.rtnyn_s.push(rtnyn);
+            dataArr.rtntype_s.push(rtntype);
+            dataArr.ordnum_s.push(ordnum);
+            dataArr.ordseq_s.push(ordseq);
+            dataArr.portcd_s.push(portcd);
+            dataArr.portnm_s.push(portnm);
+            dataArr.shipnm_s.push(shipnm);
+            dataArr.pacmeth_s.push(pacmeth);
+            dataArr.paymeth1_s.push(paymeth1);
+            dataArr.prcterms_s.push(prcterms);
+            dataArr.poregnum_s.push(poregnum);
+            dataArr.itemgrade_s.push(itemgrade);
+            dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+            dataArr.itemnm_s.push(itemnm);
+            dataArr.itemacnt_s.push(itemacnt == "" ? "" : itemacnt);
+            dataArr.qty_s.push(qty == "" ? 0 : qty);
+            dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+            dataArr.lenunit_s.push(lenunit);
+            dataArr.totlen_s.push(totlen);
+            dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
+            dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+            dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+            dataArr.unpcalmeth_s.push(
+              unpcalmeth == undefined ? "Q" : unpcalmeth
+            );
+            dataArr.unp_s.push(unp == "" ? 0 : unp);
+            dataArr.amt_s.push(amt == "" ? 0 : amt);
+            dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+            dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+            dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
+            dataArr.lotnum_s.push(lotnum);
+            dataArr.orglot_s.push(orglot);
+            dataArr.heatno_s.push(heatno);
+            dataArr.pcncd_s.push(pcncd);
+            dataArr.remark_s.push(remark == undefined ? "" : remark);
+            dataArr.inrecdt_s.push(inrecdt);
+            dataArr.inseq1_s.push(inseq1);
+            dataArr.inseq2_s.push(inseq2);
+            dataArr.gonum_s.push(gonum);
+            dataArr.goseq_s.push(goseq);
+            dataArr.connum_s.push(connum);
+            dataArr.conseq_s.push(conseq);
+            dataArr.spno_s.push(spno);
+            dataArr.boxno_s.push(boxno);
+            dataArr.endyn_s.push(endyn);
+            dataArr.reqnum_s.push(reqnum);
+            dataArr.reqseq_s.push(reqseq);
+            dataArr.boxcd_s.push(boxcd);
+            dataArr.specialunp_s.push(specialunp);
           });
 
-          if (dataItem.length == 0) {
-            setParaData((prev) => ({
-              ...prev,
-              workType: workType,
-              orgdiv: filters.orgdiv,
-              recdt: filters.recdt,
-              seq1: filters.seq1,
-              busadiv: "",
-              location: filters.location,
-              doexdiv: filters.doexdiv,
-              outkind: "",
-              outtype: filters.outtype,
-              outdt: filters.outdt,
-              shipdt:
-                filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
-              person: filters.person,
-              custcd: filters.custcd,
-              rcvcustcd: filters.rcvcustcd,
-              taxdiv: filters.taxdiv,
-              amtunit: filters.amtunit,
-              baseamt: filters.baseamt,
-              wonchgrat: filters.wonchgrat,
-              uschgrat: filters.uschgrat,
-              contractno: "",
-              remark: filters.remark,
-              cargb: "",
-              dvnm: "",
-              dvnum: "",
-              port: "",
-              lcno: "",
-              lcdt: "",
-              actloca: "",
-              actdt: "",
-              acseq1: filters.acseq1,
-              acseq2: filters.acseq2,
-              eregno: filters.eregno,
-              custprsncd: filters.custprsncd,
-              unprate: filters.unprate,
-              countrycd: "",
-              custnm: filters.custnm,
-              rcvcustnm: filters.rcvcustnm,
-              attdatnum: filters.attdatnum,
-              boxnm: "",
-              wgt: "",
-              userid: userId,
-              pc: pc,
-              form_id: "SA_A5001W",
-              serviceid: companyCode,
-            }));
-          } else {
-            let dataArr: TdataArr = {
-              rowstatus_s: [],
-              seq2_s: [],
-              rtnyn_s: [],
-              rtntype_s: [],
-              ordnum_s: [],
-              ordseq_s: [],
-              portcd_s: [],
-              portnm_s: [],
-              shipnm_s: [],
-              pacmeth_s: [],
-              paymeth1_s: [],
-              prcterms_s: [],
-              poregnum_s: [],
-              itemgrade_s: [],
-              itemcd_s: [],
-              itemnm_s: [],
-              itemacnt_s: [],
-              qty_s: [],
-              qtyunit_s: [],
-              lenunit_s: [],
-              totlen_s: [],
-              unitwgt_s: [],
-              totwgt_s: [],
-              wgtunit_s: [],
-              unpcalmeth_s: [],
-              unp_s: [],
-              amt_s: [],
-              wonamt_s: [],
-              taxamt_s: [],
-              dlramt_s: [],
-              lotnum_s: [],
-              orglot_s: [],
-              heatno_s: [],
-              pcncd_s: [],
-              remark_s: [],
-              inrecdt_s: [],
-              inseq1_s: [],
-              inseq2_s: [],
-              gonum_s: [],
-              goseq_s: [],
-              connum_s: [],
-              conseq_s: [],
-              spno_s: [],
-              boxno_s: [],
-              endyn_s: [],
-              reqnum_s: [],
-              reqseq_s: [],
-              boxcd_s: [],
-              specialunp_s: [],
-            };
-
-            dataItem.forEach((item: any, idx: number) => {
-              const {
-                rowstatus = "",
-                seq2 = "",
-                rtnyn = "",
-                rtntype = "",
-                ordnum = "",
-                ordseq = "",
-                portcd = "",
-                portnm = "",
-                shipnm = "",
-                pacmeth = "",
-                paymeth1 = "",
-                prcterms = "",
-                poregnum = "",
-                itemgrade = "",
-                itemcd = "",
-                itemnm = "",
-                itemacnt = "",
-                qty = "",
-                qtyunit = "",
-                lenunit = "",
-                totlen = "",
-                unitwgt = "",
-                totwgt = "",
-                wgtunit = "",
-                unpcalmeth = "",
-                unp = "",
-                amt = "",
-                wonamt = "",
-                taxamt = "",
-                dlramt = "",
-                lotnum = "",
-                orglot = "",
-                heatno = "",
-                pcncd = "",
-                remark = "",
-                inrecdt = "",
-                inseq1 = "",
-                inseq2 = "",
-                gonum = "",
-                goseq = "",
-                connum = "",
-                conseq = "",
-                spno = "",
-                boxno = "",
-                endyn = "",
-                reqnum = "",
-                reqseq = "",
-                boxcd = "",
-                specialunp = "",
-              } = item;
-              dataArr.rowstatus_s.push(rowstatus);
-              dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-              dataArr.rtnyn_s.push(rtnyn);
-              dataArr.rtntype_s.push(rtntype);
-              dataArr.ordnum_s.push(ordnum);
-              dataArr.ordseq_s.push(ordseq);
-              dataArr.portcd_s.push(portcd);
-              dataArr.portnm_s.push(portnm);
-              dataArr.shipnm_s.push(shipnm);
-              dataArr.pacmeth_s.push(pacmeth);
-              dataArr.paymeth1_s.push(paymeth1);
-              dataArr.prcterms_s.push(prcterms);
-              dataArr.poregnum_s.push(poregnum);
-              dataArr.itemgrade_s.push(itemgrade);
-              dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
-              dataArr.itemnm_s.push(itemnm);
-              dataArr.itemacnt_s.push(itemacnt == "" ? "" : itemacnt);
-              dataArr.qty_s.push(qty == "" ? 0 : qty);
-              dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-              dataArr.lenunit_s.push(lenunit);
-              dataArr.totlen_s.push(totlen);
-              dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-              dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
-              dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
-              dataArr.unpcalmeth_s.push(
-                unpcalmeth == undefined ? "Q" : unpcalmeth
-              );
-              dataArr.unp_s.push(unp == "" ? 0 : unp);
-              dataArr.amt_s.push(amt == "" ? 0 : amt);
-              dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-              dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-              dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
-              dataArr.lotnum_s.push(lotnum);
-              dataArr.orglot_s.push(orglot);
-              dataArr.heatno_s.push(heatno);
-              dataArr.pcncd_s.push(pcncd);
-              dataArr.remark_s.push(remark == undefined ? "" : remark);
-              dataArr.inrecdt_s.push(inrecdt);
-              dataArr.inseq1_s.push(inseq1);
-              dataArr.inseq2_s.push(inseq2);
-              dataArr.gonum_s.push(gonum);
-              dataArr.goseq_s.push(goseq);
-              dataArr.connum_s.push(connum);
-              dataArr.conseq_s.push(conseq);
-              dataArr.spno_s.push(spno);
-              dataArr.boxno_s.push(boxno);
-              dataArr.endyn_s.push(endyn);
-              dataArr.reqnum_s.push(reqnum);
-              dataArr.reqseq_s.push(reqseq);
-              dataArr.boxcd_s.push(boxcd);
-              dataArr.specialunp_s.push(specialunp);
-            });
-            deletedMainRows.forEach((item: any, idx: number) => {
-              const {
-                rowstatus = "",
-                seq2 = "",
-                rtnyn = "",
-                rtntype = "",
-                ordnum = "",
-                ordseq = "",
-                portcd = "",
-                portnm = "",
-                shipnm = "",
-                pacmeth = "",
-                paymeth1 = "",
-                prcterms = "",
-                poregnum = "",
-                itemgrade = "",
-                itemcd = "",
-                itemnm = "",
-                itemacnt = "",
-                qty = "",
-                qtyunit = "",
-                lenunit = "",
-                totlen = "",
-                unitwgt = "",
-                totwgt = "",
-                wgtunit = "",
-                unpcalmeth = "",
-                unp = "",
-                amt = "",
-                wonamt = "",
-                taxamt = "",
-                dlramt = "",
-                lotnum = "",
-                orglot = "",
-                heatno = "",
-                pcncd = "",
-                remark = "",
-                inrecdt = "",
-                inseq1 = "",
-                inseq2 = "",
-                gonum = "",
-                goseq = "",
-                connum = "",
-                conseq = "",
-                spno = "",
-                boxno = "",
-                endyn = "",
-                reqnum = "",
-                reqseq = "",
-                boxcd = "",
-                specialunp = "",
-              } = item;
-              dataArr.rowstatus_s.push(rowstatus);
-              dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-              dataArr.rtnyn_s.push(rtnyn);
-              dataArr.rtntype_s.push(rtntype);
-              dataArr.ordnum_s.push(ordnum);
-              dataArr.ordseq_s.push(ordseq);
-              dataArr.portcd_s.push(portcd);
-              dataArr.portnm_s.push(portnm);
-              dataArr.shipnm_s.push(shipnm);
-              dataArr.pacmeth_s.push(pacmeth);
-              dataArr.paymeth1_s.push(paymeth1);
-              dataArr.prcterms_s.push(prcterms);
-              dataArr.poregnum_s.push(poregnum);
-              dataArr.itemgrade_s.push(itemgrade);
-              dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
-              dataArr.itemnm_s.push(itemnm);
-              dataArr.itemacnt_s.push(itemacnt == "" ? "" : itemacnt);
-              dataArr.qty_s.push(qty == "" ? 0 : qty);
-              dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-              dataArr.lenunit_s.push(lenunit);
-              dataArr.totlen_s.push(totlen);
-              dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-              dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
-              dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
-              dataArr.unpcalmeth_s.push(
-                unpcalmeth == undefined ? "Q" : unpcalmeth
-              );
-              dataArr.unp_s.push(unp == "" ? 0 : unp);
-              dataArr.amt_s.push(amt == "" ? 0 : amt);
-              dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-              dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-              dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
-              dataArr.lotnum_s.push(lotnum);
-              dataArr.orglot_s.push(orglot);
-              dataArr.heatno_s.push(heatno);
-              dataArr.pcncd_s.push(pcncd);
-              dataArr.remark_s.push(remark == undefined ? "" : remark);
-              dataArr.inrecdt_s.push(inrecdt);
-              dataArr.inseq1_s.push(inseq1);
-              dataArr.inseq2_s.push(inseq2);
-              dataArr.gonum_s.push(gonum);
-              dataArr.goseq_s.push(goseq);
-              dataArr.connum_s.push(connum);
-              dataArr.conseq_s.push(conseq);
-              dataArr.spno_s.push(spno);
-              dataArr.boxno_s.push(boxno);
-              dataArr.endyn_s.push(endyn);
-              dataArr.reqnum_s.push(reqnum);
-              dataArr.reqseq_s.push(reqseq);
-              dataArr.boxcd_s.push(boxcd);
-              dataArr.specialunp_s.push(specialunp);
-            });
-
-            setParaData((prev) => ({
-              ...prev,
-              workType: workType,
-              orgdiv: filters.orgdiv,
-              recdt: filters.recdt,
-              seq1: filters.seq1,
-              busadiv: "",
-              location: filters.location,
-              doexdiv: filters.doexdiv,
-              outkind: "",
-              outtype: filters.outtype,
-              outdt: filters.outdt,
-              shipdt:
-                filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
-              person: filters.person,
-              custcd: filters.custcd,
-              rcvcustcd: filters.rcvcustcd,
-              taxdiv: filters.taxdiv,
-              amtunit: filters.amtunit,
-              baseamt: filters.baseamt,
-              wonchgrat: filters.wonchgrat,
-              uschgrat: filters.uschgrat,
-              contractno: "",
-              remark: filters.remark,
-              cargb: "",
-              dvnm: "",
-              dvnum: "",
-              port: "",
-              lcno: "",
-              lcdt: "",
-              actloca: "",
-              actdt: "",
-              acseq1: filters.acseq1,
-              acseq2: filters.acseq2,
-              eregno: filters.eregno,
-              custprsncd: filters.custprsncd,
-              unprate: filters.unprate,
-              countrycd: "",
-              custnm: filters.custnm,
-              rcvcustnm: filters.rcvcustnm,
-              attdatnum: filters.attdatnum,
-              boxnm: "",
-              wgt: "",
-              userid: userId,
-              pc: pc,
-              form_id: "SA_A5001W",
-              serviceid: companyCode,
-              rowstatus_s: dataArr.rowstatus_s.join("|"),
-              seq2_s: dataArr.seq2_s.join("|"),
-              rtnyn_s: dataArr.rtnyn_s.join("|"),
-              rtntype_s: dataArr.rtntype_s.join("|"),
-              ordnum_s: dataArr.ordnum_s.join("|"),
-              ordseq_s: dataArr.ordseq_s.join("|"),
-              portcd_s: dataArr.portcd_s.join("|"),
-              portnm_s: dataArr.portnm_s.join("|"),
-              shipnm_s: dataArr.shipnm_s.join("|"),
-              pacmeth_s: dataArr.pacmeth_s.join("|"),
-              paymeth1_s: dataArr.paymeth1_s.join("|"),
-              prcterms_s: dataArr.prcterms_s.join("|"),
-              poregnum_s: dataArr.poregnum_s.join("|"),
-              itemgrade_s: dataArr.itemgrade_s.join("|"),
-              itemcd_s: dataArr.itemcd_s.join("|"),
-              itemnm_s: dataArr.itemnm_s.join("|"),
-              itemacnt_s: dataArr.itemacnt_s.join("|"),
-              qty_s: dataArr.qty_s.join("|"),
-              qtyunit_s: dataArr.qtyunit_s.join("|"),
-              lenunit_s: dataArr.lenunit_s.join("|"),
-              totlen_s: dataArr.totlen_s.join("|"),
-              unitwgt_s: dataArr.unitwgt_s.join("|"),
-              totwgt_s: dataArr.totwgt_s.join("|"),
-              wgtunit_s: dataArr.wgtunit_s.join("|"),
-              unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
-              unp_s: dataArr.unp_s.join("|"),
-              amt_s: dataArr.amt_s.join("|"),
-              wonamt_s: dataArr.wonamt_s.join("|"),
-              taxamt_s: dataArr.taxamt_s.join("|"),
-              dlramt_s: dataArr.dlramt_s.join("|"),
-              lotnum_s: dataArr.lotnum_s.join("|"),
-              orglot_s: dataArr.orglot_s.join("|"),
-              heatno_s: dataArr.heatno_s.join("|"),
-              pcncd_s: dataArr.pcncd_s.join("|"),
-              remark_s: dataArr.remark_s.join("|"),
-              inrecdt_s: dataArr.inrecdt_s.join("|"),
-              inseq1_s: dataArr.inseq1_s.join("|"),
-              inseq2_s: dataArr.inseq2_s.join("|"),
-              gonum_s: dataArr.gonum_s.join("|"),
-              goseq_s: dataArr.goseq_s.join("|"),
-              connum_s: dataArr.connum_s.join("|"),
-              conseq_s: dataArr.conseq_s.join("|"),
-              spno_s: dataArr.spno_s.join("|"),
-              boxno_s: dataArr.boxno_s.join("|"),
-              endyn_s: dataArr.endyn_s.join("|"),
-              reqnum_s: dataArr.reqnum_s.join("|"),
-              reqseq_s: dataArr.reqseq_s.join("|"),
-              boxcd_s: dataArr.boxcd_s.join("|"),
-              specialunp_s: dataArr.specialunp_s.join("|"),
-            }));
-          }
+          setParaData((prev) => ({
+            ...prev,
+            workType: workType,
+            orgdiv: filters.orgdiv,
+            recdt: filters.recdt,
+            seq1: filters.seq1,
+            busadiv: "",
+            location: filters.location,
+            doexdiv: filters.doexdiv,
+            outkind: "",
+            outtype: filters.outtype,
+            outdt: filters.outdt,
+            shipdt:
+              filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
+            person: filters.person,
+            custcd: filters.custcd,
+            rcvcustcd: filters.rcvcustcd,
+            taxdiv: filters.taxdiv,
+            amtunit: filters.amtunit,
+            baseamt: filters.baseamt,
+            wonchgrat: filters.wonchgrat,
+            uschgrat: filters.uschgrat,
+            contractno: "",
+            remark: filters.remark,
+            cargb: "",
+            dvnm: "",
+            dvnum: "",
+            port: "",
+            lcno: "",
+            lcdt: "",
+            actloca: "",
+            actdt: "",
+            acseq1: filters.acseq1,
+            acseq2: filters.acseq2,
+            eregno: filters.eregno,
+            custprsncd: filters.custprsncd,
+            unprate: filters.unprate,
+            countrycd: "",
+            custnm: filters.custnm,
+            rcvcustnm: filters.rcvcustnm,
+            attdatnum: filters.attdatnum,
+            boxnm: "",
+            wgt: "",
+            userid: userId,
+            pc: pc,
+            form_id: "SA_A5001W",
+            serviceid: companyCode,
+            rowstatus_s: dataArr.rowstatus_s.join("|"),
+            seq2_s: dataArr.seq2_s.join("|"),
+            rtnyn_s: dataArr.rtnyn_s.join("|"),
+            rtntype_s: dataArr.rtntype_s.join("|"),
+            ordnum_s: dataArr.ordnum_s.join("|"),
+            ordseq_s: dataArr.ordseq_s.join("|"),
+            portcd_s: dataArr.portcd_s.join("|"),
+            portnm_s: dataArr.portnm_s.join("|"),
+            shipnm_s: dataArr.shipnm_s.join("|"),
+            pacmeth_s: dataArr.pacmeth_s.join("|"),
+            paymeth1_s: dataArr.paymeth1_s.join("|"),
+            prcterms_s: dataArr.prcterms_s.join("|"),
+            poregnum_s: dataArr.poregnum_s.join("|"),
+            itemgrade_s: dataArr.itemgrade_s.join("|"),
+            itemcd_s: dataArr.itemcd_s.join("|"),
+            itemnm_s: dataArr.itemnm_s.join("|"),
+            itemacnt_s: dataArr.itemacnt_s.join("|"),
+            qty_s: dataArr.qty_s.join("|"),
+            qtyunit_s: dataArr.qtyunit_s.join("|"),
+            lenunit_s: dataArr.lenunit_s.join("|"),
+            totlen_s: dataArr.totlen_s.join("|"),
+            unitwgt_s: dataArr.unitwgt_s.join("|"),
+            totwgt_s: dataArr.totwgt_s.join("|"),
+            wgtunit_s: dataArr.wgtunit_s.join("|"),
+            unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
+            unp_s: dataArr.unp_s.join("|"),
+            amt_s: dataArr.amt_s.join("|"),
+            wonamt_s: dataArr.wonamt_s.join("|"),
+            taxamt_s: dataArr.taxamt_s.join("|"),
+            dlramt_s: dataArr.dlramt_s.join("|"),
+            lotnum_s: dataArr.lotnum_s.join("|"),
+            orglot_s: dataArr.orglot_s.join("|"),
+            heatno_s: dataArr.heatno_s.join("|"),
+            pcncd_s: dataArr.pcncd_s.join("|"),
+            remark_s: dataArr.remark_s.join("|"),
+            inrecdt_s: dataArr.inrecdt_s.join("|"),
+            inseq1_s: dataArr.inseq1_s.join("|"),
+            inseq2_s: dataArr.inseq2_s.join("|"),
+            gonum_s: dataArr.gonum_s.join("|"),
+            goseq_s: dataArr.goseq_s.join("|"),
+            connum_s: dataArr.connum_s.join("|"),
+            conseq_s: dataArr.conseq_s.join("|"),
+            spno_s: dataArr.spno_s.join("|"),
+            boxno_s: dataArr.boxno_s.join("|"),
+            endyn_s: dataArr.endyn_s.join("|"),
+            reqnum_s: dataArr.reqnum_s.join("|"),
+            reqseq_s: dataArr.reqseq_s.join("|"),
+            boxcd_s: dataArr.boxcd_s.join("|"),
+            specialunp_s: dataArr.specialunp_s.join("|"),
+          }));
         }
       }
-    } catch (e) {
-      alert(e);
     }
   };
 
@@ -3320,7 +3313,6 @@ const CopyWindow = ({
           setData={setCopyData}
           custcd={filters.custcd}
           custnm={filters.custnm == undefined ? "" : filters.custnm}
-          pathname={pathname}
         />
       )}
       {attachmentsWindowVisible && (

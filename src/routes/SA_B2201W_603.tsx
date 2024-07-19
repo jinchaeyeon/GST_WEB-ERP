@@ -116,7 +116,7 @@ const SA_B2201W_603: React.FC = () => {
   }, [customOptionData, webheight, webheight2]);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B2201W_603", setMessagesData);
+  UseMessages(setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -1167,7 +1167,6 @@ const SA_B2201W_603: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_B2201W_603"
         />
       )}
       {gridList.map((grid: TGrid) =>

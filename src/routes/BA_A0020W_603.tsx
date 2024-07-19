@@ -544,7 +544,7 @@ const BA_A0020W_603: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("BA_A0020W_603", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(

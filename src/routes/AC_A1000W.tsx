@@ -126,7 +126,7 @@ const AC_A1000W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A1000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -1263,7 +1263,6 @@ const AC_A1000W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="AC_A1000W"
         />
       )}
       {printWindow && (
@@ -1276,7 +1275,6 @@ const AC_A1000W: React.FC = () => {
               : mainDataResult.data.filter((item: any) => item.chk == true)
           }
           modal={true}
-          pathname="AC_A1000W"
         />
       )}
       {receiveWindow && (
@@ -1295,7 +1293,6 @@ const AC_A1000W: React.FC = () => {
           }
           setData={(str) => setOK(str)}
           modal={true}
-          pathname="AC_A1000W"
         />
       )}
       {paymentWindow && (
@@ -1313,7 +1310,6 @@ const AC_A1000W: React.FC = () => {
                 )[0]
           }
           setData={(str) => setOK(str)}
-          pathname="AC_A1000W"
           modal={true}
         />
       )}

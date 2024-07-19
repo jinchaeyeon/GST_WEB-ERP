@@ -48,15 +48,15 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime2,
   getBizCom,
+  getFormId,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -84,7 +84,6 @@ type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: string): void;
   pgmgb: string;
-  pathname: string;
   para?: any;
   modal?: boolean;
 };
@@ -140,7 +139,6 @@ const KendoWindow = ({
   setData,
   pgmgb,
   para,
-  pathname,
   modal = false,
 }: IKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -289,10 +287,6 @@ const KendoWindow = ({
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
     }
   }, [bizComponentData]);
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -658,7 +652,7 @@ const KendoWindow = ({
       "@p_attdatnum": ParaData.attdatnum,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": pathname,
+      "@p_form_id": getFormId(),
     },
   };
 

@@ -217,7 +217,7 @@ const SA_A1100W_603: React.FC = () => {
   const [page6, setPage6] = useState(initialPageState);
   const [checked, setChecked] = useState(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A1100W_603", setMessagesData);
+  UseMessages(setMessagesData);
   interface ICustData {
     address: string;
     custcd: string;
@@ -4165,7 +4165,6 @@ const SA_A1100W_603: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_A1100W_603"
         />
       )}
       {gridList.map((grid: TGrid) =>

@@ -36,12 +36,11 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -57,7 +56,6 @@ type TKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void;
   modal?: boolean;
-  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -67,12 +65,7 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 
-const KendoWindow = ({
-  setVisible,
-  setData,
-  modal = false,
-  pathname,
-}: TKendoWindow) => {
+const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -141,10 +134,6 @@ const KendoWindow = ({
         height4
     );
   };
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

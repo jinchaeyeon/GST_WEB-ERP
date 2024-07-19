@@ -218,7 +218,7 @@ const SA_A1001W_603: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A1001W_603", setMessagesData);
+  UseMessages(setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
 
@@ -2509,7 +2509,6 @@ const SA_A1001W_603: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="CM_A7000W"
         />
       )}
       {emailWindowVisible && (

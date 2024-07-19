@@ -417,7 +417,7 @@ const PR_A9100W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("PR_A9100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

@@ -48,17 +48,15 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
   getAcntQuery,
   getAcntnumQuery,
   getBizCom,
   getGridItemChangedData,
   getHeight,
-  getWindowDeviceHeight,
+  getWindowDeviceHeight
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -77,7 +75,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object, filter: object): void;
   modal?: boolean;
-  pathname: string;
 };
 
 type IData = {
@@ -315,7 +312,6 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -382,10 +378,6 @@ const CopyWindow = ({
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
   const [acntcd, setAcntcd] = useState<string>("");
   const [acntnm, setAcntnm] = useState<string>("");
   const [acntsrtnm, setAcntsrtnm] = useState<string>("");
@@ -691,30 +683,29 @@ const CopyWindow = ({
     });
 
     if (valid == true) {
-      try {
-        if (mainDataResult.data.length == 0) {
-          throw findMessage(messagesData, "MA_A9001W_002");
-        } else if (
-          convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
-          convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
-          convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
-          convertDateToStr(filters.frdt).substring(6, 8).length != 2
-        ) {
-          throw findMessage(messagesData, "MA_A9001W_001");
-        } else if (
-          filters.location == null ||
-          filters.location == "" ||
-          filters.location == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A9001W_003");
-        } else {
-          if (valid == true) {
-            setData(mainDataResult.data, filters);
-            onClose();
-          }
+      if (mainDataResult.data.length == 0) {
+        alert("데이터가 없습니다.");
+        return false;
+      } else if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        alert("날짜를 입력해주세요.");
+        return false;
+      } else if (
+        filters.location == null ||
+        filters.location == "" ||
+        filters.location == undefined
+      ) {
+        alert("필수값을 입력해주세요.");
+        return false;
+      } else {
+        if (valid == true) {
+          setData(mainDataResult.data, filters);
+          onClose();
         }
-      } catch (e) {
-        alert(e);
       }
     }
   };

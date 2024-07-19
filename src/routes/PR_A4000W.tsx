@@ -174,7 +174,7 @@ const PR_A4000W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("PR_A4000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -2752,7 +2752,6 @@ const PR_A4000W: React.FC = () => {
           setData={setPlanData}
           modal={true}
           custdiv={custdiv}
-          pathname="PR_A4000W"
         />
       )}
       {detailWindowVisible && (
@@ -2761,7 +2760,6 @@ const PR_A4000W: React.FC = () => {
           rekey={rekey}
           reloadData={reloadData}
           modal={true}
-          pathname="PR_A4000W"
         />
       )}
       {/* 컨트롤 네임 불러오기 용 */}

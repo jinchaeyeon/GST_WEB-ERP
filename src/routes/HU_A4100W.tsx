@@ -291,7 +291,7 @@ const HU_A4100W: React.FC = () => {
     });
   };
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A4100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   useEffect(() => {
     if (customOptionData !== null) {

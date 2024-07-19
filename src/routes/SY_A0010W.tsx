@@ -1932,7 +1932,6 @@ const Page: React.FC = () => {
           isCopy={isCopy}
           reloadData={reloadData}
           modal={true}
-          pathname="SY_A0010W"
         />
       )}
 

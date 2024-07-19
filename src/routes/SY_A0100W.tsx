@@ -94,7 +94,7 @@ const App: React.FC = () => {
   });
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SY_A0100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;

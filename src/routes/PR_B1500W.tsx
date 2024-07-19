@@ -73,7 +73,7 @@ const PR_B1500W: React.FC = () => {
   const [state, setState] = useState(true);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("PR_B1500W", setMessagesData);
+  UseMessages(setMessagesData);
   const setLoading = useSetRecoilState(isLoading);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

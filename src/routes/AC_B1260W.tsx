@@ -107,7 +107,7 @@ const AC_B1260W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B1260W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);

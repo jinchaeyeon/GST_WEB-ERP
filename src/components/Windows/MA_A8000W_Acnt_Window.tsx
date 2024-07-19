@@ -35,13 +35,11 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
-  findMessage,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import WindowFilterContainer from "../Containers/WindowFilterContainer";
@@ -56,7 +54,6 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   custcd: string;
   modal?: boolean;
-  pathname: string;
 };
 
 let targetRowIndex: null | number = null;
@@ -69,7 +66,6 @@ const CopyWindow = ({
   setData,
   custcd,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -126,11 +122,6 @@ const CopyWindow = ({
   const setLoading = useSetRecoilState(isLoading);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -414,24 +405,21 @@ const CopyWindow = ({
   };
 
   const search = () => {
-    try {
-      if (
-        filters.acntses == "" ||
-        filters.acntses == null ||
-        filters.acntses == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A8000W_002");
-      }
-      resetAllGrid();
-      setFilters((prev) => ({
-        ...prev,
-        pgNum: 1,
-        find_row_value: "",
-        isSearch: true,
-      }));
-    } catch (e) {
-      alert(e);
+    if (
+      filters.acntses == "" ||
+      filters.acntses == null ||
+      filters.acntses == undefined
+    ) {
+      alert("필수값을 채워주세요.");
+      return false;
     }
+    resetAllGrid();
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
   };
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)

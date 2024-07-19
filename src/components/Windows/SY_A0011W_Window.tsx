@@ -12,11 +12,9 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
-  findMessage,
   getHeight,
-  getWindowDeviceHeight,
+  getWindowDeviceHeight
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -29,7 +27,6 @@ type TKendoWindow = {
   isCopy?: boolean;
   para?: Iparameters; //{};
   modal?: boolean;
-  pathname: string;
 };
 
 var height = 0;
@@ -44,7 +41,6 @@ const KendoWindow = ({
   isCopy,
   para,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
@@ -162,9 +158,6 @@ const KendoWindow = ({
     }
   };
 
-  const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages(pathname, setMessagesData);
-
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -224,18 +217,19 @@ const KendoWindow = ({
   const handleSubmit = () => {
     if (!permissions.save) return;
     let valid = true;
-    try {
-      if (!initialVal.user_group_id) {
-        throw findMessage(messagesData, "SY_A0011W_001");
-      }
 
-      if (!initialVal.user_group_name) {
-        throw findMessage(messagesData, "SY_A0011W_002");
-      }
-    } catch (e) {
-      alert(e);
+    if (!initialVal.user_group_id) {
+      alert("사용자 그룹 ID를 입력하세요.");
+    } else {
       valid = false;
     }
+
+    if (!initialVal.user_group_name) {
+      alert("사용자 그룹명를 입력하세요.");
+    } else {
+      valid = false;
+    }
+
     if (!valid) return false;
     setParaData((prev) => ({
       ...prev,

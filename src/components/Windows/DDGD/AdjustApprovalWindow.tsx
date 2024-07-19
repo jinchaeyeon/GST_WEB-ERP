@@ -27,6 +27,7 @@ import CenterCell from "../../Cells/CenterCell";
 import {
   UseGetValueFromSessionItem,
   UsePermissions,
+  getFormId,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
@@ -77,7 +78,6 @@ const centerField = ["classnm", "orgdt", "adjdt"];
 type IWindow = {
   setVisible(t: boolean): void;
   modal?: boolean;
-  pathname: string;
 };
 
 const DATA_ITEM_KEY = "membership_key";
@@ -85,11 +85,7 @@ const DATA_ITEM_KEY = "membership_key";
 let targetRowIndex: null | number = null;
 var height = 0;
 var height2 = 0;
-const AdjustApprovalWindow = ({
-  setVisible,
-  modal = false,
-  pathname,
-}: IWindow) => {
+const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -315,7 +311,7 @@ const AdjustApprovalWindow = ({
         "@p_adjdt": "",
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": pathname,
+        "@p_form_id": getFormId(),
       },
     };
 

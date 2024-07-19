@@ -51,17 +51,15 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   checkIsDDLValid,
   convertDateToStr,
-  findMessage,
   getGridItemChangedData,
   getHeight,
   getItemQuery,
   getSelectedFirstData,
   getWindowDeviceHeight,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -420,7 +418,6 @@ type TKendoWindow = {
   ordkey?: string;
   itemcd?: string;
   modal?: boolean;
-  pathname: string;
 };
 
 var height = 0;
@@ -436,7 +433,6 @@ const KendoWindow = ({
   ordkey,
   itemcd,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -452,9 +448,7 @@ const KendoWindow = ({
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   //커스텀 옵션 조회
@@ -1566,37 +1560,40 @@ const KendoWindow = ({
 
   const onSave = () => {
     if (!permissions.save) return;
-    let valid = true;
-    try {
-      if (Information2.planqty < 1) {
-        throw findMessage(messagesData, "PR_A1100W_006");
-      }
-      mainDataResult.data.forEach((item: any, idx: number) => {
-        mainDataResult.data.forEach((chkItem: any, chkIdx: number) => {
-          if (
-            (item.proccd == chkItem.proccd ||
-              item.procseq == chkItem.procseq) &&
-            idx !== chkIdx
-          ) {
-            throw findMessage(messagesData, "PR_A1100W_003");
-          }
-        });
 
-        if (!checkIsDDLValid(item.proccd)) {
-          throw findMessage(messagesData, "PR_A1100W_004");
-        }
-
-        if (item.procseq < 0) {
-          throw findMessage(messagesData, "PR_A1100W_005");
+    if (Information2.planqty < 1) {
+      alert("계획수량을 입력하세요.");
+      return false;
+    }
+    let valid2 = true;
+    let valid3 = true;
+    mainDataResult.data.forEach((item: any, idx: number) => {
+      mainDataResult.data.forEach((chkItem: any, chkIdx: number) => {
+        if (
+          (item.proccd == chkItem.proccd || item.procseq == chkItem.procseq) &&
+          idx !== chkIdx
+        ) {
+          valid2 = false;
         }
       });
-    } catch (e) {
-      alert(e);
-      valid = false;
+
+      if (!checkIsDDLValid(item.proccd)) {
+        valid3 = false;
+      }
+
+      if (item.procseq < 0) {
+        valid3 = false;
+      }
+    });
+
+    if (!valid2) {
+      alert("공정과 공정순서를 확인하세요.");
+      return false;
     }
-
-    if (!valid) return false;
-
+    if (!valid3) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    }
     let processArr: TProcessData = {
       proccd: [],
       planno: [],

@@ -74,7 +74,7 @@ const SY_A0120: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
 
-  UseMessages("SY_A0120W", setMessagesData);
+  UseMessages(setMessagesData);
   //커스텀 옵션 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA001,L_BA002", setBizComponentData);

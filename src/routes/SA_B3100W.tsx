@@ -139,7 +139,7 @@ const SA_B3100W: React.FC = () => {
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B3100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;

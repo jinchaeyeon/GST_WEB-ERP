@@ -122,7 +122,7 @@ const MA_A2400W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A2400W", setMessagesData);
+  UseMessages(setMessagesData);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -2130,7 +2130,6 @@ const MA_A2400W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="MA_A2400W"
         />
       )}
       {custWindowVisible && (

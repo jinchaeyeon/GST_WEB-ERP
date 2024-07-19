@@ -11,7 +11,6 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
-import * as React from "react";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -35,7 +34,6 @@ import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   getGridItemChangedData,
@@ -43,7 +41,7 @@ import {
   getWindowDeviceHeight,
   numberWithCommas,
   numberWithCommas3,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -57,7 +55,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(str: string): void;
   modal?: boolean;
-  pathname: string;
 };
 
 type TdataArr = {
@@ -114,7 +111,6 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -176,8 +172,6 @@ const CopyWindow = ({
   const setLoading = useSetRecoilState(isLoading);
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -2254,7 +2248,6 @@ const CopyWindow = ({
             setVisible={setDataWindowVisible}
             setData={setCopyData}
             importnum={Information.importnum}
-            pathname={pathname}
           />
         )}
       </Window>

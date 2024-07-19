@@ -174,7 +174,7 @@ const MA_A9001W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A9001W", setMessagesData);
+  UseMessages(setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   let gridRef: any = useRef(null);
@@ -4114,7 +4114,6 @@ const MA_A9001W: React.FC = () => {
           }
           setData={setCopyData}
           modal={true}
-          pathname="MA_A9001W"
         />
       )}
       {dataWindowVisible && (
@@ -4122,7 +4121,6 @@ const MA_A9001W: React.FC = () => {
           setVisible={setDataWindowVisible}
           setData={setCopyData2}
           modal={true}
-          pathname="MA_A9001W"
         />
       )}
       {gridList.map((grid: TGrid) =>

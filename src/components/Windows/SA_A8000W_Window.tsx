@@ -49,7 +49,6 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   getAcntQuery,
@@ -60,7 +59,7 @@ import {
   getStdramkQuery,
   getWindowDeviceHeight,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -114,7 +113,6 @@ type IWindow = {
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   list: any;
   modal?: boolean;
-  pathname: string;
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
@@ -530,7 +528,6 @@ const CopyWindow = ({
   reload,
   list,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -606,10 +603,6 @@ const CopyWindow = ({
 
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -2881,7 +2874,6 @@ const CopyWindow = ({
           setVisible={setDetailWindowVisible}
           setData={setDatas}
           custcd={workType == "N" ? undefined : data.custcd}
-          pathname={pathname}
         />
       )}
     </>

@@ -271,7 +271,7 @@ const HU_A3200W: React.FC = () => {
   });
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A3200W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();

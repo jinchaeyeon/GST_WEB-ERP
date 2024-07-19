@@ -74,7 +74,7 @@ const AC_B6040W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B6040W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

@@ -105,7 +105,7 @@ const AC_A1100W: React.FC = () => {
   UsePermissions(setPermissions);
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A1100W", setMessagesData);
+  UseMessages(setMessagesData);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -783,7 +783,6 @@ const AC_A1100W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="AC_A1100W"
         />
       )}
       {gridList.map((grid: TGrid) =>

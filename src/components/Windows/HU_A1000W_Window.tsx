@@ -1075,7 +1075,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 
 var height = 0;
@@ -1097,7 +1096,6 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -11492,7 +11490,6 @@ const CopyWindow = ({
           setData={getOvertime}
           prsnnm={information.prsnnm}
           prsnnum={information.prsnnum}
-          pathname={pathname}
         />
       )}
       {bankcdWindowVisible && (

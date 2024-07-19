@@ -209,7 +209,7 @@ const MA_B3100: React.FC = () => {
   };
 
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("MA_B3100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   let gridRef: any = useRef(null);
 

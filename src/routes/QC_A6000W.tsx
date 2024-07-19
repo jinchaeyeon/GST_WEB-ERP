@@ -181,7 +181,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
           setData={(str) => getBadData(str)}
           renum={dataItem.renum}
           modal={true}
-          pathname="QC_A6000W"
         />
       )}
     </>
@@ -276,7 +275,7 @@ const QC_A6000: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("QC_A6000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

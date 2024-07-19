@@ -33,12 +33,11 @@ import DateCell from "../Cells/DateCell";
 import {
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   getHeight,
   getWindowDeviceHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import WindowFilterContainer from "../Containers/WindowFilterContainer";
@@ -47,19 +46,13 @@ import Window from "./WindowComponent/Window";
 type IWindow = {
   setVisible(t: boolean): void;
   infomation: any;
-  pathname: string;
   modal?: boolean;
 };
 
 var height = 0;
 var height2 = 0;
 var height3 = 0;
-const CopyWindow = ({
-  setVisible,
-  infomation,
-  pathname,
-  modal = false,
-}: IWindow) => {
+const CopyWindow = ({ setVisible, infomation, modal = false }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -134,10 +127,6 @@ const CopyWindow = ({
       take: initialPageState.take,
     });
   };
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

@@ -127,7 +127,7 @@ const SA_B3000W: React.FC = () => {
   const MAX_CHARACTERS = 6;
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B3000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;

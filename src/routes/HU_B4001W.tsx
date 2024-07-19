@@ -143,7 +143,7 @@ const HU_B4001W: React.FC = () => {
   let adjTargetRowIndex: null | number = null;
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_B4001W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

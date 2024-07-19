@@ -490,7 +490,7 @@ const CR_A0010W: React.FC = () => {
   const [password, setPassword] = useState<String>("");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CR_A0010W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;

@@ -154,7 +154,7 @@ const SA_A9001W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A9001W", setMessagesData);
+  UseMessages(setMessagesData);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -4950,7 +4950,6 @@ const SA_A9001W: React.FC = () => {
           setVisible={setDataWindowVisible}
           setData={setCopyData2}
           modal={true}
-          pathname="SA_A9001W"
         />
       )}
       {dataWindowVisible2 && (
@@ -4965,7 +4964,6 @@ const SA_A9001W: React.FC = () => {
             }))
           }
           modal={true}
-          pathname="SA_A9001W"
         />
       )}
       {transactionWindowVisible && (
@@ -4985,7 +4983,6 @@ const SA_A9001W: React.FC = () => {
       {errorWindowVisible && (
         <SA_A9001W_Error_Window
           setVisible={setErrorWindowClick}
-          pathname="SA_A9001W"
           infomation={infomation}
           modal={true}
         />

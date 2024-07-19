@@ -1215,14 +1215,12 @@ const Main: React.FC = () => {
             }}
             para={detailParameters}
             modal={true}
-            pathname="HOME"
           />
         )}
         {adjustWindowVisible && (
           <AdjustApprovalWindow
             setVisible={setAdjustWindowVisible}
             modal={true}
-            pathname="HOME"
           />
         )}
       </div>

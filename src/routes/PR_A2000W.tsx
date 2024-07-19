@@ -1166,7 +1166,6 @@ const PR_A2000W: React.FC = () => {
           setVisible={setPlanWindowVisible}
           setData={setPlanData}
           modal={true}
-          pathname="PR_A2000W"
         />
       )}
       {inLotWinVisible && (
@@ -1186,7 +1185,6 @@ const PR_A2000W: React.FC = () => {
           }}
           setData={setStopData}
           modal={true}
-          pathname="PR_A2000W"
         />
       )}
       {defectWindowVisible && (

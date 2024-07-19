@@ -42,12 +42,12 @@ import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseBizComponent,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   arrayLengthValidator,
   getCodeFromValue,
+  getFormId,
   getHeight,
-  getWindowDeviceHeight,
+  getWindowDeviceHeight
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -69,7 +69,6 @@ type TKendoWindow = {
   setVisible(isVisible: boolean): void;
   rekey: string;
   setData(badqty: number): void;
-  pathname: string;
 };
 
 let deletedRows: object[] = [];
@@ -88,7 +87,11 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <FormComboBoxCell bizComponent={bizComponent} {...props} id="comboboxcells"/>
+    <FormComboBoxCell
+      bizComponent={bizComponent}
+      {...props}
+      id="comboboxcells"
+    />
   ) : (
     <td />
   );
@@ -399,12 +402,7 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 
-const KendoWindow = ({
-  setVisible,
-  rekey,
-  setData,
-  pathname,
-}: TKendoWindow) => {
+const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -528,10 +526,6 @@ const KendoWindow = ({
     }
   };
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages(pathname, setMessagesData);
-
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -541,7 +535,7 @@ const KendoWindow = ({
     remark_s: "",
     userid: userId,
     pc: pc,
-    form_id: pathname,
+    form_id: getFormId(),
   });
 
   //프로시저 파라미터

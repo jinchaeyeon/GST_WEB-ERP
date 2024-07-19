@@ -54,7 +54,6 @@ type IKendoWindow = {
   setData(overtime: string): void;
   prsnnm: string;
   prsnnum: string;
-  pathname: string;
   modal?: boolean;
 };
 
@@ -71,16 +70,6 @@ const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
 let temp = 0;
 
-type TKendoWindow = {
-  setVisible(t: boolean): void;
-  setFilters(t: any): void;
-  workType: string;
-  isCopy: boolean;
-  membership_id?: string;
-  modal?: boolean;
-  pathname: string;
-};
-
 var height = 0;
 var height2 = 0;
 var height3 = 0;
@@ -90,7 +79,6 @@ const KendoWindow = ({
   setData,
   prsnnm,
   prsnnum,
-  pathname,
   modal = false,
 }: IKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({

@@ -34,12 +34,11 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
-  handleKeyPressSearch,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -58,7 +57,6 @@ type TKendoWindow = {
   setVisible(isVisible: boolean): void;
   quotestnum: string;
   modal?: boolean;
-  pathname: string;
 };
 
 var height = 0;
@@ -70,7 +68,6 @@ const KendoWindow = ({
   setVisible,
   quotestnum,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -140,10 +137,6 @@ const KendoWindow = ({
         height4
     );
   };
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const onClose = () => {
     setisFilterHideStates2(true);
@@ -651,7 +644,6 @@ const KendoWindow = ({
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={false}
-          pathname="CM_A5000W"
         />
       )}
     </Window>

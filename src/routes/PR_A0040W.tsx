@@ -239,7 +239,7 @@ const PR_A0040W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("PR_A0040W", setMessagesData);
+  UseMessages(setMessagesData);
   const [filter, setFilter] = React.useState(initialFilter);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

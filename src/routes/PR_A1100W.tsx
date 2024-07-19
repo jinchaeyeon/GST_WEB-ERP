@@ -270,7 +270,7 @@ const PR_A1100W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("PR_A1100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -3337,7 +3337,6 @@ const PR_A1100W: React.FC = () => {
           ordkey={ordkey}
           itemcd={itemcd}
           modal={true}
-          pathname="PR_A1100W"
         />
       )}
       {custWindowVisible && (

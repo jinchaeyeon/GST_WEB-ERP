@@ -781,7 +781,7 @@ const HU_A3080W: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A3080W", setMessagesData);
+  UseMessages(setMessagesData);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);

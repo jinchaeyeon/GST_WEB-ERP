@@ -58,18 +58,16 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getItemQuery,
   getWindowDeviceHeight,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -94,7 +92,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 
 export const FormContext = createContext<{
@@ -485,7 +482,6 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -558,10 +554,6 @@ const CopyWindow = ({
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -1603,50 +1595,51 @@ const CopyWindow = ({
     if (!permissions.save) return;
     let valid = true;
 
-    try {
-      mainDataResult.data.map((item) => {
-        if (
-          (item.itemcd == "" || item.itemnm == "" || item.qty == 0) &&
-          valid == true
-        ) {
-          alert("필수항목(품목코드, 품목명, 수량을 채워주세요.)");
-          valid = false;
-          return false;
-        } else if (mainDataResult.data.length == 0) {
-          throw findMessage(messagesData, "MA_A2700W_001");
-        } else if (
-          convertDateToStr(filters.indt).substring(0, 4) < "1997" ||
-          convertDateToStr(filters.indt).substring(6, 8) > "31" ||
-          convertDateToStr(filters.indt).substring(6, 8) < "01" ||
-          convertDateToStr(filters.indt).substring(6, 8).length != 2
-        ) {
-          throw findMessage(messagesData, "MA_A2700W_002");
-        } else if (
-          filters.location == "" ||
+    mainDataResult.data.map((item) => {
+      if (
+        (item.itemcd == "" || item.itemnm == "" || item.qty == 0) &&
+        valid == true
+      ) {
+        alert("필수항목(품목코드, 품목명, 수량을 채워주세요.)");
+        valid = false;
+        return false;
+      } else if (mainDataResult.data.length == 0 && valid == true) {
+        alert("데이터가 없습니다.");
+        return false;
+      } else if (
+        convertDateToStr(filters.indt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.indt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.indt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.indt).substring(6, 8).length != 2
+      ) {
+        alert("날짜를 입력해주세요.");
+        return false;
+      } else if (
+        (filters.location == "" ||
           filters.location == null ||
-          filters.location == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2700W_003");
-        } else if (
-          filters.inuse == "" ||
+          filters.location == undefined) &&
+        valid == true
+      ) {
+        alert("필수값을 입력해주세요.");
+        return false;
+      } else if (
+        (filters.inuse == "" ||
           filters.inuse == null ||
-          filters.inuse == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2700W_004");
-        } else if (
-          filters.doexdiv == "" ||
+          filters.inuse == undefined) &&
+        valid == true
+      ) {
+        alert("필수값을 입력해주세요.");
+        return false;
+      } else if (
+        (filters.doexdiv == "" ||
           filters.doexdiv == null ||
-          filters.doexdiv == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A2700W_005");
-        }
-      });
-    } catch (e) {
-      alert(e);
-      valid = false;
-    }
-
-    if (!valid) return false;
+          filters.doexdiv == undefined) &&
+        valid == true
+      ) {
+        alert("필수값을 입력해주세요.");
+        return false;
+      }
+    });
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
@@ -3436,21 +3429,18 @@ const CopyWindow = ({
           setVisible={setCopyWindowVisible2}
           setData={setCopyData2}
           itemacnt={"1"}
-          pathname={pathname}
         />
       )}
       {CopyWindowVisible3 && (
         <CopyWindow4
           setVisible={setCopyWindowVisible3}
           setData={setCopyData3}
-          pathname={pathname}
         />
       )}
       {CopyWindowVisible4 && (
         <CopyWindow5
           setVisible={setCopyWindowVisible4}
           setData={setCopyData4}
-          pathname={pathname}
         />
       )}
       {attachmentsWindowVisible && (

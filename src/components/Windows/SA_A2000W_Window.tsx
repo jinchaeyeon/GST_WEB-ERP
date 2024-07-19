@@ -61,12 +61,10 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   checkIsDDLValid,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
@@ -74,7 +72,7 @@ import {
   getUnpQuery,
   getWindowDeviceHeight,
   isValidDate,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -116,7 +114,6 @@ type TKendoWindow = {
   isCopy: boolean;
   para?: Iparameters; //{};
   modal?: boolean;
-  pathname: string;
 };
 
 type TDetailData = {
@@ -438,7 +435,6 @@ const KendoWindow = ({
   isCopy,
   para,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -454,10 +450,6 @@ const KendoWindow = ({
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const pc = UseGetValueFromSessionItem("pc");
   let deviceWidth = document.documentElement.clientWidth;
@@ -1114,53 +1106,60 @@ const KendoWindow = ({
   const handleSubmit = () => {
     if (!permissions.save) return;
     let valid = true;
-
+    let valid2 = true;
+    let valid3 = true;
     //검증
-    try {
-      mainDataResult.data.map((item: any) => {
-        if (!item.itemcd) {
-          throw findMessage(messagesData, "SA_A2000W_004");
-        }
-        if (!item.itemnm) {
-          throw findMessage(messagesData, "SA_A2000W_005");
-        }
-        if (!checkIsDDLValid(item.itemacnt)) {
-          throw findMessage(messagesData, "SA_A2000W_006");
-        }
-        if (item.qty < 1) {
-          throw findMessage(messagesData, "SA_A2000W_007");
-        }
-        if (!item.unp) {
-          throw findMessage(messagesData, "SA_A2000W_009");
-        }
-      });
-      if (
-        filters.doexdiv == null ||
-        filters.doexdiv == "" ||
-        filters.doexdiv == undefined ||
-        filters.taxdiv == null ||
-        filters.taxdiv == "" ||
-        filters.taxdiv == undefined ||
-        filters.orddt == null ||
-        filters.orddt == "" ||
-        filters.orddt == undefined ||
-        filters.dlvdt == null ||
-        filters.dlvdt == "" ||
-        filters.dlvdt == undefined ||
-        filters.custcd == null ||
-        filters.custcd == "" ||
-        filters.custcd == undefined ||
-        filters.custnm == null ||
-        filters.custnm == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A2000W_008");
+    mainDataResult.data.map((item: any) => {
+      if (!item.itemcd) {
+        valid = false;
       }
-    } catch (e) {
-      alert(e);
+      if (!item.itemnm) {
+        valid = false;
+      }
+      if (!checkIsDDLValid(item.itemacnt)) {
+        valid = false;
+      }
+      if (item.qty < 1) {
+        valid2 = false;
+      }
+      if (!item.unp) {
+        valid3 = false;
+      }
+    });
+    if (
+      filters.doexdiv == null ||
+      filters.doexdiv == "" ||
+      filters.doexdiv == undefined ||
+      filters.taxdiv == null ||
+      filters.taxdiv == "" ||
+      filters.taxdiv == undefined ||
+      filters.orddt == null ||
+      filters.orddt == "" ||
+      filters.orddt == undefined ||
+      filters.dlvdt == null ||
+      filters.dlvdt == "" ||
+      filters.dlvdt == undefined ||
+      filters.custcd == null ||
+      filters.custcd == "" ||
+      filters.custcd == undefined ||
+      filters.custnm == null ||
+      filters.custnm == undefined
+    ) {
       valid = false;
     }
 
-    if (!valid) return false;
+    if (!valid) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    }
+    if (!valid2) {
+      alert("수주량을 1 이상 입력하세요.");
+      return false;
+    }
+    if (!valid3) {
+      alert("단가를 입력하세요.");
+      return false;
+    }
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (

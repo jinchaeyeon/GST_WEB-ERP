@@ -44,16 +44,14 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -103,7 +101,6 @@ type TKendoWindow = {
   setVisible(isVisible: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 
 interface IUser {
@@ -119,8 +116,7 @@ var height4 = 0;
 const KendoWindow = ({
   setVisible,
   setData,
-  modal = false,
-  pathname,
+  modal = false
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -189,10 +185,6 @@ const KendoWindow = ({
         height4
     );
   };
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -488,28 +480,24 @@ const KendoWindow = ({
   };
 
   const search = () => {
-    try {
       if (
         convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A5000W_001");
+        alert("날짜를 입력해주세요.");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A5000W_001");
+        alert("날짜를 입력해주세요.");
       } else {
         resetAllGrid();
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
-    } catch (e) {
-      alert(e);
-    }
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용

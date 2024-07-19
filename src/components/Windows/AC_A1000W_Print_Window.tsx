@@ -11,9 +11,8 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import {
   GetPropertyValueByName,
   UseCustomOption,
-  UseMessages,
   getHeight,
-  getWindowDeviceHeight,
+  getWindowDeviceHeight
 } from "../CommonFunction";
 import ReplaceTaxReport from "../Prints/ReplaceTaxReport";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
@@ -23,11 +22,10 @@ type IWindow = {
   data?: any;
   setVisible(t: boolean): void;
   modal?: boolean;
-  pathname: string;
 };
 var height = 0;
 var height2 = 0;
-const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({ data, setVisible, modal = false }: IWindow) => {
   let deviceWidth = document.documentElement.clientWidth;
   let deviceHeight = document.documentElement.clientHeight;
   let isMobile = deviceWidth <= 1200;
@@ -74,9 +72,6 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
   const onChangePostion2 = (position: any) => {
     setPosition2(position);
   };
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
 

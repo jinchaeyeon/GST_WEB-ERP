@@ -534,7 +534,7 @@ const SY_A0120: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SY_A0012W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;

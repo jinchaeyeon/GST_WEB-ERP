@@ -139,7 +139,7 @@ const AC_A3000W: React.FC = () => {
   };
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A3000W", setMessagesData);
+  UseMessages(setMessagesData);
   const processApi = useApi();
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

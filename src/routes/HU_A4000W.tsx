@@ -590,7 +590,7 @@ const HU_A4000W: React.FC = () => {
   const idGetter9 = getter(DATA_ITEM_KEY9);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A4000W", setMessagesData);
+  UseMessages(setMessagesData);
   const [workType, setWorkType] = useState("N");
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 

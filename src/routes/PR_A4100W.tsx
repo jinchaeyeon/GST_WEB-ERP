@@ -177,7 +177,7 @@ const PR_A4100W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("PR_A4100W", setMessagesData);
+  UseMessages(setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);

@@ -170,7 +170,7 @@ const AC_B5040W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B5040W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(

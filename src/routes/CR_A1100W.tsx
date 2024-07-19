@@ -159,7 +159,7 @@ const CR_A1100W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CR_A1100W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 반, 종, 성별

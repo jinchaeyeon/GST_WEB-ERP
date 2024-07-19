@@ -51,13 +51,12 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
-  findMessage,
   getBizCom,
+  getFormId,
   getGridItemChangedData,
   getHeight,
-  getWindowDeviceHeight,
+  getWindowDeviceHeight
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
@@ -78,7 +77,6 @@ type TKendoWindow = {
   group_code?: string;
   isCopy: boolean;
   modal?: boolean;
-  pathname: string;
 };
 let targetRowIndex: null | number = null;
 let temp = 0;
@@ -97,7 +95,6 @@ const KendoWindow = ({
   group_code = "",
   isCopy,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -726,10 +723,6 @@ const KendoWindow = ({
     setLoading(false);
   };
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages(pathname, setMessagesData);
-
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -753,7 +746,7 @@ const KendoWindow = ({
     use_yn: "",
     userid: userId,
     pc: pc,
-    form_id: pathname,
+    form_id: getFormId(),
   });
 
   useEffect(() => {
@@ -883,49 +876,55 @@ const KendoWindow = ({
   const handleSubmit = () => {
     if (!permissions.save) return;
     let valid = true;
-
+    let valid2 = true;
+    let valid3 = true;
     //검증
-    try {
-      detailDataResult.data.forEach((item: any, idx: number) => {
-        if (!item.sub_code) {
-          throw findMessage(messagesData, "SY_A0010W_004");
-        }
-        if (!item.code_name) {
-          throw findMessage(messagesData, "SY_A0010W_005");
-        }
+    detailDataResult.data.forEach((item: any, idx: number) => {
+      if (!item.sub_code) {
+        valid = false;
+      }
+      if (!item.code_name) {
+        valid = false;
+      }
 
-        detailDataResult.data.forEach((chkItem: any, chkIdx: number) => {
-          if (
-            item.sub_code == chkItem.sub_code &&
-            idx !== chkIdx &&
-            valid == true
-          ) {
-            throw findMessage(messagesData, "SY_A0010W_003");
-            valid = false;
-          }
-        });
-
-        if (initialVal.code_length < item.sub_code.length && valid == true) {
-          throw findMessage(messagesData, "SY_A0010W_007");
-          valid = false;
-        }
-
-        if (!initialVal.group_code) {
-          throw findMessage(messagesData, "SY_A0010W_008");
-        }
-        if (!initialVal.group_name) {
-          throw findMessage(messagesData, "SY_A0010W_009");
-        }
-        if (!initialVal.group_category) {
-          throw findMessage(messagesData, "SY_A0010W_010");
+      detailDataResult.data.forEach((chkItem: any, chkIdx: number) => {
+        if (
+          item.sub_code == chkItem.sub_code &&
+          idx !== chkIdx &&
+          valid2 == true
+        ) {
+          valid2 = false;
         }
       });
-    } catch (e) {
-      alert(e);
-      valid = false;
+
+      if (initialVal.code_length < item.sub_code.length && valid == true) {
+        valid3 = false;
+      }
+
+      if (!initialVal.group_code) {
+        valid = false;
+      }
+      if (!initialVal.group_name) {
+        valid = false;
+      }
+      if (!initialVal.group_category) {
+        valid = false;
+      }
+    });
+
+    if (!valid) {
+      alert("필수값을 채워주세요.");
+      return false;
+    }
+    if (!valid2) {
+      alert("세부코드가 중복되었습니다.");
+      return false;
+    }
+    if (!valid3) {
+      alert("세부코드의 길이가 설정하신 세부코드길이보다 큽니다.");
+      return false;
     }
 
-    if (!valid) return false;
     if (detailDataResult.total == 0) {
       alert("데이터가 없습니다.");
       return false;
@@ -992,7 +991,7 @@ const KendoWindow = ({
           "@p_userid": userId,
           "@p_pc": pc,
           "@p_attdatnum_img": "",
-          "@p_form_id": pathname,
+          "@p_form_id": getFormId(),
         },
       };
 
@@ -1056,7 +1055,7 @@ const KendoWindow = ({
           "@p_userid": userId,
           "@p_pc": pc,
           "@p_attdatnum_img": null,
-          "@p_form_id": pathname,
+          "@p_form_id": getFormId(),
         },
       };
 
@@ -1584,7 +1583,7 @@ const KendoWindow = ({
               </GridTitleContainer>
               <CommentsGrid
                 ref_key={initialVal.group_code}
-                form_id={pathname}
+                form_id={getFormId()}
                 table_id={"comCodeMaster"}
                 style={{ height: mobileheight2 }}
               />
@@ -2079,7 +2078,7 @@ const KendoWindow = ({
             <GridContainer width={`calc(32% - ${GAP}px)`}>
               <CommentsGrid
                 ref_key={initialVal.group_code}
-                form_id={pathname}
+                form_id={getFormId()}
                 table_id={"comCodeMaster"}
                 style={{ height: webheight2 }}
               />

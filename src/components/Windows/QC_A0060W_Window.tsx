@@ -45,16 +45,14 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   setDefaultDate,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -75,7 +73,6 @@ type IWindow = {
   reloadData(workType: string): void;
   rev: boolean;
   modal?: boolean;
-  pathname: string;
 };
 
 type TdataArr = {
@@ -157,7 +154,6 @@ const CopyWindow = ({
   reloadData,
   rev,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -240,10 +236,6 @@ const CopyWindow = ({
   const companyCode = loginResult ? loginResult.companyCode : "";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
@@ -600,47 +592,48 @@ const CopyWindow = ({
         }
       }
     }
-
-    try {
-      if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "QC_A0060W_005");
-      } else if (
-        convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.recdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "QC_A0060W_001");
-      } else if (
-        filters.itemnm == null ||
-        filters.itemnm == "" ||
-        filters.itemnm == undefined
-      ) {
-        throw findMessage(messagesData, "QC_A0060W_002");
-      } else if (
-        filters.location == null ||
-        filters.location == "" ||
-        filters.location == undefined
-      ) {
-        throw findMessage(messagesData, "QC_A0060W_003");
-      } else if (
-        filters.proccd == null ||
-        filters.proccd == "" ||
-        filters.proccd == undefined
-      ) {
-        throw findMessage(messagesData, "QC_A0060W_004");
-      } else if (
-        mainDataResult.data.filter((item) => item.inspeccd == "").length > 0
-      ) {
-        throw findMessage(messagesData, "QC_A0060W_006");
-      } else if (
-        mainDataResult.data.filter((item) => item.qc_gubun == "").length > 0
-      ) {
-        throw findMessage(messagesData, "QC_A0060W_007");
-      }
-    } catch (e) {
-      alert(e);
-      valid = false;
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+      return false;
+    } else if (
+      convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.recdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else if (
+      filters.itemnm == null ||
+      filters.itemnm == "" ||
+      filters.itemnm == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.location == null ||
+      filters.location == "" ||
+      filters.location == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.proccd == null ||
+      filters.proccd == "" ||
+      filters.proccd == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      mainDataResult.data.filter((item) => item.inspeccd == "").length > 0
+    ) {
+      alert("검사항목은 필수입니다.");
+      return false;
+    } else if (
+      mainDataResult.data.filter((item) => item.qc_gubun == "").length > 0
+    ) {
+      alert("측정구분은 필수입니다.");
+      return false;
     }
 
     if (!valid) return false;

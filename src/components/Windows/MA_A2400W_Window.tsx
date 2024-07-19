@@ -45,18 +45,16 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   isValidDate,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -76,7 +74,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 let temp = 0;
 
@@ -160,7 +157,6 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -226,10 +222,7 @@ const CopyWindow = ({
 
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
 
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
   // 삭제할 첨부파일 리스트를 담는 함수
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -626,243 +619,246 @@ const CopyWindow = ({
       }
     });
 
-    try {
-      if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "MA_A2400W_003");
-      } else if (
-        convertDateToStr(filters.purdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.purdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.purdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.purdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "MA_A2400W_001");
-      } else if (
-        filters.doexdiv == null ||
-        filters.doexdiv == "" ||
-        filters.doexdiv == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2400W_004");
-      } else if (
-        filters.location == null ||
-        filters.location == "" ||
-        filters.location == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2400W_002");
-      } else if (
-        filters.custcd == null ||
-        filters.custcd == "" ||
-        filters.custcd == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2400W_005");
-      } else if (
-        filters.taxdiv == null ||
-        filters.taxdiv == "" ||
-        filters.taxdiv == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2400W_006");
-      } else if (
-        filters.pursts == null ||
-        filters.pursts == "" ||
-        filters.pursts == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A2400W_007");
-      } else {
-        if (valid == true) {
-          const dataItem = mainDataResult.data.filter((item: any) => {
-            return (
-              (item.rowstatus == "N" || item.rowstatus == "U") &&
-              item.rowstatus !== undefined
-            );
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+      return false;
+    } else if (
+      convertDateToStr(filters.purdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.purdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.purdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.purdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else if (
+      filters.doexdiv == null ||
+      filters.doexdiv == "" ||
+      filters.doexdiv == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.location == null ||
+      filters.location == "" ||
+      filters.location == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.custcd == null ||
+      filters.custcd == "" ||
+      filters.custcd == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.taxdiv == null ||
+      filters.taxdiv == "" ||
+      filters.taxdiv == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.pursts == null ||
+      filters.pursts == "" ||
+      filters.pursts == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else {
+      if (valid == true) {
+        const dataItem = mainDataResult.data.filter((item: any) => {
+          return (
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
+            item.rowstatus !== undefined
+          );
+        });
+
+        if (dataItem.length == 0 && deletedMainRows.length == 0) {
+          setParaData((prev) => ({
+            ...prev,
+            workType: workType,
+            amt: filters.amt,
+            amtunit: filters.amtunit,
+            attdatnum: filters.attdatnum,
+            baseamt: filters.baseamt,
+            custcd: filters.custcd,
+            custnm: filters.custnm,
+            custprsncd: filters.custprsncd,
+            doexdiv: filters.doexdiv,
+            files: filters.files,
+            inexpdt: filters.inexpdt,
+            location: sessionLocation,
+            orgdiv: sessionOrgdiv,
+            person: filters.person,
+            purdt: filters.purdt,
+            pursts: filters.pursts,
+            purnum: filters.purnum,
+            remark: filters.remark,
+            taxdiv: filters.taxdiv,
+            uschgrat: filters.uschgrat,
+            wonchgrat: filters.wonchgrat,
+            userid: userId,
+            pc: pc,
+            form_id: "MA_A2400W",
+            serviceid: companyCode,
+          }));
+        } else {
+          let dataArr: TdataArr = {
+            rowstatus_s: [],
+            purseq_s: [],
+            itemcd_s: [],
+            itemnm_s: [],
+            insiz_s: [],
+            qty_s: [],
+            qtyunit_s: [],
+            unitwgt_s: [],
+            wgt_s: [],
+            wgtunit_s: [],
+            proccd_s: [],
+            planno_s: [],
+            planseq_s: [],
+            unpcalmeth_s: [],
+            unp_s: [],
+            amt_s: [],
+            wonamt_s: [],
+            taxamt_s: [],
+            remark_s: [],
+          };
+
+          dataItem.forEach((item: any, idx: number) => {
+            const {
+              amt = "",
+              itemcd = "",
+              itemnm = "",
+              rowstatus = "",
+              taxamt = "",
+              unp = "",
+              qty = "",
+              qtyunit = "",
+              wonamt = "",
+              remark = "",
+              purseq = "",
+              insiz = "",
+              unitwgt = "",
+              wgt = "",
+              wgtunit = "",
+              proccd = "",
+              planno = "",
+              planseq = "",
+              unpcalmeth = "",
+            } = item;
+            dataArr.rowstatus_s.push(rowstatus);
+            dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
+            dataArr.itemcd_s.push(itemcd);
+            dataArr.itemnm_s.push(itemnm);
+            dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
+            dataArr.qty_s.push(qty == "" ? 0 : qty);
+            dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+            dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
+            dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
+            dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+            dataArr.proccd_s.push(proccd == undefined ? "" : proccd);
+            dataArr.planno_s.push(planno == undefined ? "" : planno);
+            dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
+            dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
+            dataArr.unp_s.push(unp == "" ? 0 : unp);
+            dataArr.amt_s.push(amt == "" ? 0 : amt);
+            dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+            dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+            dataArr.remark_s.push(remark == undefined ? "" : remark);
           });
-
-          if (dataItem.length == 0 && deletedMainRows.length == 0) {
-            setParaData((prev) => ({
-              ...prev,
-              workType: workType,
-              amt: filters.amt,
-              amtunit: filters.amtunit,
-              attdatnum: filters.attdatnum,
-              baseamt: filters.baseamt,
-              custcd: filters.custcd,
-              custnm: filters.custnm,
-              custprsncd: filters.custprsncd,
-              doexdiv: filters.doexdiv,
-              files: filters.files,
-              inexpdt: filters.inexpdt,
-              location: sessionLocation,
-              orgdiv: sessionOrgdiv,
-              person: filters.person,
-              purdt: filters.purdt,
-              pursts: filters.pursts,
-              purnum: filters.purnum,
-              remark: filters.remark,
-              taxdiv: filters.taxdiv,
-              uschgrat: filters.uschgrat,
-              wonchgrat: filters.wonchgrat,
-              userid: userId,
-              pc: pc,
-              form_id: "MA_A2400W",
-              serviceid: companyCode,
-            }));
-          } else {
-            let dataArr: TdataArr = {
-              rowstatus_s: [],
-              purseq_s: [],
-              itemcd_s: [],
-              itemnm_s: [],
-              insiz_s: [],
-              qty_s: [],
-              qtyunit_s: [],
-              unitwgt_s: [],
-              wgt_s: [],
-              wgtunit_s: [],
-              proccd_s: [],
-              planno_s: [],
-              planseq_s: [],
-              unpcalmeth_s: [],
-              unp_s: [],
-              amt_s: [],
-              wonamt_s: [],
-              taxamt_s: [],
-              remark_s: [],
-            };
-
-            dataItem.forEach((item: any, idx: number) => {
-              const {
-                amt = "",
-                itemcd = "",
-                itemnm = "",
-                rowstatus = "",
-                taxamt = "",
-                unp = "",
-                qty = "",
-                qtyunit = "",
-                wonamt = "",
-                remark = "",
-                purseq = "",
-                insiz = "",
-                unitwgt = "",
-                wgt = "",
-                wgtunit = "",
-                proccd = "",
-                planno = "",
-                planseq = "",
-                unpcalmeth = "",
-              } = item;
-              dataArr.rowstatus_s.push(rowstatus);
-              dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
-              dataArr.itemcd_s.push(itemcd);
-              dataArr.itemnm_s.push(itemnm);
-              dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
-              dataArr.qty_s.push(qty == "" ? 0 : qty);
-              dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-              dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-              dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
-              dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
-              dataArr.proccd_s.push(proccd == undefined ? "" : proccd);
-              dataArr.planno_s.push(planno == undefined ? "" : planno);
-              dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
-              dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
-              dataArr.unp_s.push(unp == "" ? 0 : unp);
-              dataArr.amt_s.push(amt == "" ? 0 : amt);
-              dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-              dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-              dataArr.remark_s.push(remark == undefined ? "" : remark);
-            });
-            deletedMainRows.forEach((item: any, idx: number) => {
-              const {
-                amt = "",
-                itemcd = "",
-                itemnm = "",
-                rowstatus = "",
-                taxamt = "",
-                unp = "",
-                qty = "",
-                qtyunit = "",
-                wonamt = "",
-                remark = "",
-                purseq = "",
-                insiz = "",
-                unitwgt = "",
-                wgt = "",
-                wgtunit = "",
-                proccd = "",
-                planno = "",
-                planseq = "",
-                unpcalmeth = "",
-              } = item;
-              dataArr.rowstatus_s.push(rowstatus);
-              dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
-              dataArr.itemcd_s.push(itemcd);
-              dataArr.itemnm_s.push(itemnm);
-              dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
-              dataArr.qty_s.push(qty == "" ? 0 : qty);
-              dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-              dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-              dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
-              dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
-              dataArr.proccd_s.push(proccd == undefined ? "" : proccd);
-              dataArr.planno_s.push(planno == undefined ? "" : planno);
-              dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
-              dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
-              dataArr.unp_s.push(unp == "" ? 0 : unp);
-              dataArr.amt_s.push(amt == "" ? 0 : amt);
-              dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-              dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-              dataArr.remark_s.push(remark == undefined ? "" : remark);
-            });
-            setParaData((prev) => ({
-              ...prev,
-              workType: workType,
-              amt: filters.amt,
-              amtunit: filters.amtunit,
-              attdatnum: filters.attdatnum,
-              baseamt: filters.baseamt,
-              custcd: filters.custcd,
-              custnm: filters.custnm,
-              custprsncd: filters.custprsncd,
-              doexdiv: filters.doexdiv,
-              files: filters.files,
-              inexpdt: filters.inexpdt,
-              location: sessionLocation,
-              orgdiv: sessionOrgdiv,
-              person: filters.person,
-              purdt: filters.purdt,
-              pursts: filters.pursts,
-              purnum: filters.purnum,
-              remark: filters.remark,
-              taxdiv: filters.taxdiv,
-              uschgrat: filters.uschgrat,
-              wonchgrat: filters.wonchgrat,
-              userid: userId,
-              pc: pc,
-              form_id: "MA_A2400W",
-              serviceid: companyCode,
-              rowstatus_s: dataArr.rowstatus_s.join("|"),
-              purseq_s: dataArr.purseq_s.join("|"),
-              itemcd_s: dataArr.itemcd_s.join("|"),
-              itemnm_s: dataArr.itemnm_s.join("|"),
-              insiz_s: dataArr.insiz_s.join("|"),
-              qty_s: dataArr.qty_s.join("|"),
-              qtyunit_s: dataArr.qtyunit_s.join("|"),
-              unitwgt_s: dataArr.unitwgt_s.join("|"),
-              wgt_s: dataArr.wgt_s.join("|"),
-              wgtunit_s: dataArr.wgtunit_s.join("|"),
-              proccd_s: dataArr.proccd_s.join("|"),
-              planno_s: dataArr.planno_s.join("|"),
-              planseq_s: dataArr.planseq_s.join("|"),
-              unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
-              unp_s: dataArr.unp_s.join("|"),
-              amt_s: dataArr.amt_s.join("|"),
-              wonamt_s: dataArr.wonamt_s.join("|"),
-              taxamt_s: dataArr.taxamt_s.join("|"),
-              remark_s: dataArr.remark_s.join("|"),
-            }));
-          }
+          deletedMainRows.forEach((item: any, idx: number) => {
+            const {
+              amt = "",
+              itemcd = "",
+              itemnm = "",
+              rowstatus = "",
+              taxamt = "",
+              unp = "",
+              qty = "",
+              qtyunit = "",
+              wonamt = "",
+              remark = "",
+              purseq = "",
+              insiz = "",
+              unitwgt = "",
+              wgt = "",
+              wgtunit = "",
+              proccd = "",
+              planno = "",
+              planseq = "",
+              unpcalmeth = "",
+            } = item;
+            dataArr.rowstatus_s.push(rowstatus);
+            dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
+            dataArr.itemcd_s.push(itemcd);
+            dataArr.itemnm_s.push(itemnm);
+            dataArr.insiz_s.push(insiz == undefined ? "" : insiz);
+            dataArr.qty_s.push(qty == "" ? 0 : qty);
+            dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+            dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
+            dataArr.wgt_s.push(wgt == "" ? 0 : wgt);
+            dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+            dataArr.proccd_s.push(proccd == undefined ? "" : proccd);
+            dataArr.planno_s.push(planno == undefined ? "" : planno);
+            dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
+            dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
+            dataArr.unp_s.push(unp == "" ? 0 : unp);
+            dataArr.amt_s.push(amt == "" ? 0 : amt);
+            dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+            dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+            dataArr.remark_s.push(remark == undefined ? "" : remark);
+          });
+          setParaData((prev) => ({
+            ...prev,
+            workType: workType,
+            amt: filters.amt,
+            amtunit: filters.amtunit,
+            attdatnum: filters.attdatnum,
+            baseamt: filters.baseamt,
+            custcd: filters.custcd,
+            custnm: filters.custnm,
+            custprsncd: filters.custprsncd,
+            doexdiv: filters.doexdiv,
+            files: filters.files,
+            inexpdt: filters.inexpdt,
+            location: sessionLocation,
+            orgdiv: sessionOrgdiv,
+            person: filters.person,
+            purdt: filters.purdt,
+            pursts: filters.pursts,
+            purnum: filters.purnum,
+            remark: filters.remark,
+            taxdiv: filters.taxdiv,
+            uschgrat: filters.uschgrat,
+            wonchgrat: filters.wonchgrat,
+            userid: userId,
+            pc: pc,
+            form_id: "MA_A2400W",
+            serviceid: companyCode,
+            rowstatus_s: dataArr.rowstatus_s.join("|"),
+            purseq_s: dataArr.purseq_s.join("|"),
+            itemcd_s: dataArr.itemcd_s.join("|"),
+            itemnm_s: dataArr.itemnm_s.join("|"),
+            insiz_s: dataArr.insiz_s.join("|"),
+            qty_s: dataArr.qty_s.join("|"),
+            qtyunit_s: dataArr.qtyunit_s.join("|"),
+            unitwgt_s: dataArr.unitwgt_s.join("|"),
+            wgt_s: dataArr.wgt_s.join("|"),
+            wgtunit_s: dataArr.wgtunit_s.join("|"),
+            proccd_s: dataArr.proccd_s.join("|"),
+            planno_s: dataArr.planno_s.join("|"),
+            planseq_s: dataArr.planseq_s.join("|"),
+            unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
+            unp_s: dataArr.unp_s.join("|"),
+            amt_s: dataArr.amt_s.join("|"),
+            wonamt_s: dataArr.wonamt_s.join("|"),
+            taxamt_s: dataArr.taxamt_s.join("|"),
+            remark_s: dataArr.remark_s.join("|"),
+          }));
         }
       }
-    } catch (e) {
-      alert(e);
     }
   };
 
@@ -2000,11 +1996,7 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow2
-          setVisible={setCopyWindowVisible}
-          setData={setCopyData}
-          pathname={pathname}
-        />
+        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow

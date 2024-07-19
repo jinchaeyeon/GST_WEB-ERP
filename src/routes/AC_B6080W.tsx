@@ -273,7 +273,7 @@ const AC_B6080W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B6080W", setMessagesData);
+  UseMessages(setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);

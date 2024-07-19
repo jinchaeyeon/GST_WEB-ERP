@@ -19,13 +19,12 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
+  getFormId,
   getHeight,
-  getWindowDeviceHeight,
+  getWindowDeviceHeight
 } from "../CommonFunction";
 import Window from "./WindowComponent/Window";
 
@@ -57,7 +56,6 @@ type TKendoWindow = {
   isCopy: boolean;
   membership_id?: string;
   modal?: boolean;
-  pathname: string;
 };
 
 var height = 0;
@@ -70,7 +68,6 @@ const KendoWindow = ({
   isCopy,
   membership_id,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -321,10 +318,6 @@ const KendoWindow = ({
     setLoading(false);
   };
 
-  //메시지 조회
-  const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages(pathname, setMessagesData);
-
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -367,7 +360,7 @@ const KendoWindow = ({
         "@p_dayofweek": paraData.dayofweek,
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": pathname,
+        "@p_form_id": getFormId(),
       },
     };
 
@@ -419,31 +412,24 @@ const KendoWindow = ({
       dayofweek,
     } = initialVal;
 
-    //검증
-    let vaild = true;
-    let errorMessage = "";
     if (workType == "N") {
       if (!custcd) {
-        errorMessage = findMessage(messagesData, "CR_A0040W_001"); // 반려견코드를 입력해주세요.
-        vaild = false;
+        alert("필수값을 입력해주세요.");
+        return false;
       } else if (!janqty) {
-        errorMessage = findMessage(messagesData, "CR_A0040W_002"); // 등원횟수를 입력해주세요.
-        vaild = false;
+        alert("필수값을 입력해주세요.");
+        return false;
       } else if (!adjqty) {
-        errorMessage = findMessage(messagesData, "CR_A0040W_003"); // 변경횟수를 입력해주세요.
-        vaild = false;
+        alert("필수값을 입력해주세요.");
+        return false;
       } else if (!strdt) {
-        errorMessage = findMessage(messagesData, "CR_A0040W_005"); // 시작일자를 입력해주세요.
-        vaild = false;
+        alert("시작일자를 입력해주세요.");
+        return false;
       } else if (!enddt) {
-        errorMessage = findMessage(messagesData, "CR_A0040W_006"); // 만기일자를 입력해주세요.
-        vaild = false;
+        alert("만기일자를 입력해주세요.");
+        return false;
       }
       // strdt, enddt
-    }
-    if (!vaild) {
-      alert(errorMessage);
-      return false;
     }
 
     setParaData((prev) => ({

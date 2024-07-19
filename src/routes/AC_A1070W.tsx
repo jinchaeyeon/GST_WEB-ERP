@@ -215,7 +215,7 @@ const AC_A1070W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A1070W", setMessagesData);
+  UseMessages(setMessagesData);
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
 

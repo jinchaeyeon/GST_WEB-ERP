@@ -98,7 +98,7 @@ const AC_B1340W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B1340W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

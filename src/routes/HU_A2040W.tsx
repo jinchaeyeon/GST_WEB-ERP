@@ -164,7 +164,7 @@ const HU_A2040W: React.FC = () => {
 
   //폼 메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("HU_A2040W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001, L_HU005", setBizComponentData);

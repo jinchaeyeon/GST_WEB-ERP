@@ -150,7 +150,7 @@ const QC_A0120: React.FC = () => {
   }, [customOptionData, webheight, webheight2, tabSelected]);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("QC_A0120W", setMessagesData);
+  UseMessages(setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {

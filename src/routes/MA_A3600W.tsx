@@ -419,7 +419,7 @@ const MA_A3600W: React.FC = () => {
   }, [customOptionData, webheight, webheight2]);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A3600W", setMessagesData);
+  UseMessages(setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {

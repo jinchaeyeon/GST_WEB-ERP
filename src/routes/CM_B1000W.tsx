@@ -133,7 +133,7 @@ const CM_B1000W: React.FC = () => {
   });
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_B1000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

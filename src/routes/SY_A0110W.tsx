@@ -62,7 +62,7 @@ const SY_A0110: React.FC = () => {
   });
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SY_A0110W", setMessagesData);
+  UseMessages(setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);

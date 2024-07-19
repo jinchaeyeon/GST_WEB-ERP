@@ -253,7 +253,7 @@ const AC_A0090W: React.FC = () => {
   };
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A0090W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

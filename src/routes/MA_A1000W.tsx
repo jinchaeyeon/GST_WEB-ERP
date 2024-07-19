@@ -142,7 +142,7 @@ const MA_A1000W: React.FC = () => {
   };
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A1000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -988,7 +988,7 @@ const MA_A1000W: React.FC = () => {
         filters.location == "" ||
         filters.location == undefined
       ) {
-        throw findMessage(messagesData, "MA_A2000W_002");
+        throw findMessage(messagesData, "MA_A1000W_004");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -1633,7 +1633,6 @@ const MA_A1000W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="MA_A1000W"
         />
       )}
       {custWindowVisible && (

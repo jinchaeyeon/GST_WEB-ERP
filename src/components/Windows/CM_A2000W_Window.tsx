@@ -47,18 +47,17 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
+  getFormId,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   isValidDate,
   setDefaultDate2,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -81,7 +80,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reloadData(str: string): void;
   modal?: boolean;
-  pathname: string;
 };
 let temp = 0;
 
@@ -130,7 +128,6 @@ const CopyWindow = ({
   setVisible,
   reloadData,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -237,10 +234,7 @@ const CopyWindow = ({
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
 
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -617,106 +611,96 @@ const CopyWindow = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     if (!permissions.save) return;
-    try {
-      if (
-        convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.recdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "CM_A2000W_001");
-      } else if (
-        filters.rcvperson == null ||
-        filters.rcvperson == "" ||
-        filters.rcvperson == undefined
-      ) {
-        throw findMessage(messagesData, "CM_A2000W_003");
-      } else if (
-        filters.title == null ||
-        filters.title == "" ||
-        filters.title == undefined
-      ) {
-        throw findMessage(messagesData, "CM_A2000W_002");
+    if (
+      convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.recdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else if (
+      filters.rcvperson == null ||
+      filters.rcvperson == "" ||
+      filters.rcvperson == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else if (
+      filters.title == null ||
+      filters.title == "" ||
+      filters.title == undefined
+    ) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    } else {
+      const dataItem = mainDataResult.data.filter((item: any) => {
+        return (
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+      if (dataItem.length == 0) {
+        setParaData((prev: any) => ({
+          ...prev,
+          workType: workType,
+          recno: filters.recno,
+          recdt: convertDateToStr(filters.recdt),
+          person: filters.person,
+          rcvperson: filters.rcvperson,
+          endyn: filters.endyn,
+          custcd: filters.custcd,
+          title: filters.title,
+          reqctns: filters.reqctns,
+          attdatnum: filters.attdatnum,
+          reqdt: convertDateToStr(filters.reqdt),
+          finexpdt:
+            filters.finexpdt == null ? "" : convertDateToStr(filters.finexpdt),
+          findt: filters.findt == null ? "" : convertDateToStr(filters.findt),
+        }));
       } else {
-        const dataItem = mainDataResult.data.filter((item: any) => {
-          return (
-            (item.rowstatus == "N" || item.rowstatus == "U") &&
-            item.rowstatus !== undefined
+        let dataArr: TdataArr = {
+          user_id_s: [],
+          chooses_s: [],
+          loadok_s: [],
+          readok_s: [],
+        };
+        dataItem.forEach((item: any, idx: number) => {
+          const { user_id = "", chooses = "", loadok = "", readok = "" } = item;
+
+          dataArr.user_id_s.push(user_id);
+          dataArr.chooses_s.push(
+            chooses == true ? "Y" : chooses == false ? "N" : chooses
+          );
+          dataArr.loadok_s.push(
+            loadok == true ? "Y" : loadok == false ? "N" : loadok
+          );
+          dataArr.readok_s.push(
+            readok == true ? "Y" : readok == false ? "N" : readok
           );
         });
-        if (dataItem.length == 0) {
-          setParaData((prev: any) => ({
-            ...prev,
-            workType: workType,
-            recno: filters.recno,
-            recdt: convertDateToStr(filters.recdt),
-            person: filters.person,
-            rcvperson: filters.rcvperson,
-            endyn: filters.endyn,
-            custcd: filters.custcd,
-            title: filters.title,
-            reqctns: filters.reqctns,
-            attdatnum: filters.attdatnum,
-            reqdt: convertDateToStr(filters.reqdt),
-            finexpdt:
-              filters.finexpdt == null
-                ? ""
-                : convertDateToStr(filters.finexpdt),
-            findt: filters.findt == null ? "" : convertDateToStr(filters.findt),
-          }));
-        } else {
-          let dataArr: TdataArr = {
-            user_id_s: [],
-            chooses_s: [],
-            loadok_s: [],
-            readok_s: [],
-          };
-          dataItem.forEach((item: any, idx: number) => {
-            const {
-              user_id = "",
-              chooses = "",
-              loadok = "",
-              readok = "",
-            } = item;
-
-            dataArr.user_id_s.push(user_id);
-            dataArr.chooses_s.push(
-              chooses == true ? "Y" : chooses == false ? "N" : chooses
-            );
-            dataArr.loadok_s.push(
-              loadok == true ? "Y" : loadok == false ? "N" : loadok
-            );
-            dataArr.readok_s.push(
-              readok == true ? "Y" : readok == false ? "N" : readok
-            );
-          });
-          setParaData((prev: any) => ({
-            ...prev,
-            workType: workType,
-            recno: filters.recno,
-            recdt: convertDateToStr(filters.recdt),
-            person: filters.person,
-            rcvperson: filters.rcvperson,
-            endyn: filters.endyn,
-            custcd: filters.custcd,
-            title: filters.title,
-            reqctns: filters.reqctns,
-            attdatnum: filters.attdatnum,
-            reqdt: convertDateToStr(filters.reqdt),
-            finexpdt:
-              filters.finexpdt == null
-                ? ""
-                : convertDateToStr(filters.finexpdt),
-            findt: filters.findt == null ? "" : convertDateToStr(filters.findt),
-            person2: dataArr.user_id_s.join("|"),
-            chooses: dataArr.chooses_s.join("|"),
-            loadok: dataArr.loadok_s.join("|"),
-            readok: dataArr.readok_s.join("|"),
-          }));
-        }
+        setParaData((prev: any) => ({
+          ...prev,
+          workType: workType,
+          recno: filters.recno,
+          recdt: convertDateToStr(filters.recdt),
+          person: filters.person,
+          rcvperson: filters.rcvperson,
+          endyn: filters.endyn,
+          custcd: filters.custcd,
+          title: filters.title,
+          reqctns: filters.reqctns,
+          attdatnum: filters.attdatnum,
+          reqdt: convertDateToStr(filters.reqdt),
+          finexpdt:
+            filters.finexpdt == null ? "" : convertDateToStr(filters.finexpdt),
+          findt: filters.findt == null ? "" : convertDateToStr(filters.findt),
+          person2: dataArr.user_id_s.join("|"),
+          chooses: dataArr.chooses_s.join("|"),
+          loadok: dataArr.loadok_s.join("|"),
+          readok: dataArr.readok_s.join("|"),
+        }));
       }
-    } catch (e) {
-      alert(e);
     }
   };
 
@@ -1566,7 +1550,7 @@ const CopyWindow = ({
                       ? filters.recno
                       : data?.recno
                   }
-                  form_id={pathname}
+                  form_id={getFormId()}
                   table_id={"CR100T"}
                   style={{ height: mobileheight4 }}
                 ></CommentsGrid>
@@ -2025,7 +2009,7 @@ const CopyWindow = ({
                     ? filters.recno
                     : data?.recno
                 }
-                form_id={pathname}
+                form_id={getFormId()}
                 table_id={"CR100T"}
                 style={{ height: webheight4 }}
               ></CommentsGrid>

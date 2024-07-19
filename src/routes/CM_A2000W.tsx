@@ -128,7 +128,7 @@ const CM_A2000W: React.FC = () => {
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_A2000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
@@ -833,7 +833,6 @@ const CM_A2000W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="CM_A2000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

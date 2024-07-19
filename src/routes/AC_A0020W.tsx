@@ -978,7 +978,7 @@ const AC_A0020W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A0020W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

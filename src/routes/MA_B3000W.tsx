@@ -183,7 +183,7 @@ const MA_B3000W: React.FC = () => {
   }, [customOptionData]);
 
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("MA_B3000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [gridDataState, setGridDataState] = useState<State>({
     sort: [],

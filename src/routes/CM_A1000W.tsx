@@ -148,7 +148,7 @@ const CM_A1000W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_A1000W", setMessagesData);
+  UseMessages(setMessagesData);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
     top: isMobile == true ? 0 : (deviceHeightWindow - 800) / 2,

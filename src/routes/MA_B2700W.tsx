@@ -78,7 +78,7 @@ const MA_B2700W: React.FC = () => {
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_B2700W", setMessagesData);
+  UseMessages(setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);

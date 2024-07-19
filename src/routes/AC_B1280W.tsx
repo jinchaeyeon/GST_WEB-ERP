@@ -112,7 +112,7 @@ const AC_B1280W: React.FC = () => {
   const sessionLocation = UseGetValueFromSessionItem("location");
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B1280W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);

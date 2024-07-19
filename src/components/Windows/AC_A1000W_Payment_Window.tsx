@@ -41,16 +41,14 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -68,7 +66,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(t: string): void;
   modal?: boolean;
-  pathname: string;
 };
 
 type TdataArr = {
@@ -116,13 +113,7 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
-const CopyWindow = ({
-  data,
-  setData,
-  setVisible,
-  modal = false,
-  pathname,
-}: IWindow) => {
+const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -206,10 +197,6 @@ const CopyWindow = ({
 
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -526,60 +513,63 @@ const CopyWindow = ({
       valid3 = false;
     }
 
-    try {
-      if (newData.length == 0) {
-        throw findMessage(messagesData, "AC_A1000W_001");
-      } else if (valid2 != true) {
-        throw findMessage(messagesData, "AC_A1000W_004");
-      } else if (valid3 != true) {
-        throw findMessage(messagesData, "AC_A1000W_003");
-      } else {
-        let dataArr: TdataArr = {
-          notenum_s: [],
-          janamt_s: [],
-          enddt_s: [],
-          custcd_s: [],
-          custnm_s: [],
-          remark1_s: [],
-        };
+    if (newData.length == 0) {
+      alert("데이터가 없습니다");
+      return false;
+    } else if (valid2 != true) {
+      alert(
+        "[입력]창의 상태가 [만기, 부도]일 경우 [대체거래처]를 입력할 수 없습니다"
+      );
+      return false;
+    } else if (valid3 != true) {
+      alert(
+        "[입력]창의 상태가 [할인, 배서, 일부]일 경우 [대체거래처]를 올바르게 입력하세요"
+      );
+      return false;
+    } else {
+      let dataArr: TdataArr = {
+        notenum_s: [],
+        janamt_s: [],
+        enddt_s: [],
+        custcd_s: [],
+        custnm_s: [],
+        remark1_s: [],
+      };
 
-        newData.forEach((item: any, idx: number) => {
-          const {
-            notenum = "",
-            janamt = "",
-            enddt = "",
-            custcd = "",
-            custnm = "",
-            remark1 = "",
-          } = item;
-          dataArr.notenum_s.push(notenum);
-          dataArr.janamt_s.push(janamt);
-          dataArr.enddt_s.push(enddt);
-          dataArr.custcd_s.push(custcd);
-          dataArr.custnm_s.push(custnm);
-          dataArr.remark1_s.push(remark1);
-        });
-        setParaData((prev) => ({
-          ...prev,
-          workType: "N",
-          orgdiv: sessionOrgdiv,
-          location: sessionLocation,
-          dptcd: newData[0].dptcd,
-          actdt: convertDateToStr(filters.date),
-          notests: filters.notests,
-          custcd: filters.custcd,
-          custnm: filters.custnm,
-          notediv: filters.notediv,
-          notenum_s: dataArr.notenum_s.join("|"),
-          janamt_s: dataArr.janamt_s.join("|"),
-          enddt_s: dataArr.enddt_s.join("|"),
-          custcd_s: dataArr.custcd_s.join("|"),
-          custnm_s: dataArr.custnm_s.join("|"),
-          remark1_s: dataArr.remark1_s.join("|"),
-        }));
-      }
-    } catch (e) {
-      alert(e);
+      newData.forEach((item: any, idx: number) => {
+        const {
+          notenum = "",
+          janamt = "",
+          enddt = "",
+          custcd = "",
+          custnm = "",
+          remark1 = "",
+        } = item;
+        dataArr.notenum_s.push(notenum);
+        dataArr.janamt_s.push(janamt);
+        dataArr.enddt_s.push(enddt);
+        dataArr.custcd_s.push(custcd);
+        dataArr.custnm_s.push(custnm);
+        dataArr.remark1_s.push(remark1);
+      });
+      setParaData((prev) => ({
+        ...prev,
+        workType: "N",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
+        dptcd: newData[0].dptcd,
+        actdt: convertDateToStr(filters.date),
+        notests: filters.notests,
+        custcd: filters.custcd,
+        custnm: filters.custnm,
+        notediv: filters.notediv,
+        notenum_s: dataArr.notenum_s.join("|"),
+        janamt_s: dataArr.janamt_s.join("|"),
+        enddt_s: dataArr.enddt_s.join("|"),
+        custcd_s: dataArr.custcd_s.join("|"),
+        custnm_s: dataArr.custnm_s.join("|"),
+        remark1_s: dataArr.remark1_s.join("|"),
+      }));
     }
   };
 
@@ -776,31 +766,27 @@ const CopyWindow = ({
     setMainDataResult(process([], mainDataState));
   };
   const search = () => {
-    try {
-      if (
-        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.frdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "AC_B1300W_001");
-      } else if (
-        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.todt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "AC_B1300W_001");
-      } else {
-        setPage(initialPageState); // 페이지 초기화
-        resetAllGrid(); // 데이터 초기화
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-        if (swiper && isMobile) {
-          swiper.slideTo(1);
-        }
+    if (
+      convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.frdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+    } else if (
+      convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.todt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 입력해주세요.");
+    } else {
+      setPage(initialPageState); // 페이지 초기화
+      resetAllGrid(); // 데이터 초기화
+      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      if (swiper && isMobile) {
+        swiper.slideTo(1);
       }
-    } catch (e) {
-      alert(e);
     }
   };
   return (

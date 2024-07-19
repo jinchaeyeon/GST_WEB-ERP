@@ -118,7 +118,7 @@ const MA_A2000W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A2300W", setMessagesData);
+  UseMessages(setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -1799,7 +1799,6 @@ const MA_A2000W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="MA_A2300W"
         />
       )}
       {custWindowVisible && (

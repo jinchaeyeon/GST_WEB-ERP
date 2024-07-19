@@ -22,6 +22,7 @@ import {
   UseBizComponent,
   UseGetValueFromSessionItem,
   UsePermissions,
+  getFormId,
   getHeight,
   getWindowDeviceHeight,
 } from "../CommonFunction";
@@ -36,13 +37,12 @@ type TKendoWindow = {
   setVisible(visible: boolean): void;
   data: TData;
   setData(): void;
-  pathname: string;
 };
 
 var height = 0;
 var height2 = 0;
 
-const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
+const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -177,7 +177,7 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
       "@p_serviceid": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": pathname,
+      "@p_form_id": getFormId(),
     },
   };
 

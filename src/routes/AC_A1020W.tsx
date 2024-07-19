@@ -115,7 +115,7 @@ const AC_A1020W: React.FC = () => {
   const [workType, setWorkType] = useState<"N" | "U" | "C">("N");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A1020W", setMessagesData);
+  UseMessages(setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const pc = UseGetValueFromSessionItem("pc");
@@ -1010,7 +1010,6 @@ const AC_A1020W: React.FC = () => {
                 )[0]
               : ""
           }
-          pathname="AC_A1020W"
           pgmgb="Z"
           setData={(str) =>
             setFilters((prev) => ({

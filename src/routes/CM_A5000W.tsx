@@ -264,7 +264,7 @@ const CM_A5000W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_A5000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const history = useHistory();
   const location = useLocation();
@@ -3713,7 +3713,6 @@ const CM_A5000W: React.FC = () => {
           setVisible={setCopyWindowvisible}
           setData={setCopyData}
           modal={true}
-          pathname="CM_A5000W"
         />
       )}
       {projectWindowVisible && (
@@ -3721,7 +3720,6 @@ const CM_A5000W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="CM_A5000W"
         />
       )}
       {projectWindowVisible2 && (
@@ -3729,7 +3727,6 @@ const CM_A5000W: React.FC = () => {
           setVisible={setProjectWindowVisible2}
           quotestnum={information.quotestnum}
           modal={true}
-          pathname="CM_A5000W"
         />
       )}
       {projectWindowVisible3 && (
@@ -3737,7 +3734,6 @@ const CM_A5000W: React.FC = () => {
           setVisible={setProjectWindowVisible3}
           setData={setProjectData2}
           modal={true}
-          pathname="CM_A5000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

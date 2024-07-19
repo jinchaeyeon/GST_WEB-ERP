@@ -1806,7 +1806,6 @@ const HU_A4110W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="HU_A4110W"
         />
       )}
       {detailWindowVisible2 && (

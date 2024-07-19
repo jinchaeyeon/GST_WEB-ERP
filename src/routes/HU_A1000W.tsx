@@ -204,7 +204,7 @@ const HU_A1000W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A1000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_dptcd_001,L_HU005", setBizComponentData);
@@ -1442,7 +1442,6 @@ const HU_A1000W: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="HU_A1000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

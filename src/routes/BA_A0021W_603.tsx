@@ -184,7 +184,7 @@ const BA_A0021W_603: React.FC = () => {
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("BA_A0021W_603", setMessagesData);
+  UseMessages(setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);

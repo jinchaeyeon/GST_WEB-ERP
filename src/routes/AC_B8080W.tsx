@@ -58,7 +58,7 @@ const AC_B8080W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_B8080W", setMessagesData);
+  UseMessages(setMessagesData);
   const [tabSelected, setTabSelected] = useState<number>(0);
 
   //커스텀 옵션 조회

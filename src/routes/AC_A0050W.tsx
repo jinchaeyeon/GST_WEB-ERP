@@ -162,7 +162,7 @@ const AC_A0050W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const pc = UseGetValueFromSessionItem("pc");
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("AC_A0050W", setMessagesData);
+  UseMessages(setMessagesData);
   const [tabSelected, setTabSelected] = useState(0);
   const [tabSelected2, setTabSelected2] = useState(0);
   const idGetter2 = getter(DATA_ITEM_KEY2);

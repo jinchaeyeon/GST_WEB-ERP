@@ -256,7 +256,7 @@ const CR_A0040W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CR_A0040W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -1047,7 +1047,6 @@ const CR_A0040W: React.FC = () => {
             )?.membership_id ?? ""
           }
           modal={true}
-          pathname="CR_A0040W"
         />
       )}
       {attachmentsWindowVisible && (

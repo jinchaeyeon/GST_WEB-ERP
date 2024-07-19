@@ -62,18 +62,16 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getItemQuery,
   getWindowDeviceHeight,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -95,7 +93,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 
 export const FormContext = createContext<{
@@ -451,7 +448,6 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -517,10 +513,7 @@ const CopyWindow = ({
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
 
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
 
@@ -1141,200 +1134,199 @@ const CopyWindow = ({
     });
 
     if (valid == true) {
-      try {
-        if (mainDataResult.data.length == 0) {
-          throw findMessage(messagesData, "MA_A1000W_001");
-        } else if (
-          convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
-          convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
-          convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
-          convertDateToStr(filters.recdt).substring(6, 8).length != 2
-        ) {
-          throw findMessage(messagesData, "MA_A1000W_002");
-        } else if (
-          filters.person == null ||
-          filters.person == "" ||
-          filters.person == undefined
-        ) {
-          throw findMessage(messagesData, "MA_A1000W_003");
-        } else {
-          if (valid == true) {
-            const dataItem = mainDataResult.data.filter((item: any) => {
-              return (
-                (item.rowstatus == "N" || item.rowstatus == "U") &&
-                item.rowstatus !== undefined
+      if (mainDataResult.data.length == 0) {
+        alert("데이터가 없습니다.");
+        return false;
+      } else if (
+        convertDateToStr(filters.recdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.recdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.recdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.recdt).substring(6, 8).length != 2
+      ) {
+        alert("날짜를 입력해주세요.");
+        return false;
+      } else if (
+        filters.person == null ||
+        filters.person == "" ||
+        filters.person == undefined
+      ) {
+        alert("필수값을 입력해주세요.");
+        return false;
+      } else {
+        if (valid == true) {
+          const dataItem = mainDataResult.data.filter((item: any) => {
+            return (
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
+              item.rowstatus !== undefined
+            );
+          });
+
+          if (dataItem.length == 0 && deletedMainRows.length == 0) {
+            setParaData((prev) => ({
+              ...prev,
+              workType: workType,
+              reqnum: filters.reqnum,
+              reqrev: filters.reqrev,
+              custcd: filters.custcd,
+              custnm: filters.custnm,
+              modiv: "",
+              dptcd: filters.dptcd,
+              person: filters.person,
+              recdt: filters.recdt,
+              finaldes: "",
+              qcmeth: "",
+              boxmeth: "",
+              dlv_method: "",
+              reportyn: "",
+              contractyn: "",
+              attdatnum: filters.attdatnum,
+              remark: filters.remark,
+              project: filters.project,
+              poregnum: filters.poregnum,
+            }));
+          } else {
+            let dataArr: TdataArr = {
+              rowstatus_s: [],
+              reqseq_s: [],
+              inexpdt_s: [],
+              itemcd_s: [],
+              itemnm_s: [],
+              qty_s: [],
+              qtyunit_s: [],
+              remark_s: [],
+              finyn_s: [],
+              unp_s: [],
+              amt_s: [],
+              wonamt_s: [],
+              taxamt_s: [],
+              load_place_s: [],
+              unpcalmeth_s: [],
+            };
+
+            dataItem.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                reqseq = "",
+                inexpdt = "",
+                itemcd = "",
+                itemnm = "",
+                qty = "",
+                qtyunit = "",
+                remark = "",
+                finyn = "",
+                unp = "",
+                amt = "",
+                wonamt = "",
+                taxamt = "",
+                load_place = "",
+                unpcalmeth = "",
+              } = item;
+
+              dataArr.rowstatus_s.push(rowstatus);
+              dataArr.reqseq_s.push(
+                reqseq == undefined || reqseq == "" ? 0 : reqseq
+              );
+              dataArr.inexpdt_s.push(
+                inexpdt == "99991231" || inexpdt == undefined ? "" : inexpdt
+              );
+              dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+              dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
+              dataArr.qty_s.push(qty == undefined ? 0 : qty);
+              dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+              dataArr.remark_s.push(remark == undefined ? "" : remark);
+              dataArr.finyn_s.push(finyn == undefined ? "N" : finyn);
+              dataArr.unp_s.push(unp == undefined ? 0 : unp);
+              dataArr.amt_s.push(amt == undefined ? 0 : amt);
+              dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+              dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+              dataArr.load_place_s.push(
+                load_place == undefined ? "" : load_place
+              );
+              dataArr.unpcalmeth_s.push(
+                unpcalmeth == undefined ? "" : unpcalmeth
               );
             });
-
-            if (dataItem.length == 0 && deletedMainRows.length == 0) {
-              setParaData((prev) => ({
-                ...prev,
-                workType: workType,
-                reqnum: filters.reqnum,
-                reqrev: filters.reqrev,
-                custcd: filters.custcd,
-                custnm: filters.custnm,
-                modiv: "",
-                dptcd: filters.dptcd,
-                person: filters.person,
-                recdt: filters.recdt,
-                finaldes: "",
-                qcmeth: "",
-                boxmeth: "",
-                dlv_method: "",
-                reportyn: "",
-                contractyn: "",
-                attdatnum: filters.attdatnum,
-                remark: filters.remark,
-                project: filters.project,
-                poregnum: filters.poregnum,
-              }));
-            } else {
-              let dataArr: TdataArr = {
-                rowstatus_s: [],
-                reqseq_s: [],
-                inexpdt_s: [],
-                itemcd_s: [],
-                itemnm_s: [],
-                qty_s: [],
-                qtyunit_s: [],
-                remark_s: [],
-                finyn_s: [],
-                unp_s: [],
-                amt_s: [],
-                wonamt_s: [],
-                taxamt_s: [],
-                load_place_s: [],
-                unpcalmeth_s: [],
-              };
-
-              dataItem.forEach((item: any, idx: number) => {
-                const {
-                  rowstatus = "",
-                  reqseq = "",
-                  inexpdt = "",
-                  itemcd = "",
-                  itemnm = "",
-                  qty = "",
-                  qtyunit = "",
-                  remark = "",
-                  finyn = "",
-                  unp = "",
-                  amt = "",
-                  wonamt = "",
-                  taxamt = "",
-                  load_place = "",
-                  unpcalmeth = "",
-                } = item;
-
-                dataArr.rowstatus_s.push(rowstatus);
-                dataArr.reqseq_s.push(
-                  reqseq == undefined || reqseq == "" ? 0 : reqseq
-                );
-                dataArr.inexpdt_s.push(
-                  inexpdt == "99991231" || inexpdt == undefined ? "" : inexpdt
-                );
-                dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
-                dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
-                dataArr.qty_s.push(qty == undefined ? 0 : qty);
-                dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-                dataArr.remark_s.push(remark == undefined ? "" : remark);
-                dataArr.finyn_s.push(finyn == undefined ? "N" : finyn);
-                dataArr.unp_s.push(unp == undefined ? 0 : unp);
-                dataArr.amt_s.push(amt == undefined ? 0 : amt);
-                dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-                dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-                dataArr.load_place_s.push(
-                  load_place == undefined ? "" : load_place
-                );
-                dataArr.unpcalmeth_s.push(
-                  unpcalmeth == undefined ? "" : unpcalmeth
-                );
-              });
-              deletedMainRows.forEach((item: any, idx: number) => {
-                const {
-                  rowstatus = "",
-                  reqseq = "",
-                  inexpdt = "",
-                  itemcd = "",
-                  itemnm = "",
-                  qty = "",
-                  qtyunit = "",
-                  remark = "",
-                  finyn = "",
-                  unp = "",
-                  amt = "",
-                  wonamt = "",
-                  taxamt = "",
-                  load_place = "",
-                  unpcalmeth = "",
-                } = item;
-                dataArr.rowstatus_s.push(rowstatus);
-                dataArr.reqseq_s.push(
-                  reqseq == undefined || reqseq == "" ? 0 : reqseq
-                );
-                dataArr.inexpdt_s.push(
-                  inexpdt == "99991231" || inexpdt == undefined ? "" : inexpdt
-                );
-                dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
-                dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
-                dataArr.qty_s.push(qty == undefined ? 0 : qty);
-                dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
-                dataArr.remark_s.push(remark == undefined ? "" : remark);
-                dataArr.finyn_s.push(finyn == undefined ? "N" : finyn);
-                dataArr.unp_s.push(unp == undefined ? 0 : unp);
-                dataArr.amt_s.push(amt == undefined ? 0 : amt);
-                dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-                dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-                dataArr.load_place_s.push(
-                  load_place == undefined ? "" : load_place
-                );
-                dataArr.unpcalmeth_s.push(
-                  unpcalmeth == undefined ? "" : unpcalmeth
-                );
-              });
-              setParaData((prev) => ({
-                ...prev,
-                workType: workType,
-                reqnum: filters.reqnum,
-                reqrev: filters.reqrev,
-                custcd: filters.custcd,
-                custnm: filters.custnm,
-                modiv: "",
-                dptcd: filters.dptcd,
-                person: filters.person,
-                recdt: filters.recdt,
-                finaldes: "",
-                qcmeth: "",
-                boxmeth: "",
-                dlv_method: "",
-                reportyn: "",
-                contractyn: "",
-                attdatnum: filters.attdatnum,
-                remark: filters.remark,
-                project: filters.project,
-                poregnum: filters.poregnum,
-                rowstatus_s: dataArr.rowstatus_s.join("|"),
-                reqseq_s: dataArr.reqseq_s.join("|"),
-                inexpdt_s: dataArr.inexpdt_s.join("|"),
-                itemcd_s: dataArr.itemcd_s.join("|"),
-                itemnm_s: dataArr.itemnm_s.join("|"),
-                qty_s: dataArr.qty_s.join("|"),
-                qtyunit_s: dataArr.qtyunit_s.join("|"),
-                remark_s: dataArr.remark_s.join("|"),
-                finyn_s: dataArr.finyn_s.join("|"),
-                unp_s: dataArr.unp_s.join("|"),
-                amt_s: dataArr.amt_s.join("|"),
-                wonamt_s: dataArr.wonamt_s.join("|"),
-                taxamt_s: dataArr.taxamt_s.join("|"),
-                load_place_s: dataArr.load_place_s.join("|"),
-                unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
-              }));
-            }
+            deletedMainRows.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                reqseq = "",
+                inexpdt = "",
+                itemcd = "",
+                itemnm = "",
+                qty = "",
+                qtyunit = "",
+                remark = "",
+                finyn = "",
+                unp = "",
+                amt = "",
+                wonamt = "",
+                taxamt = "",
+                load_place = "",
+                unpcalmeth = "",
+              } = item;
+              dataArr.rowstatus_s.push(rowstatus);
+              dataArr.reqseq_s.push(
+                reqseq == undefined || reqseq == "" ? 0 : reqseq
+              );
+              dataArr.inexpdt_s.push(
+                inexpdt == "99991231" || inexpdt == undefined ? "" : inexpdt
+              );
+              dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+              dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
+              dataArr.qty_s.push(qty == undefined ? 0 : qty);
+              dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+              dataArr.remark_s.push(remark == undefined ? "" : remark);
+              dataArr.finyn_s.push(finyn == undefined ? "N" : finyn);
+              dataArr.unp_s.push(unp == undefined ? 0 : unp);
+              dataArr.amt_s.push(amt == undefined ? 0 : amt);
+              dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+              dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+              dataArr.load_place_s.push(
+                load_place == undefined ? "" : load_place
+              );
+              dataArr.unpcalmeth_s.push(
+                unpcalmeth == undefined ? "" : unpcalmeth
+              );
+            });
+            setParaData((prev) => ({
+              ...prev,
+              workType: workType,
+              reqnum: filters.reqnum,
+              reqrev: filters.reqrev,
+              custcd: filters.custcd,
+              custnm: filters.custnm,
+              modiv: "",
+              dptcd: filters.dptcd,
+              person: filters.person,
+              recdt: filters.recdt,
+              finaldes: "",
+              qcmeth: "",
+              boxmeth: "",
+              dlv_method: "",
+              reportyn: "",
+              contractyn: "",
+              attdatnum: filters.attdatnum,
+              remark: filters.remark,
+              project: filters.project,
+              poregnum: filters.poregnum,
+              rowstatus_s: dataArr.rowstatus_s.join("|"),
+              reqseq_s: dataArr.reqseq_s.join("|"),
+              inexpdt_s: dataArr.inexpdt_s.join("|"),
+              itemcd_s: dataArr.itemcd_s.join("|"),
+              itemnm_s: dataArr.itemnm_s.join("|"),
+              qty_s: dataArr.qty_s.join("|"),
+              qtyunit_s: dataArr.qtyunit_s.join("|"),
+              remark_s: dataArr.remark_s.join("|"),
+              finyn_s: dataArr.finyn_s.join("|"),
+              unp_s: dataArr.unp_s.join("|"),
+              amt_s: dataArr.amt_s.join("|"),
+              wonamt_s: dataArr.wonamt_s.join("|"),
+              taxamt_s: dataArr.taxamt_s.join("|"),
+              load_place_s: dataArr.load_place_s.join("|"),
+              unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
+            }));
           }
         }
-      } catch (e) {
-        alert(e);
       }
     }
   };

@@ -108,7 +108,7 @@ const SA_A2300_PDA: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_A2300W_PDA", setMessagesData);
+  UseMessages(setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
 
   const tabPageRef = useRef(0);

@@ -199,7 +199,7 @@ const EA_A2000W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("EA_A2000W", setMessagesData);
+  UseMessages(setMessagesData);
 
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");

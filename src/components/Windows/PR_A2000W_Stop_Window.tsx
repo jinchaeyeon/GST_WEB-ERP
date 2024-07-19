@@ -16,9 +16,7 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
-  findMessage,
   getHeight,
   getWindowDeviceHeight,
 } from "../CommonFunction";
@@ -34,7 +32,6 @@ type TKendoWindow = {
   data: TData;
   setData(workType: string): void; // 비가동 입력시 workType 전달
   modal?: boolean;
-  pathname: string;
 };
 
 var height = 0;
@@ -45,7 +42,6 @@ const KendoWindow = ({
   data,
   setData,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -64,10 +60,6 @@ const KendoWindow = ({
 
   const pc = UseGetValueFromSessionItem("pc");
   const setLoading = useSetRecoilState(isLoading);
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -141,24 +133,17 @@ const KendoWindow = ({
 
   const onCheckClick = () => {
     if (!permissions.save) return;
-    let valid = true;
 
-    try {
-      if (
-        paraSaved.stopcd == "" ||
-        paraSaved.stopcd == undefined ||
-        paraSaved.stopcd == null
-      ) {
-        throw findMessage(messagesData, "PR_A2000W_001");
-      }
-    } catch (e) {
-      alert(e);
-      valid = false;
+    if (
+      paraSaved.stopcd == "" ||
+      paraSaved.stopcd == undefined ||
+      paraSaved.stopcd == null
+    ) {
+      alert("필수값을 선택해주세요.");
+      return false;
     }
 
-    if (valid) {
-      fetchTodoSave();
-    }
+    fetchTodoSave();
   };
 
   const fetchTodoSave = async () => {

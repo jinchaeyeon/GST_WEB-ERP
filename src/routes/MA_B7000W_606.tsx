@@ -502,7 +502,7 @@ const MA_B7000W_606: React.FC = () => {
   }, [detail1DataResult]);
 
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("MA_B7000W_606", setMessagesData);
+  UseMessages(setMessagesData);
 
   //그리드 리셋
   const resetAllGrid = () => {

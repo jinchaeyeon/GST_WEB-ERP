@@ -39,7 +39,6 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -47,7 +46,7 @@ import {
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
-  setDefaultDate2,
+  setDefaultDate2
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -70,7 +69,6 @@ type TKendoWindow = {
   categories?: string;
   para?: Iparameters; //{};
   modal?: boolean;
-  pathname: string;
 };
 
 type TDetailData = {
@@ -93,7 +91,6 @@ const KendoWindow = ({
   categories,
   para,
   modal = false,
-  pathname,
 }: TKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -133,10 +130,6 @@ const KendoWindow = ({
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
-
-  //메시지 조회
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,

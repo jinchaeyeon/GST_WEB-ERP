@@ -478,7 +478,7 @@ const HU_A6020W: React.FC = () => {
     setTabSelected(e.selected);
   };
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A6020W", setMessagesData);
+  UseMessages(setMessagesData);
 
   useEffect(() => {
     if (customOptionData !== null) {

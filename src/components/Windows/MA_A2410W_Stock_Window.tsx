@@ -38,16 +38,14 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   chkScrollHandler,
   convertDateToStr,
-  findMessage,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -61,7 +59,6 @@ import Window from "./WindowComponent/Window";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
-  pathname: string;
   modal?: boolean;
 };
 
@@ -70,12 +67,7 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 let temp = 0;
-const CopyWindow = ({
-  setVisible,
-  setData,
-  pathname,
-  modal = false,
-}: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -179,11 +171,6 @@ const CopyWindow = ({
       take: initialPageState.take,
     });
   };
-
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -475,23 +462,20 @@ const CopyWindow = ({
   };
 
   const search = () => {
-    try {
-      if (
-        convertDateToStr(filters.yyyy).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.yyyy).substring(0, 4).length != 4
-      ) {
-        throw findMessage(messagesData, "SA_A5000W_001");
-      } else {
-        resetAllGrid();
-        setPage(initialPageState); // 페이지 초기화
-        setFilters((prev: any) => ({
-          ...prev,
-          pgNum: 1,
-          isSearch: true,
-        }));
-      }
-    } catch (e) {
-      alert(e);
+    if (
+      convertDateToStr(filters.yyyy).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.yyyy).substring(0, 4).length != 4
+    ) {
+      alert("날짜를 입력해주세요.");
+      return false;
+    } else {
+      resetAllGrid();
+      setPage(initialPageState); // 페이지 초기화
+      setFilters((prev: any) => ({
+        ...prev,
+        pgNum: 1,
+        isSearch: true,
+      }));
     }
   };
 

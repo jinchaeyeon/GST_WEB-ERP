@@ -37,13 +37,12 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   getBizCom,
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -57,7 +56,6 @@ import Window from "./WindowComponent/Window";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
-  pathname: string;
   modal?: boolean;
 };
 
@@ -71,12 +69,7 @@ var height4 = 0;
 var height5 = 0;
 let targetRowIndex: null | number = null;
 
-const ProdStockWindow = ({
-  setVisible,
-  setData,
-  pathname,
-  modal = false,
-}: IWindow) => {
+const ProdStockWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -185,11 +178,6 @@ const ProdStockWindow = ({
       take: initialPageState.take,
     });
   };
-
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

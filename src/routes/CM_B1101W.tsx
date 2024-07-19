@@ -223,7 +223,7 @@ const CM_B1101W: React.FC = () => {
   UsePermissions(setPermissions);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_B1101W", setMessagesData);
+  UseMessages(setMessagesData);
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = GetPropertyValueByName(

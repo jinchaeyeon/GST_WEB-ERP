@@ -43,16 +43,14 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
-  UseMessages,
   UsePermissions,
   convertDateToStr,
-  findMessage,
   getBizCom,
   getGridItemChangedData,
   getHeight,
   getWindowDeviceHeight,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -73,7 +71,6 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
-  pathname: string;
 };
 
 type Idata = {
@@ -155,7 +152,6 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname,
 }: IWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
@@ -224,10 +220,6 @@ const CopyWindow = ({
 
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
-
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
 
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
@@ -736,27 +728,25 @@ const CopyWindow = ({
   const selectData = (selectedData: any) => {
     if (!permissions.save) return;
     let valid = true;
-    try {
-      if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "MA_A3400W_001");
-      } else if (
-        convertDateToStr(filters.outdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.outdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.outdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.outdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "MA_A3400W_003");
+
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+      return false;
+    } else if (
+      convertDateToStr(filters.outdt).substring(0, 4) < "1997" ||
+      convertDateToStr(filters.outdt).substring(6, 8) > "31" ||
+      convertDateToStr(filters.outdt).substring(6, 8) < "01" ||
+      convertDateToStr(filters.outdt).substring(6, 8).length != 2
+    ) {
+      alert("날짜를 선택해주세요.");
+      return false;
+    }
+    for (var i = 0; i < mainDataResult.data.length; i++) {
+      if (mainDataResult.data[i].qty == 0 && valid == true) {
+        alert("수량은 필수입니다.");
+        valid = false;
+        return false;
       }
-      for (var i = 0; i < mainDataResult.data.length; i++) {
-        if (mainDataResult.data[i].qty == 0 && valid == true) {
-          alert("수량은 필수입니다.");
-          valid = false;
-          return false;
-        }
-      }
-    } catch (e) {
-      alert(e);
-      valid = false;
     }
 
     if (valid == true) {
@@ -2107,7 +2097,6 @@ const CopyWindow = ({
           setVisible={setCopyWindowVisible2}
           setData={setCopyData2}
           itemacnt={"1"}
-          pathname={pathname}
         />
       )}
       {attachmentsWindowVisible && (

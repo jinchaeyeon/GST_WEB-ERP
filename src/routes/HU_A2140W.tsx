@@ -318,7 +318,7 @@ const HU_A2140W: React.FC = () => {
   );
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("HU_A2140W", setMessagesData);
+  UseMessages(setMessagesData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1646,7 +1646,6 @@ const HU_A2140W: React.FC = () => {
                 )[0]
               : ""
           }
-          pathname="HU_A2140W"
           pgmgb="W"
           setData={(str) =>
             setFilters((prev) => ({

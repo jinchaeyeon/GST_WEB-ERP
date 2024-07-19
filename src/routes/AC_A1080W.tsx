@@ -177,7 +177,7 @@ const AC_A1080W: React.FC = () => {
   UsePermissions(setPermissions);
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("AC_A1080W", setMessagesData);
+  UseMessages(setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");

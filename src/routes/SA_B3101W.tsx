@@ -98,7 +98,7 @@ const SA_B3101W: React.FC = () => {
   });
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B3101W", setMessagesData);
+  UseMessages(setMessagesData);
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 
