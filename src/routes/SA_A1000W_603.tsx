@@ -1125,7 +1125,7 @@ const SA_A1000W_603: React.FC = () => {
       if (data.rowstatus == "N" || data.rowstatus == "U") {
         alert("저장 후 조회해주세요.");
       } else {
-        if (data.itemlvl1 == "L") {
+        if (data.itemacnt == "1") {
           if (data.type == "Basic") {
             setDesignWindowVisible(true);
           } else if (data.type == "Cheomdan") {
