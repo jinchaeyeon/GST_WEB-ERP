@@ -9,6 +9,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
 import APPDDGD from "./APPDDGD";
+import APPFNF from "./APPFNF";
 import APPWEBERP from "./APPWEBERP";
 import "./flags.css";
 import "./index.css";
@@ -19,14 +20,18 @@ const path = window.location.href;
 const themes = {
   blue: `WEBERP.css`,
   yellow: `DDGD.css`,
+  navy: `FNF.css`,
 };
 
 const defaultTheme = path.includes("localhost")
   ? //WEB ERP개발할떄 바꿀부분입니다.
     //"yellow"
-    "blue"
+    //"blue"
+    "navy"
   : path.split("/")[2].split(".")[1] == "ddgd"
   ? "yellow"
+  : path.split("/")[2].split(".")[1] == "fnffood" //추후수정
+  ? "navy"
   : "blue";
 
 root.render(
@@ -39,7 +44,13 @@ root.render(
     <RecoilRoot>
       <HelmetProvider>
         <BrowserRouter>
-            {defaultTheme == "yellow" ? <APPDDGD /> : <APPWEBERP />}
+          {defaultTheme == "yellow" ? (
+            <APPDDGD />
+          ) : defaultTheme == "navy" ? (
+            <APPFNF />
+          ) : (
+            <APPWEBERP />
+          )}
         </BrowserRouter>
       </HelmetProvider>
     </RecoilRoot>

@@ -705,6 +705,51 @@ export const LoginBox = styled.div<TColor>`
   }
 `;
 
+
+export const LoginBoxFNF = styled.div<TColor>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${(props) => props.theme};
+  height: 100vh;
+  width: 100%;
+  border-top-left-radius: 300px;
+  background-color: #fff;
+
+  > form {
+    width: 400px;
+    padding: 50px;
+    border-radius: 5px;
+  }
+  .k-button.login-btn {
+    width: 100%;
+    margin-top: 40px;
+    height: 48px;
+    font-size: 18px;
+    font-weight: 600;
+    background-color: ${(props) => props.theme};
+    border-color: 1px solid ${(props) => props.theme};
+  }
+  .k-input {
+    height: 44px;
+    padding-left: 20px;
+    font-size: 14px;
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+  .k-form-horizontal .k-form-field > .k-label,
+  .k-form-horizontal .k-form-field > kendo-label,
+  .k-form-horizontal .k-form-field > .k-form-label {
+    align-items: flex-start;
+    width: 25% !important;
+  }
+  .k-form-horizontal .k-form-field-wrap {
+    max-width: calc(75% - 10px) !important;
+  }
+  @media (max-width: 1200px) {
+    width: 100%;
+  }
+`;
+
 export const RadioButtonBox = styled.div`
   display: flex;
 `;

@@ -156,6 +156,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
+    "prestart": "gulp sass",
     "start": "webpack-dev-server --open --mode=development --progress --no-hot --watch",
     "build": "webpack --mode production",
     "test": "react-scripts test",
