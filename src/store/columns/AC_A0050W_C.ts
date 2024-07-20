@@ -265,4 +265,69 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList4",
+    columns: [
+      {
+        id: "col_notediv",
+        field: "notediv",
+        caption: "어음구분",
+        width: 120,
+      },
+      {
+        id: "col_notenum",
+        field: "notenum",
+        caption: "어음번호",
+        width: 150,
+      },
+      {
+        id: "col_notedec",
+        field: "notedec",
+        caption: "어음내역",
+        width: 150,
+      },
+      {
+        id: "col_custnm4",
+        field: "custnm",
+        caption: "업체명",
+        width: 150,
+      },
+      {
+        id: "col_banknm4",
+        field: "banknm",
+        caption: "지급은행",
+        width: 120,
+      },
+      {
+        id: "col_enddt4",
+        field: "enddt",
+        caption: "만기일자",
+        width: 120,
+      },
+      {
+        id: "col_pubdt",
+        field: "pubdt",
+        caption: "발행일자",
+        width: 120,
+      },
+      {
+        id: "col_pubbank",
+        field: "pubbank",
+        caption: "발행은행명",
+        width: 150,
+      },
+      {
+        id: "col_pubamt",
+        field: "pubamt",
+        caption: "발행금액",
+        width: 100,
+      },
+      {
+        id: "col_remark1",
+        field: "remark1",
+        caption: "비고",
+        width: 200,
+      },
+    ],
+  },
 ];
