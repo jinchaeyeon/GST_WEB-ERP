@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { CLOSED_GNV_WIDTH, GNV_WIDTH } from "./components/CommonString";
 import logoBIO from "./img/Biotoxtech.png";
+import logoFNF from "./img/fnf_main_logo.jpg";
 import loginBgSrc from "./img/login_bg.png";
 import logoDDGD from "./img/login_ddgd.png";
 import logoWEBERP from "./img/login_web_erp.png";
@@ -705,7 +706,6 @@ export const LoginBox = styled.div<TColor>`
   }
 `;
 
-
 export const LoginBoxFNF = styled.div<TColor>`
   display: flex;
   align-items: center;
@@ -1152,6 +1152,8 @@ export const Logo = styled.div<TLogo>`
       ? logoDDGD
       : props.name == "BIO"
       ? logoBIO
+      : props.name == "FNF"
+      ? logoFNF
       : logoWEBERP});
   background-size: contain;
   background-repeat: no-repeat;

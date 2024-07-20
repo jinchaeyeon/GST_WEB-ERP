@@ -1,16 +1,3 @@
-import DescriptionIcon from "@mui/icons-material/Description";
-import MessageIcon from "@mui/icons-material/Message";
-import {
-  Chip,
-  Divider,
-  ListSubheader,
-  Avatar as MuiAvatar,
-  Typography,
-} from "@mui/material";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemText from "@mui/material/ListItemText";
 import Tooltip from "@mui/material/Tooltip";
 import {
   DataResult,
@@ -21,30 +8,22 @@ import {
   process,
 } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { SvgIcon } from "@progress/kendo-react-common";
 import { setGroupIds } from "@progress/kendo-react-data-tools";
 import {
   AutoComplete,
   AutoCompleteCloseEvent,
 } from "@progress/kendo-react-dropdowns";
 import {
-  Avatar,
   PanelBar,
   PanelBarItem,
-  PanelBarSelectEventArguments,
-  TabStrip,
-  TabStripTab,
+  PanelBarSelectEventArguments
 } from "@progress/kendo-react-layout";
-import { Popup } from "@progress/kendo-react-popup";
-import { userIcon } from "@progress/kendo-svg-icons";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import cookie from "react-cookies";
 import { useHistory, useLocation, withRouter } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   AppName,
   ButtonContainer,
@@ -52,14 +31,12 @@ import {
   Footer,
   Gnv,
   GnvPanel,
-  GridContainer,
-  GridContainerWrap,
   Logo,
   MenuSearchBox,
   Modal,
   PageWrap,
   TopTitle,
-  Wrapper,
+  Wrapper
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import {
@@ -90,8 +67,6 @@ import {
 import { PAGE_SIZE } from "../CommonString";
 import Loading from "../Loading";
 import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
-import HelpWindow from "../Windows/CommonWindows/HelpWindow";
-import MessengerWindow from "../Windows/CommonWindows/MessengerWindow";
 import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
 import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
 
@@ -139,7 +114,6 @@ const PanelBarNavContainer = (props: any) => {
   };
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const customerName = loginResult ? loginResult.customerName : "";
   const userId = loginResult ? loginResult.userId : "";
   const userName = loginResult ? loginResult.userName : "";
   const loginKey = loginResult ? loginResult.loginKey : "";
@@ -147,7 +121,7 @@ const PanelBarNavContainer = (props: any) => {
   const avatar = loginResult ? loginResult.profileImage : "";
   const name = loginResult ? loginResult.userName : "";
   const position = loginResult ? loginResult.dptnm : "";
-  const webTitle = loginResult ? loginResult.webTitle : "";
+  const customerName = loginResult ? loginResult.customerName : "";
   const isAdmin = role == "ADMIN";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
@@ -863,7 +837,7 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   useLayoutEffect(() => {
-    if(paths.length > 0) {
+    if (paths.length > 0) {
       const handleWindowResize = () => {
         setWebHeight(getHeight(".Bars"));
       };
@@ -889,580 +863,11 @@ const PanelBarNavContainer = (props: any) => {
           >
             <div className="Bars">
               <AppName theme={"#303fad"} onClick={() => setIsMenuOpend(false)}>
-                {companyCode == "2302BA03" ? (
-                  <Logo size="120px" name={"BIO"} />
-                ) : (
-                  <>
-                    <Logo size="32px" name={"GST WEB"} />
-                    {webTitle}
-                  </>
-                )}
+                <Logo size="90%" name={"FNF"} />
               </AppName>
-              {companyCode == "2302BA03" ? (
-                <>
-                  <div style={{ marginTop: "10px", marginBottom: "10px" }}>
-                    <h2
-                      style={{
-                        fontSize: "1.1em",
-                        fontWeight: "normal",
-                        marginBottom: "5px",
-                      }}
-                    >
-                      {contact[0].name}
-                    </h2>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: "0.8em",
-                      }}
-                    >
-                      {contact[0].position}
-                    </p>
-                  </div>
-                  <GridContainer
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Button
-                      icon="calendar"
-                      themeColor={"primary"}
-                      fillMode="flat"
-                      title="일정"
-                    ></Button>
-                    <Button
-                      icon="bell"
-                      themeColor={"primary"}
-                      onClick={() => {
-                        setShow(!show);
-                        fetchMainGrid(filters);
-                        setChip(0);
-                        fetchMainGrid2(filters2);
-                      }}
-                      fillMode="flat"
-                      title="알림"
-                    ></Button>
-                    <Button
-                      icon="info"
-                      themeColor={"primary"}
-                      onClick={onHelpWndClick}
-                      fillMode="flat"
-                      title="도움말"
-                    ></Button>
-                    <Button
-                      icon="question"
-                      themeColor={"primary"}
-                      onClick={() => {
-                        window.open(`https://spm.gsti.co.kr/QnA`);
-                      }}
-                      fillMode="flat"
-                      title="Q&A: SPM 프로그램으로 연결됩니다. 프로그램 관련 문의 글을 올리실 수 있습니다."
-                    ></Button>
-                    <Popup
-                      offset={offset}
-                      show={show}
-                      style={{
-                        width: "400px",
-                        color: "#787878",
-                        backgroundColor: "#fcf7f8",
-                        border: "1px solid rgba(0,0,0,.05)",
-                        maxHeight: "600px",
-                      }}
-                    >
-                      <TabStrip
-                        style={{ width: "100%", maxHeight: "600px" }}
-                        selected={tabSelected}
-                        onSelect={handleSelectTab}
-                        scrollable={isMobile}
-                      >
-                        <TabStripTab title="알림">
-                          <Swiper
-                            spaceBetween={1}
-                            slidesPerView={3}
-                            navigation={true}
-                            modules={[Navigation]}
-                            style={{ marginBottom: "10px" }}
-                          >
-                            <SwiperSlide>
-                              <Chip
-                                label="전체"
-                                color="primary"
-                                variant={chip == 0 ? "outlined" : "filled"}
-                                onClick={() => handleChangeChip(0)}
-                              />
-                            </SwiperSlide>
-                            <SwiperSlide>
-                              <Chip
-                                label="업무보고"
-                                color="primary"
-                                variant={chip == 1 ? "outlined" : "filled"}
-                                onClick={() => handleChangeChip(1)}
-                              />
-                            </SwiperSlide>
-                            <SwiperSlide>
-                              <Chip
-                                label="전자결재"
-                                color="primary"
-                                variant={chip == 2 ? "outlined" : "filled"}
-                                onClick={() => handleChangeChip(2)}
-                              />
-                            </SwiperSlide>
-                            <SwiperSlide>
-                              <Chip
-                                label="게시판"
-                                color="primary"
-                                variant={chip == 3 ? "outlined" : "filled"}
-                                onClick={() => handleChangeChip(3)}
-                              />
-                            </SwiperSlide>
-                            <SwiperSlide>
-                              <Chip
-                                label="미팅룸"
-                                color="primary"
-                                variant={chip == 4 ? "outlined" : "filled"}
-                                onClick={() => handleChangeChip(4)}
-                              />
-                            </SwiperSlide>
-                          </Swiper>
-                          <Divider />
-                          {resultState.map((item) => (
-                            <List
-                              sx={{
-                                width: "100%",
-                                maxWidth: 360,
-                                bgcolor: "background.paper",
-                              }}
-                              subheader={
-                                <ListSubheader
-                                  component="div"
-                                  style={{
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  {item.value}
-                                </ListSubheader>
-                              }
-                            >
-                              {item.items.map((data: any) => (
-                                <ListItem
-                                  onClick={() => onList(data)}
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  <ListItemAvatar>
-                                    <MuiAvatar sx={{ bgcolor: "#303fad" }}>
-                                      {data.worktype == "approval" ? (
-                                        <DescriptionIcon />
-                                      ) : (
-                                        ""
-                                      )}
-                                    </MuiAvatar>
-                                  </ListItemAvatar>
-                                  <ListItemText
-                                    primary={
-                                      <Typography
-                                        variant="subtitle1"
-                                        style={{
-                                          whiteSpace: "nowrap",
-                                          overflow: "hidden",
-                                          textOverflow: "ellipsis",
-                                        }}
-                                      >
-                                        [결재요청] {data.appnm}
-                                      </Typography>
-                                    }
-                                    secondary={
-                                      <Typography variant="caption">
-                                        요청자 : {data.prsnnm}
-                                      </Typography>
-                                    }
-                                  />
-                                </ListItem>
-                              ))}
-                            </List>
-                          ))}
-                        </TabStripTab>
-                        <TabStripTab title="쪽지">
-                          <List
-                            sx={{
-                              width: "100%",
-                              maxWidth: 360,
-                              bgcolor: "background.paper",
-                            }}
-                            subheader={
-                              <ListSubheader
-                                component="div"
-                                style={{
-                                  fontWeight: 600,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                }}
-                              >
-                                안읽은 쪽지 리스트
-                                <Button
-                                  onClick={onMessengerClick}
-                                  icon="email"
-                                  themeColor={"primary"}
-                                >
-                                  전체 쪽지함
-                                </Button>
-                              </ListSubheader>
-                            }
-                          >
-                            {mainDataResult.data.map((item, index) => {
-                              if (item.read_time == null) {
-                                return (
-                                  <>
-                                    <ListItem
-                                      onClick={() => onMessage(item.slip_id)}
-                                      style={{ cursor: "pointer" }}
-                                    >
-                                      <ListItemAvatar>
-                                        <MuiAvatar sx={{ bgcolor: "#303fad" }}>
-                                          <MessageIcon />
-                                        </MuiAvatar>
-                                      </ListItemAvatar>
-                                      <ListItemText
-                                        primary={
-                                          <Typography
-                                            variant="subtitle1"
-                                            style={{
-                                              whiteSpace: "nowrap",
-                                              overflow: "hidden",
-                                              textOverflow: "ellipsis",
-                                            }}
-                                          >
-                                            {item.slip_content}
-                                          </Typography>
-                                        }
-                                        secondary={
-                                          <Typography variant="caption">
-                                            보낸사람 : {item.sender_name}
-                                          </Typography>
-                                        }
-                                      />
-                                    </ListItem>
-                                    {index != mainDataResult.total - 1 ? (
-                                      <Divider />
-                                    ) : (
-                                      ""
-                                    )}
-                                  </>
-                                );
-                              }
-                            })}
-                          </List>
-                        </TabStripTab>
-                      </TabStrip>
-                    </Popup>
-                  </GridContainer>
-                </>
-              ) : (
-                <>
-                  <GridContainerWrap height={"150px"} style={{ gap: "0px" }}>
-                    <GridContainer
-                      width="80%"
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      {contact[0].avatar == "" ||
-                      contact[0].avatar == undefined ? (
-                        <Avatar
-                          className="k-avatar-lg"
-                          rounded="full"
-                          type="icon"
-                        >
-                          <SvgIcon icon={userIcon} size="large" />
-                        </Avatar>
-                      ) : (
-                        <Avatar
-                          className="k-avatar-lg"
-                          rounded="full"
-                          type="image"
-                          style={{
-                            backgroundColor: "white",
-                            border: "2px solid #303fad",
-                          }}
-                        >
-                          <img
-                            src={"data:image/png;base64," + contact[0].avatar}
-                            alt="UserImage"
-                          />
-                        </Avatar>
-                      )}
-                      <div style={{ marginTop: "5px" }}>
-                        <h2
-                          style={{
-                            fontSize: "1.1em",
-                            fontWeight: "normal",
-                            marginBottom: "5px",
-                          }}
-                        >
-                          {contact[0].name}
-                        </h2>
-                        <p
-                          style={{
-                            margin: 0,
-                            fontSize: "0.8em",
-                          }}
-                        >
-                          {contact[0].position}
-                        </p>
-                      </div>
-                    </GridContainer>
-                    <GridContainer
-                      width="20%"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        flexDirection: isMobileMenuOpend ? "row" : "column",
-                      }}
-                    >
-                      <Button
-                        icon="calendar"
-                        themeColor={"primary"}
-                        fillMode="flat"
-                        title="일정"
-                      ></Button>
-                      <Button
-                        icon="bell"
-                        themeColor={"primary"}
-                        onClick={() => {
-                          setShow(!show);
-                          fetchMainGrid(filters);
-                          setChip(0);
-                          fetchMainGrid2(filters2);
-                        }}
-                        fillMode="flat"
-                        title="알림"
-                      ></Button>
-                      <Button
-                        icon="info"
-                        themeColor={"primary"}
-                        onClick={onHelpWndClick}
-                        fillMode="flat"
-                        title="도움말"
-                      ></Button>
-                      <Button
-                        icon="question"
-                        themeColor={"primary"}
-                        onClick={() => {
-                          window.open(`https://spm.gsti.co.kr/QnA`);
-                        }}
-                        fillMode="flat"
-                        title="Q&A: SPM 프로그램으로 연결됩니다. 프로그램 관련 문의 글을 올리실 수 있습니다."
-                      ></Button>
-                      <Popup
-                        offset={offset}
-                        show={show}
-                        style={{
-                          width: "400px",
-                          color: "#787878",
-                          backgroundColor: "#fcf7f8",
-                          border: "1px solid rgba(0,0,0,.05)",
-                          maxHeight: "600px",
-                        }}
-                      >
-                        <TabStrip
-                          style={{ width: "100%", maxHeight: "600px" }}
-                          selected={tabSelected}
-                          onSelect={handleSelectTab}
-                          scrollable={isMobile}
-                        >
-                          <TabStripTab title="알림">
-                            <Swiper
-                              spaceBetween={1}
-                              slidesPerView={3}
-                              navigation={true}
-                              modules={[Navigation]}
-                              style={{ marginBottom: "10px" }}
-                            >
-                              <SwiperSlide>
-                                <Chip
-                                  label="전체"
-                                  color="primary"
-                                  variant={chip == 0 ? "outlined" : "filled"}
-                                  onClick={() => handleChangeChip(0)}
-                                />
-                              </SwiperSlide>
-                              <SwiperSlide>
-                                <Chip
-                                  label="업무보고"
-                                  color="primary"
-                                  variant={chip == 1 ? "outlined" : "filled"}
-                                  onClick={() => handleChangeChip(1)}
-                                />
-                              </SwiperSlide>
-                              <SwiperSlide>
-                                <Chip
-                                  label="전자결재"
-                                  color="primary"
-                                  variant={chip == 2 ? "outlined" : "filled"}
-                                  onClick={() => handleChangeChip(2)}
-                                />
-                              </SwiperSlide>
-                              <SwiperSlide>
-                                <Chip
-                                  label="게시판"
-                                  color="primary"
-                                  variant={chip == 3 ? "outlined" : "filled"}
-                                  onClick={() => handleChangeChip(3)}
-                                />
-                              </SwiperSlide>
-                              <SwiperSlide>
-                                <Chip
-                                  label="미팅룸"
-                                  color="primary"
-                                  variant={chip == 4 ? "outlined" : "filled"}
-                                  onClick={() => handleChangeChip(4)}
-                                />
-                              </SwiperSlide>
-                            </Swiper>
-                            <Divider />
-                            {resultState.map((item) => (
-                              <List
-                                sx={{
-                                  width: "100%",
-                                  maxWidth: 360,
-                                  bgcolor: "background.paper",
-                                }}
-                                subheader={
-                                  <ListSubheader
-                                    component="div"
-                                    style={{
-                                      fontWeight: 600,
-                                    }}
-                                  >
-                                    {item.value}
-                                  </ListSubheader>
-                                }
-                              >
-                                {item.items.map((data: any) => (
-                                  <ListItem
-                                    onClick={() => onList(data)}
-                                    style={{ cursor: "pointer" }}
-                                  >
-                                    <ListItemAvatar>
-                                      <MuiAvatar sx={{ bgcolor: "#303fad" }}>
-                                        {data.worktype == "approval" ? (
-                                          <DescriptionIcon />
-                                        ) : (
-                                          ""
-                                        )}
-                                      </MuiAvatar>
-                                    </ListItemAvatar>
-                                    <ListItemText
-                                      primary={
-                                        <Typography
-                                          variant="subtitle1"
-                                          style={{
-                                            whiteSpace: "nowrap",
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                          }}
-                                        >
-                                          [결재요청] {data.appnm}
-                                        </Typography>
-                                      }
-                                      secondary={
-                                        <Typography variant="caption">
-                                          요청자 : {data.prsnnm}
-                                        </Typography>
-                                      }
-                                    />
-                                  </ListItem>
-                                ))}
-                              </List>
-                            ))}
-                          </TabStripTab>
-                          <TabStripTab title="쪽지">
-                            <List
-                              sx={{
-                                width: "100%",
-                                maxWidth: 360,
-                                bgcolor: "background.paper",
-                              }}
-                              subheader={
-                                <ListSubheader
-                                  component="div"
-                                  style={{
-                                    fontWeight: 600,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                  }}
-                                >
-                                  안읽은 쪽지 리스트
-                                  <Button
-                                    onClick={onMessengerClick}
-                                    icon="email"
-                                    themeColor={"primary"}
-                                  >
-                                    전체 쪽지함
-                                  </Button>
-                                </ListSubheader>
-                              }
-                            >
-                              {mainDataResult.data.map((item, index) => {
-                                if (item.read_time == null) {
-                                  return (
-                                    <>
-                                      <ListItem
-                                        onClick={() => onMessage(item.slip_id)}
-                                        style={{ cursor: "pointer" }}
-                                      >
-                                        <ListItemAvatar>
-                                          <MuiAvatar
-                                            sx={{ bgcolor: "#303fad" }}
-                                          >
-                                            <MessageIcon />
-                                          </MuiAvatar>
-                                        </ListItemAvatar>
-                                        <ListItemText
-                                          primary={
-                                            <Typography
-                                              variant="subtitle1"
-                                              style={{
-                                                whiteSpace: "nowrap",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                              }}
-                                            >
-                                              {item.slip_content}
-                                            </Typography>
-                                          }
-                                          secondary={
-                                            <Typography variant="caption">
-                                              보낸사람 : {item.sender_name}
-                                            </Typography>
-                                          }
-                                        />
-                                      </ListItem>
-                                      {index != mainDataResult.total - 1 ? (
-                                        <Divider />
-                                      ) : (
-                                        ""
-                                      )}
-                                    </>
-                                  );
-                                }
-                              })}
-                            </List>
-                          </TabStripTab>
-                        </TabStrip>
-                      </Popup>
-                    </GridContainer>
-                  </GridContainerWrap>
-                </>
-              )}
-
+              <AppName theme={"#303fad"} style={{fontSize: "15px", fontWeight: "600"}}>
+              {customerName}
+              </AppName>
               {prgMenus && (
                 <MenuSearchBox>
                   {searchedMenu == "" && (
@@ -1598,7 +1003,7 @@ const PanelBarNavContainer = (props: any) => {
           <TopTitle>
             <div style={{ width: "30px" }}></div>
             <AppName theme={"#303fad"}>
-              <Logo size="32px" name={"GST WEB"} />
+              <Logo size="32px" name={"FNF"} />
             </AppName>
             <Button
               icon="menu"
@@ -1632,17 +1037,6 @@ const PanelBarNavContainer = (props: any) => {
         </div>
         <div>{ip}</div>
       </Footer>
-      {helpWindowVisible && (
-        <HelpWindow setVisible={setHelpWindowVisible} modal={true} />
-      )}
-      {windowVisible && (
-        <MessengerWindow
-          setVisible={setWindowVisible}
-          id={Id}
-          reload={() => fetchMainGrid(filters)}
-          modal={true}
-        />
-      )}
     </>
   );
 };
