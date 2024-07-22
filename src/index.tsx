@@ -30,7 +30,7 @@ const defaultTheme = path.includes("localhost")
     "navy"
   : path.split("/")[2].split(".")[1] == "ddgd"
   ? "yellow"
-  : path.split("/")[2].split(".")[1] == "fnf-test" //추후수정
+  : path.split("/")[2].split(".")[0] == "fnf-test" //추후수정
   ? "navy"
   : "blue";
 
