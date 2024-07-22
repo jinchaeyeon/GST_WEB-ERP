@@ -127,7 +127,7 @@ const Login: React.FC = () => {
         if (path.includes("localhost")) {
           company = "2402CFAE";
         } else {
-          if (path.split("/")[2].split(".")[0] == "fnffood") {
+          if (path.split("/")[2].split(".")[0] == "fnf-test") {
             company = "2402CFAE";
           } else {
             company = "2402CFAE";
