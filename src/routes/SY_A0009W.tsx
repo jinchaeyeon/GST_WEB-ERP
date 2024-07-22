@@ -194,23 +194,7 @@ const SY_A0009W: React.FC = () => {
   });
 
   const [emailParts, setEmailParts] = useState({ email1: "", email2: "" });
-  const [mobileParts, setMobileParts] = useState({
-    mobile1: "",
-    mobile2: "",
-    mobile3: "",
-  });
-
-  const [telParts, setTelParts] = useState({
-    tel1: "",
-    tel2: "",
-    tel3: "",
-  });
-
-  const mobile2Ref = useRef<HTMLInputElement>(null);
-  const mobile3Ref = useRef<HTMLInputElement>(null);
-
-  const tel2Ref = useRef<HTMLInputElement>(null);
-  const tel3Ref = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState({ mobile_no: false, tel_no: false });
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -273,18 +257,6 @@ const SY_A0009W: React.FC = () => {
         setImgBase64("data:image/png;base64," + userData.profile_image);
         const [email1, email2] = (user.email || "").split("@");
         setEmailParts({ email1, email2 });
-        const mobile = user.mobile_no || "";
-        setMobileParts({
-          mobile1: rows[0].mobile_no.substring(0, 3),
-          mobile2: rows[0].mobile_no.substring(3, 7),
-          mobile3: rows[0].mobile_no.substring(7),
-        });
-        const tel = user.tel_no || "";
-        setTelParts({
-          tel1: rows[0].tel_no.substring(0, 3),
-          tel2: rows[0].tel_no.substring(3, 7),
-          tel3: rows[0].tel_no.substring(7),
-        });
       } else {
         console.log("[에러발생]");
         console.log(data);
@@ -381,24 +353,10 @@ const SY_A0009W: React.FC = () => {
   const handleEditClick = () => {
     if (editMode) {
       const email = `${emailParts.email1}@${emailParts.email2}`;
-      const phone = `${mobileParts.mobile1}-${mobileParts.mobile2}-${mobileParts.mobile3}`;
-      const tel = `${telParts.tel1}-${telParts.tel2}-${telParts.tel3}`;
-      setUser({ ...user, email, mobile_no: phone, tel_no: tel });
+      setUser({ ...user, email });
     } else {
       const [email1, email2] = (user.email || "").split("@");
       setEmailParts({ email1, email2 });
-      const mobile = user.mobile_no || "";
-      setMobileParts({
-        mobile1: mobile.substring(0, 3),
-        mobile2: mobile.substring(3, 7),
-        mobile3: mobile.substring(7),
-      });
-      const tel = user.tel_no || "";
-      setTelParts({
-        tel1: tel.substring(0, 3),
-        tel2: tel.substring(3, 7),
-        tel3: tel.substring(7),
-      });
     }
     setEditMode(!editMode);
   };
@@ -407,15 +365,28 @@ const SY_A0009W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setUser((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name === "mobile_no" || name === "tel_no") {
+      // 숫자와 하이픈(-)만 허용
+      const regex = /^[0-9-]*$/;
+      if (regex.test(value)) {
+        setUser((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+        setError((prev) => ({ ...prev, [name]: false }));
+      } else {
+        setError((prev) => ({ ...prev, [name]: true }));
+      }
+    } else {
+      setUser((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    var numberText = "";
     switch (name) {
       case "email1":
         setEmailParts((prev) => ({
@@ -429,61 +400,6 @@ const SY_A0009W: React.FC = () => {
           [name]: value,
         }));
         break;
-      case "mobile1":
-        numberText = value.replace(/[^0-9]/g, "");
-        setMobileParts((prev) => ({
-          ...prev,
-          [name]: numberText,
-        }));
-        if (value.length === 3 && mobile2Ref.current) {
-          mobile2Ref.current.focus();
-        }
-
-        break;
-      case "mobile2":
-        numberText = value.replace(/[^0-9]/g, "");
-        setMobileParts((prev) => ({
-          ...prev,
-          [name]: numberText,
-        }));
-        if (value.length === 4 && mobile3Ref.current) {
-          mobile3Ref.current.focus();
-        }
-        break;
-      case "mobile3":
-        numberText = value.replace(/[^0-9]/g, "");
-        setMobileParts((prev) => ({
-          ...prev,
-          [name]: numberText,
-        }));
-        break;
-      case "tel1":
-        numberText = value.replace(/[^0-9]/g, "");
-        setTelParts((prev) => ({
-          ...prev,
-          [name]: numberText,
-        }));
-        if (value.length === 3 && tel2Ref.current) {
-          tel2Ref.current.focus();
-        }
-        break;
-      case "tel2":
-        numberText = value.replace(/[^0-9]/g, "");
-        setTelParts((prev) => ({
-          ...prev,
-          [name]: numberText,
-        }));
-        if (value.length === 4 && tel3Ref.current) {
-          tel3Ref.current.focus();
-        }
-        break;
-      case "tel3":
-        numberText = value.replace(/[^0-9]/g, "");
-        setTelParts((prev) => ({
-          ...prev,
-          [name]: numberText,
-        }));
-        break;
       default:
         break;
     }
@@ -493,8 +409,6 @@ const SY_A0009W: React.FC = () => {
     if (!permissions.save) return;
     e.preventDefault();
     const email = `${emailParts.email1}@${emailParts.email2}`;
-    const mobile = `${mobileParts.mobile1}${mobileParts.mobile2}${mobileParts.mobile3}`;
-    const tel = `${telParts.tel1}${telParts.tel2}${telParts.tel3}`;
     const birdt = user.birdt;
     if (
       emailParts.email1 === "" ||
@@ -503,23 +417,9 @@ const SY_A0009W: React.FC = () => {
       emailParts.email2 === undefined
     ) {
       alert("이메일 주소를 입력해주세요.");
-    } else if (
-      mobileParts.mobile1 === "" ||
-      mobileParts.mobile2 === "" ||
-      mobileParts.mobile3 === "" ||
-      mobileParts.mobile1 === undefined ||
-      mobileParts.mobile2 === undefined ||
-      mobileParts.mobile3 === undefined
-    ) {
+    } else if (user.mobile_no === "" || user.mobile_no === undefined) {
       alert("휴대폰 번호를 입력해주세요.");
-    } else if (
-      telParts.tel1 === "" ||
-      telParts.tel2 === "" ||
-      telParts.tel3 === "" ||
-      telParts.tel1 === undefined ||
-      telParts.tel2 === undefined ||
-      telParts.tel3 === undefined
-    ) {
+    } else if (user.tel_no === "" || user.tel_no === undefined) {
       alert("사내전화 번호를 입력해주세요.");
     } else if (
       convertDateToStr(birdt).substring(0, 4) < "1997" ||
@@ -532,13 +432,15 @@ const SY_A0009W: React.FC = () => {
       const updatedUser = {
         ...user,
         email: email,
-        mobile_no: mobile,
-        tel_no: tel,
       };
       setUser(updatedUser);
       fetchSaved(updatedUser);
       handleEditClick();
     }
+  };
+
+  const handleBlur = (name: string) => {
+    setError((prev) => ({ ...prev, [name]: false }));
   };
 
   useEffect(() => {
@@ -1168,58 +1070,23 @@ const SY_A0009W: React.FC = () => {
                         {editMode ? (
                           <>
                             <TextField
-                              name="mobile1"
-                              value={mobileParts.mobile1}
-                              onChange={handleChange}
+                              name="mobile_no"
+                              value={user.mobile_no}
+                              onChange={filterInputChange}
                               InputProps={{
                                 sx: {
                                   height: "32px",
                                   margin: "2px 0 1px 7px",
                                 },
-                                inputProps: { maxLength: 3 },
                               }}
-                              sx={{ maxWidth: 62, marginRight: 1 }}
+                              sx={{ maxWidth: 170, marginRight: 1 }}
                               autoComplete="off"
-                              type="tel"
-                            />
-                            <TextField
-                              name="mobile2"
-                              value={mobileParts.mobile2}
-                              onChange={handleChange}
-                              InputProps={{
-                                sx: {
-                                  height: "32px",
-                                  margin: "2px 0 1px 0",
-                                },
-                                inputProps: { maxLength: 4 },
-                              }}
-                              sx={{
-                                maxWidth: 65,
-                                marginRight: 1,
-                              }}
-                              autoComplete="off"
-                              inputRef={mobile2Ref}
-                              type="tel"
-                            />
-                            <TextField
-                              name="mobile3"
-                              value={mobileParts.mobile3}
-                              onChange={handleChange}
-                              InputProps={{
-                                sx: {
-                                  height: "32px",
-                                  margin: "2px 0 1px 0",
-                                },
-                                inputProps: { maxLength: 4 },
-                              }}
-                              sx={{ maxWidth: 65 }}
-                              autoComplete="off"
-                              inputRef={mobile3Ref}
                               type="tel"
                             />
                           </>
                         ) : (
                           <Typography
+                            className="mobile_no"
                             variant="body1"
                             sx={{
                               padding: "3px 8px",
@@ -1229,8 +1096,7 @@ const SY_A0009W: React.FC = () => {
                               height: "35px",
                             }}
                           >
-                            {mobileParts.mobile1} - {mobileParts.mobile2} -{" "}
-                            {mobileParts.mobile3}
+                            {user.mobile_no}
                           </Typography>
                         )}
                       </Box>
@@ -1255,54 +1121,18 @@ const SY_A0009W: React.FC = () => {
                       {editMode ? (
                         <>
                           <TextField
-                            name="tel1"
-                            value={telParts.tel1}
-                            onChange={handleChange}
+                            name="tel_no"
+                            value={user.tel_no}
+                            onChange={filterInputChange}
                             InputProps={{
                               sx: {
                                 height: "32px",
                                 margin: "2px 0 1px 7px",
                               },
-                              inputProps: { maxLength: 3 },
                             }}
-                            sx={{ maxWidth: 62, marginRight: 1 }}
+                            sx={{ maxWidth: 170, marginRight: 1 }}
                             autoComplete="off"
                             type="tel"
-                          />
-                          <TextField
-                            name="tel2"
-                            value={telParts.tel2}
-                            onChange={handleChange}
-                            InputProps={{
-                              sx: {
-                                height: "32px",
-                                margin: "2px 0 1px 0",
-                                inputProps: { maxLength: 4 },
-                              },
-                            }}
-                            sx={{
-                              maxWidth: 65,
-                              marginRight: 1,
-                            }}
-                            autoComplete="off"
-                            type="tel"
-                            inputRef={tel2Ref}
-                          />
-                          <TextField
-                            name="tel3"
-                            value={telParts.tel3}
-                            onChange={handleChange}
-                            InputProps={{
-                              sx: {
-                                height: "32px",
-                                margin: "2px 0 1px 0",
-                              },
-                              inputProps: { maxLength: 4 },
-                            }}
-                            sx={{ maxWidth: 65 }}
-                            autoComplete="off"
-                            type="tel"
-                            inputRef={tel3Ref}
                           />
                         </>
                       ) : (
@@ -1316,7 +1146,7 @@ const SY_A0009W: React.FC = () => {
                             height: "35px",
                           }}
                         >
-                          {telParts.tel1} - {telParts.tel2} - {telParts.tel3}
+                          {user.tel_no}
                         </Typography>
                       )}
                     </Box>
@@ -1910,67 +1740,29 @@ const SY_A0009W: React.FC = () => {
                             {editMode ? (
                               <>
                                 <TextField
-                                  name="mobile1"
-                                  value={mobileParts.mobile1}
-                                  onChange={handleChange}
+                                  name="mobile_no"
+                                  value={user.mobile_no}
+                                  onChange={filterInputChange}
+                                  onBlur={() => handleBlur('mobile_no')}
                                   InputProps={{
                                     sx: {
                                       height: "32px",
                                       margin: "2px 0 1px 7px",
                                     },
-                                    inputProps: { maxLength: 3 },
                                   }}
-                                  sx={{ maxWidth: 80, marginRight: 1 }}
+                                  sx={{ maxWidth: 140, marginRight: 1 }}
                                   autoComplete="off"
                                   type="tel"
                                 />
-                                <TextField
-                                  name="mobile2"
-                                  value={mobileParts.mobile2}
-                                  onChange={handleChange}
-                                  InputProps={{
-                                    sx: {
-                                      height: "32px",
-                                      margin: "2px 0 1px 0",
-                                    },
-                                    inputProps: { maxLength: 4 },
-                                  }}
-                                  sx={{
-                                    maxWidth: 80,
-                                    marginRight: 1,
-                                  }}
-                                  autoComplete="off"
-                                  inputRef={mobile2Ref}
-                                  type="tel"
-                                />
-                                <TextField
-                                  name="mobile3"
-                                  value={mobileParts.mobile3}
-                                  onChange={handleChange}
-                                  InputProps={{
-                                    sx: {
-                                      height: "32px",
-                                      margin: "2px 0 1px 0",
-                                    },
-                                    inputProps: { maxLength: 4 },
-                                  }}
-                                  sx={{ maxWidth: 80 }}
-                                  autoComplete="off"
-                                  inputRef={mobile3Ref}
-                                  type="tel"
-                                />
-                                <Typography
-                                  variant="body1"
-                                  sx={{
-                                    ml: 2,
-                                    color: "red",
-                                  }}
-                                >
-                                  * 숫자만 입력 가능합니다.
-                                </Typography>
+                                {error.mobile_no && (
+                                  <Typography variant="body2" color="error">
+                                    숫자와 하이픈(-)만 입력할 수 있습니다.
+                                  </Typography>
+                                )}
                               </>
                             ) : (
                               <Typography
+                                className="mobile_no"
                                 variant="body1"
                                 sx={{
                                   padding: "3px 8px",
@@ -1980,8 +1772,7 @@ const SY_A0009W: React.FC = () => {
                                   height: "35px",
                                 }}
                               >
-                                {mobileParts.mobile1} - {mobileParts.mobile2} -{" "}
-                                {mobileParts.mobile3}
+                                {user.mobile_no}
                               </Typography>
                             )}
                           </Box>
@@ -2006,64 +1797,25 @@ const SY_A0009W: React.FC = () => {
                           {editMode ? (
                             <>
                               <TextField
-                                name="tel1"
-                                value={telParts.tel1}
-                                onChange={handleChange}
+                                name="tel_no"
+                                value={user.tel_no}
+                                onChange={filterInputChange}
+                                onBlur={() => handleBlur('tel_no')}
                                 InputProps={{
                                   sx: {
                                     height: "32px",
                                     margin: "2px 0 1px 7px",
                                   },
-                                  inputProps: { maxLength: 3 },
                                 }}
-                                sx={{ maxWidth: 80, marginRight: 1 }}
+                                sx={{ maxWidth: 140, marginRight: 1 }}
                                 autoComplete="off"
                                 type="tel"
                               />
-                              <TextField
-                                name="tel2"
-                                value={telParts.tel2}
-                                onChange={handleChange}
-                                InputProps={{
-                                  sx: {
-                                    height: "32px",
-                                    margin: "2px 0 1px 0",
-                                    inputProps: { maxLength: 4 },
-                                  },
-                                }}
-                                sx={{
-                                  maxWidth: 80,
-                                  marginRight: 1,
-                                }}
-                                autoComplete="off"
-                                type="tel"
-                                inputRef={tel2Ref}
-                              />
-                              <TextField
-                                name="tel3"
-                                value={telParts.tel3}
-                                onChange={handleChange}
-                                InputProps={{
-                                  sx: {
-                                    height: "32px",
-                                    margin: "2px 0 1px 0",
-                                  },
-                                  inputProps: { maxLength: 4 },
-                                }}
-                                sx={{ maxWidth: 80 }}
-                                autoComplete="off"
-                                type="tel"
-                                inputRef={tel3Ref}
-                              />
-                              <Typography
-                                variant="body1"
-                                sx={{
-                                  ml: 2,
-                                  color: "red",
-                                }}
-                              >
-                                * 숫자만 입력 가능합니다.
-                              </Typography>
+                              {error.tel_no && (
+                                <Typography variant="body2" color="error">
+                                  숫자와 하이픈(-)만 입력할 수 있습니다.
+                                </Typography>
+                              )}
                             </>
                           ) : (
                             <Typography
@@ -2076,8 +1828,7 @@ const SY_A0009W: React.FC = () => {
                                 height: "35px",
                               }}
                             >
-                              {telParts.tel1} - {telParts.tel2} -{" "}
-                              {telParts.tel3}
+                              {user.tel_no}
                             </Typography>
                           )}
                         </Box>
@@ -2121,7 +1872,7 @@ const SY_A0009W: React.FC = () => {
                             <Typography
                               variant="body1"
                               sx={{
-                                padding: "3px 4px",
+                                padding: "3px 8px",
                                 display: "flex",
                                 alignItems: "center",
                                 maxWidth: 400,
