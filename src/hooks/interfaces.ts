@@ -74,6 +74,7 @@ export interface IItemData {
   numref2: number;
   itemdiv: string;
   itemtype: string;
+  pac: string;
 }
 
 export interface IUnpList {
