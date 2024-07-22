@@ -90,18 +90,6 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_amt",
-        field: "amt",
-        caption: "금액",
-        width: 130,
-      },
-      {
-        id: "col_taxamt",
-        field: "taxamt",
-        caption: "세액",
-        width: 120,
-      },
-      {
         id: "col_contraamt",
         field: "contraamt",
         caption: "계약금액",
@@ -119,6 +107,12 @@ export const gridList: Array<TGrid> = [
         caption: "최종계약금액",
         width: 130,
       },
+      {
+        id: "col_fin_contraamt_won",
+        field: "fin_contraamt_won",
+        caption: "최종계약금액(원화)",
+        width: 140,
+      },
     ],
   },
   {
@@ -132,15 +126,27 @@ export const gridList: Array<TGrid> = [
         width: 60,
       },
       {
-        id: "col_ordnum",
-        field: "ordnum",
-        caption: "수주번호",
+        id: "col_contractgb",
+        field: "contractgb",
+        caption: "계약형태",
+        width: 120,
+      },
+      {
+        id: "col_quotestnum",
+        field: "quotestnum",
+        caption: "예약번호",
         width: 150,
       },
       {
         id: "col_testnum",
         field: "testnum",
         caption: "시험번호",
+        width: 150,
+      },
+      {
+        id: "col_ordnum",
+        field: "ordnum",
+        caption: "수주번호",
         width: 150,
       },
       {
@@ -168,53 +174,29 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_qty_t",
-        field: "qty_t",
+        id: "col_tkyn",
+        field: "tkyn",
         caption: "TK",
         width: 100,
       },
       {
-        id: "col_tkyn",
-        field: "tkyn",
-        caption: "TK여부",
+        id: "col_qty_t",
+        field: "qty_t",
+        caption: "용량",
         width: 100,
-      },
-      {
-        id: "col_totqty",
-        field: "totqty",
-        caption: "총 마리수",
-        width: 100,
-      },
-      {
-        id: "col_contractgb",
-        field: "contractgb",
-        caption: "계약형태",
-        width: 120,
-      },
+      },  
       {
         id: "col_amt2",
         field: "amt",
-        caption: "금액",
+        caption: "공급가액",
         width: 100,
       },
       {
         id: "col_wonamt",
         field: "wonamt",
-        caption: "원화금액",
+        caption: "공급가액(원화)",
         width: 100,
-      },
-      {
-        id: "col_taxamt2",
-        field: "taxamt",
-        caption: "세액",
-        width: 100,
-      },
-      {
-        id: "col_totamt",
-        field: "totamt",
-        caption: "합계금액",
-        width: 100,
-      },
+      },   
     ],
   },
 
@@ -229,16 +211,16 @@ export const gridList: Array<TGrid> = [
         width: 60,
       },
       {
-        id: "col_recdt_com",
-        field: "recdt",
-        caption: "작성일",
-        width: 120,
-      },
-      {
         id: "col_insert_userid_com",
         field: "insert_userid",
-        caption: "작성자",
-        width: 120,
+        caption: "등록자",
+        width: 80,
+      },
+      {
+        id: "col_recdt_com",
+        field: "recdt",
+        caption: "등록일자",
+        width: 80,
       },
       {
         id: "col_comment_com",
@@ -249,7 +231,7 @@ export const gridList: Array<TGrid> = [
     ],
   },
   {
-    // 요약정보
+    // 청구조건
     gridName: "grdList6",
     columns: [
       {
@@ -261,8 +243,8 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_payment",
         field: "payment",
-        caption: "지급항목",
-        width: 120,
+        caption: "청구조건",
+        width: 180,
       },
       {
         id: "col_paydt",
@@ -273,15 +255,9 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_amt_detail2",
         field: "amt",
-        caption: "금액",
-        width: 100,
-      },
-      {
-        id: "col_remark_detail2",
-        field: "remark",
-        caption: "비고",
-        width: 200,
-      },
+        caption: "청구예정금액",
+        width: 120,
+      },    
     ],
   },
 ];

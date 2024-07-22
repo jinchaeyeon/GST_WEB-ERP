@@ -98,7 +98,7 @@ type TdataArr = {
   rowstatus_s: string[];
   seq_s: string[];
   wonamt_s: string[];
-  taxamt_s: string[];
+  taxdiv_s: string[];
   amt_s: string[];
   contractgb_s: string[];
   quonum_s: string[];
@@ -124,10 +124,10 @@ const DateField = ["strdt", "enddt", "recdt", "paydt"];
 const NumberField = [
   "cnt1",
   "amt",
-  "taxamt",
   "contraamt",
   "change_contraamt",
   "fin_contraamt",
+  "fin_contraamt_won",
   "wonamt",
   "totamt",
   "week_b",
@@ -136,13 +136,13 @@ const NumberField = [
   "totqty",
 ];
 
-const NumberField2 = ["wonamt", "taxamt", "amt", "totamt"];
+const NumberField2 = ["wonamt", "amt", "totamt"];
 
 const customField = ["insert_userid"];
 
 const centerField = ["num"];
 const centerField2 = ["seq"];
-const requiredField = ["paydt"];
+const requiredField = ["paydt", "amt"];
 let temp = 0;
 let temp2 = 0;
 let temp6 = 0;
@@ -340,6 +340,7 @@ const SA_A1100W_603: React.FC = () => {
     custprsnnm: "",
     enddt: null,
     fin_contraamt: 0,
+    fin_contraamt_won: 0,
     project: "",
     strdt: null,
     wonchgrat: 0,
@@ -497,9 +498,6 @@ const SA_A1100W_603: React.FC = () => {
         const newData = mainDataResult2.data.map((item) => ({
           ...item,
           wonamt: ThreeNumberceil(Math.ceil(item.amt * value)),
-          taxamt: ThreeNumberceil(
-            Math.ceil(ThreeNumberceil(Math.ceil(item.amt * value)) * 0.1)
-          ),
           totamt:
             ThreeNumberceil(Math.ceil(item.amt * value)) +
             ThreeNumberceil(
@@ -551,11 +549,6 @@ const SA_A1100W_603: React.FC = () => {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
         wonamt: ThreeNumberceil(Math.ceil(item.amt * Information.wonchgrat)),
-        taxamt: ThreeNumberceil(
-          Math.ceil(
-            ThreeNumberceil(Math.ceil(item.amt * Information.wonchgrat)) * 0.1
-          )
-        ),
         totamt:
           ThreeNumberceil(Math.ceil(item.amt * Information.wonchgrat)) +
           ThreeNumberceil(
@@ -582,9 +575,6 @@ const SA_A1100W_603: React.FC = () => {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
         wonamt: ThreeNumberceil(Math.ceil(item.amt)),
-        taxamt: ThreeNumberceil(
-          Math.ceil(ThreeNumberceil(Math.ceil(item.amt)) * 0.1)
-        ),
         totamt:
           ThreeNumberceil(Math.ceil(item.amt)) +
           ThreeNumberceil(
@@ -646,17 +636,15 @@ const SA_A1100W_603: React.FC = () => {
         setMobileHeight5(getDeviceHeight(false) - height - height2 - height6);
         setWebHeight(getDeviceHeight(true) - height - height2);
         setWebHeight2(
-          (getDeviceHeight(false) - height - height2) / 2 - height4
+          (getDeviceHeight(false) - height - height2 - height7 - height8) / 2 -
+            height4
         );
         setWebHeight3(
-          (getDeviceHeight(false) - height - height2) / 2 - height5
+          (getDeviceHeight(false) - height - height2 - height7 - height8) / 2 -
+            height5
         );
         setWebHeight4(
-          getDeviceHeight(false) -
-            height -
-            height2 +
-            height8 +
-            height7 -
+          (getDeviceHeight(false) - height - height2 - height7 - height8) / 2 -
             height6
         );
       };
@@ -854,10 +842,10 @@ const SA_A1100W_603: React.FC = () => {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
         amt: Math.ceil(item.amt),
-        taxamt: Math.ceil(item.taxamt),
         contraamt: Math.ceil(item.contraamt),
         change_contraamt: Math.ceil(item.change_contraamt),
         fin_contraamt: Math.ceil(item.fin_contraamt),
+        fin_contraamt_won: Math.ceil(item.fin_contraamt_won),
       }));
 
       if (filters.find_row_value !== "") {
@@ -1006,7 +994,6 @@ const SA_A1100W_603: React.FC = () => {
         ...item,
         amt: Math.ceil(item.amt),
         wonamt: Math.ceil(item.wonamt),
-        taxamt: Math.ceil(item.taxamt),
         totamt: Math.ceil(item.totamt),
       }));
 
@@ -1025,6 +1012,9 @@ const SA_A1100W_603: React.FC = () => {
               ? null
               : toDate(data.tables[0].Rows[0].enddt),
           fin_contraamt: Math.ceil(data.tables[0].Rows[0].fin_contraamt),
+          fin_contraamt_won: Math.ceil(
+            data.tables[0].Rows[0].fin_contraamt_won
+          ),
           project: data.tables[0].Rows[0].project,
           strdt:
             data.tables[0].Rows[0].strdt == ""
@@ -1055,6 +1045,7 @@ const SA_A1100W_603: React.FC = () => {
           custprsnnm: "",
           enddt: null,
           fin_contraamt: 0,
+          fin_contraamt_won: 0,
           project: "",
           strdt: null,
           wonchgrat: 0,
@@ -1516,9 +1507,9 @@ const SA_A1100W_603: React.FC = () => {
         const optionsGridSix = _export6.workbookOptions();
         optionsGridTwo.sheets[1] = optionsGridThree.sheets[0];
         optionsGridTwo.sheets[2] = optionsGridSix.sheets[0];
-        optionsGridTwo.sheets[0].title = "계약에 대한 코멘트";
-        optionsGridTwo.sheets[1].title = "계약 상세내용";
-        optionsGridTwo.sheets[2].title = "지급조건";
+        optionsGridTwo.sheets[0].title = "청구조건";
+        optionsGridTwo.sheets[1].title = "COMMENT";
+        optionsGridTwo.sheets[2].title = "계약 상세내역";
         _export2.save(optionsGridTwo);
       }
     }
@@ -1682,13 +1673,6 @@ const SA_A1100W_603: React.FC = () => {
                 Information.amtunit == "KRW"
                   ? item.amt
                   : item.amt * Information.wonchgrat
-              ),
-              taxamt: Math.ceil(
-                Math.ceil(
-                  Information.amtunit == "KRW"
-                    ? item.amt
-                    : item.amt * Information.wonchgrat
-                ) * 0.1
               ),
               totamt:
                 Math.ceil(
@@ -1979,7 +1963,7 @@ const SA_A1100W_603: React.FC = () => {
     quorev: 0,
     rowstatus_s: "",
     wonamt_s: "",
-    taxamt_s: "",
+    taxdiv_s: "",
     amt_s: "",
     contractgb_s: "",
     quonum_s: "",
@@ -2021,7 +2005,7 @@ const SA_A1100W_603: React.FC = () => {
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_seq_s": ParaData.seq_s,
       "@p_wonamt_s": ParaData.wonamt_s,
-      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_taxdiv_s": ParaData.taxdiv_s,
       "@p_amt_s": ParaData.amt_s,
       "@p_contractgb_s": ParaData.contractgb_s,
       "@p_quonum_s": ParaData.quonum_s,
@@ -2055,7 +2039,7 @@ const SA_A1100W_603: React.FC = () => {
         rowstatus_s: [],
         seq_s: [],
         wonamt_s: [],
-        taxamt_s: [],
+        taxdiv_s: [],
         amt_s: [],
         contractgb_s: [],
         quonum_s: [],
@@ -2069,7 +2053,7 @@ const SA_A1100W_603: React.FC = () => {
           amt = "",
           seq = "",
           wonamt = "",
-          taxamt = "",
+          taxdiv = "",
           contractgb = "",
           quonum = "",
           quorev = "",
@@ -2079,7 +2063,7 @@ const SA_A1100W_603: React.FC = () => {
         dataArr.rowstatus_s.push(rowstatus);
         dataArr.seq_s.push(seq);
         dataArr.wonamt_s.push(wonamt);
-        dataArr.taxamt_s.push(taxamt);
+        dataArr.taxdiv_s.push(taxdiv);
         dataArr.amt_s.push(amt);
         dataArr.contractgb_s.push(contractgb);
         dataArr.quonum_s.push(quonum);
@@ -2093,7 +2077,7 @@ const SA_A1100W_603: React.FC = () => {
           amt = "",
           seq = "",
           wonamt = "",
-          taxamt = "",
+          taxdiv = "",
           contractgb = "",
           quonum = "",
           quorev = "",
@@ -2103,7 +2087,7 @@ const SA_A1100W_603: React.FC = () => {
         dataArr.rowstatus_s.push("D");
         dataArr.seq_s.push(seq);
         dataArr.wonamt_s.push(wonamt);
-        dataArr.taxamt_s.push(taxamt);
+        dataArr.taxdiv_s.push(taxdiv);
         dataArr.amt_s.push(amt);
         dataArr.contractgb_s.push(contractgb);
         dataArr.quonum_s.push(quonum);
@@ -2119,7 +2103,7 @@ const SA_A1100W_603: React.FC = () => {
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),
         wonamt_s: dataArr.wonamt_s.join("|"),
-        taxamt_s: dataArr.taxamt_s.join("|"),
+        taxdiv_s: dataArr.taxdiv_s.join("|"),
         amt_s: dataArr.amt_s.join("|"),
         contractgb_s: dataArr.contractgb_s.join("|"),
         quonum_s: dataArr.quonum_s.join("|"),
@@ -2290,7 +2274,7 @@ const SA_A1100W_603: React.FC = () => {
         quorev: 0,
         rowstatus_s: "",
         wonamt_s: "",
-        taxamt_s: "",
+        taxdiv_s: "",
         amt_s: "",
         contractgb_s: "",
         quonum_s: "",
@@ -2475,7 +2459,7 @@ const SA_A1100W_603: React.FC = () => {
         recdt: selectRow.recdt,
         remark: selectRow.remark,
         seq: temp2,
-        taxamt: selectRow.taxamt,
+        taxdiv: selectRow.taxdiv,
         testnum: selectRow.testnum,
         totamt: selectRow.totamt,
         totqty: selectRow.totqty,
@@ -3032,6 +3016,39 @@ const SA_A1100W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
+                          <th>과세유형</th>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <th>화폐단위</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="amtunit"
+                                type="new"
+                                value={Information.amtunit}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>환율 </th>
+                          <td>
+                            <NumericTextBox
+                              name="wonchgrat"
+                              value={Information.wonchgrat}
+                              format="n0"
+                              onChange={InfoInputChange2}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>견적금액</th>
+                          <td></td>
+                        </tr>
+                        <tr>
                           <th>계약금액</th>
                           <td>
                             <Input
@@ -3078,29 +3095,24 @@ const SA_A1100W_603: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>화폐단위</th>
+                          <th>최종계약금액(원화)</th>
                           <td>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="amtunit"
-                                type="new"
-                                value={Information.amtunit}
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
+                            {/* <Input
+                              name="fin_contraamt_won"
+                              type="text"
+                              value={numberWithCommas3(
+                                Information.fin_contraamt_won
+                              )}
+                              style={{
+                                textAlign: "end",
+                              }}
+                              className="readonly"
+                            /> */}
                           </td>
                         </tr>
                         <tr>
-                          <th>환율 </th>
-                          <td>
-                            <NumericTextBox
-                              name="wonchgrat"
-                              value={Information.wonchgrat}
-                              format="n0"
-                              onChange={InfoInputChange2}
-                            />
-                          </td>
+                          <th>계약서 여부</th>
+                          <td></td>
                         </tr>
                         <tr>
                           <th>첨부파일</th>
@@ -3128,7 +3140,7 @@ const SA_A1100W_603: React.FC = () => {
               </SwiperSlide>
               <SwiperSlide key={1}>
                 <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer2">
+                  <GridTitleContainer className="ButtonContainer3">
                     <ButtonContainer
                       style={{ justifyContent: "space-between" }}
                     >
@@ -3143,7 +3155,7 @@ const SA_A1100W_603: React.FC = () => {
                           themeColor={"primary"}
                           fillMode={"flat"}
                         ></Button>
-                        계약 상세내용
+                        청구조건
                       </GridTitle>
                       <GridTitle>
                         <Button
@@ -3156,6 +3168,276 @@ const SA_A1100W_603: React.FC = () => {
                           themeColor={"primary"}
                           fillMode={"flat"}
                         ></Button>
+                      </GridTitle>
+                    </ButtonContainer>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick6}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick6}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick6}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult6.data}
+                    ref={(exporter) => {
+                      _export6 = exporter;
+                    }}
+                    fileName="계약관리"
+                  >
+                    <Grid
+                      style={{ height: mobileheight4 }}
+                      data={process(
+                        mainDataResult6.data.map((row) => ({
+                          ...row,
+                          paydt: row.paydt
+                            ? new Date(dateformat(row.paydt))
+                            : new Date(dateformat("99991231")),
+                          [SELECTED_FIELD]: selectedState6[idGetter6(row)],
+                        })),
+                        mainDataState6
+                      )}
+                      {...mainDataState6}
+                      onDataStateChange={onMainDataStateChange6}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY6}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange6}
+                      fixedScroll={true}
+                      total={mainDataResult6.total}
+                      skip={page6.skip}
+                      take={page6.take}
+                      pageable={true}
+                      onPageChange={pageChange6}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange6}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={ongrdDetailItemChange6}
+                      cellRender={customCellRender6}
+                      rowRender={customRowRender6}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList6"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : NumberField.includes(item.fieldName)
+                                      ? NumberCell
+                                      : centerField.includes(item.fieldName)
+                                      ? CenterCell
+                                      : undefined
+                                  }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell6
+                                      : NumberField.includes(item.fieldName)
+                                      ? editNumberFooterCell6
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={2}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer className="ButtonContainer4">
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <GridTitle>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(1);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        COMMENT
+                      </GridTitle>
+                      <GridTitle>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(3);
+                            }
+                          }}
+                          icon="chevron-right"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                      </GridTitle>
+                    </ButtonContainer>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick3}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult3.data}
+                    ref={(exporter) => {
+                      _export2 = exporter;
+                    }}
+                    fileName="계약관리"
+                  >
+                    <Grid
+                      style={{ height: mobileheight5 }}
+                      data={process(
+                        mainDataResult3.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                        })),
+                        mainDataState3
+                      )}
+                      {...mainDataState3}
+                      onDataStateChange={onMainDataStateChange3}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY3}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange3}
+                      fixedScroll={true}
+                      total={mainDataResult3.total}
+                      skip={page3.skip}
+                      take={page3.take}
+                      pageable={true}
+                      onPageChange={pageChange3}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange3}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onItemChange={ongrdDetailItemChange2}
+                      cellRender={customCellRender2}
+                      rowRender={customRowRender2}
+                      editField={EDIT_FIELD}
+                    >
+                      <GridColumn field="rowstatus" title=" " width="50px" />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList3"]
+                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                          ?.map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  id={item.id}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    DateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : customField.includes(item.fieldName)
+                                      ? CustomComboBoxCell
+                                      : centerField.includes(item.fieldName)
+                                      ? CenterCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder == 0
+                                      ? mainTotalFooterCell3
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={3}>
+                <GridContainer style={{ width: "100%" }}>
+                  <GridTitleContainer className="ButtonContainer2">
+                    <ButtonContainer
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <GridTitle>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          icon="chevron-left"
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                        ></Button>
+                        계약 상세내역
                       </GridTitle>
                     </ButtonContainer>
                     <ButtonContainer
@@ -3287,500 +3569,236 @@ const SA_A1100W_603: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
               </SwiperSlide>
-              <SwiperSlide key={2}>
-                <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer3">
-                    <ButtonContainer
-                      style={{ justifyContent: "space-between" }}
-                    >
-                      <GridTitle>
-                        <Button
-                          onClick={() => {
-                            if (swiper && isMobile) {
-                              swiper.slideTo(1);
-                            }
-                          }}
-                          icon="chevron-left"
-                          themeColor={"primary"}
-                          fillMode={"flat"}
-                        ></Button>
-                        지급조건
-                      </GridTitle>
-                      <GridTitle>
-                        <Button
-                          onClick={() => {
-                            if (swiper && isMobile) {
-                              swiper.slideTo(3);
-                            }
-                          }}
-                          icon="chevron-right"
-                          themeColor={"primary"}
-                          fillMode={"flat"}
-                        ></Button>
-                      </GridTitle>
-                    </ButtonContainer>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick6}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onDeleteClick6}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onSaveClick6}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        title="저장"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={mainDataResult6.data}
-                    ref={(exporter) => {
-                      _export6 = exporter;
-                    }}
-                    fileName="계약관리"
-                  >
-                    <Grid
-                      style={{ height: mobileheight4 }}
-                      data={process(
-                        mainDataResult6.data.map((row) => ({
-                          ...row,
-                          paydt: row.paydt
-                            ? new Date(dateformat(row.paydt))
-                            : new Date(dateformat("99991231")),
-                          [SELECTED_FIELD]: selectedState6[idGetter6(row)],
-                        })),
-                        mainDataState6
-                      )}
-                      {...mainDataState6}
-                      onDataStateChange={onMainDataStateChange6}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY6}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSelectionChange6}
-                      fixedScroll={true}
-                      total={mainDataResult6.total}
-                      skip={page6.skip}
-                      take={page6.take}
-                      pageable={true}
-                      onPageChange={pageChange6}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange6}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                      onItemChange={ongrdDetailItemChange6}
-                      cellRender={customCellRender6}
-                      rowRender={customRowRender6}
-                      editField={EDIT_FIELD}
-                    >
-                      <GridColumn field="rowstatus" title=" " width="50px" />
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList6"]
-                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                          ?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : NumberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : centerField.includes(item.fieldName)
-                                      ? CenterCell
-                                      : undefined
-                                  }
-                                  headerCell={
-                                    requiredField.includes(item.fieldName)
-                                      ? RequiredHeader
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? mainTotalFooterCell6
-                                      : NumberField.includes(item.fieldName)
-                                      ? editNumberFooterCell6
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </SwiperSlide>
-              <SwiperSlide key={3}>
-                <GridContainer style={{ width: "100%" }}>
-                  <GridTitleContainer className="ButtonContainer4">
-                    <GridTitle>
-                      {" "}
-                      <Button
-                        onClick={() => {
-                          if (swiper && isMobile) {
-                            swiper.slideTo(2);
-                          }
-                        }}
-                        icon="chevron-left"
-                        themeColor={"primary"}
-                        fillMode={"flat"}
-                      ></Button>
-                      계약에 대한 코멘트
-                    </GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                      <Button
-                        onClick={onSaveClick3}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        title="저장"
-                        disabled={permissions.save ? false : true}
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={mainDataResult3.data}
-                    ref={(exporter) => {
-                      _export2 = exporter;
-                    }}
-                    fileName="계약관리"
-                  >
-                    <Grid
-                      style={{ height: mobileheight5 }}
-                      data={process(
-                        mainDataResult3.data.map((row) => ({
-                          ...row,
-                          [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                        })),
-                        mainDataState3
-                      )}
-                      {...mainDataState3}
-                      onDataStateChange={onMainDataStateChange3}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY3}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSelectionChange3}
-                      fixedScroll={true}
-                      total={mainDataResult3.total}
-                      skip={page3.skip}
-                      take={page3.take}
-                      pageable={true}
-                      onPageChange={pageChange3}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange3}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                      onItemChange={ongrdDetailItemChange2}
-                      cellRender={customCellRender2}
-                      rowRender={customRowRender2}
-                      editField={EDIT_FIELD}
-                    >
-                      <GridColumn field="rowstatus" title=" " width="50px" />
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList3"]
-                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                          ?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : customField.includes(item.fieldName)
-                                      ? CustomComboBoxCell
-                                      : centerField.includes(item.fieldName)
-                                      ? CenterCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? mainTotalFooterCell3
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </SwiperSlide>
             </Swiper>
           ) : (
             <>
-              <GridContainerWrap>
-                <GridContainer width="30%">
-                  <GridTitleContainer className="ButtonContainer5">
-                    <GridTitle>계약내용</GridTitle>
-                  </GridTitleContainer>
-                  <FormBoxWrap border={true} className="FormBoxWrap">
-                    <FormBox>
-                      <tbody>
-                        <tr>
-                          <th>등록일자</th>
-                          <td>
-                            <Input
-                              name="insert_time"
-                              type="text"
-                              value={dateformat2(Information.insert_time)}
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer5">
+                  <GridTitle>계약내용</GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap border={true} className="FormBoxWrap">
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>등록일자</th>
+                        <td>
+                          <Input
+                            name="insert_time"
+                            type="text"
+                            value={dateformat2(Information.insert_time)}
+                            className="readonly"
+                          />
+                        </td>
+                        <th>업체명</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="custnm"
+                            type="text"
+                            value={Information.custnm}
+                            className="readonly"
+                          />
+                        </td>
+                        <th>의뢰자</th>
+                        <td colSpan={2}>
+                          <Input
+                            name="custprsnnm"
+                            type="text"
+                            value={Information.custprsnnm}
+                            className="readonly"
+                          />
+                        </td>
+                        <th>물질분야</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="materialtype"
+                              type="new"
+                              value={Information.materialtype}
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
                               className="readonly"
+                              disabled={true}
                             />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>업체명</th>
-                          <td>
-                            <Input
-                              name="custnm"
-                              type="text"
-                              value={Information.custnm}
+                          )}
+                        </td>
+                        <th>물질상세분야</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="extra_field2"
+                              type="new"
+                              value={Information.extra_field2}
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
                               className="readonly"
+                              disabled={true}
                             />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>의뢰자</th>
-                          <td>
-                            <Input
-                              name="custprsnnm"
-                              type="text"
-                              value={Information.custprsnnm}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>물질분야</th>
-                          <td>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="materialtype"
-                                type="new"
-                                value={Information.materialtype}
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="readonly"
-                                disabled={true}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>물질상세분야</th>
-                          <td>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="extra_field2"
-                                type="new"
-                                value={Information.extra_field2}
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="readonly"
-                                disabled={true}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>계약명 </th>
-                          <td>
-                            <Input
-                              name="project"
-                              type="text"
-                              value={Information.project}
-                              onChange={InfoInputChange}
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>계약번호</th>
-                          <td>
-                            <Input
-                              name="contractno"
-                              type="text"
-                              value={Information.contractno}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>계약일자</th>
-                          <td>
-                            <DatePicker
-                              name="cotracdt"
-                              value={Information.cotracdt}
-                              format="yyyy-MM-dd"
-                              placeholder=""
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>계약명</th>
+                        <td colSpan={13}>
+                          <Input
+                            name="project"
+                            type="text"
+                            value={Information.project}
+                            onChange={InfoInputChange}
+                            className="required"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>계약번호</th>
+                        <th>계약일자</th>
+                        <th></th>
+                        <th colSpan={2}>계약기간</th>
+                        <th>과세유형</th>
+                        <th>화폐단위</th>
+                        <th>환율</th>
+                        <th>견적금액</th>
+                        <th>계약금액</th>
+                        <th>변경계약금액</th>
+                        <th>최종계약금액</th>
+                        <th>최종계약금액(원화)</th>
+                      </tr>
+                      <tr>
+                        <td>
+                          <Input
+                            name="contractno"
+                            type="text"
+                            value={Information.contractno}
+                            className="readonly"
+                          />
+                        </td>
+                        <td>
+                          <DatePicker
+                            name="cotracdt"
+                            value={Information.cotracdt}
+                            format="yyyy-MM-dd"
+                            placeholder=""
+                            className="required"
+                            onChange={InfoInputChange}
+                          />
+                        </td>
+                        <td colSpan={3}>
+                          <CommonDateRangePicker
+                            className="required"
+                            value={{
+                              start: Information.strdt,
+                              end: Information.enddt,
+                            }}
+                            onChange={(e: {
+                              value: { start: any; end: any };
+                            }) =>
+                              setInformation((prev) => ({
+                                ...prev,
+                                strdt: e.value.start,
+                                enddt: e.value.end,
+                              }))
+                            }
+                          />
+                        </td>
+                        <td></td>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="amtunit"
+                              type="new"
+                              value={Information.amtunit}
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
                               className="required"
-                              onChange={InfoInputChange}
                             />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>계약기간</th>
-                          <td>
-                            <CommonDateRangePicker
-                              value={{
-                                start: Information.strdt,
-                                end: Information.enddt,
-                              }}
-                              onChange={(e: {
-                                value: { start: any; end: any };
-                              }) =>
-                                setInformation((prev) => ({
-                                  ...prev,
-                                  strdt: e.value.start,
-                                  enddt: e.value.end,
-                                }))
-                              }
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>계약금액</th>
-                          <td>
-                            <Input
-                              name="contraamt"
-                              type="text"
-                              value={numberWithCommas3(Information.contraamt)}
-                              style={{
-                                textAlign: "end",
-                              }}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>변경계약금액</th>
-                          <td>
-                            <Input
-                              name="change_contraamt"
-                              type="text"
-                              value={numberWithCommas3(
-                                Information.change_contraamt
-                              )}
-                              style={{
-                                textAlign: "end",
-                              }}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>최종계약금액</th>
-                          <td>
-                            <Input
-                              name="fin_contraamt"
-                              type="text"
-                              value={numberWithCommas3(
-                                Information.fin_contraamt
-                              )}
-                              style={{
-                                textAlign: "end",
-                              }}
-                              className="readonly"
-                            />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>화폐단위</th>
-                          <td>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="amtunit"
-                                type="new"
-                                value={Information.amtunit}
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
+                          )}
+                        </td>
+                        <td>
+                          <NumericTextBox
+                            name="wonchgrat"
+                            value={Information.wonchgrat}
+                            format="n0"
+                            onChange={InfoInputChange2}
+                            className="required"
+                          />
+                        </td>
+                        <td></td>
+                        <td>
+                          <Input
+                            name="contraamt"
+                            type="text"
+                            value={numberWithCommas3(Information.contraamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            className="readonly"
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="change_contraamt"
+                            type="text"
+                            value={numberWithCommas3(
+                              Information.change_contraamt
                             )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>환율 </th>
-                          <td>
-                            <NumericTextBox
-                              name="wonchgrat"
-                              value={Information.wonchgrat}
-                              format="n0"
-                              onChange={InfoInputChange2}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            className="readonly"
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="fin_contraamt"
+                            type="text"
+                            value={numberWithCommas3(Information.fin_contraamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            className="readonly"
+                          />
+                        </td>
+                        <td>
+                          {/* <Input
+                            name="fin_contraamt_won"
+                            type="text"
+                            value={numberWithCommas3(
+                              Information.fin_contraamt_won
+                            )}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            className="readonly"
+                          /> */}
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>계약서 여부</th>
+                        <td></td>
+                        <th>첨부파일</th>
+                        <td colSpan={11}>
+                          <Input
+                            name="files"
+                            type="text"
+                            value={Information.files}
+                            className="readonly"
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onAttachmentsWndClick}
+                              icon="more-horizontal"
+                              fillMode="flat"
                             />
-                          </td>
-                        </tr>
-                        <tr>
-                          <th>첨부파일</th>
-                          <td>
-                            <Input
-                              name="files"
-                              type="text"
-                              value={Information.files}
-                              className="readonly"
-                            />
-                            <ButtonInInput>
-                              <Button
-                                type={"button"}
-                                onClick={onAttachmentsWndClick}
-                                icon="more-horizontal"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </FormBox>
-                  </FormBoxWrap>
-                  <GridContainer>
+                          </ButtonInInput>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+                <GridContainerWrap>
+                  <GridContainer width="50%">
                     <GridTitleContainer className="ButtonContainer2">
-                      <GridTitle>지급조건</GridTitle>
+                      <GridTitle>청구조건</GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick6}
@@ -3810,7 +3828,7 @@ const SA_A1100W_603: React.FC = () => {
                     <ExcelExport
                       data={mainDataResult6.data}
                       ref={(exporter) => {
-                        _export6 = exporter;
+                        _export2 = exporter;
                       }}
                       fileName="계약관리"
                     >
@@ -3896,9 +3914,9 @@ const SA_A1100W_603: React.FC = () => {
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
-                  <GridContainer>
+                  <GridContainer width={`calc(50% - ${GAP}px)`}>
                     <GridTitleContainer className="ButtonContainer3">
-                      <GridTitle>계약에 대한 코멘트</GridTitle>
+                      <GridTitle>COMMENT</GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick}
@@ -3928,7 +3946,7 @@ const SA_A1100W_603: React.FC = () => {
                     <ExcelExport
                       data={mainDataResult3.data}
                       ref={(exporter) => {
-                        _export2 = exporter;
+                        _export3 = exporter;
                       }}
                       fileName="계약관리"
                     >
@@ -4004,137 +4022,137 @@ const SA_A1100W_603: React.FC = () => {
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
-                </GridContainer>
-                <GridContainer width={`calc(70% - ${GAP}px)`}>
-                  <GridTitleContainer className="ButtonContainer4">
-                    <GridTitle>계약 상세내용</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        themeColor={"primary"}
-                        fillMode="outline"
-                        onClick={onDeleteClick3}
-                        disabled={permissions.delete ? false : true}
-                      >
-                        계약삭제
-                      </Button>
-                      <Button
-                        themeColor={"primary"}
-                        fillMode="outline"
-                        onClick={onCopyClick}
-                        disabled={permissions.save ? false : true}
-                      >
-                        계약변경
-                      </Button>
-                      <Button
-                        onClick={onDeleteClick2}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        변경계약 삭제
-                      </Button>
-                      <Button
-                        onClick={onSaveClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        저장
-                      </Button>
-                      <Button
-                        onClick={onChangeStatus}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        계약완료
-                      </Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <ExcelExport
-                    data={mainDataResult2.data}
-                    ref={(exporter) => {
-                      _export3 = exporter;
-                    }}
-                    fileName="계약관리"
-                  >
-                    <Grid
-                      style={{ height: webheight4 }}
-                      data={process(
-                        mainDataResult2.data.map((row) => ({
-                          ...row,
-                          contractgb: contractgbListData.find(
-                            (items: any) => items.sub_code == row.contractgb
-                          )?.code_name,
-                          [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                        })),
-                        mainDataState2
-                      )}
-                      {...mainDataState2}
-                      onDataStateChange={onMainDataStateChange2}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY2}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
-                      }}
-                      onSelectionChange={onSelectionChange2}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult2.total}
-                      skip={page2.skip}
-                      take={page2.take}
-                      pageable={true}
-                      onPageChange={pageChange2}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange2}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                      onItemChange={ongrdDetailItemChange}
-                      cellRender={customCellRender}
-                      rowRender={customRowRender}
-                      editField={EDIT_FIELD}
+                </GridContainerWrap>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer4">
+                  <GridTitle>계약 상세내역</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      themeColor={"primary"}
+                      fillMode="outline"
+                      onClick={onDeleteClick3}
+                      disabled={permissions.delete ? false : true}
                     >
-                      <GridColumn field="rowstatus" title=" " width="50px" />
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList2"]
-                          ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                          ?.map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    centerField2.includes(item.fieldName)
-                                      ? CenterCell
-                                      : NumberField.includes(item.fieldName)
-                                      ? NumberCell
-                                      : customField.includes(item.fieldName)
-                                      ? CustomComboBoxCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? mainTotalFooterCell2
-                                      : NumberField2.includes(item.fieldName)
-                                      ? editNumberFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
-                    </Grid>
-                  </ExcelExport>
-                </GridContainer>
-              </GridContainerWrap>
+                      계약삭제
+                    </Button>
+                    <Button
+                      themeColor={"primary"}
+                      fillMode="outline"
+                      onClick={onCopyClick}
+                      disabled={permissions.save ? false : true}
+                    >
+                      계약변경
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      변경계약 삭제
+                    </Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      저장
+                    </Button>
+                    <Button
+                      onClick={onChangeStatus}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      계약완료
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export6 = exporter;
+                  }}
+                  fileName="계약관리"
+                >
+                  <Grid
+                    style={{ height: webheight4 }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        contractgb: contractgbListData.find(
+                          (items: any) => items.sub_code == row.contractgb
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={ongrdDetailItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  centerField2.includes(item.fieldName)
+                                    ? CenterCell
+                                    : NumberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : customField.includes(item.fieldName)
+                                    ? CustomComboBoxCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell2
+                                    : NumberField2.includes(item.fieldName)
+                                    ? editNumberFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
             </>
           )}
         </TabStripTab>
