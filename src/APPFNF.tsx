@@ -1073,6 +1073,8 @@ const AppInner: React.FC = () => {
     } else {
       if (currentTheme == "yellow") {
         return MainAdminCRM;
+      } else if (currentTheme == "yellow") {
+        return MainFNF;
       } else if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
       } else if (loginResult.companyCode == "2301A110") {

@@ -137,6 +137,7 @@ const generateUrl = (url: string, params: any) => {
 
 export const useApi = () => {
   const token = localStorage.getItem("accessToken");
+  
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";

@@ -8,7 +8,8 @@ import {
   GridPageChangeEvent,
   GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -20,14 +21,34 @@ import {
 } from "../CommonStyled";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
-import { getDeviceHeight, getHeight } from "../components/CommonFunction";
+import {
+  convertDateToStr,
+  getDeviceHeight,
+  getHeight,
+  UseGetValueFromSessionItem,
+  UsePermissions,
+} from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import NoticeWindow_FNF from "../components/Windows/NoticeWindow_FNF";
+import { useApi } from "../hooks/api";
+import { isLoading, sessionItemState } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 let height = 0;
 let height2 = 0;
 let index = 0;
 const Main: React.FC = () => {
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+  const setLoading = useSetRecoilState(isLoading);
+  const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   let deviceWidth = document.documentElement.clientWidth;
@@ -37,6 +58,8 @@ const Main: React.FC = () => {
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
 
   useLayoutEffect(() => {
     height = getHeight(".ButtonContainer");
@@ -56,6 +79,8 @@ const Main: React.FC = () => {
       window.removeEventListener("resize", handleWindowResize);
     };
   }, [webheight, webheight2]);
+  const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
 
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],
@@ -108,6 +133,17 @@ const Main: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY2,
     });
     setNoticeSelectedState(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "U1",
+      orgdiv: selectedRowData.ORGDIV,
+      datnum: selectedRowData.DATNUM,
+      prsnnum: selectedRowData.PRSNNUM,
+    }));
   };
   const onOrderSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -153,17 +189,196 @@ const Main: React.FC = () => {
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
+    workType: "Q",
+    orgdiv: sessionOrgdiv,
+    custcd: sessionUserId,
+    frdt: new Date(),
+    todt: new Date(),
     find_row_value: "",
     pgNum: 1,
-    isSearch: false,
+    isSearch: true,
   });
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
+    workType: "Q2",
+    custcd: sessionUserId,
     find_row_value: "",
     pgNum: 1,
-    isSearch: false,
+    isSearch: true,
   });
+
+  const fetchOrder = async (filters: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    const orderParameters: Iparameters = {
+      procedureName: "P_HM_A1000W_628_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_custcd": filters.custcd,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+      },
+    };
+
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", orderParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+      setOrderDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        setOrderSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+      }
+    }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchNotice = async (filters2: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    const orderParameters: Iparameters = {
+      procedureName: "P_HM_A1000W_628_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_custcd": filters2.custcd,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+      },
+    };
+
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", orderParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+      setNoticeDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        setNoticeSelectedState({ [rows[0][DATA_ITEM_KEY2]]: true });
+      }
+    }
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (sessionItem && filters.isSearch && permissions.view) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchOrder(deepCopiedFilters);
+    }
+  }, [filters, permissions, sessionItem]);
+
+  useEffect(() => {
+    if (sessionItem && filters2.isSearch && permissions.view) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchNotice(deepCopiedFilters);
+    }
+  }, [filters2, permissions, sessionItem]);
+
+  const [paraData, setParaData] = useState({
+    workType: "",
+    orgdiv: "",
+    datnum: "",
+    prsnnum: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_HM_A1000W_628_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData.workType,
+      "@p_orgdiv": paraData.orgdiv,
+      "@p_datnum": paraData.datnum,
+      "@p_prsnnum": paraData.prsnnum,
+    },
+  };
+
+  useEffect(() => {
+    if (permissions.save && paraData.workType != "") {
+      fetchGridSaved();
+    }
+  }, [paraData, permissions]);
+
+  const fetchGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess == true) {
+      if (paraData.workType == "U1") {
+        setDetailWindowVisible(true);
+      }
+      setParaData({
+        workType: "",
+        orgdiv: "",
+        datnum: "",
+        prsnnum: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -222,7 +437,7 @@ const Main: React.FC = () => {
                     field="dlvdt"
                     title="본사출고일"
                     cell={DateCell}
-                    footerCell={noticeTotalFooterCell}
+                    footerCell={orderTotalFooterCell}
                     width="120px"
                   />
                   <GridColumn
@@ -306,7 +521,7 @@ const Main: React.FC = () => {
                     width="200px"
                   />
                   <GridColumn
-                    field="D_NOTDATE"
+                    field="NOTDATE"
                     title="공지일자"
                     cell={DateCell}
                     width="120px"
@@ -363,7 +578,7 @@ const Main: React.FC = () => {
                   field="dlvdt"
                   title="본사출고일"
                   cell={DateCell}
-                  footerCell={noticeTotalFooterCell}
+                  footerCell={orderTotalFooterCell}
                   width="120px"
                 />
                 <GridColumn
@@ -445,7 +660,7 @@ const Main: React.FC = () => {
                   width="200px"
                 />
                 <GridColumn
-                  field="D_NOTDATE"
+                  field="NOTDATE"
                   title="공지일자"
                   cell={DateCell}
                   width="120px"
@@ -454,6 +669,21 @@ const Main: React.FC = () => {
             </GridContainer>
           </GridContainerWrap>
         </>
+      )}
+      {detailWindowVisible && (
+        <NoticeWindow_FNF
+          setVisible={setDetailWindowVisible}
+          data={
+            noticeDataResult.total > 0
+              ? noticeDataResult.data.filter(
+                  (item: any) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(noticeSelectedState)[0]
+                )[0]
+              : []
+          }
+          modal={true}
+        />
       )}
     </>
   );

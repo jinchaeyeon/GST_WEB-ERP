@@ -7,6 +7,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
   const [menus, setMenus] = useRecoilState(menusState);
 
   const isLoggedIn = !!token;
+
   function error() {
     const datas = window.location.href.split("?")[0];
     const link = datas.split("/")[3].toUpperCase();
