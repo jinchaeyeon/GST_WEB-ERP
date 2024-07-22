@@ -429,7 +429,7 @@ const AppInner: React.FC = () => {
       (sessionUserId == "" || sessionUserId == null)
     )
       fetchSessionItem();
-  }, [userId, sessionUserId]);
+    }, [userId, sessionUserId, token, pc]);
 
   let sessionOrgdiv = sessionItem.find(
     (sessionItem) => sessionItem.code == "orgdiv"
