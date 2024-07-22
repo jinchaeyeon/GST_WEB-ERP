@@ -176,6 +176,7 @@ const Login: React.FC = () => {
           userConfig,
           serviceCategory,
           defaultCulture,
+          custcd,
         } = response;
         if (formData.chk == "Y") {
           localStorage.setItem("userId", userId);
@@ -216,6 +217,7 @@ const Login: React.FC = () => {
           defaultCulture,
           dptcd: userConfig == undefined ? "" : userConfig.Rows[5].value,
           position: userConfig == undefined ? "" : userConfig.Rows[4].value,
+          custcd,
         });
 
         setPwExpInfo(passwordExpirationInfo);

@@ -59,7 +59,7 @@ const Main: React.FC = () => {
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  const sessionCustcd = UseGetValueFromSessionItem("custcd");
 
   useLayoutEffect(() => {
     height = getHeight(".ButtonContainer");
@@ -187,13 +187,15 @@ const Main: React.FC = () => {
     });
   };
 
+  let defaultfrdtdate = new Date();
+  let defaulttodtdate = new Date();
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
     orgdiv: sessionOrgdiv,
-    custcd: sessionUserId,
-    frdt: new Date(),
-    todt: new Date(),
+    custcd: sessionCustcd,
+    frdt: new Date(defaultfrdtdate.setMonth(defaultfrdtdate.getMonth() - 1)),
+    todt: new Date(defaulttodtdate.setMonth(defaulttodtdate.getMonth() + 1)),
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -202,7 +204,7 @@ const Main: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q2",
-    custcd: sessionUserId,
+    custcd: sessionCustcd,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -380,6 +382,12 @@ const Main: React.FC = () => {
     setLoading(false);
   };
 
+  const onRowDoubleClick = (props: any) => {
+    const selectedData = props.dataItem;
+    const origin = window.location.origin;
+    window.open(origin + `/MA_B2020W_628?go=` + selectedData.dlvdt);
+  };
+
   return (
     <>
       {isMobile ? (
@@ -432,6 +440,7 @@ const Main: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  onRowDoubleClick={onRowDoubleClick}
                 >
                   <GridColumn
                     field="dlvdt"
@@ -573,6 +582,7 @@ const Main: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
+                onRowDoubleClick={onRowDoubleClick}
               >
                 <GridColumn
                   field="dlvdt"

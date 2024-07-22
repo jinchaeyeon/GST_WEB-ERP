@@ -51,6 +51,7 @@ import {
   UseMessages,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getBizCom,
   getDeviceHeight,
@@ -60,6 +61,7 @@ import {
   getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
+  toDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -69,10 +71,11 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import ItemsMultiWindow_FNF from "../components/Windows/CommonWindows/ItemsMultiWindow_FNF";
+import ItemWindow_FNF from "../components/Windows/CommonWindows/ItemsWindow_FNF";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
@@ -85,10 +88,11 @@ var height2 = 0;
 let deletedMainRows: object[] = [];
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
-const numberField = ["qty, hsqty", "wonamt", "taxamt", "unp"];
-const numberField2 = ["qty, hsqty", "wonamt", "taxamt"];
+const numberField = ["qty", "hsqty", "wonamt", "taxamt", "unp", "bnatur_insiz"];
+const numberField2 = ["qty", "hsqty", "wonamt", "taxamt"];
 const dateField = ["dlvdt"];
 const commandField = ["itemcd"];
+const requiredField = ["dlvdt", "itemcd", "qty"];
 
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
@@ -103,7 +107,7 @@ type TItemInfo = {
   model: string;
   itemacnt: string;
   itemacntnm: string;
-  bnatur: string;
+  bnatur_insiz: number;
   spec: string;
   invunit: string;
   invunitnm: string;
@@ -131,6 +135,11 @@ type TItemInfo = {
   itemlvl4: string;
   itemlvl5: string;
   custitemnm: string;
+  origin: string;
+  hscode: string;
+  numref1: number;
+  numref2: number;
+  itemtype: string;
 };
 
 const defaultItemInfo = {
@@ -141,7 +150,7 @@ const defaultItemInfo = {
   model: "",
   itemacnt: "",
   itemacntnm: "",
-  bnatur: "",
+  bnatur_insiz: 0,
   spec: "",
   invunit: "",
   invunitnm: "",
@@ -169,6 +178,11 @@ const defaultItemInfo = {
   itemlvl4: "",
   itemlvl5: "",
   custitemnm: "",
+  origin: "",
+  hscode: "",
+  numref1: 0,
+  numref2: 0,
+  itemtype: "",
 };
 
 const ColumnCommandCell = (props: GridCellProps) => {
@@ -212,7 +226,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       model,
       itemacnt,
       itemacntnm,
-      bnatur,
+      bnatur_insiz,
       spec,
       invunit,
       invunitnm,
@@ -240,6 +254,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
       itemlvl4,
       itemlvl5,
       custitemnm,
+      origin,
+      hscode,
+      numref1,
+      numref2,
+      itemtype,
     } = data;
     setItemInfo({
       itemcd,
@@ -249,7 +268,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       model,
       itemacnt,
       itemacntnm,
-      bnatur,
+      bnatur_insiz,
       spec,
       invunit,
       invunitnm,
@@ -277,6 +296,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
       itemlvl4,
       itemlvl5,
       custitemnm,
+      origin,
+      hscode,
+      numref1,
+      itemtype,
+      numref2,
     });
   };
   //BA_A0080W에만 사용
@@ -309,10 +333,11 @@ const ColumnCommandCell = (props: GridCellProps) => {
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {itemWindowVisible2 && (
-        <ItemsWindow
+        <ItemWindow_FNF
           setVisible={setItemWindowVisible2}
           workType={"ROW_ADD"}
           setData={setItemData2}
+          modal={true}
         />
       )}
     </>
@@ -332,7 +357,7 @@ const MA_B2020W_628: React.FC = () => {
   });
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  const sessionCustcd = UseGetValueFromSessionItem("custcd");
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
@@ -369,26 +394,37 @@ const MA_B2020W_628: React.FC = () => {
   UseMessages(setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
     if (customOptionData !== null) {
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-
-      setFilters((prev) => ({
-        ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        ordsts: defaultOption.find((item: any) => item.id == "ordsts")
-          ?.valueCode,
-        isSearch: true,
-      }));
+      if (queryParams.has("go")) {
+        setFilters((prev) => ({
+          ...prev,
+          frdt: toDate(queryParams.get("go") as string),
+          todt: toDate(queryParams.get("go") as string),
+          ordsts: defaultOption.find((item: any) => item.id == "ordsts")
+            ?.valueCode,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          ordsts: defaultOption.find((item: any) => item.id == "ordsts")
+            ?.valueCode,
+          isSearch: true,
+        }));
+      }
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA015, L_MA035",
+    "L_BA066,L_BA061, L_BA015, L_BA068, L_BA065_628",
     //수량단위, 발주구분
     setBizComponentData
   );
@@ -397,14 +433,25 @@ const MA_B2020W_628: React.FC = () => {
   const [qtyunitListData, setQtyunitListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [purtypeListData, setPurtypeListData] = React.useState([
+  const [ordstsListData, setOrdstsListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [originListData, setoriginListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemacntListData, setItemacntListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [itemtypeListData, setitemtypeListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
-      setPurtypeListData(getBizCom(bizComponentData, "L_MA035"));
+      setOrdstsListData(getBizCom(bizComponentData, "L_BA068"));
+      setoriginListData(getBizCom(bizComponentData, "L_BA065_628"));
+      setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
+      setitemtypeListData(getBizCom(bizComponentData, "L_BA066"));
     }
   }, [bizComponentData]);
 
@@ -451,7 +498,7 @@ const MA_B2020W_628: React.FC = () => {
     orgdiv: sessionOrgdiv,
     frdt: new Date(),
     todt: new Date(),
-    custcd: sessionUserId,
+    custcd: sessionCustcd,
     ordsts: "",
     itemnm: "",
     rcvcustnm: "",
@@ -474,6 +521,8 @@ const MA_B2020W_628: React.FC = () => {
       "@p_ordsts": filters.ordsts,
       "@p_itemnm": filters.itemnm,
       "@p_rcvcustnm": filters.rcvcustnm,
+      "@p_itemcd": "",
+      "@p_today": "",
       "@p_find_row_value": filters.find_row_value,
     },
   };
@@ -645,7 +694,7 @@ const MA_B2020W_628: React.FC = () => {
     model: string;
     itemacnt: string;
     itemacntnm: string;
-    bnatur: string;
+    bnatur_insiz: number;
     spec: string;
     invunit: string;
     invunitnm: string;
@@ -673,6 +722,13 @@ const MA_B2020W_628: React.FC = () => {
     itemlvl4: string;
     itemlvl5: string;
     custitemnm: string;
+    origin: string;
+    hscode: string;
+    numref1: number;
+    numref2: number;
+    itemtype: string;
+    taxdiv: string;
+    unpcalmeth: string;
   }
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
@@ -831,17 +887,17 @@ const MA_B2020W_628: React.FC = () => {
     if (
       field == "ordsts" ||
       field == "itemnm" ||
-      field == "ordsiz" ||
-      field == "specnum" ||
-      field == "specsize" ||
+      field == "spec" ||
+      field == "origin" ||
+      field == "bnatur_insiz" ||
       field == "qtyunit" ||
       field == "rowstatus" ||
       field == "hsqty" ||
-      field == "hsunit" ||
+      field == "hscode" ||
       field == "unp" ||
       field == "wonamt" ||
       field == "taxamt" ||
-      field == "itemdiv" ||
+      field == "itemtype" ||
       field == "edityn" ||
       field == "itemacnt"
     ) {
@@ -890,6 +946,43 @@ const MA_B2020W_628: React.FC = () => {
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
       if (editedField !== "itemcd") {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                wonamt: item.qty * item.unp,
+                hsqty: item.numref1 == 0 ? 0 : item.qty / item.numref1,
+                taxamt:
+                  item.qty && item.unp != 0
+                    ? item.taxdiv == "A"
+                      ? item.unpcalmeth == "2"
+                        ? Math.ceil(
+                            item.qty * item.unp - (item.qty * item.unp) / 1.1
+                          )
+                        : Math.ceil(item.qty * item.unp * 0.1)
+                      : 0
+                    : 0,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
       } else {
         mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
           if (editIndex == item[DATA_ITEM_KEY]) {
@@ -918,63 +1011,123 @@ const MA_B2020W_628: React.FC = () => {
   };
 
   useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-            chlditemcd: itemInfo.itemcd,
-            chlditemnm: itemInfo.itemnm,
-            itemcd: itemInfo.itemcd,
-            itemno: itemInfo.itemno,
-            itemnm: itemInfo.itemnm,
-            insiz: itemInfo.insiz,
-            model: itemInfo.model,
-            bnatur: itemInfo.bnatur,
-            itemacnt: itemInfo.itemacnt,
-            spec: itemInfo.spec,
-            //invunit
-            qtyunit: itemInfo.invunit,
-            invunitnm: itemInfo.invunitnm,
-            unitwgt: itemInfo.unitwgt,
-            wgtunit: itemInfo.wgtunit,
-            wgtunitnm: itemInfo.wgtunitnm,
-            maker: itemInfo.maker,
-            dwgno: itemInfo.dwgno,
-            remark: itemInfo.remark,
-            itemlvl1: itemInfo.itemlvl1,
-            itemlvl2: itemInfo.itemlvl2,
-            itemlvl3: itemInfo.itemlvl3,
-            extra_field1: itemInfo.extra_field1,
-            extra_field2: itemInfo.extra_field2,
-            extra_field7: itemInfo.extra_field7,
-            extra_field6: itemInfo.extra_field6,
-            extra_field8: itemInfo.extra_field8,
-            packingsiz: itemInfo.packingsiz,
-            unitqty: itemInfo.unitqty,
-            color: itemInfo.color,
-            gubun: itemInfo.gubun,
-            qcyn: itemInfo.qcyn,
-            outside: itemInfo.outside,
-            itemthick: itemInfo.itemthick,
-            itemlvl4: itemInfo.itemlvl4,
-            itemlvl5: itemInfo.itemlvl5,
-            custitemnm: itemInfo.custitemnm,
-            rowstatus: item.rowstatus == "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+    (async () => {
+      var unp = await fetchUnpItem(filters.custcd, itemInfo.itemcd);
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              chlditemcd: itemInfo.itemcd,
+              chlditemnm: itemInfo.itemnm,
+              itemcd: itemInfo.itemcd,
+              itemno: itemInfo.itemno,
+              itemnm: itemInfo.itemnm,
+              insiz: itemInfo.insiz,
+              model: itemInfo.model,
+              bnatur_insiz: itemInfo.bnatur_insiz,
+              itemacnt: itemInfo.itemacnt,
+              spec: itemInfo.spec,
+              //invunit
+              qtyunit: itemInfo.invunit,
+              invunitnm: itemInfo.invunitnm,
+              unitwgt: itemInfo.unitwgt,
+              wgtunit: itemInfo.wgtunit,
+              wgtunitnm: itemInfo.wgtunitnm,
+              maker: itemInfo.maker,
+              dwgno: itemInfo.dwgno,
+              remark: itemInfo.remark,
+              itemlvl1: itemInfo.itemlvl1,
+              itemlvl2: itemInfo.itemlvl2,
+              itemlvl3: itemInfo.itemlvl3,
+              extra_field1: itemInfo.extra_field1,
+              extra_field2: itemInfo.extra_field2,
+              extra_field7: itemInfo.extra_field7,
+              extra_field6: itemInfo.extra_field6,
+              extra_field8: itemInfo.extra_field8,
+              packingsiz: itemInfo.packingsiz,
+              unitqty: itemInfo.unitqty,
+              color: itemInfo.color,
+              gubun: itemInfo.gubun,
+              qcyn: itemInfo.qcyn,
+              outside: itemInfo.outside,
+              itemthick: itemInfo.itemthick,
+              itemlvl4: itemInfo.itemlvl4,
+              itemlvl5: itemInfo.itemlvl5,
+              custitemnm: itemInfo.custitemnm,
+              origin: itemInfo.origin,
+              hscode: itemInfo.hscode,
+              unp: unp,
+              wonamt: unp * item.qty,
+              numref1: itemInfo.numref1,
+              numref2: itemInfo.numref2,
+              itemtype: itemInfo.itemtype,
+              taxamt:
+                item.qty && unp != 0
+                  ? item.taxdiv == "A"
+                    ? item.unpcalmeth == "2"
+                      ? Math.ceil(item.qty * unp - (item.qty * unp) / 1.1)
+                      : Math.ceil(item.qty * unp * 0.1)
+                    : 0
+                  : 0,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    })();
   }, [itemInfo]);
+
+  const fetchUnpItem = async (custcd: string, itemcd: string) => {
+    if (!permissions.view) return;
+    if (custcd == "") return;
+    let data: any;
+    const datas =
+      mainDataResult.total > 0
+        ? mainDataResult.data.filter(
+            (item: any) =>
+              item[DATA_ITEM_KEY] ==
+              Object.getOwnPropertyNames(selectedState)[0]
+          )[0].dlvdt
+        : convertDateToStr(new Date());
+    const parameters: Iparameters = {
+      procedureName: "P_MA_B2020W_628_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "UNP",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_custcd": filters.custcd,
+        "@p_ordsts": filters.ordsts,
+        "@p_itemnm": filters.itemnm,
+        "@p_rcvcustnm": filters.rcvcustnm,
+        "@p_itemcd": itemcd,
+        "@p_today": datas,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+      return rows[0].salunp;
+    }
+  };
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
@@ -1007,7 +1160,7 @@ const MA_B2020W_628: React.FC = () => {
             model,
             itemacnt,
             itemacntnm,
-            bnatur,
+            bnatur_insiz,
             spec,
             invunit,
             invunitnm,
@@ -1035,6 +1188,11 @@ const MA_B2020W_628: React.FC = () => {
             itemlvl4,
             itemlvl5,
             custitemnm,
+            origin,
+            hscode,
+            numref1,
+            numref2,
+            itemtype,
           } = rows[0];
           setItemInfo({
             itemcd,
@@ -1044,7 +1202,7 @@ const MA_B2020W_628: React.FC = () => {
             model,
             itemacnt,
             itemacntnm,
-            bnatur,
+            bnatur_insiz,
             spec,
             invunit,
             invunitnm,
@@ -1072,6 +1230,11 @@ const MA_B2020W_628: React.FC = () => {
             itemlvl4,
             itemlvl5,
             custitemnm,
+            origin,
+            hscode,
+            numref1,
+            itemtype,
+            numref2,
           });
         } else {
           const newData = mainDataResult.data.map((item: any) =>
@@ -1087,7 +1250,7 @@ const MA_B2020W_628: React.FC = () => {
                   model: "",
                   itemacnt: "",
                   itemacntnm: "",
-                  bnatur: "",
+                  bnatur_insiz: 0,
                   spec: "",
                   invunit: "",
                   invunitnm: "",
@@ -1115,6 +1278,14 @@ const MA_B2020W_628: React.FC = () => {
                   itemlvl4: "",
                   itemlvl5: "",
                   custitemnm: "",
+                  origin: "",
+                  hscode: "",
+                  unp: 0,
+                  numref1: 0,
+                  numref2: 0,
+                  wonamt: 0,
+                  itemtype: "",
+                  taxamt: 0,
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -1139,15 +1310,43 @@ const MA_B2020W_628: React.FC = () => {
     setEditIndex(undefined);
     setItemMultiWindowVisible(true);
   };
-  const addItemData = (itemDatas: IItemData[]) => {
+  const addItemData = (itemDatas: any) => {
     mainDataResult.data.map((item) => {
       if (item[DATA_ITEM_KEY] > temp) {
         temp = item[DATA_ITEM_KEY];
       }
     });
-    itemDatas.map((item) => {
+    itemDatas.map(async (item: any) => {
+      var unp = await fetchUnpItem(filters.custcd, item.itemcd);
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
+        dlvdt: convertDateToStr(new Date()),
+        edityn: "신규",
+        hsqty: 0,
+        hscode: item.hscode,
+        itemacnt: item.itemacnt,
+        itemcd: item.itemcd,
+        itemtype: item.itemtype,
+        itemnm: item.itemnm,
+        ordnum: "",
+        ordseq: 0,
+        spec: item.spec,
+        ordsts: "1",
+        orgdiv: sessionOrgdiv,
+        qty: 0,
+        qtyunit: item.qtyunit,
+        rcvcustnm: "",
+        remark: "",
+        origin: item.origin,
+        bnatur_insiz: item.bnatur_insiz,
+        taxamt: 0,
+        taxdiv: item.taxdiv,
+        numref1: item.numref1,
+        numref2: item.numref2,
+        unp: unp,
+        unpcalmeth: item.unpcalmeth,
+        unpstd: "",
+        wonamt: 0,
         rowstatus: "N",
       };
       setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
@@ -1169,7 +1368,33 @@ const MA_B2020W_628: React.FC = () => {
     });
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp,
-
+      dlvdt: convertDateToStr(new Date()),
+      edityn: "신규",
+      hsqty: 0,
+      hscode: "",
+      itemacnt: "",
+      itemcd: "",
+      itemtype: "",
+      itemnm: "",
+      ordnum: "",
+      ordseq: 0,
+      spec: "",
+      ordsts: "1",
+      orgdiv: sessionOrgdiv,
+      qty: 0,
+      qtyunit: "",
+      rcvcustnm: "",
+      remark: "",
+      origin: "",
+      bnatur_insiz: 0,
+      taxamt: 0,
+      taxdiv: "",
+      numref1: 0,
+      numref2: 0,
+      unp: 0,
+      unpcalmeth: "",
+      unpstd: "",
+      wonamt: 0,
       rowstatus: "N",
     };
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
@@ -1183,25 +1408,148 @@ const MA_B2020W_628: React.FC = () => {
   };
 
   const onCopyClick = () => {
-    mainDataResult.data.map((item) => {
-      if (item[DATA_ITEM_KEY] > temp) {
-        temp = item[DATA_ITEM_KEY];
+    if (mainDataResult.total > 0) {
+      mainDataResult.data.map((item) => {
+        if (item[DATA_ITEM_KEY] > temp) {
+          temp = item[DATA_ITEM_KEY];
+        }
+      });
+      const data = mainDataResult.data.filter(
+        (item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        dlvdt: convertDateToStr(new Date()),
+        edityn: "신규",
+        hsqty: data.hsqty,
+        hscode: data.hscode,
+        itemacnt: data.itemacnt,
+        itemcd: data.itemcd,
+        itemtype: data.itemtype,
+        itemnm: data.itemnm,
+        ordnum: data.ordnum,
+        ordseq: data.ordseq,
+        spec: data.spec,
+        ordsts: data.ordsts,
+        orgdiv: data.orgdiv,
+        qty: data.qty,
+        qtyunit: data.qtyunit,
+        rcvcustnm: data.rcvcustnm,
+        remark: data.remark,
+        origin: data.origin,
+        bnatur_insiz: data.bnatur_insiz,
+        taxamt: data.taxamt,
+        taxdiv: data.taxdiv,
+        numref1: data.numref1,
+        numref2: data.numref2,
+        unp: data.unp,
+        unpcalmeth: data.unpcalmeth,
+        unpstd: data.unpstd,
+        wonamt: data.wonamt,
+        rowstatus: "N",
+      };
+      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onSaveClick = () => {
+    if (!permissions.save) return;
+    let valid = true;
+    let valid2 = true;
+    let valid3 = true;
+    let valid4 = true;
+    let valid5 = true;
+    let valid6 = true;
+    let valid7 = true;
+    let date = convertDateToStr(new Date());
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    dataItem.map((item: any) => {
+      if (
+        item.dlvdt.substring(0, 4) < "1997" ||
+        item.dlvdt.substring(6, 8) > "31" ||
+        item.dlvdt.substring(6, 8) < "01" ||
+        item.dlvdt.substring(6, 8).length != 2
+      ) {
+        valid = false;
+      } else {
+        if (item.dlvdt < date) {
+          valid3 = false;
+        }
+        if (item.dlvdt == date && new Date().getHours() > 12) {
+          valid4 = false;
+        }
+        if (date != null ? parseInt(date) - parseInt(item.dlvdt) > 90 : false) {
+          valid5 = false;
+        }
+        if (
+          new Date().getDay() == 5 &&
+          toDate(item.dlvdt).getDay() == 6 &&
+          new Date().getHours() > 17
+        ) {
+          valid6 = false;
+        }
+      }
+
+      if (item.ordsts != "1") {
+        valid2 = false;
+      }
+
+      if(item.qty < item.numref2) 
+      {
+        valid7 = false;
       }
     });
-    const newDataItem = {
-      [DATA_ITEM_KEY]: ++temp,
 
-      rowstatus: "N",
-    };
-    setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+    if (valid != true) {
+      alert("필수값을 입력해주세요.");
+    }
+    if (valid2 != true) {
+      alert(
+        "처리 상태가 '등록'이 아닌 건이 포함되어 있어 수정사항 저장이 불가능합니다."
+      );
+    }
+    if (valid3 != true) {
+      alert("본사출고일이 현재 날짜보다 이전입니다.");
+    }
+    if (valid4 != true) {
+      alert(
+        "본사출고일이 당일입니다. \n당일건은 12시 이전에만 등록 가능합니다."
+      );
+    }
+    if (valid5 != true) {
+      alert(
+        "본사출고일이 현재 날짜보다 90일 이후 입니다. \n본사출고일은 현재 날짜 이후로 90일까지 입력가능합니다."
+      );
+    }
+    if (valid6 != true) {
+      alert(
+        "토요 발주건은 금요일 5시 이전에만 등록 가능합니다. \n이후 발주건에 대해서는 본사로 전화주시기 바랍니다."
+      );
+    }
+    if (valid7 != true) {
+      alert(
+        "최저주문수량보다 수량이 적습니다."
+      );
+    }
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
-    setMainDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
-      };
-    });
-  }
+  };
 
   return (
     <>
@@ -1307,7 +1655,7 @@ const MA_B2020W_628: React.FC = () => {
               disabled={permissions.save ? false : true}
             ></Button>
             <Button
-              //onClick={onSaveClick}
+              onClick={onSaveClick}
               fillMode="outline"
               themeColor={"primary"}
               icon="save"
@@ -1336,12 +1684,25 @@ const MA_B2020W_628: React.FC = () => {
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
-                  purtype: purtypeListData.find(
-                    (item: any) => item.sub_code == row.purtype
+                  ordsts: ordstsListData.find(
+                    (item: any) => item.sub_code == row.ordsts
                   )?.code_name,
                   qtyunit: qtyunitListData.find(
                     (item: any) => item.sub_code == row.qtyunit
                   )?.code_name,
+                  origin: originListData.find(
+                    (item: any) => item.sub_code == row.origin
+                  )?.code_name,
+                  itemacnt: itemacntListData.find(
+                    (items: any) => items.sub_code == row.itemacnt
+                  )?.code_name,
+                  itemtype: itemtypeListData.find(
+                    (item: any) => item.sub_code == row.itemtype
+                  )?.code_name,
+                  dlvdt: row.dlvdt
+                    ? new Date(dateformat(row.dlvdt))
+                    : new Date(dateformat("99991231")),
+                  edityn: row.edityn == "N" ? "" : row.edityn,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1403,6 +1764,11 @@ const MA_B2020W_628: React.FC = () => {
                               ? ColumnCommandCell
                               : undefined
                           }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
                           footerCell={
                             item.sortOrder == 0
                               ? mainTotalFooterCell
@@ -1418,7 +1784,7 @@ const MA_B2020W_628: React.FC = () => {
         </FormContext.Provider>
       </GridContainer>
       {itemWindowVisible && (
-        <ItemsWindow
+        <ItemWindow_FNF
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
@@ -1426,7 +1792,7 @@ const MA_B2020W_628: React.FC = () => {
         />
       )}
       {itemMultiWindowVisible && (
-        <ItemsMultiWindow
+        <ItemsMultiWindow_FNF
           setVisible={setItemMultiWindowVisible}
           setData={addItemData}
           modal={true}

@@ -40,6 +40,7 @@ export interface IItemData {
   itemacnt: string;
   itemacntnm: string;
   bnatur: string;
+  bnatur_insiz: number;
   spec: string;
   invunit: string;
   invunitnm: string;
@@ -67,6 +68,12 @@ export interface IItemData {
   itemlvl4: string;
   itemlvl5: string;
   custitemnm: string;
+  origin: string;
+  hscode: string;
+  numref1: number;
+  numref2: number;
+  itemdiv: string;
+  itemtype: string;
 }
 
 export interface IUnpList {

@@ -50,6 +50,7 @@ export type TLoginResult = {
   defaultCulture: string;
   dptcd: string;
   position: string;
+  custcd: string;
 };
 
 export type TCommonCode = {
@@ -109,7 +110,8 @@ export type TSessionItemCode =
   | "position"
   | "dptcd"
   | "postcd"
-  | "pc";
+  | "pc"
+  | "custcd";
 
 export type TPermissions = {
   view: boolean;
