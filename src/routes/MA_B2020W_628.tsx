@@ -25,7 +25,7 @@ import React, {
   useContext,
   useEffect,
   useLayoutEffect,
-  useState
+  useState,
 } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -71,12 +71,14 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
+import MA_B2020W_628_PRINT from "../components/Prints/MA_B2020W_628_PRINT";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsMultiWindow_FNF from "../components/Windows/CommonWindows/ItemsMultiWindow_FNF";
 import ItemWindow_FNF from "../components/Windows/CommonWindows/ItemsWindow_FNF";
+import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
-import { IItemData } from "../hooks/interfaces";
+import { IItemData, IWindowPosition } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -477,7 +479,16 @@ const MA_B2020W_628: React.FC = () => {
   }>({});
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
-
+  let deviceHeight = document.documentElement.clientHeight;
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceHeight : 800,
+  });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -1829,6 +1840,17 @@ const MA_B2020W_628: React.FC = () => {
     }
     setLoading(false);
   };
+  const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
+
+  const onPrintWndClick = () => {
+    if (!permissions.print) return;
+    if (mainDataResult.total > 0) {
+      window.scrollTo(0, 0);
+      setPreviewVisible((prev) => !prev);
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
 
   return (
     <>
@@ -1902,6 +1924,15 @@ const MA_B2020W_628: React.FC = () => {
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
+            <Button
+              onClick={onPrintWndClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="print"
+              disabled={permissions.print ? false : true}
+            >
+              출력
+            </Button>
             <Button
               themeColor={"primary"}
               onClick={onItemMultiWndClick}
@@ -2076,6 +2107,19 @@ const MA_B2020W_628: React.FC = () => {
           setData={addItemData}
           modal={true}
         />
+      )}
+      {previewVisible && (
+        <Window
+          titles={"미리보기"}
+          Close={() => {
+            setPreviewVisible((prev) => !prev);
+          }}
+          positions={position}
+          modals={true}
+          onChangePostion={onChangePostion}
+        >
+          <MA_B2020W_628_PRINT data={filters} />
+        </Window>
       )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

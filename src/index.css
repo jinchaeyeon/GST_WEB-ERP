@@ -1022,6 +1022,10 @@ body {
   width: 100% !important;
 }
 
+#WorkDailyReport table {
+  width: 100% !important;
+}
+
 #WorkDailyReport table.tb_approval {
   height: 3.6cm !important;
   width: 8cm !important;
@@ -1045,13 +1049,19 @@ body {
   text-align: right !important;
 }
 
+#WorkDailyReport .header {
+  font-size: 1.2em !important;
+  font-weight: 600 !important;
+}
+
 #WorkDailyReport table.main_tb th,
 #WorkDailyReport table.main_tb td {
   padding: 0 0.1cm !important;
   line-height: 0.6cm !important;
   height: 1.2cm !important;
   word-wrap: break-word !important;
-  font-size: 0.85em !important;
+  font-size: 1em !important;
+  font-weight: 500 !important;
 }
 
 #WorkDailyReport .right {
