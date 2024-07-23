@@ -656,14 +656,6 @@ const MA_A2020W_628: React.FC = () => {
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
-            <Button
-              onClick={onDeleteClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus"
-              title="행 삭제"
-              disabled={permissions.save ? false : true}
-            ></Button>
             <div style={{ padding: "4px", marginLeft: "5px" }}>
               {customOptionData !== null && (
                 <CustomOptionComboBox
@@ -683,6 +675,14 @@ const MA_A2020W_628: React.FC = () => {
             >
               출력
             </Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+              disabled={permissions.save ? false : true}
+            ></Button>
           </ButtonContainer>
         </GridTitleContainer>
         <ExcelExport
