@@ -249,7 +249,7 @@ const SA_A1100W_603: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_CM501_603, L_sysUserMaster_001, L_SA001_603, L_BA037",
+    "L_CM501_603, L_sysUserMaster_001, L_SA001_603, L_BA037, L_BA029",
     setBizComponentData
   );
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -266,12 +266,16 @@ const SA_A1100W_603: React.FC = () => {
   const [extra_field2ListData, setExtra_field2ListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [taxdivListData, setTaxdivListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setcontractgbListData(getBizCom(bizComponentData, "L_BA037"));
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setMaterialtypeListData(getBizCom(bizComponentData, "L_SA001_603"));
       setExtra_field2ListData(getBizCom(bizComponentData, "L_CM501_603"));
+      setTaxdivListData(getBizCom(bizComponentData, "L_BA029"));
     }
   }, [bizComponentData]);
 
@@ -340,7 +344,7 @@ const SA_A1100W_603: React.FC = () => {
     custprsnnm: "",
     enddt: null,
     fin_contraamt: 0,
-    fin_contraamt_won: 0,
+    wonamt: 0,
     project: "",
     strdt: null,
     wonchgrat: 0,
@@ -1011,9 +1015,8 @@ const SA_A1100W_603: React.FC = () => {
             data.tables[0].Rows[0].enddt == ""
               ? null
               : toDate(data.tables[0].Rows[0].enddt),
-          fin_contraamt: Math.ceil(data.tables[0].Rows[0].fin_contraamt),
-          fin_contraamt_won: Math.ceil(
-            data.tables[0].Rows[0].fin_contraamt_won
+          wonamt: Math.ceil(
+            data.tables[0].Rows[0].wonamt
           ),
           project: data.tables[0].Rows[0].project,
           strdt:
@@ -1032,6 +1035,7 @@ const SA_A1100W_603: React.FC = () => {
           files: data.tables[0].Rows[0].files,
           quonum: data.tables[0].Rows[0].quonum,
           quorev: data.tables[0].Rows[0].quorev,
+          taxdiv: data.tables[0].Rows[0].taxdiv,
         }));
       } else {
         setInformation((prev) => ({
@@ -1045,7 +1049,7 @@ const SA_A1100W_603: React.FC = () => {
           custprsnnm: "",
           enddt: null,
           fin_contraamt: 0,
-          fin_contraamt_won: 0,
+          wonamt: 0,
           project: "",
           strdt: null,
           wonchgrat: 0,
@@ -1057,6 +1061,7 @@ const SA_A1100W_603: React.FC = () => {
           files: "",
           quonum: "",
           quorev: 0,
+          taxdiv: "",
         }));
       }
       setMainDataResult2({
@@ -3017,7 +3022,17 @@ const SA_A1100W_603: React.FC = () => {
                         </tr>
                         <tr>
                           <th>과세유형</th>
-                          <td></td>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="taxdiv"
+                                type="new"
+                                value={Information.taxdiv}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                              />
+                            )}
+                          </td>
                         </tr>
                         <tr>
                           <th>화폐단위</th>
@@ -3097,17 +3112,17 @@ const SA_A1100W_603: React.FC = () => {
                         <tr>
                           <th>최종계약금액(원화)</th>
                           <td>
-                            {/* <Input
-                              name="fin_contraamt_won"
+                            <Input
+                              name="wonamt"
                               type="text"
                               value={numberWithCommas3(
-                                Information.fin_contraamt_won
+                                Information.wonamt
                               )}
                               style={{
                                 textAlign: "end",
                               }}
                               className="readonly"
-                            /> */}
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -3699,7 +3714,18 @@ const SA_A1100W_603: React.FC = () => {
                             }
                           />
                         </td>
-                        <td></td>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="taxdiv"
+                              type="new"
+                              value={Information.taxdiv}
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          )}
+                        </td>
                         <td>
                           {customOptionData !== null && (
                             <CustomOptionComboBox
@@ -3758,17 +3784,17 @@ const SA_A1100W_603: React.FC = () => {
                           />
                         </td>
                         <td>
-                          {/* <Input
-                            name="fin_contraamt_won"
+                          <Input
+                            name="wonamt"
                             type="text"
                             value={numberWithCommas3(
-                              Information.fin_contraamt_won
+                              Information.wonamt
                             )}
                             style={{
                               textAlign: "end",
                             }}
                             className="readonly"
-                          /> */}
+                          />
                         </td>
                       </tr>
                       <tr>

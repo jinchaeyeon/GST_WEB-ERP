@@ -180,8 +180,8 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_qty_t",
-        field: "qty_t",
+        id: "col_wgtyn",
+        field: "wgtyn",
         caption: "용량",
         width: 100,
       },  
