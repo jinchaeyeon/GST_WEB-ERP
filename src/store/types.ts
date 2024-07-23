@@ -51,6 +51,7 @@ export type TLoginResult = {
   dptcd: string;
   position: string;
   custcd: string;
+  custnm: string;
 };
 
 export type TCommonCode = {
@@ -111,7 +112,8 @@ export type TSessionItemCode =
   | "dptcd"
   | "postcd"
   | "pc"
-  | "custcd";
+  | "custcd"
+  | "custnm";
 
 export type TPermissions = {
   view: boolean;

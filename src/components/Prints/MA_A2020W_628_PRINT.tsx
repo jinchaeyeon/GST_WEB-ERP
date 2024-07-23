@@ -5,6 +5,7 @@ import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { Iparameters, TPermissions } from "../../store/types";
 import {
+  UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime2,
@@ -23,6 +24,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
   const processApi = useApi();
   const [mainDataResult, setMainDataResult] = useState<any>(null);
   const [total, setTotal] = useState<any>(null);
+  const custnm = UseGetValueFromSessionItem("custnm");
 
   useEffect(() => {
     if (data !== null && permissions.view) {
@@ -85,7 +87,13 @@ const MA_B2020W_628_PRINT = (data: any) => {
   };
 
   const componentRef = useRef(null);
-
+  let before_itemnm = "";
+  let sum_qty = 0;
+  let sum_sqty = 0;
+  let sum_count = 0;
+  let sum_temp_qty = 0;
+  let sum_temp_sqty = 0;
+  let sum_temp_count = 0;
   return (
     <LandscapePrint>
       <ButtonContainer>
@@ -110,7 +118,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
           <>
             <div className={styles.header_wrap}>
               <div className={styles.left}>
-                <p>{data.data.custnm}</p>
+                <p>{custnm}</p>
               </div>
               <div className={styles.center}>
                 <h1>품명별 합계</h1>
@@ -147,23 +155,88 @@ const MA_B2020W_628_PRINT = (data: any) => {
                           <th>비고</th>
                           <th>대리점명</th>
                         </tr>
-                        {mainDataResult.map((item2: any, idx2: number) => (
-                          <tr key={item2.rownum}>
-                            <td>{item2.itemnm}</td>
-                            <td>{item2.ordsiz}</td>
-                            <td>{item2.qty}</td>
-                            <td>{item2.sqty}</td>
-                            <td>{item2.rcvcustnm}</td>
-                            <td>{item2.remark}</td>
-                            <td>{item2.orgnm}</td>
-                          </tr>
-                        ))}
+                        {mainDataResult.map((item2: any, idx2: number) => {
+                          if (idx2 != 0 && before_itemnm !== item2.itemnm) {
+                            before_itemnm = item2.itemnm;
+                            sum_temp_qty = sum_qty;
+                            sum_temp_sqty = sum_sqty;
+                            sum_temp_count = sum_count;
+                            sum_qty = 0;
+                            sum_sqty = 0;
+                            sum_count = 1;
+                            return (
+                              <>
+                                <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                  <td colSpan={2}>소 계 ({sum_temp_count})</td>
+                                  <td>{sum_temp_qty}</td>
+                                  <td>{sum_temp_sqty}</td>
+                                  <td></td>
+                                  <td></td>
+                                  <td></td>
+                                </tr>
+                                <tr key={item2.rownum}>
+                                  <td>{item2.itemnm}</td>
+                                  <td>{item2.ordsiz}</td>
+                                  <td>{item2.qty}</td>
+                                  <td>{item2.sqty}</td>
+                                  <td>{item2.rcvcustnm}</td>
+                                  <td>{item2.remark}</td>
+                                  <td>{item2.orgnm}</td>
+                                </tr>
+                                {idx2 == total - 1 ? (
+                                  <>
+                                    <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                      <td colSpan={2}>소 계 ({1})</td>
+                                      <td>{sum_temp_qty}</td>
+                                      <td>{sum_temp_sqty}</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                    </tr>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </>
+                            );
+                          } else {
+                            sum_qty += item2.qty;
+                            sum_sqty += item2.sqty;
+                            sum_count += 1;
+                            before_itemnm = item2.itemnm;
+                            return (
+                              <>
+                                <tr key={item2.rownum}>
+                                  <td>{idx2 == 0 ? item2.itemnm : ""}</td>
+                                  <td>{item2.ordsiz}</td>
+                                  <td>{item2.qty}</td>
+                                  <td>{item2.sqty}</td>
+                                  <td>{item2.rcvcustnm}</td>
+                                  <td>{item2.remark}</td>
+                                  <td>{item2.orgnm}</td>
+                                </tr>
+                                {idx2 == total - 1 ? (
+                                  <>
+                                    <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                      <td colSpan={2}>소 계 ({sum_count})</td>
+                                      <td>{sum_temp_qty}</td>
+                                      <td>{sum_temp_sqty}</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                    </tr>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </>
+                            );
+                          }
+                        })}
                         <tr style={{ backgroundColor: "#e6e6e6" }}>
-                          <td colSpan={2}>소 계 ({total})</td>
-                          <td>{total > 0 ? mainDataResult[0].total_qty : 0}</td>
-                          <td>
-                            {total > 0 ? mainDataResult[0].total_sqty : 0}
-                          </td>
+                          <td colSpan={2}>합 계 ({total})</td>
+                          <td>{mainDataResult[0].total_qty}</td>
+                          <td>{mainDataResult[0].total_sqty}</td>
                           <td></td>
                           <td></td>
                           <td></td>
