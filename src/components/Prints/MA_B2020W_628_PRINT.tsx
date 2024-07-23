@@ -96,7 +96,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
         />
       </ButtonContainer>
 
-      <div className={styles.printable}>
+      <div className={styles.printable} ref={componentRef}>
         <div className={styles.header_wrap}>
           <div className={styles.left}>
             <p>
