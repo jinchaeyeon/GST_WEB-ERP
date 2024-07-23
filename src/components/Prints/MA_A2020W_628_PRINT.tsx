@@ -10,6 +10,7 @@ import {
   convertDateToStrWithTime2,
   dateformat2,
 } from "../CommonFunction";
+import styles from "./MA_A2020W_628_PRINT.module.css";
 
 const MA_B2020W_628_PRINT = (data: any) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -104,39 +105,29 @@ const MA_B2020W_628_PRINT = (data: any) => {
         />
       </ButtonContainer>
 
-      <div
-        id="WorkDailyReport"
-        className="printable landscape"
-        ref={componentRef}
-      >
+      <div className={styles.printable} ref={componentRef}>
         {data.data.pgubun == "8" ? (
           <>
-            <div className="title_container">
-              <h1 className="title">품명별 합계</h1>
-              <h3>출력일시: {convertDateToStrWithTime2(new Date())}</h3>
-            </div>
-            <div
-              id="header"
-              className="header_wrap"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: "5px",
-              }}
-            >
-              <div className="header left">
+            <div className={styles.header_wrap}>
+              <div className={styles.left}>
                 <p>{data.data.custnm}</p>
               </div>
-              <h3>
-                출고일자: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
-                {dateformat2(convertDateToStr(data.data.todt))}
-              </h3>
+              <div className={styles.center}>
+                <h1>품명별 합계</h1>
+                <p>
+                  출고일자: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
+                  {dateformat2(convertDateToStr(data.data.todt))}
+                </p>
+              </div>
+              <div className={styles.right}>
+                <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
+              </div>
             </div>
             {mainDataResult !== null &&
               mainDataResult.map((item1: any, idx1: number) =>
                 idx1 == 0 || idx1 % 10 == 0 ? (
                   <>
-                    <table className="main_tb">
+                    <table className={styles.tg}>
                       <colgroup>
                         <col width="20%" />
                         <col width="15%" />
@@ -168,9 +159,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
                           </tr>
                         ))}
                         <tr style={{ backgroundColor: "#e6e6e6" }}>
-                          <td className="center" colSpan={2}>
-                            소 계 ({total})
-                          </td>
+                          <td colSpan={2}>소 계 ({total})</td>
                           <td>{total > 0 ? mainDataResult[0].total_qty : 0}</td>
                           <td>
                             {total > 0 ? mainDataResult[0].total_sqty : 0}

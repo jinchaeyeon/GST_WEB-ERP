@@ -11,7 +11,7 @@ import {
   dateformat2,
   numberWithCommas,
 } from "../CommonFunction";
-import styles from "./MA_B2020W_328_PRINT.module.css";
+import styles from "./MA_B2020W_628_PRINT.module.css";
 
 const MA_B2020W_628_PRINT = (data: any) => {
   const [permissions, setPermissions] = useState<TPermissions>({

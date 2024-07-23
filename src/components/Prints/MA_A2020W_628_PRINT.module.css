@@ -20,11 +20,11 @@
         margin: 0;
     }
 
-    #printable {
+    .printable {
         display: block;
     }
 
-    #non-printable {
+    .non-printable {
         display: none;
     }
 
@@ -38,8 +38,6 @@ body {
     /*감추기*/
     display: none;
 }
-
-
 
 .tg {
     table-layout: fixed;
@@ -62,7 +60,7 @@ body {
     border-width: 1px;
     overflow: hidden;
     word-break: normal;
-    border: solid 1px #000;
+    border-bottom: solid 1px #000;
     height: 0.75cm;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -87,11 +85,11 @@ td.tg-baqh.foot_1 {
     font-family: Arial, sans-serif;
     font-size: 1em;
     font-weight: normal;
-    border: solid 1px #000;
+    border-top: solid 2px #000;
+    border-bottom: solid 2px #000;
     overflow: hidden;
     word-break: normal;
     height: 0.75cm;
-    background-color: #e6e6e6;
     display: table-cell;
     vertical-align: middle;
 }
@@ -217,7 +215,6 @@ span.cap2 {
     text-align: left;
     font-size: 1.2em;
     vertical-align: top;
-    margin-top: 2cm;
 }
 
 .center {
@@ -226,53 +223,63 @@ span.cap2 {
 
 .right {
     text-align: left;
-    width: 7cm;
+    width: 6cm;
     float: right;
-    margin-top: 2cm;
 }
 
 h1 {
     margin: .2cm;
-    height: 2.8cm;
-    font-size: 2.2em;
-    line-height: 2cm;
+    font-size: 1.5em;
 }
 
 p {
     margin: .2cm;
-    font-size: 16px;
+    font-size: .9em;
 }
 
+td:nth-child(1),
 td:nth-child(2),
-td:nth-child(3),
-td:nth-child(5),
-td:nth-child(6) {
-    text-align: left;
-    padding-left: 5px;
-}
-
-td:nth-child(4),
 td:nth-child(7) {
-    text-align: right;
-    padding-right: 5px;
+    text-align: left;
 }
 
 th:nth-child(1),
-td:nth-child(1),
 th:nth-child(2),
+th:nth-child(7),
+td:nth-child(5),
+td:nth-child(6) {
+    text-align: left;
+}
+
+td:nth-child(3),
+th:nth-child(3) {
+    text-align: right;
+}
+
+td:nth-child(3),
 th:nth-child(3),
+td:nth-child(4),
+th:nth-child(4) {
+    font-weight: bold;
+}
+
+
+td:nth-child(4),
 th:nth-child(4),
 th:nth-child(5),
-th:nth-child(6),
-th:nth-child(7) {
+th:nth-child(6) {
     text-align: center;
 }
 
-.sum-row td {
-    text-align: center;
-    background-color: #e6e6e6;
+.sum-row {
+    border-bottom: solid 2px #000;
+    font-weight: bold;
 }
 
 .empty-row {
+    border-bottom: hidden;
+}
+
+.sum-row:last-child {
     border-bottom: hidden;
 }
