@@ -42,7 +42,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
-import NumberCommaCell from "../components/Cells/NumberCommaCell";
+import NumberFloatCell from "../components/Cells/NumberFloatCell";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -75,7 +75,6 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import MA_B2020W_628_PRINT from "../components/Prints/MA_B2020W_628_PRINT";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import ItemsMultiWindow_FNF from "../components/Windows/CommonWindows/ItemsMultiWindow_FNF";
 import ItemWindow_FNF from "../components/Windows/CommonWindows/ItemsWindow_FNF";
 import Window from "../components/Windows/WindowComponent/Window";
 import { useApi } from "../hooks/api";
@@ -89,12 +88,12 @@ var height = 0;
 var height2 = 0;
 let deletedMainRows: object[] = [];
 const DATA_ITEM_KEY = "num";
-const numberField = ["qty", "hsqty", "wonamt", "taxamt", "unp", "bnatur_insiz"];
+const numberField = ["wonamt", "taxamt", "unp"];
 const numberField2 = ["qty", "hsqty", "wonamt", "taxamt"];
 const dateField = ["dlvdt"];
 const commandField = ["itemcd"];
 const requiredField = ["dlvdt", "itemcd", "qty"];
-const floatfield = ["bnatur_insiz"];
+const floatfield = ["qty", "hsqty", "bnatur_insiz"];
 
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
@@ -433,7 +432,7 @@ const MA_B2020W_628: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA066,L_BA061, L_BA015, L_SA002, L_BA065_628",
+    "L_BA066,L_BA061, L_BA015, L_SA004, L_BA065_628",
     //수량단위, 발주구분
     setBizComponentData
   );
@@ -457,7 +456,7 @@ const MA_B2020W_628: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       setQtyunitListData(getBizCom(bizComponentData, "L_BA015"));
-      setOrdstsListData(getBizCom(bizComponentData, "L_SA002"));
+      setOrdstsListData(getBizCom(bizComponentData, "L_SA004"));
       setoriginListData(getBizCom(bizComponentData, "L_BA065_628"));
       setItemacntListData(getBizCom(bizComponentData, "L_BA061"));
       setitemtypeListData(getBizCom(bizComponentData, "L_BA066"));
@@ -1280,64 +1279,10 @@ const MA_B2020W_628: React.FC = () => {
     },
     [mainDataResult]
   );
-  const [itemMultiWindowVisible, setItemMultiWindowVisible] =
-    useState<boolean>(false);
+
   const onItemMultiWndClick = () => {
     setEditIndex(undefined);
-    setItemMultiWindowVisible(true);
-  };
-  const addItemData = (itemDatas: any) => {
-    mainDataResult.data.map((item) => {
-      if (item[DATA_ITEM_KEY] > temp) {
-        temp = item[DATA_ITEM_KEY];
-      }
-    });
-    itemDatas.map(async (item: any) => {
-      var unp = await fetchUnpItem(filters.custcd, item.itemcd);
-      const newDataItem = {
-        [DATA_ITEM_KEY]: ++temp,
-        amtunit: "KRW",
-        dlvdt: convertDateToStr(new Date()),
-        edityn: "신규",
-        hsqty: 0,
-        hscode: item.hscode,
-        itemacnt: item.itemacnt,
-        itemcd: item.itemcd,
-        itemtype: item.itemtype,
-        itemnm: item.itemnm,
-        ordnum: "",
-        ordseq: 0,
-        spec: item.spec,
-        ordsts: "1",
-        orgdiv: sessionOrgdiv,
-        qty: 0,
-        qtyunit: item.qtyunit,
-        rcvcustnm: "",
-        remark: "",
-        origin: item.origin,
-        bnatur_insiz: item.bnatur_insiz,
-        taxamt: 0,
-        taxdiv: item.taxdiv,
-        numref1: item.numref1,
-        numref2: item.numref2,
-        unp: unp,
-        unpcalmeth: item.unpcalmeth,
-        unpstd: "",
-        wonamt: 0,
-        orddt: convertDateToStr(new Date()),
-        ordspec: "",
-        pac: item.pac,
-        rowstatus: "N",
-      };
-      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
-
-      setMainDataResult((prev) => {
-        return {
-          data: [newDataItem, ...prev.data],
-          total: prev.total + 1,
-        };
-      });
-    });
+    setItemWindowVisible(true);
   };
 
   const onAddClick = () => {
@@ -2063,7 +2008,7 @@ const MA_B2020W_628: React.FC = () => {
                               : commandField.includes(item.fieldName)
                               ? ColumnCommandCell
                               : floatfield.includes(item.fieldName)
-                              ? NumberCommaCell
+                              ? NumberFloatCell
                               : undefined
                           }
                           headerCell={
@@ -2090,14 +2035,6 @@ const MA_B2020W_628: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
-          modal={true}
-        />
-      )}
-      {itemMultiWindowVisible && (
-        <ItemsMultiWindow_FNF
-          setVisible={setItemMultiWindowVisible}
-          setData={addItemData}
-          modal={true}
         />
       )}
       {previewVisible && (

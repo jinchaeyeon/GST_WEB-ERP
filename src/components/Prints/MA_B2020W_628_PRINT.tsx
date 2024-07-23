@@ -141,16 +141,24 @@ const MA_B2020W_628_PRINT = (data: any) => {
                         <td>{dateformat2(item2.dlvdt)}</td>
                         <td>{item2.itemnm}</td>
                         <td>{item2.spec}</td>
-                        <td>{numberWithCommas(item2.qty) + item2.qtyunit}</td>
+                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                          {numberWithCommas(item2.qty) + item2.qtyunit}
+                        </td>
                         <td>{item2.rcvcustnm}</td>
                         <td>{item2.remark}</td>
-                        <td>{numberWithCommas(item2.unp)}</td>
+                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                          {numberWithCommas(item2.unp)}
+                        </td>
                       </tr>
                     ))}
                     <tr style={{ backgroundColor: "#e6e6e6" }}>
                       <td colSpan={2}>계</td>
                       <td>{total + "건"}</td>
-                      <td>{total > 0 ? numberWithCommas(mainDataResult[0].total_qty) : 0}</td>
+                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                        {total > 0
+                          ? numberWithCommas(mainDataResult[0].total_qty)
+                          : 0}
+                      </td>
                       <td></td>
                       <td></td>
                       <td></td>

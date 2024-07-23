@@ -6,6 +6,7 @@ import {
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
+  GridRowProps,
   GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useLayoutEffect, useState } from "react";
@@ -388,6 +389,20 @@ const Main: React.FC = () => {
     window.open(origin + `/MA_B2020W_628?go=` + selectedData.dlvdt);
   };
 
+  const rowRender = (
+    trElement: React.ReactElement<HTMLTableRowElement>,
+    props: GridRowProps
+  ) => {
+    const available = props.dataItem.LOADOK == 0;
+    const blue = { color: "blue" };
+    const trProps: any = { style: available ? blue : undefined };
+    return React.cloneElement(
+      trElement,
+      { ...trProps },
+      trElement.props.children as any
+    );
+  };
+
   return (
     <>
       {isMobile ? (
@@ -522,6 +537,7 @@ const Main: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  rowRender={rowRender}
                 >
                   <GridColumn
                     field="TITLE"
@@ -662,6 +678,7 @@ const Main: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
+                rowRender={rowRender}
               >
                 <GridColumn
                   field="TITLE"

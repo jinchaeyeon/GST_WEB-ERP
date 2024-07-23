@@ -296,7 +296,6 @@ const ItemWindow_FNF = ({
   // 부모로 데이터 전달, 창 닫기 (여러 행을 추가하는 경우 Close 제외)
   const selectData = (selectedData: any) => {
     setData(selectedData);
-    onClose();
   };
 
   //메인 그리드 선택 이벤트
