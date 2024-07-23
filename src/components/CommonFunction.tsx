@@ -1078,8 +1078,8 @@ export const UseGetValueFromSessionItem = (code: string) => {
     if (
       sessionItem.find((sessionItem) => sessionItem.code == codes) == undefined
     ) {
-      // resetLocalStorage();
-      // window.location.href = "/";
+      resetLocalStorage();
+      window.location.href = "/";
       return "";
     } else {
       return sessionItem.find((sessionItem) => sessionItem.code == codes)!
