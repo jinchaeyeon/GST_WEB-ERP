@@ -11,6 +11,7 @@ import {
   dateformat2,
   numberWithCommas,
 } from "../CommonFunction";
+import styles from "./MA_B2020W_328_PRINT.module.css";
 
 const MA_B2020W_628_PRINT = (data: any) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -95,33 +96,27 @@ const MA_B2020W_628_PRINT = (data: any) => {
         />
       </ButtonContainer>
 
-      <div
-        id="WorkDailyReport"
-        className="printable landscape"
-        ref={componentRef}
-      >
-        <div className="title_container">
-          <h1 className="title">발주 List</h1>
+      <div className={styles.printable}>
+        <div className={styles.header_wrap}>
+          <div className={styles.left}>
+            <p>
+              납품예정기간: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
+              {dateformat2(convertDateToStr(data.data.todt))}
+            </p>
+          </div>
+          <div className={styles.center}>
+            <h1>발주 List</h1>
+          </div>
+          <div className={styles.right}>
+            <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
+          </div>
         </div>
-        <div
-          className="header"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "5px",
-          }}
-        >
-          <h3>
-            납품예정기간: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
-            {dateformat2(convertDateToStr(data.data.todt))}
-          </h3>
-          <h3>출력일시: {convertDateToStrWithTime2(new Date())}</h3>
-        </div>
+
         {mainDataResult !== null &&
           mainDataResult.map((item1: any, idx1: number) =>
             idx1 == 0 || idx1 % 10 == 0 ? (
               <>
-                <table className="main_tb">
+                <table className={styles.tg}>
                   <colgroup>
                     <col width="10%" />
                     <col width="20%" />
@@ -143,21 +138,17 @@ const MA_B2020W_628_PRINT = (data: any) => {
                     </tr>
                     {mainDataResult.map((item2: any, idx2: number) => (
                       <tr key={item2.rownum}>
-                        <td className="center">{dateformat2(item2.dlvdt)}</td>
+                        <td>{dateformat2(item2.dlvdt)}</td>
                         <td>{item2.itemnm}</td>
                         <td>{item2.spec}</td>
                         <td>{item2.qty + item2.qtyunit}</td>
                         <td>{item2.rcvcustnm}</td>
                         <td>{item2.remark}</td>
-                        <td className="number">
-                          {numberWithCommas(item2.unp)}
-                        </td>
+                        <td>{numberWithCommas(item2.unp)}</td>
                       </tr>
                     ))}
                     <tr style={{ backgroundColor: "#e6e6e6" }}>
-                      <td className="center" colSpan={2}>
-                        계
-                      </td>
+                      <td colSpan={2}>계</td>
                       <td>{total + "건"}</td>
                       <td>{total > 0 ? mainDataResult[0].total_qty : 0}</td>
                       <td></td>

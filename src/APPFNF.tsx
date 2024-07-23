@@ -168,6 +168,7 @@ const HU_B4010W = lazy(() => import("./routes/HU_B4010W"));
 const MA_A0010W = lazy(() => import("./routes/MA_A0010W"));
 const MA_A1000W = lazy(() => import("./routes/MA_A1000W"));
 const MA_A2000W = lazy(() => import("./routes/MA_A2000W"));
+const MA_A2020W_628 = lazy(() => import("./routes/MA_A2020W_628"));
 const MA_A2300W = lazy(() => import("./routes/MA_A2300W"));
 const MA_A2300W_615 = lazy(() => import("./routes/MA_A2300W_615"));
 const MA_A2310W_606 = lazy(() => import("./routes/MA_A2310W_606"));
@@ -850,6 +851,8 @@ const AppInner: React.FC = () => {
       return MA_A1000W;
     } else if (str == "MA_A2000W") {
       return MA_A2000W;
+    } else if (str == "MA_A2020W_628") {
+      return MA_A2020W_628;
     } else if (str == "MA_A2300W") {
       return MA_A2300W;
     } else if (str == "MA_A2300W_615") {
@@ -1270,6 +1273,11 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/MA_A0010W" component={MA_A0010W} exact />
                     <AuthRoute path="/MA_A1000W" component={MA_A1000W} exact />
                     <AuthRoute path="/MA_A2000W" component={MA_A2000W} exact />
+                    <AuthRoute
+                      path="/MA_A2020W_628"
+                      component={MA_A2020W_628}
+                      exact
+                    />
                     <AuthRoute path="/MA_A2300W" component={MA_A2300W} exact />
                     <AuthRoute
                       path="/MA_A2300W_615"

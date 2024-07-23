@@ -42,6 +42,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import NumberCommaCell from "../components/Cells/NumberCommaCell";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -93,6 +94,7 @@ const numberField2 = ["qty", "hsqty", "wonamt", "taxamt"];
 const dateField = ["dlvdt"];
 const commandField = ["itemcd"];
 const requiredField = ["dlvdt", "itemcd", "qty"];
+const floatfield = ["bnatur_insiz"];
 
 export const FormContext = createContext<{
   itemInfo: TItemInfo;
@@ -523,31 +525,31 @@ const MA_B2020W_628: React.FC = () => {
     isSearch: false,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_MA_B2020W_628_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "Q",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_custcd": filters.custcd,
-      "@p_ordsts": filters.ordsts,
-      "@p_itemnm": filters.itemnm,
-      "@p_rcvcustnm": filters.rcvcustnm,
-      "@p_itemcd": "",
-      "@p_today": "",
-      "@p_find_row_value": filters.find_row_value,
-    },
-  };
-
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     if (!permissions.view) return;
     let data: any;
     setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_MA_B2020W_628_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "Q",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_custcd": filters.custcd,
+        "@p_ordsts": filters.ordsts,
+        "@p_itemnm": filters.itemnm,
+        "@p_rcvcustnm": filters.rcvcustnm,
+        "@p_itemcd": "",
+        "@p_today": "",
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -565,16 +567,7 @@ const MA_B2020W_628: React.FC = () => {
       });
 
       if (totalRowCnt > 0) {
-        const selectedRow =
-          filters.find_row_value == ""
-            ? rows[0]
-            : rows.find((row: any) => row.ordnum == filters.find_row_value);
-
-        if (selectedRow != undefined) {
-          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-        } else {
-          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-        }
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     }
     setFilters((prev) => ({
@@ -610,6 +603,7 @@ const MA_B2020W_628: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     deletedMainRows = [];
+    setValues(false);
     setMainDataResult(process([], mainDataState));
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
@@ -667,10 +661,6 @@ const MA_B2020W_628: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-  };
-
-  const onItemWndClick = () => {
-    setItemWindowVisible(true);
   };
 
   interface IItemData {
@@ -2072,6 +2062,8 @@ const MA_B2020W_628: React.FC = () => {
                               ? DateCell
                               : commandField.includes(item.fieldName)
                               ? ColumnCommandCell
+                              : floatfield.includes(item.fieldName)
+                              ? NumberCommaCell
                               : undefined
                           }
                           headerCell={
