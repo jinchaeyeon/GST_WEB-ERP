@@ -10,6 +10,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   dateformat2,
+  numberWithCommas,
 } from "../CommonFunction";
 import styles from "./MA_A2020W_628_PRINT.module.css";
 
@@ -25,6 +26,14 @@ const MA_B2020W_628_PRINT = (data: any) => {
   const [mainDataResult, setMainDataResult] = useState<any>(null);
   const [total, setTotal] = useState<any>(null);
   const custnm = UseGetValueFromSessionItem("custnm");
+
+  function isInteger(number: number) {
+    if (number % 1 === 0) {
+      return numberWithCommas(number);
+    } else {
+      return numberWithCommas(parseFloat(number.toFixed(2)));
+    }
+  }
 
   useEffect(() => {
     if (data !== null && permissions.view) {
@@ -88,12 +97,19 @@ const MA_B2020W_628_PRINT = (data: any) => {
 
   const componentRef = useRef(null);
   let before_itemnm = "";
+  let before_custnm = "";
   let sum_qty = 0;
   let sum_sqty = 0;
   let sum_count = 0;
+  let sum_amt = 0;
+  let sum_taxamt = 0;
+  let sum_totamt = 0;
   let sum_temp_qty = 0;
   let sum_temp_sqty = 0;
   let sum_temp_count = 0;
+  let sum_temp_amt = 0;
+  let sum_temp_taxamt = 0;
+  let sum_temp_totamt = 0;
   return (
     <LandscapePrint>
       <ButtonContainer>
@@ -133,7 +149,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
             </div>
             {mainDataResult !== null &&
               mainDataResult.map((item1: any, idx1: number) =>
-                idx1 == 0 || idx1 % 10 == 0 ? (
+                idx1 == 0 || idx1 % total == 0 ? (
                   <>
                     <table className={styles.tg}>
                       <colgroup>
@@ -163,13 +179,21 @@ const MA_B2020W_628_PRINT = (data: any) => {
                             sum_temp_count = sum_count;
                             sum_qty = 0;
                             sum_sqty = 0;
-                            sum_count = 1;
+                            sum_count = 0;
+                            sum_qty += item2.qty;
+                            sum_sqty += item2.sqty;
+                            sum_count += 1;
+                            before_itemnm = item2.itemnm;
                             return (
                               <>
                                 <tr style={{ backgroundColor: "#e6e6e6" }}>
                                   <td colSpan={2}>소 계 ({sum_temp_count})</td>
-                                  <td>{sum_temp_qty}</td>
-                                  <td>{sum_temp_sqty}</td>
+                                  <td>{isInteger(sum_temp_qty)}</td>
+                                  <td>
+                                    {sum_temp_sqty == 0
+                                      ? ""
+                                      : isInteger(sum_temp_sqty)}
+                                  </td>
                                   <td></td>
                                   <td></td>
                                   <td></td>
@@ -177,8 +201,12 @@ const MA_B2020W_628_PRINT = (data: any) => {
                                 <tr key={item2.rownum}>
                                   <td>{item2.itemnm}</td>
                                   <td>{item2.ordsiz}</td>
-                                  <td>{item2.qty}</td>
-                                  <td>{item2.sqty}</td>
+                                  <td>{numberWithCommas(item2.qty)}</td>
+                                  <td>
+                                    {item2.sqty == 0
+                                      ? ""
+                                      : numberWithCommas(item2.sqty)}
+                                  </td>
                                   <td>{item2.rcvcustnm}</td>
                                   <td>{item2.remark}</td>
                                   <td>{item2.orgnm}</td>
@@ -187,8 +215,12 @@ const MA_B2020W_628_PRINT = (data: any) => {
                                   <>
                                     <tr style={{ backgroundColor: "#e6e6e6" }}>
                                       <td colSpan={2}>소 계 ({1})</td>
-                                      <td>{sum_temp_qty}</td>
-                                      <td>{sum_temp_sqty}</td>
+                                      <td>{isInteger(sum_temp_qty)}</td>
+                                      <td>
+                                        {sum_temp_sqty == 0
+                                          ? ""
+                                          : isInteger(sum_temp_sqty)}
+                                      </td>
                                       <td></td>
                                       <td></td>
                                       <td></td>
@@ -209,8 +241,12 @@ const MA_B2020W_628_PRINT = (data: any) => {
                                 <tr key={item2.rownum}>
                                   <td>{idx2 == 0 ? item2.itemnm : ""}</td>
                                   <td>{item2.ordsiz}</td>
-                                  <td>{item2.qty}</td>
-                                  <td>{item2.sqty}</td>
+                                  <td>{numberWithCommas(item2.qty)}</td>
+                                  <td>
+                                    {item2.sqty == 0
+                                      ? ""
+                                      : numberWithCommas(item2.sqty)}
+                                  </td>
                                   <td>{item2.rcvcustnm}</td>
                                   <td>{item2.remark}</td>
                                   <td>{item2.orgnm}</td>
@@ -219,8 +255,18 @@ const MA_B2020W_628_PRINT = (data: any) => {
                                   <>
                                     <tr style={{ backgroundColor: "#e6e6e6" }}>
                                       <td colSpan={2}>소 계 ({sum_count})</td>
-                                      <td>{sum_temp_qty}</td>
-                                      <td>{sum_temp_sqty}</td>
+                                      <td>
+                                        {sum_temp_qty == 0
+                                          ? isInteger(sum_qty)
+                                          : isInteger(sum_temp_qty)}
+                                      </td>
+                                      <td>
+                                        {sum_temp_sqty == 0
+                                          ? sum_sqty == 0
+                                            ? ""
+                                            : isInteger(sum_temp_sqty)
+                                          : isInteger(sum_temp_sqty)}
+                                      </td>
                                       <td></td>
                                       <td></td>
                                       <td></td>
@@ -235,8 +281,12 @@ const MA_B2020W_628_PRINT = (data: any) => {
                         })}
                         <tr style={{ backgroundColor: "#e6e6e6" }}>
                           <td colSpan={2}>합 계 ({total})</td>
-                          <td>{mainDataResult[0].total_qty}</td>
-                          <td>{mainDataResult[0].total_sqty}</td>
+                          <td>{isInteger(mainDataResult[0].total_qty)}</td>
+                          <td>
+                            {mainDataResult[0].total_sqty == 0
+                              ? ""
+                              : isInteger(mainDataResult[0].total_sqty)}
+                          </td>
                           <td></td>
                           <td></td>
                           <td></td>
@@ -250,8 +300,301 @@ const MA_B2020W_628_PRINT = (data: any) => {
                 )
               )}
           </>
+        ) : data.data.pgubun == "7" ? (
+          <>
+            <div className={styles.header_wrap}>
+              <div className={styles.left}>
+                <p>{custnm}</p>
+              </div>
+              <div className={styles.center}>
+                <h1>대리점별 합계</h1>
+                <p>
+                  출고일자: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
+                  {dateformat2(convertDateToStr(data.data.todt))}
+                </p>
+              </div>
+              <div className={styles.right}>
+                <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
+              </div>
+            </div>
+            {mainDataResult !== null &&
+              mainDataResult.map((item1: any, idx1: number) =>
+                idx1 == 0 || idx1 % total == 0 ? (
+                  <>
+                    <table className={styles.tg}>
+                      <colgroup>
+                        <col width="20%" />
+                        <col width="25%" />
+                        <col width="25%" />
+                        <col width="15%" />
+                        <col width="15%" />
+                      </colgroup>
+                      <tbody>
+                        <tr style={{ backgroundColor: "#e6e6e6" }}>
+                          <th>대리점명</th>
+                          <th>품목명</th>
+                          <th>사이즈</th>
+                          <th>수주량(kg)</th>
+                          <th>소분량</th>
+                        </tr>
+                        {mainDataResult.map((item2: any, idx2: number) => {
+                          if (idx2 != 0 && before_custnm !== item2.custnm) {
+                            before_custnm = item2.custnm;
+                            sum_temp_qty = sum_qty;
+                            sum_temp_sqty = sum_sqty;
+                            sum_temp_count = sum_count;
+                            sum_qty = 0;
+                            sum_sqty = 0;
+                            sum_count = 0;
+                            sum_qty += item2.qty;
+                            sum_sqty += item2.sqty;
+                            sum_count += 1;
+                            before_custnm = item2.custnm;
+                            return (
+                              <>
+                                <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                  <td colSpan={2}>소 계 ({sum_temp_count})</td>
+                                  <td></td>
+                                  <td>{isInteger(sum_temp_qty)}</td>
+                                  <td>{isInteger(sum_temp_sqty)}</td>
+                                </tr>
+                                <tr key={item2.rownum}>
+                                  <td>{item2.custnm}</td>
+                                  <td>{item2.itemnm}</td>
+                                  <td>{item2.ordsiz}</td>
+                                  <td>{numberWithCommas(item2.qty)}</td>
+                                  <td>{numberWithCommas(item2.sqty)}</td>
+                                </tr>
+                                {idx2 == total - 1 ? (
+                                  <>
+                                    <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                      <td colSpan={2}>소 계 ({1})</td>
+                                      <td></td>
+                                      <td>{isInteger(sum_temp_qty)}</td>
+                                      <td>{isInteger(sum_temp_sqty)}</td>
+                                    </tr>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </>
+                            );
+                          } else {
+                            sum_qty += item2.qty;
+                            sum_sqty += item2.sqty;
+                            sum_count += 1;
+                            before_custnm = item2.custnm;
+                            return (
+                              <>
+                                <tr key={item2.rownum}>
+                                  <td>{idx2 == 0 ? item2.custnm : ""}</td>
+                                  <td>{item2.itemnm}</td>
+                                  <td>{item2.ordsiz}</td>
+                                  <td>{numberWithCommas(item2.qty)}</td>
+                                  <td>{numberWithCommas(item2.sqty)}</td>
+                                </tr>
+                                {idx2 == total - 1 ? (
+                                  <>
+                                    <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                      <td colSpan={2}>소 계 ({sum_count})</td>
+                                      <td></td>
+                                      <td>
+                                        {sum_temp_qty == 0
+                                          ? isInteger(sum_qty)
+                                          : isInteger(sum_temp_qty)}
+                                      </td>
+                                      <td>
+                                        {sum_temp_sqty == 0
+                                          ? isInteger(sum_sqty)
+                                          : isInteger(sum_temp_sqty)}
+                                      </td>
+                                    </tr>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </>
+                            );
+                          }
+                        })}
+                        <tr style={{ backgroundColor: "#e6e6e6" }}>
+                          <td colSpan={2}>합 계 ({total})</td>
+                          <td></td>
+                          <td>{isInteger(mainDataResult[0].total_qty)}</td>
+                          <td>{isInteger(mainDataResult[0].total_sqty)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div style={{ pageBreakBefore: "always" }} />
+                  </>
+                ) : (
+                  ""
+                )
+              )}
+          </>
         ) : (
-          <></>
+          <>
+            <div className={styles.header_wrap}>
+              <div className={styles.left}>
+                <p>{custnm}</p>
+              </div>
+              <div className={styles.center}>
+                <h1>납품현황출력</h1>
+                <p>
+                  출고일자: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
+                  {dateformat2(convertDateToStr(data.data.todt))}
+                </p>
+              </div>
+              <div className={styles.right}>
+                <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
+              </div>
+            </div>
+            {mainDataResult !== null &&
+              mainDataResult.map((item1: any, idx1: number) =>
+                idx1 == 0 || idx1 % total == 0 ? (
+                  <>
+                    <table className={styles.tg}>
+                      <colgroup>
+                        <col width="20%" />
+                        <col width="15%" />
+                        <col width="10%" />
+                        <col width="10%" />
+                        <col width="15%" />
+                        <col width="15%" />
+                        <col width="15%" />
+                      </colgroup>
+                      <tbody>
+                        <tr style={{ backgroundColor: "#e6e6e6" }}>
+                          <th>품목명</th>
+                          <th>사이즈</th>
+                          <th>수주량(kg)</th>
+                          <th>단가</th>
+                          <th>공급가액</th>
+                          <th>부가세</th>
+                          <th>합계</th>
+                        </tr>
+                        {mainDataResult.map((item2: any, idx2: number) => {
+                          if (idx2 != 0 && before_itemnm !== item2.itemnm) {
+                            sum_temp_qty = sum_qty;
+                            sum_temp_amt = sum_amt;
+                            sum_temp_taxamt = sum_taxamt;
+                            sum_temp_totamt = sum_totamt;
+                            sum_temp_count = sum_count;
+                            sum_qty = 0;
+                            sum_amt = 0;
+                            sum_taxamt = 0;
+                            sum_totamt = 0;
+                            sum_count = 0;
+                            sum_qty += item2.qty;
+                            sum_amt += item2.amt;
+                            sum_taxamt += item2.taxamt;
+                            sum_totamt += item2.totamt;
+                            sum_count += 1;
+                            before_itemnm = item2.itemnm;
+                            return (
+                              <>
+                                <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                  <td colSpan={2}>소 계 ({sum_temp_count})</td>
+                                  <td>{isInteger(sum_temp_qty)}</td>
+                                  <td></td>
+                                  <td>{isInteger(sum_temp_amt)}</td>
+                                  <td>{isInteger(sum_temp_taxamt)}</td>
+                                  <td>{isInteger(sum_temp_totamt)}</td>
+                                </tr>
+                                <tr key={item2.rownum}>
+                                  <td>{item2.itemnm}</td>
+                                  <td>{item2.ordsiz}</td>
+                                  <td>{numberWithCommas(item2.qty)}</td>
+                                  <td>{numberWithCommas(item2.basinvunp)}</td>
+                                  <td>{numberWithCommas(item2.amt)}</td>
+                                  <td>{numberWithCommas(item2.taxamt)}</td>
+                                  <td>{numberWithCommas(item2.totamt)}</td>
+                                </tr>
+                                {idx2 == total - 1 ? (
+                                  <>
+                                    <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                      <td colSpan={2}>소 계 ({1})</td>
+                                      <td>{isInteger(sum_temp_qty)}</td>
+                                      <td></td>
+                                      <td>{isInteger(sum_temp_amt)}</td>
+                                      <td>{isInteger(sum_temp_taxamt)}</td>
+                                      <td>{isInteger(sum_temp_totamt)}</td>
+                                    </tr>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </>
+                            );
+                          } else {
+                            sum_qty += item2.qty;
+                            sum_amt += item2.amt;
+                            sum_taxamt += item2.taxamt;
+                            sum_totamt += item2.totamt;
+                            sum_count += 1;
+                            before_itemnm = item2.itemnm;
+                            return (
+                              <>
+                                <tr key={item2.rownum}>
+                                  <td>{idx2 == 0 ? item2.itemnm : ""}</td>
+                                  <td>{item2.ordsiz}</td>
+                                  <td>{numberWithCommas(item2.qty)}</td>
+                                  <td>{numberWithCommas(item2.basinvunp)}</td>
+                                  <td>{numberWithCommas(item2.amt)}</td>
+                                  <td>{numberWithCommas(item2.taxamt)}</td>
+                                  <td>{numberWithCommas(item2.totamt)}</td>
+                                </tr>
+                                {idx2 == total - 1 ? (
+                                  <>
+                                    <tr style={{ backgroundColor: "#e6e6e6" }}>
+                                      <td colSpan={2}>소 계 ({sum_count})</td>
+                                      <td>
+                                        {sum_temp_qty == 0
+                                          ? isInteger(sum_qty)
+                                          : isInteger(sum_temp_qty)}
+                                      </td>
+                                      <td></td>
+                                      <td>
+                                        {sum_temp_amt == 0
+                                          ? isInteger(sum_amt)
+                                          : isInteger(sum_temp_amt)}
+                                      </td>
+                                      <td>
+                                        {sum_temp_taxamt == 0
+                                          ? isInteger(sum_taxamt)
+                                          : isInteger(sum_temp_taxamt)}
+                                      </td>
+                                      <td>
+                                        {sum_temp_totamt == 0
+                                          ? isInteger(sum_totamt)
+                                          : isInteger(sum_temp_totamt)}
+                                      </td>
+                                    </tr>
+                                  </>
+                                ) : (
+                                  <></>
+                                )}
+                              </>
+                            );
+                          }
+                        })}
+                        <tr style={{ backgroundColor: "#e6e6e6" }}>
+                          <td colSpan={2}>합 계 ({total})</td>
+                          <td>{isInteger(mainDataResult[0].total_qty)}</td>
+                          <td></td>
+                          <td>{isInteger(mainDataResult[0].total_amt)}</td>
+                          <td>{isInteger(mainDataResult[0].total_taxamt)}</td>
+                          <td>{isInteger(mainDataResult[0].total_totamt)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div style={{ pageBreakBefore: "always" }} />
+                  </>
+                ) : (
+                  ""
+                )
+              )}
+          </>
         )}
       </div>
     </LandscapePrint>

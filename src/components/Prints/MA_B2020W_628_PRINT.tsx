@@ -114,7 +114,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
 
         {mainDataResult !== null &&
           mainDataResult.map((item1: any, idx1: number) =>
-            idx1 == 0 || idx1 % 10 == 0 ? (
+            idx1 == 0 || idx1 % total == 0 ? (
               <>
                 <table className={styles.tg}>
                   <colgroup>
@@ -141,7 +141,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
                         <td>{dateformat2(item2.dlvdt)}</td>
                         <td>{item2.itemnm}</td>
                         <td>{item2.spec}</td>
-                        <td>{item2.qty + item2.qtyunit}</td>
+                        <td>{numberWithCommas(item2.qty) + item2.qtyunit}</td>
                         <td>{item2.rcvcustnm}</td>
                         <td>{item2.remark}</td>
                         <td>{numberWithCommas(item2.unp)}</td>
@@ -150,7 +150,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
                     <tr style={{ backgroundColor: "#e6e6e6" }}>
                       <td colSpan={2}>계</td>
                       <td>{total + "건"}</td>
-                      <td>{total > 0 ? mainDataResult[0].total_qty : 0}</td>
+                      <td>{total > 0 ? numberWithCommas(mainDataResult[0].total_qty) : 0}</td>
                       <td></td>
                       <td></td>
                       <td></td>

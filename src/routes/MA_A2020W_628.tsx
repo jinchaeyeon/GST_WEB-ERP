@@ -75,7 +75,8 @@ const MA_A2020W_628: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-
+  const sessionpc = UseGetValueFromSessionItem("pc");
+  const sessionuserId = UseGetValueFromSessionItem("user_id");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
   const sessionCustcd = UseGetValueFromSessionItem("custcd");
@@ -538,6 +539,143 @@ const MA_A2020W_628: React.FC = () => {
     }
   };
 
+  const onCheckClick = () => {
+    const dataItem = mainDataResult.data.filter((item: any) => item.chk == true);
+    if (dataItem.length == 0) return false;
+
+    let valid = true;
+
+    dataItem.map((item) => {
+      if(item.gubun == "Y") {
+        valid = false;
+      }
+    })
+
+    if(valid != true) {
+      alert("구분이 확정인 정보는 처리가 불가능합니다.");
+      return false;
+    }
+    let dataArr: any = {
+      orgdiv: [],
+      ordnum: [],
+      ordseq: [],
+    }
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        orgdiv ="",
+        ordnum ="",
+        ordseq="",
+      } = item;
+      dataArr.orgdiv.push(orgdiv);
+      dataArr.ordnum.push(ordnum);
+      dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+    })
+    setParaData((prev) => ({
+      ...prev,
+      workType: "Y",
+      orgdiv: dataArr.orgdiv.join("|"),
+      ordnum: dataArr.ordnum.join("|"),
+      ordseq: dataArr.ordseq.join("|"),
+    }))
+  }
+
+  const onCloseClick = () => {
+    const dataItem = mainDataResult.data.filter((item: any) => item.chk == true);
+    if (dataItem.length == 0) return false;
+    let valid = true;
+
+    dataItem.map((item) => {
+      if(item.gubun == "N") {
+        valid = false;
+      }
+    })
+    if(valid != true) {
+      alert("구분이 대기인 정보는 처리가 불가능합니다.");
+      return false;
+    }
+    let dataArr: any = {
+      orgdiv: [],
+      ordnum: [],
+      ordseq: [],
+    }
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        orgdiv ="",
+        ordnum ="",
+        ordseq="",
+      } = item;
+      dataArr.orgdiv.push(orgdiv);
+      dataArr.ordnum.push(ordnum);
+      dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
+    })
+    setParaData((prev) => ({
+      ...prev,
+      workType: "N",
+      orgdiv: dataArr.orgdiv.join("|"),
+      ordnum: dataArr.ordnum.join("|"),
+      ordseq: dataArr.ordseq.join("|"),
+    }))
+  }
+
+  const [ParaData, setParaData] = useState({
+    workType: "",
+    orgdiv: "",
+    ordnum: "",
+    ordseq: "",
+  })
+
+  const para: Iparameters = {
+    procedureName: "P_MA_A2020W_628_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_userid": sessionuserId,
+      "@p_pc": sessionpc,
+      "@p_ordnum": ParaData.ordnum,
+      "@p_ordseq": ParaData.ordseq,
+    },
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "" && permissions.save) {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData, permissions]);
+
+  const fetchTodoGridSaved = async () => {
+    if (!permissions.save) return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      setValues(false);
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setParaData({
+        workType: "",
+        orgdiv: "",
+        ordnum: "",
+        ordseq: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -674,6 +812,24 @@ const MA_A2020W_628: React.FC = () => {
               disabled={permissions.print ? false : true}
             >
               출력
+            </Button>
+            <Button
+              onClick={onCheckClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="check"
+              disabled={permissions.save ? false : true}
+            >
+              확정
+            </Button>
+            <Button
+              onClick={onCloseClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="close"
+              disabled={permissions.save ? false : true}
+            >
+              해제
             </Button>
             <Button
               onClick={onDeleteClick}
