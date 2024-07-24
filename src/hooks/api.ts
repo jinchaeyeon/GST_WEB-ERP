@@ -56,6 +56,10 @@ const domain: any = {
     action: "post",
     url: "api/auth/login?withImage=true&withConfig=true",
   },
+  profile: {
+    action: "get",
+    url: "api/user/profile",
+  },
   "login-old": { action: "post", url: "api/auth/login-old" },
   "company-codes": { action: "get", url: "api/auth/company-codes" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },
@@ -264,6 +268,10 @@ export const useApi = () => {
             headers = { ...headers, Authorization: `Bearer ${token}` };
           }
 
+          if(info.url.includes("user/profile")) {
+            headers = { ...headers, Authorization: `Bearer ${localStorage.getItem("accessToken")}` };
+          }
+
           if (info.action != "get") {
             initCache();
           }
@@ -453,6 +461,10 @@ export const useApi = () => {
           headers = { ...headers, Authorization: `Bearer ${token}` };
         }
 
+        if(info.url.includes("user/profile")) {
+          headers = { ...headers, Authorization: `Bearer ${localStorage.getItem("accessToken")}` };
+        }
+        
         if (info.action != "get") {
           initCache();
         }

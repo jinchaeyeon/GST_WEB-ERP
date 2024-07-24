@@ -138,7 +138,9 @@ const MA_B2020W_628_PRINT = (data: any) => {
                     </tr>
                     {mainDataResult.map((item2: any, idx2: number) => (
                       <tr key={item2.rownum}>
-                        <td>{dateformat2(item2.dlvdt)}</td>
+                        <td style={{ textAlign: "center" }}>
+                          {dateformat2(item2.dlvdt)}
+                        </td>
                         <td>{item2.itemnm}</td>
                         <td>{item2.spec}</td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
@@ -151,10 +153,15 @@ const MA_B2020W_628_PRINT = (data: any) => {
                         </td>
                       </tr>
                     ))}
-                    <tr style={{ backgroundColor: "#e6e6e6" }}>
+                    <tr
+                      style={{
+                        backgroundColor: "#e6e6e6",
+                        textAlign: "center",
+                      }}
+                    >
                       <td colSpan={2}>계</td>
                       <td>{total + "건"}</td>
-                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                      <td>
                         {total > 0
                           ? numberWithCommas(mainDataResult[0].total_qty)
                           : 0}

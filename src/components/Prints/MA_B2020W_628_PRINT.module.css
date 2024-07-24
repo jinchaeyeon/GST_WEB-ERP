@@ -67,7 +67,7 @@ body {
         white-space: nowrap;
         display: table-cell;
         vertical-align: middle;
-        text-align: center;
+        padding-left: 3px;
     }
     
     td.tg-baqh.number {

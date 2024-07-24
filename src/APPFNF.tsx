@@ -427,12 +427,11 @@ const AppInner: React.FC = () => {
   useEffect(() => {
     if (
       token &&
-      pc &&
       userId != "" &&
       (sessionUserId == "" || sessionUserId == null)
     )
       fetchSessionItem();
-  }, [userId, sessionUserId, token, pc]);
+  }, [userId, sessionUserId, token]);
 
   let sessionOrgdiv = sessionItem.find(
     (sessionItem) => sessionItem.code == "orgdiv"
@@ -469,6 +468,7 @@ const AppInner: React.FC = () => {
           .concat([
             { code: "pc", value: pc },
             { code: "custcd", value: loginResult.custcd },
+            { code: "custnm", value: loginResult.custnm },
           ]);
         setSessionItem(array);
       }

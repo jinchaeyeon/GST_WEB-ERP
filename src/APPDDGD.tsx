@@ -426,12 +426,11 @@ const AppInner: React.FC = () => {
   useEffect(() => {
     if (
       token &&
-      pc &&
       userId != "" &&
       (sessionUserId == "" || sessionUserId == null)
     )
       fetchSessionItem();
-  }, [userId, sessionUserId, token, pc]);
+  }, [userId, sessionUserId, token]);
 
   let sessionOrgdiv = sessionItem.find(
     (sessionItem) => sessionItem.code == "orgdiv"
