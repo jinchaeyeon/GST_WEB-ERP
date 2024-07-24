@@ -126,9 +126,9 @@ const PR_B0020W_628: React.FC = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height2);
-        setWebHeight(getDeviceHeight(true) * 1.2 - height - height2);
+        setWebHeight(getDeviceHeight(true) * 1.4 - height - height2);
         setWebHeight2(
-          getDeviceHeight(true) * 1.2 - height - height3 - height4 - GAP
+          getDeviceHeight(true) * 1.4 - height - height3 - height4 - GAP
         );
       };
       handleWindowResize();
