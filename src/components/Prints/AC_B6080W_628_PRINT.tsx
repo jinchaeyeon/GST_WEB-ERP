@@ -26,7 +26,7 @@ const AC_B6080W_628_PRINT = (data: any) => {
   const [mainDataResult, setMainDataResult] = useState<any>(null);
   const [total, setTotal] = useState<any>(null);
   const sessionCustcd = UseGetValueFromSessionItem("custcd");
-  const sessionUserName = UseGetValueFromSessionItem("user_name");
+  const sessionCustnm = UseGetValueFromSessionItem("custnm");
 
   useEffect(() => {
     if (data !== null && permissions.view) {
@@ -97,7 +97,7 @@ const AC_B6080W_628_PRINT = (data: any) => {
         <div className={styles.header_wrap}>
           <div className={styles.left}>
             <p>
-              ({sessionCustcd}){sessionUserName}
+              ({sessionCustcd}){sessionCustnm}
             </p>
           </div>
           <div className={styles.center}>
