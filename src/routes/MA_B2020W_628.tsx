@@ -651,22 +651,27 @@ const MA_B2020W_628: React.FC = () => {
     );
   };
 
+  // 소수점 셋째 자리에서 반올림하여 소수점 둘째 자리까지 표현
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = "";
-    mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
-    );
-
-    var parts = parseFloat(sum).toString().split(".");
-    return parts[0] != "NaN" ? (
+    let sum = 0;  
+    mainDataResult.data.forEach((item) => {
+      if (props.field !== undefined && item["total_" + props.field] !== undefined) {
+        sum += parseFloat(item["total_" + props.field]) || 0;  
+      }
+    });
+      
+    let roundedSum = (Math.round(sum * 100) / 100).toFixed(2); 
+    var parts = roundedSum.toString().split(".");
+  
+    return !isNaN(parseFloat(roundedSum)) ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+          (parts[1] ? "." + parts[1] : ".00")}
       </td>
     ) : (
       <td></td>
     );
-  };
+  };;
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
