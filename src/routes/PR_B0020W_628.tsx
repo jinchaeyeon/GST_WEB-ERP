@@ -1152,7 +1152,7 @@ const PR_B0020W_628: React.FC = () => {
       ) : (
         <>
           <GridContainerWrap>
-            <GridContainer width={"55%"}>
+            <GridContainer width={"65%"}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
                 <ButtonContainer>
@@ -1190,6 +1190,30 @@ const PR_B0020W_628: React.FC = () => {
                     disabled={permissions.save ? false : true}
                   >
                     주소/제조 일괄변경
+                  </Button>
+                  <Button
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="print"
+                    disabled={permissions.print ? false : true}
+                  >
+                    겉지출력
+                  </Button>
+                  <Button
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="print"
+                    disabled={permissions.print ? false : true}
+                  >
+                    속지출력
+                  </Button>
+                  <Button
+                    icon="x"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    disabled={permissions.save ? false : true}
+                  >
+                    출력취소
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1284,36 +1308,10 @@ const PR_B0020W_628: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </GridContainer>
-            <GridContainer width={`calc(45% - ${GAP}px)`}>
+            <GridContainer width={`calc(35% - ${GAP}px)`}>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>출력정보</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="print"
-                      disabled={permissions.print ? false : true}
-                    >
-                      겉지출력
-                    </Button>
-                    <Button
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="print"
-                      disabled={permissions.print ? false : true}
-                    >
-                      속지출력
-                    </Button>
-                    <Button
-                      icon="x"
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                    >
-                      출력취소
-                    </Button>
-                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}

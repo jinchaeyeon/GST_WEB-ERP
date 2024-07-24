@@ -431,6 +431,7 @@ export const FormBoxFNF = styled.table`
   tr td {
     /* background-color: #ffffff;
     border: solid 1px #d7d7d7; */
+    width: 100px;
     text-align: center;
     padding: 5px;
     position: relative;
