@@ -360,7 +360,7 @@ const PR_B0020W_628: React.FC = () => {
     extra_field2: "",
     extra_field3: "",
     extra_field5: "",
-    extra_field6: null,
+    extra_field6: "",
     extra_field7: null,
     ingredgb: "",
     insiz: "",
@@ -396,7 +396,7 @@ const PR_B0020W_628: React.FC = () => {
     tagtemp4: "",
     tagtemp5: "",
     totqty: 10,
-    usediv: "",
+    sealno: "",
   });
 
   const [Information2, setInformation2] = useState<{ [name: string]: any }>({
@@ -479,7 +479,7 @@ const PR_B0020W_628: React.FC = () => {
           extra_field2: "",
           extra_field3: "",
           extra_field5: "",
-          extra_field6: null,
+          extra_field6: "",
           extra_field7: null,
           ingredgb: "",
           insiz: "",
@@ -515,7 +515,7 @@ const PR_B0020W_628: React.FC = () => {
           tagtemp4: "",
           tagtemp5: "",
           totqty: 10,
-          usediv: "",
+          sealno: "",
         });
       }
     }
@@ -592,8 +592,7 @@ const PR_B0020W_628: React.FC = () => {
           extra_field2: rows[0].extra_field2,
           extra_field3: rows[0].extra_field3,
           extra_field5: rows[0].extra_field5,
-          extra_field6:
-            rows[0].extra_field6 == "" ? null : toDate2(rows[0].extra_field6),
+          extra_field6: rows[0].extra_field6,
           extra_field7:
             rows[0].extra_field7 == "" ? null : toDate2(rows[0].extra_field7),
           ingredgb: rows[0].ingredgb,
@@ -630,7 +629,7 @@ const PR_B0020W_628: React.FC = () => {
           tagtemp4: rows[0].tagtemp4,
           tagtemp5: rows[0].tagtemp5,
           totqty: rows[0].totqty,
-          usediv: rows[0].usediv,
+          sealno: rows[0].sealno,
         });
       } else {
         setInformation({
@@ -647,7 +646,7 @@ const PR_B0020W_628: React.FC = () => {
           extra_field2: "",
           extra_field3: "",
           extra_field5: "",
-          extra_field6: null,
+          extra_field6: "",
           extra_field7: null,
           ingredgb: "",
           insiz: "",
@@ -683,7 +682,7 @@ const PR_B0020W_628: React.FC = () => {
           tagtemp4: "",
           tagtemp5: "",
           totqty: 10,
-          usediv: "",
+          sealno: "",
         });
       }
     }
@@ -786,10 +785,7 @@ const PR_B0020W_628: React.FC = () => {
       extra_field2: selectedRowData.extra_field2,
       extra_field3: selectedRowData.extra_field3,
       extra_field5: selectedRowData.extra_field5,
-      extra_field6:
-        selectedRowData.extra_field6 == ""
-          ? null
-          : toDate2(selectedRowData.extra_field6),
+      extra_field6: selectedRowData.extra_field6,
       extra_field7:
         selectedRowData.extra_field7 == ""
           ? null
@@ -831,7 +827,7 @@ const PR_B0020W_628: React.FC = () => {
       tagtemp4: selectedRowData.tagtemp4,
       tagtemp5: selectedRowData.tagtemp5,
       totqty: selectedRowData.totqty,
-      usediv: selectedRowData.usediv,
+      sealno: selectedRowData.sealno,
     });
   };
 
@@ -1026,7 +1022,6 @@ const PR_B0020W_628: React.FC = () => {
 
   const onUpdateShlife = () => {};
 
-  console.log(Information);
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -1421,8 +1416,8 @@ const PR_B0020W_628: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ width: "60px" }}>품목명</th>
-                      <td colSpan={2}>
+                      <th style={{width: "10%", minWidth: "50px"}}>품목명</th>
+                      <td>
                         <Input
                           name="itemnm"
                           type="text"
@@ -1430,8 +1425,8 @@ const PR_B0020W_628: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th style={{ width: "60px" }}>규격</th>
-                      <td colSpan={2}>
+                      <th>규격</th>
+                      <td>
                         <Input
                           name="spec"
                           type="text"
@@ -1441,8 +1436,8 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ width: "60px" }}>원산지</th>
-                      <td colSpan={2}>
+                      <th>원산지</th>
+                      <td>
                         <Input
                           name="specnum"
                           type="text"
@@ -1450,8 +1445,8 @@ const PR_B0020W_628: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th style={{ width: "60px" }}>중량</th>
-                      <td colSpan={2}>
+                      <th>중량</th>
+                      <td>
                         <Input
                           name="qty"
                           type="number"
@@ -1461,8 +1456,8 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ width: "60px" }}>식품유형</th>
-                      <td colSpan={2}>
+                      <th>식품유형</th>
+                      <td>
                         <Input
                           name="extra_field1"
                           type="text"
@@ -1470,8 +1465,8 @@ const PR_B0020W_628: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th style={{ width: "60px" }}>성분</th>
-                      <td colSpan={2}>
+                      <th>성분</th>
+                      <td>
                         <Input
                           name="Ingredients"
                           type="text"
@@ -1481,8 +1476,8 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ width: "60px" }}>대리점명</th>
-                      <td colSpan={2}>
+                      <th>대리점명</th>
+                      <td>
                         <Input
                           name="custnm"
                           type="text"
@@ -1490,8 +1485,8 @@ const PR_B0020W_628: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th style={{ width: "60px" }}>납품처명</th>
-                      <td colSpan={2}>
+                      <th>납품처명</th>
+                      <td>
                         <Input
                           name="extra_field6"
                           type="text"
@@ -1501,8 +1496,8 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ width: "60px" }}>제조일자</th>
-                      <td colSpan={2}>
+                      <th>제조일자</th>
+                      <td>
                         <DatePicker
                           name="poregnum"
                           value={Information.poregnum}
@@ -1511,8 +1506,8 @@ const PR_B0020W_628: React.FC = () => {
                           placeholder=""
                         />
                       </td>
-                      <th style={{ width: "60px" }}>포장</th>
-                      <td colSpan={2}>
+                      <th>포장</th>
+                      <td>
                         <Input
                           name="extra_field2"
                           type="text"
@@ -1522,8 +1517,8 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ width: "60px" }}>유통기한</th>
-                      <td colSpan={5}>
+                      <th>유통기한</th>
+                      <td colSpan={3}>
                         <div className="filter-item-wrap">
                           <DatePicker
                             name="extra_field7"
@@ -1547,7 +1542,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <td></td>
-                      <td colSpan={5}>
+                      <td colSpan={3}>
                         {bizComponentData !== null && (
                           <BizComponentRadioGroup
                             name="extra_field3"
@@ -1560,7 +1555,7 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ width: "60px" }}>등급</th>
+                      <th>등급</th>
                       <td>
                         <Input
                           name="dwgno"
@@ -1569,7 +1564,7 @@ const PR_B0020W_628: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th style={{ width: "60px" }}>생산년도</th>
+                      <th>생산년도</th>
                       <td>
                         <Input
                           name="project"
@@ -1578,7 +1573,9 @@ const PR_B0020W_628: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th style={{ width: "60px" }}>형태</th>
+                    </tr>
+                    <tr>
+                      <th>형태</th>
                       <td>
                         <Input
                           name="insiz"
@@ -1589,8 +1586,8 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ width: "60px" }}>인쇄수</th>
-                      <td colSpan={2}>
+                      <th>인쇄수</th>
+                      <td>
                         <Input
                           name="prtqty"
                           type="number"
@@ -1598,8 +1595,8 @@ const PR_B0020W_628: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                      <th style={{ width: "60px" }}>용지구분</th>
-                      <td colSpan={2}>
+                      <th>용지구분</th>
+                      <td>
                         {bizComponentData !== null && (
                           <BizComponentRadioGroup
                             name="sealno"
@@ -1613,7 +1610,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>제조/판매원</th>
-                      <td colSpan={5}>
+                      <td colSpan={3}>
                         <Input
                           name="tagtemp3"
                           type="text"
@@ -1624,7 +1621,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>주의사항</th>
-                      <td colSpan={5}>
+                      <td colSpan={3}>
                         <TextArea
                           name="remark"
                           rows={3}
@@ -1635,7 +1632,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>주소구분</th>
-                      <td colSpan={2}>
+                      <td>
                         {bizComponentData !== null && (
                           <BizComponentComboBox
                             name="addrgb"
