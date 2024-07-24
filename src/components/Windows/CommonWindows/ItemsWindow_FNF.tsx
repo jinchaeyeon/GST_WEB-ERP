@@ -24,9 +24,11 @@ import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isFilterHideState2, isLoading } from "../../../store/atoms";
 import { TPermissions } from "../../../store/types";
+import NumberCell from "../../Cells/NumberCell";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
+  UseGetValueFromSessionItem,
   UsePermissions,
   getHeight,
   getWindowDeviceHeight,
@@ -36,10 +38,9 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import WindowFilterContainer from "../../Containers/WindowFilterContainer";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
 import Window from "../WindowComponent/Window";
-import NumberCell from "../../Cells/NumberCell";
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
-  setVisible(t: boolean): void;
+  Close(): void;
   setData(data: object): void; // 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
   yn?: boolean;
@@ -53,7 +54,7 @@ var height3 = 0;
 
 const ItemWindow_FNF = ({
   workType,
-  setVisible,
+  Close,
   setData,
   modal = false,
   yn = false,
@@ -71,9 +72,9 @@ const ItemWindow_FNF = ({
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [position, setPosition] = useState<IWindowPosition>({
-    left: isMobile == true ? 0 : (deviceWidth - 1500) / 2,
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
     top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
-    width: isMobile == true ? deviceWidth : 1500,
+    width: isMobile == true ? deviceWidth : 1200,
     height: isMobile == true ? deviceHeight : 800,
   });
   const [isFilterHideStates2, setisFilterHideStates2] =
@@ -107,7 +108,7 @@ const ItemWindow_FNF = ({
   const setLoading = useSetRecoilState(isLoading);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "R_USEYN, L_BA061",
+    "L_BA067, R_ITEMTREAT_628, L_BA061",
     //사용여부,
     setBizComponentData
   );
@@ -143,7 +144,7 @@ const ItemWindow_FNF = ({
 
   const onClose = () => {
     setisFilterHideStates2(true);
-    setVisible(false);
+    Close();
   };
 
   const processApi = useApi();
@@ -154,21 +155,19 @@ const ItemWindow_FNF = ({
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const sessionCustcd = UseGetValueFromSessionItem("custcd");
   const [filters, setFilters] = useState({
     itemcd: "",
     itemnm: "",
-    insiz: "",
-    bnatur: "",
+    itemdiv: "",
     spec: "",
+    specsize: "",
+    gubun: "1",
+    itemsts: "",
     itemacnt: "",
-    itemlvl1: "",
-    itemlvl2: "",
-    itemlvl3: "",
-    custcd: "",
-    custnm: "",
-    dwgno: "",
-    useyn: yn == true ? "Y" : yn == false ? "%" : "N",
+    orgdiv: sessionOrgdiv,
+    custcd: sessionCustcd,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -217,17 +216,21 @@ const ItemWindow_FNF = ({
     const parameters = {
       para:
         "popup-data?id=" +
-        "P_ITEMCD" +
+        "P_ITEMCD_W_628" +
         "&page=" +
         filters.pgNum +
         "&pageSize=" +
         filters.pgSize,
       itemcd: filters.itemcd,
       itemnm: filters.itemnm,
-      insiz: filters.insiz,
+      itemdiv: filters.itemdiv,
+      spec: filters.spec,
+      specsize: filters.specsize == "" ? 0 : filters.specsize,
+      gubun: filters.gubun,
+      itemsts: filters.itemsts,
       itemacnt: filters.itemacnt,
-      useyn:
-        filters.useyn == "Y" ? "사용" : filters.useyn == "N" ? "미사용" : "",
+      orgdiv: filters.orgdiv,
+      custcd: filters.custcd,
     };
     try {
       data = await processApi<any>("popup-data", parameters);
@@ -283,13 +286,6 @@ const ItemWindow_FNF = ({
 
   const onRowDoubleClick = (props: any) => {
     const selectedData = props.dataItem;
-    selectData(selectedData);
-  };
-
-  const onConfirmBtnClick = (props: any) => {
-    const selectedData = mainDataResult.data.find(
-      (row: any) => row.itemcd == Object.keys(selectedState)[0]
-    );
     selectData(selectedData);
   };
 
@@ -359,6 +355,18 @@ const ItemWindow_FNF = ({
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
+              <th>품목구분</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="gubun"
+                    value={filters.gubun}
+                    bizComponentId="R_ITEMTREAT_628"
+                    bizComponentData={bizComponentData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
               <th>품목코드</th>
               <td>
                 <Input
@@ -378,16 +386,6 @@ const ItemWindow_FNF = ({
                   onChange={filterInputChange}
                 />
               </td>
-
-              <th>규격</th>
-              <td>
-                <Input
-                  name="insiz"
-                  type="text"
-                  value={filters.insiz}
-                  onChange={filterInputChange}
-                />
-              </td>
               <th>품목계정</th>
               <td>
                 {bizComponentData !== null && (
@@ -400,17 +398,46 @@ const ItemWindow_FNF = ({
                   />
                 )}
               </td>
-              <th>사용여부</th>
+            </tr>
+            <tr>
+              <th>규격</th>
+              <td>
+                <Input
+                  name="specsize"
+                  type="number"
+                  value={filters.specsize}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>상태구분</th>
               <td>
                 {bizComponentData !== null && (
-                  <BizComponentRadioGroup
-                    name="useyn"
-                    value={filters.useyn}
-                    bizComponentId="R_USEYN"
+                  <BizComponentComboBox
+                    name="itemsts"
+                    value={filters.itemsts}
+                    bizComponentId="L_BA067"
                     bizComponentData={bizComponentData}
-                    changeData={filterRadioChange}
+                    changeData={filterComboChange}
                   />
                 )}
+              </td>
+              <th>형태</th>
+              <td>
+                <Input
+                  name="itemdiv"
+                  type="text"
+                  value={filters.itemdiv}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>사이즈</th>
+              <td>
+                <Input
+                  name="spec"
+                  type="text"
+                  value={filters.spec}
+                  onChange={filterInputChange}
+                />
               </td>
             </tr>
           </tbody>
@@ -463,25 +490,35 @@ const ItemWindow_FNF = ({
           <GridColumn
             field="itemcd"
             title="품목코드"
-            width="200px"
+            width="150px"
             footerCell={mainTotalFooterCell}
           />
-          <GridColumn field="itemnm" title="품목명" width="200px" />
-          <GridColumn field="itemtype" title="형태" width="200px" />
-          <GridColumn field="spec" title="사이즈" width="200px" />
-          <GridColumn field="bnatur_insiz" title="규격" width="100px" cell={NumberCell}/>
+          <GridColumn field="itemnm" title="품목명" width="150px" />
+          <GridColumn field="itemtypenm" title="형태" width="120px" />
+          <GridColumn field="spec" title="사이즈" width="150px" />
+          <GridColumn
+            field="bnatur_insiz"
+            title="규격"
+            width="100px"
+            cell={NumberCell}
+          />
           <GridColumn field="itemacntnm" title="계정" width="120px" />
-          <GridColumn field="unitwgt" title="단위중량" width="100px"  cell={NumberCell}/>
-          <GridColumn field="numref1" title="변환계수" width="100px"  cell={NumberCell}/>
+          <GridColumn
+            field="unitwgt"
+            title="단위중량"
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="numref1"
+            title="변환계수"
+            width="100px"
+            cell={NumberCell}
+          />
         </Grid>
       </GridContainer>
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
-          {workType !== "ROWS_ADD" && (
-            <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
-              확인
-            </Button>
-          )}
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>

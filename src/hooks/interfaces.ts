@@ -75,6 +75,8 @@ export interface IItemData {
   itemdiv: string;
   itemtype: string;
   pac: string;
+  taxdiv: string;
+  unpcalmeth: string;
 }
 
 export interface IUnpList {
