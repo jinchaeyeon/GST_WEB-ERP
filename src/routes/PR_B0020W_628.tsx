@@ -103,7 +103,7 @@ const PR_B0020W_628: React.FC = () => {
   UseCustomOption(setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA002_628, L_BA065_628, L_BA066",
+    "R_Shlife,R_Printgb, L_BA002_628, L_BA065_628, L_BA066",
     //수량단위, 발주구분
     setBizComponentData
   );
@@ -371,7 +371,7 @@ const PR_B0020W_628: React.FC = () => {
     ordnum: "",
     ordseq: 0,
     orgdiv: "",
-    poregnum: "",
+    poregnum: null,
     print_pc: "",
     print_userid: "",
     project: "",
@@ -490,7 +490,7 @@ const PR_B0020W_628: React.FC = () => {
           ordnum: "",
           ordseq: 0,
           orgdiv: "",
-          poregnum: "",
+          poregnum: null,
           print_pc: "",
           print_userid: "",
           project: "",
@@ -605,7 +605,7 @@ const PR_B0020W_628: React.FC = () => {
           ordnum: rows[0].ordnum,
           ordseq: rows[0].ordseq,
           orgdiv: rows[0].orgdiv,
-          poregnum: rows[0].poregnum,
+          poregnum: rows[0].poregnum == "" ? null : toDate2(rows[0].poregnum),
           print_pc: rows[0].print_pc,
           print_userid: rows[0].print_userid,
           project: rows[0].project,
@@ -658,7 +658,7 @@ const PR_B0020W_628: React.FC = () => {
           ordnum: "",
           ordseq: 0,
           orgdiv: "",
-          poregnum: "",
+          poregnum: null,
           print_pc: "",
           print_userid: "",
           project: "",
@@ -803,7 +803,10 @@ const PR_B0020W_628: React.FC = () => {
       ordnum: selectedRowData.ordnum,
       ordseq: selectedRowData.ordseq,
       orgdiv: selectedRowData.orgdiv,
-      poregnum: selectedRowData.poregnum,
+      poregnum:
+        selectedRowData.poregnum == ""
+          ? null
+          : toDate2(selectedRowData.poregnum),
       print_pc: selectedRowData.print_pc,
       print_userid: selectedRowData.print_userid,
       project: selectedRowData.project,
@@ -1023,6 +1026,7 @@ const PR_B0020W_628: React.FC = () => {
 
   const onUpdateShlife = () => {};
 
+  console.log(Information);
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -1528,22 +1532,31 @@ const PR_B0020W_628: React.FC = () => {
                             onChange={InputChange}
                             placeholder=""
                           />
-                          {bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="extra_field3"
-                              value={Information.extra_field3}
-                              bizComponentId="R_RTR"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
+                          <div className="filter-item-wrap">
+                            <Input
+                              name="cycletime_min"
+                              type="number"
+                              value={Information.cycletime_min}
+                              onChange={InputChange}
+                              style={{ width: "90%" }}
                             />
-                          )}
-                          <Input
-                            name="cycletime_min"
-                            type="number"
-                            value={Information.cycletime_min}
-                            onChange={InputChange}
-                          />
+                            일
+                          </div>
                         </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td colSpan={5}>
+                        {bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="extra_field3"
+                            value={Information.extra_field3}
+                            bizComponentId="R_Shlife"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                          />
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -1591,7 +1604,7 @@ const PR_B0020W_628: React.FC = () => {
                           <BizComponentRadioGroup
                             name="sealno"
                             value={Information.sealno}
-                            bizComponentId="R_RTR"
+                            bizComponentId="R_Printgb"
                             bizComponentData={bizComponentData}
                             changeData={RadioChange}
                           />
