@@ -83,8 +83,8 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-let valid = true;
-let valid2 = true;
+let valid = false;
+let valid2 = false;
 let temp = 0;
 var height = 0;
 var height2 = 0;
