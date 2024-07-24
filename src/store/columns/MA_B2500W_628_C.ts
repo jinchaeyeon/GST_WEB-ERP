@@ -5,6 +5,12 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList",
     columns: [
       {
+        id: "col_num",
+        field: "num",
+        caption: "#",
+        width: 40,
+      },
+      {
         id: "col_outdt",
         field: "outdt",
         caption: "매입일자",
