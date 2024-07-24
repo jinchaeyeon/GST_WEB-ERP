@@ -2099,7 +2099,7 @@ const MA_B2020W_628: React.FC = () => {
               rowRender={customRowRender}
               editField={EDIT_FIELD}
             >
-              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn field="num" title="#" width="40px" />
               <GridColumn
                 field="chk"
                 title=" "
