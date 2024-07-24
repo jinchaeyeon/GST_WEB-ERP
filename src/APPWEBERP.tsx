@@ -215,6 +215,7 @@ const PR_A7000W = lazy(() => import("./routes/PR_A7000W"));
 const PR_A9000W = lazy(() => import("./routes/PR_A9000W"));
 const PR_A9100W = lazy(() => import("./routes/PR_A9100W"));
 const PR_B0020W = lazy(() => import("./routes/PR_B0020W"));
+const PR_B0020W_628 = lazy(() => import("./routes/PR_B0020W_628"));
 const PR_B1103W = lazy(() => import("./routes/PR_B1103W"));
 const PR_B1104W = lazy(() => import("./routes/PR_B1104W"));
 const PR_B1500W = lazy(() => import("./routes/PR_B1500W"));
@@ -944,6 +945,8 @@ const AppInner: React.FC = () => {
       return PR_A9100W;
     } else if (str == "PR_B0020W") {
       return PR_B0020W;
+    } else if (str == "PR_B0020W_628") {
+      return PR_B0020W_628;
     } else if (str == "PR_B1103W") {
       return PR_B1103W;
     } else if (str == "PR_B1104W") {
@@ -1351,6 +1354,11 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/PR_A9000W" component={PR_A9000W} exact />
                     <AuthRoute path="/PR_A9100W" component={PR_A9100W} exact />
                     <AuthRoute path="/PR_B0020W" component={PR_B0020W} exact />
+                    <AuthRoute
+                      path="/PR_B0020W_628"
+                      component={PR_B0020W_628}
+                      exact
+                    />
                     <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
                     <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
                     <AuthRoute path="/PR_B1500W" component={PR_B1500W} exact />
