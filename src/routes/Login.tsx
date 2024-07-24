@@ -141,38 +141,23 @@ const Login: React.FC = () => {
         const {
           token,
           refreshToken,
+          userId,
+          userName,
+          role,
           companyCode,
           serviceName,
           customerName,
           loginKey,
+          passwordExpirationInfo,
           webTitle,
+          homeMenuWeb,
+          profileImage,
+          userConfig,
           serviceCategory,
           defaultCulture,
-        } = response;
-
-        localStorage.setItem("accessToken", token);
-        localStorage.setItem("refreshToken", refreshToken);
-
-        const response2 = await processApi<any>("profile");
-
-        const {
           custcd,
           custnm,
-          dptcd,
-          dptnm,
-          homeMenuWeb,
-          location,
-          orgdiv,
-          passwordExpirationInfo,
-          position,
-          postcd,
-          postnm,
-          profileImage,
-          role,
-          userId,
-          userName,
-        } = response2;
-
+        } = response;
         if (formData.chk == "Y") {
           localStorage.setItem("userId", userId);
         } else {
@@ -180,6 +165,18 @@ const Login: React.FC = () => {
             localStorage.removeItem("userId");
           }
         }
+        localStorage.setItem("accessToken", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
+        // setAccessToken(token);
+        // const expires = new Date();
+        // expires.setMinutes(expires.getMinutes() + 60);
+        // cookie.save("refreshToken", refreshToken, {
+        //   path: "/",
+        //   expires,
+        //   // secure: true,
+        //   // httpOnly: true,
+        // });
 
         setLoginResult({
           langCode: formData.langCode
@@ -193,13 +190,13 @@ const Login: React.FC = () => {
           customerName,
           loginKey,
           webTitle,
-          homeMenuWeb: homeMenuWeb == undefined ? "" : homeMenuWeb.web,
+          homeMenuWeb,
           profileImage,
-          dptnm,
+          dptnm: userConfig.Rows[6].value,
           serviceCategory,
           defaultCulture,
-          dptcd,
-          position,
+          dptcd: userConfig == undefined ? "" : userConfig.Rows[5].value,
+          position: userConfig == undefined ? "" : userConfig.Rows[4].value,
           custcd,
           custnm,
         });
