@@ -20,8 +20,8 @@ import {
   GridTitle,
   GridTitleContainer,
 } from "../CommonStyled";
-import CenterCell from "../components/Cells/CenterCell";
 import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
 import {
   convertDateToStr,
   getDeviceHeight,
@@ -467,31 +467,31 @@ const Main: React.FC = () => {
                   <GridColumn
                     field="rqty"
                     title="등록"
-                    cell={CenterCell}
+                    cell={NumberCell}
                     width="100px"
                   />
                   <GridColumn
                     field="iqty"
                     title="접수"
-                    cell={CenterCell}
+                    cell={NumberCell}
                     width="100px"
                   />
                   <GridColumn
                     field="cqty"
                     title="취소"
-                    cell={CenterCell}
+                    cell={NumberCell}
                     width="100px"
                   />
                   <GridColumn
                     field="fqty"
                     title="완료"
-                    cell={CenterCell}
+                    cell={NumberCell}
                     width="100px"
                   />
                   <GridColumn
                     field="aqty"
                     title="총건수"
-                    cell={CenterCell}
+                    cell={NumberCell}
                     width="100px"
                   />
                 </Grid>
@@ -610,31 +610,31 @@ const Main: React.FC = () => {
                 <GridColumn
                   field="rqty"
                   title="등록"
-                  cell={CenterCell}
+                  cell={NumberCell}
                   width="100px"
                 />
                 <GridColumn
                   field="iqty"
                   title="접수"
-                  cell={CenterCell}
+                  cell={NumberCell}
                   width="100px"
                 />
                 <GridColumn
                   field="cqty"
                   title="취소"
-                  cell={CenterCell}
+                  cell={NumberCell}
                   width="100px"
                 />
                 <GridColumn
                   field="fqty"
                   title="완료"
-                  cell={CenterCell}
+                  cell={NumberCell}
                   width="100px"
                 />
                 <GridColumn
                   field="aqty"
                   title="총건수"
-                  cell={CenterCell}
+                  cell={NumberCell}
                   width="100px"
                 />
               </Grid>
