@@ -1022,7 +1022,7 @@ const AC_A0000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="법인기본"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1510,7 +1510,7 @@ const AC_A0000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="법인기본"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
