@@ -594,7 +594,7 @@ const MA_B2500W_628: React.FC = () => {
                             : CenterCell
                         }
                         footerCell={
-                          item.sortOrder == 0
+                          item.sortOrder == 1
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell2
