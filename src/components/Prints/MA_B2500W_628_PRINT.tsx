@@ -11,7 +11,7 @@ import {
   dateformat2,
   numberWithCommas,
 } from "../CommonFunction";
-import styles from "./MA_B2020W_628_PRINT.module.css";
+import styles from "./MA_B2500W_628_PRINT.module.css";
 
 const MA_B2500W_628_PRINT = (data: any) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -141,7 +141,7 @@ const MA_B2500W_628_PRINT = (data: any) => {
                     </tr>
                     {mainDataResult.map((item2: any, idx2: number) => (
                       <tr key={item2.rownum}>
-                        <td>{dateformat2(item2.outdt)}</td>
+                        <td style={{ textAlign: "center"}}>{dateformat2(item2.outdt)}</td>
                         <td>{item2.itemnm}</td>
                         <td style={{ textAlign: "center"}}>{item2.qtyunit}</td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
