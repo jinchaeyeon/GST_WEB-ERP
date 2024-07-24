@@ -26,6 +26,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
@@ -34,6 +35,7 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import {
   convertDateToStr,
   findMessage,
+  getBizCom,
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
@@ -41,12 +43,14 @@ import {
   GetPropertyValueByName,
   handleKeyPressSearch,
   setDefaultDate,
+  UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
 } from "../components/CommonFunction";
 import {
+  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
@@ -62,7 +66,6 @@ import { IWindowPosition } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CenterCell from "../components/Cells/CenterCell";
 
 var height = 0;
 var height2 = 0;
@@ -202,6 +205,22 @@ const MA_A2020W_628: React.FC = () => {
     }
   };
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "L_BA065_628",
+    //수량단위, 발주구분
+    setBizComponentData
+  );
+
+  const [originListData, setoriginListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setoriginListData(getBizCom(bizComponentData, "L_BA065_628"));
+    }
+  }, [bizComponentData]);
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -287,7 +306,7 @@ const MA_A2020W_628: React.FC = () => {
     if (
       filters.isSearch &&
       permissions.view &&
-      // bizComponentData !== null &&
+      bizComponentData !== null &&
       customOptionData !== null
     ) {
       const _ = require("lodash");
@@ -299,7 +318,7 @@ const MA_A2020W_628: React.FC = () => {
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, customOptionData]);
+  }, [filters, permissions, customOptionData, bizComponentData]);
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -541,18 +560,20 @@ const MA_A2020W_628: React.FC = () => {
   };
 
   const onCheckClick = () => {
-    const dataItem = mainDataResult.data.filter((item: any) => item.chk == true);
+    const dataItem = mainDataResult.data.filter(
+      (item: any) => item.chk == true
+    );
     if (dataItem.length == 0) return false;
 
     let valid = true;
 
     dataItem.map((item) => {
-      if(item.gubun == "Y") {
+      if (item.gubun == "Y") {
         valid = false;
       }
-    })
+    });
 
-    if(valid != true) {
+    if (valid != true) {
       alert("구분이 확정인 정보는 처리가 불가능합니다.");
       return false;
     }
@@ -560,37 +581,35 @@ const MA_A2020W_628: React.FC = () => {
       orgdiv: [],
       ordnum: [],
       ordseq: [],
-    }
+    };
     dataItem.forEach((item: any, idx: number) => {
-      const {
-        orgdiv ="",
-        ordnum ="",
-        ordseq="",
-      } = item;
+      const { orgdiv = "", ordnum = "", ordseq = "" } = item;
       dataArr.orgdiv.push(orgdiv);
       dataArr.ordnum.push(ordnum);
       dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
-    })
+    });
     setParaData((prev) => ({
       ...prev,
       workType: "Y",
       orgdiv: dataArr.orgdiv.join("|"),
       ordnum: dataArr.ordnum.join("|"),
       ordseq: dataArr.ordseq.join("|"),
-    }))
-  }
+    }));
+  };
 
   const onCloseClick = () => {
-    const dataItem = mainDataResult.data.filter((item: any) => item.chk == true);
+    const dataItem = mainDataResult.data.filter(
+      (item: any) => item.chk == true
+    );
     if (dataItem.length == 0) return false;
     let valid = true;
 
     dataItem.map((item) => {
-      if(item.gubun == "N") {
+      if (item.gubun == "N") {
         valid = false;
       }
-    })
-    if(valid != true) {
+    });
+    if (valid != true) {
       alert("구분이 대기인 정보는 처리가 불가능합니다.");
       return false;
     }
@@ -598,32 +617,28 @@ const MA_A2020W_628: React.FC = () => {
       orgdiv: [],
       ordnum: [],
       ordseq: [],
-    }
+    };
     dataItem.forEach((item: any, idx: number) => {
-      const {
-        orgdiv ="",
-        ordnum ="",
-        ordseq="",
-      } = item;
+      const { orgdiv = "", ordnum = "", ordseq = "" } = item;
       dataArr.orgdiv.push(orgdiv);
       dataArr.ordnum.push(ordnum);
       dataArr.ordseq.push(ordseq == "" ? 0 : ordseq);
-    })
+    });
     setParaData((prev) => ({
       ...prev,
       workType: "N",
       orgdiv: dataArr.orgdiv.join("|"),
       ordnum: dataArr.ordnum.join("|"),
       ordseq: dataArr.ordseq.join("|"),
-    }))
-  }
+    }));
+  };
 
   const [ParaData, setParaData] = useState({
     workType: "",
     orgdiv: "",
     ordnum: "",
     ordseq: "",
-  })
+  });
 
   const para: Iparameters = {
     procedureName: "P_MA_A2020W_628_S",
@@ -862,6 +877,9 @@ const MA_A2020W_628: React.FC = () => {
                     : row.gubun == "Y"
                     ? "확정"
                     : "전체",
+                specnum: originListData.find(
+                  (item: any) => item.sub_code == row.specnum
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
