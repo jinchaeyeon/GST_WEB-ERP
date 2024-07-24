@@ -20,7 +20,7 @@ import "swiper/css";
 import {
   ButtonContainer,
   FilterBox,
-  FormBox,
+  FormBoxFNF,
   FormBoxWrap,
   GridContainer,
   GridContainerWrap,
@@ -1152,7 +1152,7 @@ const PR_B0020W_628: React.FC = () => {
       ) : (
         <>
           <GridContainerWrap>
-            <GridContainer width={"65%"}>
+            <GridContainer width={"55%"}>
               <GridTitleContainer className="ButtonContainer">
                 <GridTitle>요약정보</GridTitle>
                 <ButtonContainer>
@@ -1190,30 +1190,6 @@ const PR_B0020W_628: React.FC = () => {
                     disabled={permissions.save ? false : true}
                   >
                     주소/제조 일괄변경
-                  </Button>
-                  <Button
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="print"
-                    disabled={permissions.print ? false : true}
-                  >
-                    겉지출력
-                  </Button>
-                  <Button
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="print"
-                    disabled={permissions.print ? false : true}
-                  >
-                    속지출력
-                  </Button>
-                  <Button
-                    icon="x"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    disabled={permissions.save ? false : true}
-                  >
-                    출력취소
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
@@ -1308,10 +1284,36 @@ const PR_B0020W_628: React.FC = () => {
                 </Grid>
               </ExcelExport>
             </GridContainer>
-            <GridContainer width={`calc(35% - ${GAP}px)`}>
+            <GridContainer width={`calc(45% - ${GAP}px)`}>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer2">
                   <GridTitle>출력정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="print"
+                      disabled={permissions.print ? false : true}
+                    >
+                      겉지출력
+                    </Button>
+                    <Button
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="print"
+                      disabled={permissions.print ? false : true}
+                    >
+                      속지출력
+                    </Button>
+                    <Button
+                      icon="x"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      출력취소
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult2.data}
@@ -1413,11 +1415,11 @@ const PR_B0020W_628: React.FC = () => {
                     disabled={permissions.save ? false : true}
                   />
                 </ButtonContainer>
-                <FormBox>
+                <FormBoxFNF>
                   <tbody>
                     <tr>
-                      <th style={{width: "10%", minWidth: "50px"}}>품목명</th>
-                      <td>
+                      <th>품목명</th>
+                      <td colSpan={2}>
                         <Input
                           name="itemnm"
                           type="text"
@@ -1426,7 +1428,7 @@ const PR_B0020W_628: React.FC = () => {
                         />
                       </td>
                       <th>규격</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="spec"
                           type="text"
@@ -1437,7 +1439,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>원산지</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="specnum"
                           type="text"
@@ -1446,7 +1448,7 @@ const PR_B0020W_628: React.FC = () => {
                         />
                       </td>
                       <th>중량</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="qty"
                           type="number"
@@ -1457,7 +1459,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>식품유형</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="extra_field1"
                           type="text"
@@ -1466,7 +1468,7 @@ const PR_B0020W_628: React.FC = () => {
                         />
                       </td>
                       <th>성분</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="Ingredients"
                           type="text"
@@ -1477,7 +1479,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>대리점명</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="custnm"
                           type="text"
@@ -1486,7 +1488,7 @@ const PR_B0020W_628: React.FC = () => {
                         />
                       </td>
                       <th>납품처명</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="extra_field6"
                           type="text"
@@ -1497,7 +1499,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>제조일자</th>
-                      <td>
+                      <td colSpan={2}>
                         <DatePicker
                           name="poregnum"
                           value={Information.poregnum}
@@ -1507,7 +1509,7 @@ const PR_B0020W_628: React.FC = () => {
                         />
                       </td>
                       <th>포장</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="extra_field2"
                           type="text"
@@ -1518,7 +1520,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>유통기한</th>
-                      <td colSpan={3}>
+                      <td colSpan={5}>
                         <div className="filter-item-wrap">
                           <DatePicker
                             name="extra_field7"
@@ -1542,7 +1544,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <td></td>
-                      <td colSpan={3}>
+                      <td colSpan={5}>
                         {bizComponentData !== null && (
                           <BizComponentRadioGroup
                             name="extra_field3"
@@ -1573,8 +1575,6 @@ const PR_B0020W_628: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
-                    </tr>
-                    <tr>
                       <th>형태</th>
                       <td>
                         <Input
@@ -1587,7 +1587,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>인쇄수</th>
-                      <td>
+                      <td colSpan={2}>
                         <Input
                           name="prtqty"
                           type="number"
@@ -1596,7 +1596,7 @@ const PR_B0020W_628: React.FC = () => {
                         />
                       </td>
                       <th>용지구분</th>
-                      <td>
+                      <td colSpan={2}>
                         {bizComponentData !== null && (
                           <BizComponentRadioGroup
                             name="sealno"
@@ -1610,7 +1610,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>제조/판매원</th>
-                      <td colSpan={3}>
+                      <td colSpan={5}>
                         <Input
                           name="tagtemp3"
                           type="text"
@@ -1621,7 +1621,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>주의사항</th>
-                      <td colSpan={3}>
+                      <td colSpan={5}>
                         <TextArea
                           name="remark"
                           rows={3}
@@ -1632,7 +1632,7 @@ const PR_B0020W_628: React.FC = () => {
                     </tr>
                     <tr>
                       <th>주소구분</th>
-                      <td>
+                      <td colSpan={2}>
                         {bizComponentData !== null && (
                           <BizComponentComboBox
                             name="addrgb"
@@ -1645,7 +1645,7 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                   </tbody>
-                </FormBox>
+                </FormBoxFNF>
               </FormBoxWrap>
             </GridContainer>
           </GridContainerWrap>

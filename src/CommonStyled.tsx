@@ -406,6 +406,62 @@ export const FormBox = styled.table`
   }
 `;
 
+
+export const FormBoxFNF = styled.table`
+  /* line-height: 1.5; */
+  /* border: solid 1px #d7d7d7;
+  background-color: #fff; */
+  width: 100%;
+
+  tr th + td {
+    min-height: 40px;
+  }
+  tr th {
+    /* background-color: #f5f5f8;
+    border: solid 1px #d7d7d7; */
+    color: #333333;
+    font-weight: 400;
+    font-size: 13px;
+    text-align: right;
+    vertical-align: middle;
+    padding-right: 10px;
+    padding-left: 7px;
+    text-align: right;
+  }
+  tr td {
+    /* background-color: #ffffff;
+    border: solid 1px #d7d7d7; */
+    text-align: center;
+    padding: 5px;
+    position: relative;
+    vertical-align: middle;
+  }
+  .filter-item-wrap {
+    display: flex;
+    align-items: center;
+  }
+  .k-radio-list.k-list-horizontal {
+    justify-content: center;
+    border: solid 1px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+  }
+  @media (max-width: 1200px) {
+    tr {
+      display: flex;
+      flex-direction: column;
+    }
+    tr th,
+    tr td {
+      width: 100%;
+      border: none;
+    }
+    tr th {
+      min-height: 35px;
+      line-height: 35px;
+    }
+  }
+`;
+
 type TGridContainerWrap = {
   flexDirection?: "column" | "row" | "row-reverse" | "column-reverse";
   maxWidth?: string | number;
