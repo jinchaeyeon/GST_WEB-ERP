@@ -62,6 +62,7 @@ import { IWindowPosition } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import CenterCell from "../components/Cells/CenterCell";
 
 var height = 0;
 var height2 = 0;
@@ -919,7 +920,7 @@ const MA_A2020W_628: React.FC = () => {
                             ? DateCell
                             : floatField.includes(item.fieldName)
                             ? NumberCommaCell
-                            : undefined
+                            : CenterCell
                         }
                         footerCell={
                           item.sortOrder == 0

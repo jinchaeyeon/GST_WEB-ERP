@@ -82,6 +82,7 @@ import { IItemData, IWindowPosition } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import CenterCell from "../components/Cells/CenterCell";
 
 let valid = false;
 let valid2 = false;
@@ -2126,7 +2127,7 @@ const MA_B2020W_628: React.FC = () => {
                               ? ColumnCommandCell
                               : floatfield.includes(item.fieldName)
                               ? NumberFloatCell
-                              : undefined
+                              : CenterCell
                           }
                           headerCell={
                             requiredField.includes(item.fieldName)
