@@ -21,7 +21,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
@@ -58,12 +58,13 @@ import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2500W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import NumberFloatCell from "../components/Cells/NumberFloatCell";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 
 const dateField = ["outdt"];
 const numberField = ["wonamt", "taxamt", "totamt"];
 const floatfield = ["qty", "hsqty"];
 const floatfield2 = ["unp"];
-const floatfield3 = [ "bnatur_insiz"];
+const floatfield3 = ["bnatur_insiz"];
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
@@ -129,7 +130,7 @@ const MA_B2500W_628: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),      
+        todt: setDefaultDate(customOptionData, "todt"),
         isSearch: true,
       }));
     }
@@ -197,7 +198,6 @@ const MA_B2500W_628: React.FC = () => {
       [name]: value,
     }));
   };
-
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -380,14 +380,17 @@ const MA_B2500W_628: React.FC = () => {
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) => {
-      if (props.field !== undefined && item["total_" + props.field] !== undefined) {
+      if (
+        props.field !== undefined &&
+        item["total_" + props.field] !== undefined
+      ) {
         sum = parseFloat(item["total_" + props.field]) || 0;
       }
     });
-  
+
     let roundedSum = sum.toFixed(2); // 소수점 둘째 자리까지 표시
     var parts = roundedSum.toString().split(".");
-  
+
     return !isNaN(parseFloat(roundedSum)) ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -474,23 +477,19 @@ const MA_B2500W_628: React.FC = () => {
 
   const CustomNumberCell = (props: any) => {
     let value = props.dataItem[props.field];
-    let integerValue = Math.round(value); 
-    
+    let integerValue = Math.round(value);
+
     return (
-      <td style={{ textAlign: 'right' }}>
-        {integerValue.toLocaleString()} 
-      </td>
+      <td style={{ textAlign: "right" }}>{integerValue.toLocaleString()}</td>
     );
   };
 
   const CustomFloatCell = (props: any) => {
     let value = props.dataItem[props.field];
-    let floatValue = parseFloat(value).toFixed(1); 
-    
+    let floatValue = parseFloat(value).toFixed(1);
+
     return (
-      <td style={{ textAlign: 'right' }}>
-        {floatValue.toLocaleString()}
-      </td>
+      <td style={{ textAlign: "right" }}>{floatValue.toLocaleString()}</td>
     );
   };
 
@@ -515,20 +514,22 @@ const MA_B2500W_628: React.FC = () => {
             <tr>
               <th>매입일자</th>
               <td>
-                <CommonDateRangePicker
-                  value={{
-                    start: filters.frdt,
-                    end: filters.todt,
-                  }}
-                  onChange={(e: { value: { start: any; end: any } }) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      frdt: e.value.start,
-                      todt: e.value.end,
-                    }))
-                  }
-                  className="required"
-                />
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <DatePicker
+                    name="frdt"
+                    value={filters.frdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+                  <DatePicker
+                    name="todt"
+                    value={filters.todt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+                </div>
               </td>
               <th>형태</th>
               <td>
@@ -584,7 +585,7 @@ const MA_B2500W_628: React.FC = () => {
                 ...row,
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code == row.qtyunit
-                )?.code_name,            
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState

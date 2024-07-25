@@ -2177,20 +2177,23 @@ const PR_B0020W_628: React.FC = () => {
             <tr>
               <th>일자</th>
               <td>
-                <CommonDateRangePicker
-                  value={{
-                    start: filters.frdt,
-                    end: filters.todt,
-                  }}
-                  onChange={(e: { value: { start: any; end: any } }) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      frdt: e.value.start,
-                      todt: e.value.end,
-                    }))
-                  }
-                  className="required"
-                />
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <DatePicker
+                    name="frdt"
+                    value={filters.frdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+
+                  <DatePicker
+                    name="todt"
+                    value={filters.todt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+                </div>
               </td>
               <th>자타사구분</th>
               <td>
