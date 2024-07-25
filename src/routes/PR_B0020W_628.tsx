@@ -66,6 +66,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import PrintComponent2 from "../components/Prints/PR_B0020W_628_in_PRINT";
 import PrintComponent from "../components/Prints/PR_B0020W_628_out_PRINT";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -174,7 +175,8 @@ const PR_B0020W_628: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        load_place: defaultOption.find((item: any) => item.id == "load_place")?.valueCode,
+        load_place: defaultOption.find((item: any) => item.id == "load_place")
+          ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         prodiv: defaultOption.find((item: any) => item.id == "prodiv")
           ?.valueCode,
@@ -1559,18 +1561,67 @@ const PR_B0020W_628: React.FC = () => {
   };
 
   const printComponentRef = useRef(null);
+  const printComponentRef2 = useRef(null);
 
   const handlePrint = useReactToPrint({
     content: () => printComponentRef.current,
+  });
+  const handlePrint2 = useReactToPrint({
+    content: () => printComponentRef2.current,
   });
 
   const onInPrint = () => {
     if (!permissions.print) return;
     if (!permissions.save) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true);
-    let valid = true;
+    if (datas.length > 0) {
+      //그리드 데이터 조회
+      const fetchMainGrid3 = async (filters3: any) => {
+        if (!permissions.view) return;
+        let data: any;
+        setLoading(true);
+        //조회조건 파라미터
+        const parameters: Iparameters = {
+          procedureName: "P_PR_B0020W_628_Q",
+          pageNumber: 1,
+          pageSize: PAGE_SIZE,
+          parameters: {
+            "@p_work_type": "Q2",
+            "@p_orgdiv": filters3.orgdiv,
+            "@p_custcd": "",
+            "@p_frdt": "",
+            "@p_todt": "",
+            "@p_custnm2": "",
+            "@p_itemsts": "",
+            "@p_location": "",
+            "@p_prodiv": "",
+            "@p_finyn": "",
+            "@p_kind": "",
+            "@p_itemnm": "",
+            "@p_load_place": "",
+            "@p_ordnum": filters3.ordnum,
+            "@p_ordseq": filters3.ordseq,
+            "@p_find_row_value": "",
+          },
+        };
+        try {
+          data = await processApi<any>("procedure", parameters);
+        } catch (error) {
+          data = null;
+        }
 
-    if (valid == true) {
+        if (data.isSuccess == true) {
+          const totalRowCnt = data.tables[0].TotalRowCount;
+          const rows = data.tables[0].Rows.map((item: any) => ({
+            ...item,
+          }));
+          let array = rows.filter(
+            (item: { sealno: string }) => item.sealno == "2"
+          );
+          setList((prev) => [...prev, ...array]);
+        }
+        setLoading(false);
+      };
       let dataArr: TdataArr = {
         ordnum_s: [],
         ordseq_s: [],
@@ -1579,11 +1630,18 @@ const PR_B0020W_628: React.FC = () => {
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", itemcd = "" } = item;
+        const { orgdiv= "", ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
         dataArr.seq_s.push("2");
+        const filters3 = {
+          orgdiv: orgdiv,
+          ordnum: ordnum,
+          ordseq: ordseq,
+          pgNum: 1,
+        };
+        fetchMainGrid3(filters3);
       });
 
       setParaData((prev) => ({
@@ -1595,6 +1653,8 @@ const PR_B0020W_628: React.FC = () => {
         itemcd_s: dataArr.itemcd_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),
       }));
+    } else {
+      alert("데이터가 없습니다.");
     }
   };
 
@@ -1801,7 +1861,13 @@ const PR_B0020W_628: React.FC = () => {
 
     if (data.isSuccess == true) {
       if (ParaData.workType == "print") {
-        handlePrint();
+        console.log(ParaData.seq_s);
+        console.log(ParaData.seq_s.charAt(0));
+        if(ParaData.seq_s.charAt(0) == "1") {
+          handlePrint();
+        } else {
+          handlePrint2();
+        }
       }
       setFilters((prev) => ({
         ...prev,
@@ -2280,6 +2346,9 @@ const PR_B0020W_628: React.FC = () => {
                   >
                     속지출력
                   </Button>
+                  <div style={{ display: "none" }}>
+                    <PrintComponent2 ref={printComponentRef2} data={list} />
+                  </div>
                   <Button
                     onClick={onCancel}
                     icon="x"

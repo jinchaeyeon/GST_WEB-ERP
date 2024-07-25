@@ -1,10 +1,5 @@
-import { forwardRef, useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
-import { useApi } from "../../hooks/api";
-import { isLoading } from "../../store/atoms";
-import { Iparameters, TPermissions } from "../../store/types";
-import { dateformat4, UsePermissions } from "../CommonFunction";
-import { PAGE_SIZE } from "../CommonString";
+import { forwardRef } from "react";
+import { dateformat4 } from "../CommonFunction";
 import styles from "./PR_B0020W_628_out_PRINT.module.css";
 
 interface PrintComponentProps {
@@ -91,7 +86,7 @@ const PrintComponent = forwardRef<HTMLDivElement, PrintComponentProps>(
                           </span>
                         </span>
                         <span>
-                          소비가한 :{" "}
+                          소비기한 :{" "}
                           <span style={{ fontWeight: "bold" }}>
                             {item.extra_field3 === "9"
                               ? "별도표기"
