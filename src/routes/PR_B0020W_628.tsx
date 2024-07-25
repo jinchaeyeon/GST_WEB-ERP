@@ -111,7 +111,7 @@ const PR_B0020W_628: React.FC = () => {
   const sessionCustcd = UseGetValueFromSessionItem("custcd");
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const sessionpc = UseGetValueFromSessionItem("pc");
-  const [addstate, setAddstate] = useState(false);
+  const [addstate, setAddstate] = useState(true);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
@@ -1392,6 +1392,7 @@ const PR_B0020W_628: React.FC = () => {
         workType: "",
         stddt: "",
       });
+      setAddstate(true);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1423,6 +1424,7 @@ const PR_B0020W_628: React.FC = () => {
         pgNum: 1,
         find_row_value: data.returnString,
       }));
+      setAddstate(true);
       setParaData2({
         workType: "",
         orgdiv: sessionOrgdiv,
