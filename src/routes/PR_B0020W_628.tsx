@@ -76,7 +76,7 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 type TdataArr = {
   ordnum_s: string[];
   ordseq_s: string[];
-  addrgb_s: string[];
+  itemcd_s: string[];
 };
 let targetRowIndex: null | number = null;
 const DATA_ITEM_KEY = "num";
@@ -487,7 +487,7 @@ const PR_B0020W_628: React.FC = () => {
 
   const [Information2, setInformation2] = useState<{ [name: string]: any }>({
     shlife: null,
-    addr: "",
+    addr: "1",
   });
 
   //그리드 데이터 조회
@@ -1209,6 +1209,9 @@ const PR_B0020W_628: React.FC = () => {
 
     if (Information2.addr == "" && Information2.addr == null) {
       valid = false;
+    } else if (datas.length == 0) {
+      alert("선택된 데이터가 없습니다.");
+      return false;
     }
     if (valid == false) {
       alert("주소/제조를 선택해주세요.");
@@ -1219,23 +1222,23 @@ const PR_B0020W_628: React.FC = () => {
       let dataArr: TdataArr = {
         ordnum_s: [],
         ordseq_s: [],
-        addrgb_s: [],
+        itemcd_s: [],
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", addrgb = "" } = item;
-
+        const { ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
-        dataArr.addrgb_s.push(addrgb);
+        dataArr.itemcd_s.push(itemcd);
       });
 
       setParaData((prev) => ({
         ...prev,
         workType: "addr",
+        addrgb: Information2.addr,
         ordnum_s: dataArr.ordnum_s.join("|"),
         ordseq_s: dataArr.ordseq_s.join("|"),
-        addrgb_s: dataArr.addrgb_s.join("|"),
+        itemcd_s: dataArr.itemcd_s.join("|"),
       }));
     }
   };
@@ -1243,6 +1246,7 @@ const PR_B0020W_628: React.FC = () => {
   const onUpdateShlife = async () => {
     if (!permissions.save) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true);
+    console.log(datas);
     let valid = true;
 
     if (
@@ -1261,7 +1265,10 @@ const PR_B0020W_628: React.FC = () => {
       valid = false;
     }
     if (valid == false) {
-      alert("유통기한을 입력해주세요.");
+      alert("소비기한을 입력해주세요.");
+      return false;
+    } else if (datas.length == 0) {
+      alert("선택된 데이터가 없습니다.");
       return false;
     }
 
@@ -1269,23 +1276,23 @@ const PR_B0020W_628: React.FC = () => {
       let dataArr: TdataArr = {
         ordnum_s: [],
         ordseq_s: [],
-        addrgb_s: [],
+        itemcd_s: [],
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", addrgb = "" } = item;
-
+        const { ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
-        dataArr.addrgb_s.push(addrgb);
+        dataArr.itemcd_s.push(itemcd);
       });
 
       setParaData((prev) => ({
         ...prev,
         workType: "shlife",
+        stddt: convertDateToStr(Information2.shlife),
         ordnum_s: dataArr.ordnum_s.join("|"),
         ordseq_s: dataArr.ordseq_s.join("|"),
-        addrgb_s: dataArr.addrgb_s.join("|"),
+        itemcd_s: dataArr.itemcd_s.join("|"),
       }));
     }
   };
@@ -1295,8 +1302,9 @@ const PR_B0020W_628: React.FC = () => {
     orgdiv: sessionOrgdiv,
     ordnum_s: "",
     ordseq_s: "",
-    addrgb_s: "",
-    stddt: convertDateToStr(Information2.shlife),
+    itemcd_s: "",
+    addrgb: "",
+    stddt: "",
   });
 
   const [ParaData2, setParaData2] = useState({
@@ -1326,13 +1334,18 @@ const PR_B0020W_628: React.FC = () => {
     parameters: {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": ParaData.orgdiv,
-      "@p_ordnum": ParaData.ordnum_s,
-      "@p_ordseq": ParaData.ordseq_s,
-      "@p_addrgb": ParaData.addrgb_s,
-      "@stddt": ParaData.stddt,
+      "@p_ordnum_s": ParaData.ordnum_s,
+      "@p_ordseq_s": ParaData.ordseq_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_addrgb": ParaData.addrgb,
+      "@p_stddt": ParaData.stddt,
+      "@p_form_id": "PR_B0020W_628",
+      "@p_userid": sessionUserId,
+      "@p_pc": sessionpc,
     },
   };
-
+  console.log(Information2.shlife);
+  console.log(ParaData);
   const para2: Iparameters = {
     procedureName: "P_PR_B0020W_628_S",
     pageNumber: 0,
@@ -1361,11 +1374,11 @@ const PR_B0020W_628: React.FC = () => {
     },
   };
 
-  // useEffect(() => {
-  //   if (permissions.save) {
-  //     fetchTodoGridSaved();
-  //   }
-  // }, [ParaData, permissions]);
+  useEffect(() => {
+    if (permissions.save && ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData, permissions]);
 
   const fetchTodoGridSaved = async () => {
     if (!permissions.save) return;
@@ -1386,9 +1399,10 @@ const PR_B0020W_628: React.FC = () => {
       }));
       setParaData({
         orgdiv: sessionOrgdiv,
-        addrgb_s: "",
+        addrgb: "",
         ordnum_s: "",
         ordseq_s: "",
+        itemcd_s: "",
         workType: "",
         stddt: "",
       });
@@ -1603,7 +1617,7 @@ const PR_B0020W_628: React.FC = () => {
                     themeColor={"primary"}
                     disabled={permissions.save ? false : true}
                   >
-                    유통기한 일괄변경
+                    소비기한 일괄변경
                   </Button>
                   <div style={{ padding: "4px", marginLeft: "5px" }}>
                     {customOptionData !== null && (
@@ -1974,7 +1988,7 @@ const PR_B0020W_628: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>유통기한</th>
+                      <th>소비기한</th>
                       <td colSpan={5}>
                         <div className="filter-item-wrap">
                           <DatePicker
