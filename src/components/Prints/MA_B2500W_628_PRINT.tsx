@@ -74,6 +74,16 @@ const MA_B2500W_628_PRINT = (data: any) => {
 
   const componentRef = useRef(null);
 
+// 숫자를 포맷하는 함수
+const formatNumber = (numStr: string) => {
+  const parsedNum = parseFloat(numStr);
+  if (isNaN(parsedNum)) return "0.00";
+  const flooredNum = Math.floor(parsedNum * 100) / 100;
+  const formattedNum = flooredNum.toFixed(2);
+
+  return formattedNum.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
   return (
     <LandscapePrint>
       <ButtonContainer>
@@ -145,19 +155,19 @@ const MA_B2500W_628_PRINT = (data: any) => {
                         <td>{item2.itemnm}</td>
                         <td style={{ textAlign: "center"}}>{item2.qtyunit}</td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.qty)}
+                        {formatNumber(item2.qty)}
                         </td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
                           {numberWithCommas(item2.unp)}
                         </td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.wonamt)}
+                          {numberWithCommas(Math.trunc(item2.wonamt))}
                         </td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.taxamt)}
+                          {numberWithCommas(Math.trunc(item2.taxamt))}
                         </td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.totamt)}
+                          {numberWithCommas(Math.trunc(item2.totamt))}
                         </td>
                         <td>{item2.rcvcustnm}</td>
                         <td>{item2.specnum}</td>
@@ -169,23 +179,23 @@ const MA_B2500W_628_PRINT = (data: any) => {
                       <td></td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_qty)
+                          ? formatNumber(mainDataResult[0].total_qty)
                           : 0}
                       </td>
                       <td></td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_wonamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_wonamt))
                           : 0}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_taxamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_taxamt))
                           : 0}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_totamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_totamt))
                           : 0}
                       </td>
                       <td></td>
