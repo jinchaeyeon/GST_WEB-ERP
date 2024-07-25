@@ -1,13 +1,14 @@
 @media print {
-
   @page {
-    size: portrait;
-    margin-top: 1cm;
-    margin-right: 1cm;
-    margin-bottom: 0cm;
-    margin-left: 1cm;
-  }
+    .printable2 {
+      size: landscape
+    }
 
+    .printable1 {
+      size: portrait
+    }
+  }  
+  
   html,
   body {
     border: 0;
@@ -20,15 +21,11 @@
     margin: 0;
     display: none;
   }
-
 }
 
 .printable1 {
   background-color: #fff;
   width: 10.1cm;
-  white-space: nowrap;
-  overflow: hidden;
-
 
   .container-grid {
     margin-top: 10px;
@@ -267,7 +264,9 @@
     list-style: none;
   }
 
-  #printable2 {
+  /*************************************** 속지 ***************************************/
+
+  .printable2 {
     background-color: #fff;
     width: 21cm;
   }
@@ -369,27 +368,15 @@
     display: inline-block;
   }
 
-  .tag-table {
+  .tag_table {
     width: 10.1cm;
     height: 11cm;
     padding: .2cm;
     page-break-before: always;
   }
 
-  #printable2 .tag-table {
-    width: 21cm;
-    height: 9cm;
-    padding: .2cm;
-    page-break-before: always;
-    position: relative;
-    /*
-	-ms-transform: rotate(90deg); /* IE 9 
-	transform: rotate(90deg);	
-	-webkit-transform: rotate(90deg);  /*사파리, 크롬, 오페라 브라우저 사용*/
-  }
-
   /*************************************** 겉지 - 좌측테이블 ***************************************/
-  #printable2 ul:nth-child(1) {
+  .printable2 ul:nth-child(1) {
     -ms-transform: rotate(90deg);
     /* IE 9 */
     transform: rotate(90deg);
@@ -401,131 +388,131 @@
     width: 8cm;
   }
 
-  #printable2 ul:nth-child(1) li:nth-child(1) span {
+  .printable2 ul:nth-child(1) li:nth-child(1) span {
     font-size: 32px;
     font-weight: 500;
   }
 
-  #printable2 ul:nth-child(1) li:nth-child(2) span {
+  .printable2 ul:nth-child(1) li:nth-child(2) span {
     font-size: 24px;
   }
 
-  #printable2 ul:nth-child(1) li:nth-child(3) span {
+  .printable2 ul:nth-child(1) li:nth-child(3) span {
     font-size: 24px;
     font-weight: bold;
   }
 
-  #printable2 ul:nth-child(1) li:nth-child(4) span {
+  .printable2 ul:nth-child(1) li:nth-child(4) span {
     font-size: 24px;
   }
 
-  #printable2 ul:nth-child(1) li:nth-child(5) span {
+  .printable2 ul:nth-child(1) li:nth-child(5) span {
     font-size: 32px;
     font-weight: bold;
   }
 
-  #printable2 ul:nth-child(1) li:nth-child(6),
-  #printable2 ul:nth-child(1) li:nth-child(7) {
+  .printable2 ul:nth-child(1) li:nth-child(6),
+  .printable2 ul:nth-child(1) li:nth-child(7) {
     height: .6cm;
   }
 
-  #printable2 ul:nth-child(1) li:nth-child(6) span,
-  #printable2 ul:nth-child(1) li:nth-child(7) span {
+  .printable2 ul:nth-child(1) li:nth-child(6) span,
+  .printable2 ul:nth-child(1) li:nth-child(7) span {
     font-size: 16px;
   }
 
   /*************************************** 겉지 - 우측테이블 ***************************************/
-  #printable2 ul:nth-child(2) li:nth-child(1),
-  #printable2 ul:nth-child(2) li:nth-child(2),
-  #printable2 ul:nth-child(2) li:nth-child(3),
-  #printable2 ul:nth-child(2) li:nth-child(4) {
+  .printable2 ul:nth-child(2) li:nth-child(1),
+  .printable2 ul:nth-child(2) li:nth-child(2),
+  .printable2 ul:nth-child(2) li:nth-child(3),
+  .printable2 ul:nth-child(2) li:nth-child(4) {
     margin-left: 2cm;
   }
 
-  #printable2 ul:nth-child(2) {
+  .printable2 ul:nth-child(2) {
     padding-left: 6.5cm;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(1) span {
+  .printable2 ul:nth-child(2) li:nth-child(1) span {
     font-size: 1.9em;
     font-weight: 900;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(2) span {
+  .printable2 ul:nth-child(2) li:nth-child(2) span {
     font-size: 28px;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(3)>span:nth-child(1) {
+  .printable2 ul:nth-child(2) li:nth-child(3)>span:nth-child(1) {
     display: inline-block;
     font-size: 20px;
     font-weight: bold;
     width: 6cm;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(3)>span:nth-child(2) {
+  .printable2 ul:nth-child(2) li:nth-child(3)>span:nth-child(2) {
     font-size: 20px;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(3)>span:nth-child(2) span {
+  .printable2 ul:nth-child(2) li:nth-child(3)>span:nth-child(2) span {
     font-size: 20px;
   }
 
 
-  #printable2 ul:nth-child(2) li:nth-child(4)>span:nth-child(1),
-  #printable2 ul:nth-child(2) li:nth-child(4)>span:nth-child(2) {
+  .printable2 ul:nth-child(2) li:nth-child(4)>span:nth-child(1),
+  .printable2 ul:nth-child(2) li:nth-child(4)>span:nth-child(2) {
     font-size: 20px;
 
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(4)>span:nth-child(1) {
+  .printable2 ul:nth-child(2) li:nth-child(4)>span:nth-child(1) {
     width: 6.5cm;
     display: inline-block;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) {
+  .printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) {
     display: inline-block;
     vertical-align: top;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) span {
+  .printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) span {
     font-size: 18px;
     vertical-align: top;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(2) {
+  .printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(2) {
     display: inline-block;
     float: right;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(2)>span {
+  .printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(2)>span {
     display: block;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(6) span {
+  .printable2 ul:nth-child(2) li:nth-child(6) span {
     font-size: 18px;
   }
 
 
-  #printable2 ul:nth-child(2) li:nth-child(6)>span:last-child {
+  .printable2 ul:nth-child(2) li:nth-child(6)>span:last-child {
     font-size: 16px;
     float: right;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(6)>span:nth-child(1) {
+  .printable2 ul:nth-child(2) li:nth-child(6)>span:nth-child(1) {
     display: inline-block;
     width: 5.5cm;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(8)>span:nth-child(2) {
+  .printable2 ul:nth-child(2) li:nth-child(8)>span:nth-child(2) {
     float: right;
   }
 
-  #printable2 ul:nth-child(2) li:nth-child(7),
-  #printable2 ul:nth-child(2) li:nth-child(8),
-  #printable2 ul:nth-child(2) li:nth-child(9),
-  #printable2 ul:nth-child(2) li:nth-child(10),
-  #printable2 ul:nth-child(2) li:nth-child(11),
-  #printable2 ul:nth-child(2) li:nth-child(12) {
+  .printable2 ul:nth-child(2) li:nth-child(7),
+  .printable2 ul:nth-child(2) li:nth-child(8),
+  .printable2 ul:nth-child(2) li:nth-child(9),
+  .printable2 ul:nth-child(2) li:nth-child(10),
+  .printable2 ul:nth-child(2) li:nth-child(11),
+  .printable2 ul:nth-child(2) li:nth-child(12) {
     height: .4cm;
   }
 
@@ -575,8 +562,8 @@
     text-align: center;
   }
 
-
-  #printable2 {
+  /*태그 글자수 넘칠시 자르기*/
+  .printable2 {
     white-space: nowrap;
     overflow: hidden;
   }
@@ -593,7 +580,7 @@
   .logo {
     width: 55px;
     position: absolute;
-    padding: 5px 10px;
+    margin: 5px 15px;
   }
 
   .filterlist_inner .k-dropdown {
@@ -629,7 +616,7 @@
     width: 110px !important;
   }
 
-  #printable2 li:last-child {
+  .printable2 li:last-child {
     overflow: inherit;
     word-wrap: break-word;
     /*white-space: break-spaces;*/
@@ -664,25 +651,25 @@
   }
 
   .ingred1,
-  #printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) .ingred1,
+  .printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) .ingred1,
   .ingred1 {
     font-size: 18px;
   }
 
   .ingred2,
-  #printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) .ingred2,
+  .printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) .ingred2,
   .ingred2 {
     font-size: 15px;
   }
 
   .ingred3,
-  #printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) .ingred3,
+  .printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) .ingred3,
   .ingred3 {
     font-size: 13px;
   }
 
   .ingred4,
-  #printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) .ingred4,
+  .printable2 ul:nth-child(2) li:nth-child(5) div:nth-child(1) .ingred4,
   .ingred4 {
     font-size: 11.8px;
   }

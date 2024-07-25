@@ -22,24 +22,26 @@ const PrintComponent = forwardRef<HTMLDivElement, PrintComponentProps>(
                     </li>
                     <li>
                       사이즈:
-                      <span>{item.ordsiz}</span>
-                      <span>{item.insiz}</span>
+                      <span>
+                        {item.ordsiz}
+                        {item.insiz}
+                      </span>
                     </li>
                     <li>
                       원산지:
                       <span>{item.specnum}</span>
-                      <div className="right">
+                      <div className={styles.right}>
                         내용량: <span>{`${item.qty}${item.qtyunit}`}</span>
                       </div>
                     </li>
                     <li>
                       <span>{item.tagtemp5}</span>
-                      <div className="right">
+                      <div className={styles.right}>
                         <span>{`(총 ${item.totqty}${item.qtyunit})`}</span>
                       </div>
                     </li>
                     <li>
-                      <div className="right">
+                      <div className={styles.right}>
                         품질등급: <span>{item.dwgno}</span>
                       </div>
                     </li>
@@ -51,20 +53,26 @@ const PrintComponent = forwardRef<HTMLDivElement, PrintComponentProps>(
                     </li>
                     <li>
                       제조(포장) :
-                      <span className="right">
-                        {" "}
+                      <span className={styles.right}>
                         {dateformat4(item.poregnum)}
                       </span>
+                      {item.color == "Y" ? (
+                        <div className={styles.logo}>
+                          <img src={`/HACCP.jpg`} style={{width: "100%"}}/>
+                        </div>
+                      ) : (
+                        ""
+                      )}
                       <span>{item.ba030t_remark}</span>
                     </li>
                     <li>
                       소비기한:
-                      <span style={{ fontWeight: "bold" }}>
+                      <span>
                         {item.extra_field3 === "9"
                           ? "별도표기"
                           : `${dateformat4(item.extra_field7)}까지`}
                       </span>
-                      <div className="right">
+                      <div className={styles.right}>
                         생산년도: <span>{item.project}</span>
                       </div>
                     </li>

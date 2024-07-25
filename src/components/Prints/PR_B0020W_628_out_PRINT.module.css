@@ -1,7 +1,14 @@
 @media print {
 
   @page {
-    size: landscape;
+    .printable2 {
+      size: landscape
+    }
+
+    .printable1 {
+      size: portrait
+    }
+
     margin-top: 1cm;
     margin-right: 1cm;
     margin-bottom: 0cm;
@@ -263,10 +270,11 @@
   li {
     list-style: none;
   }
-  
+
   ul:nth-child(1) li {
     line-height: 40px;
   }
+
   ul:nth-child(2) li {
     line-height: 36px;
   }
