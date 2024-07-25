@@ -133,6 +133,7 @@ const KendoWindow = ({ setVisible, setData, data }: TKendoWindow) => {
                         ? "13px"
                         : "11.8px",
                   }}
+                  disabled={true}
                 />
               </td>
             </tr>
@@ -142,9 +143,6 @@ const KendoWindow = ({ setVisible, setData, data }: TKendoWindow) => {
       <BottomContainer className="BottomContainer">
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={selectData}>
-            저장
-          </Button>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기
           </Button>
         </ButtonContainer>
