@@ -141,6 +141,7 @@ const CM_A3000W: React.FC = () => {
   const dptcd = UseGetValueFromSessionItem("dptcd");
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
+  const sessionCustcd = UseGetValueFromSessionItem("custcd");
   var index = 0;
 
   let deviceWidth = document.documentElement.clientWidth;
@@ -1447,20 +1448,39 @@ const CM_A3000W: React.FC = () => {
             <tr>
               <th>작성일</th>
               <td>
-                <CommonDateRangePicker
-                  value={{
-                    start: filters.recdt_s,
-                    end: filters.recdt_e,
-                  }}
-                  onChange={(e: { value: { start: any; end: any } }) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      recdt_s: e.value.start,
-                      recdt_e: e.value.end,
-                    }))
-                  }
-                  className="required"
-                />
+                {sessionCustcd == "05190" ? (
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <DatePicker
+                      name="recdt_s"
+                      value={filters.recdt_s}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
+                      className="required"
+                    />
+                    <DatePicker
+                      name="recdt_e"
+                      value={filters.recdt_e}
+                      format="yyyy-MM-dd"
+                      onChange={filterInputChange}
+                      className="required"
+                    />
+                  </div>
+                ) : (
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.recdt_s,
+                      end: filters.recdt_e,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        recdt_s: e.value.start,
+                        recdt_e: e.value.end,
+                      }))
+                    }
+                    className="required"
+                  />
+                )}
               </td>
               <th>부서코드</th>
               {localdptcd != "" ? (

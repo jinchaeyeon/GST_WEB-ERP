@@ -66,6 +66,7 @@ import { IWindowPosition } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 
 var height = 0;
 var height2 = 0;
@@ -713,20 +714,22 @@ const MA_A2020W_628: React.FC = () => {
             <tr>
               <th>납기일자</th>
               <td>
-                <CommonDateRangePicker
-                  value={{
-                    start: filters.frdt,
-                    end: filters.todt,
-                  }}
-                  onChange={(e: { value: { start: any; end: any } }) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      frdt: e.value.start,
-                      todt: e.value.end,
-                    }))
-                  }
-                  className="required"
-                />
+              <div style={{ display: "flex", gap: "10px" }}>
+                  <DatePicker
+                    name="frdt"
+                    value={filters.frdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+                  <DatePicker
+                    name="todt"
+                    value={filters.todt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+                </div>
               </td>
               <th>구분</th>
               <td>

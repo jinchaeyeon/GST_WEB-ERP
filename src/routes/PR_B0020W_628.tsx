@@ -65,7 +65,6 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import PrintComponent from "../components/Prints/PR_B0020W_628_out_PRINT";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -174,7 +173,8 @@ const PR_B0020W_628: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        load_place: defaultOption.find((item: any) => item.id == "load_place")?.valueCode,
+        load_place: defaultOption.find((item: any) => item.id == "load_place")
+          ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         prodiv: defaultOption.find((item: any) => item.id == "prodiv")
           ?.valueCode,
@@ -2111,20 +2111,23 @@ const PR_B0020W_628: React.FC = () => {
             <tr>
               <th>일자</th>
               <td>
-                <CommonDateRangePicker
-                  value={{
-                    start: filters.frdt,
-                    end: filters.todt,
-                  }}
-                  onChange={(e: { value: { start: any; end: any } }) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      frdt: e.value.start,
-                      todt: e.value.end,
-                    }))
-                  }
-                  className="required"
-                />
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <DatePicker
+                    name="frdt"
+                    value={filters.frdt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+
+                  <DatePicker
+                    name="todt"
+                    value={filters.todt}
+                    format="yyyy-MM-dd"
+                    onChange={filterInputChange}
+                    className="required"
+                  />
+                </div>
               </td>
               <th>자타사구분</th>
               <td>
