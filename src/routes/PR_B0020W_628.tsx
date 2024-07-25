@@ -14,7 +14,7 @@ import {
   GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -78,7 +78,7 @@ type TdataArr = {
   ordseq_s: string[];
   addrgb_s: string[];
 };
-
+let targetRowIndex: null | number = null;
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 var height = 0;
@@ -92,6 +92,7 @@ const numberField = ["qty", "sqty", "specsize", "prtqty"];
 const numberField2 = ["qty", "sqty"];
 
 const PR_B0020W_628: React.FC = () => {
+  let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -108,6 +109,9 @@ const PR_B0020W_628: React.FC = () => {
   UsePermissions(setPermissions);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionCustcd = UseGetValueFromSessionItem("custcd");
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  const sessionpc = UseGetValueFromSessionItem("pc");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
@@ -311,6 +315,70 @@ const PR_B0020W_628: React.FC = () => {
     }
   };
 
+  const resetAllGrid = () => {
+    setPage(initialPageState);
+    setPage2(initialPageState);
+    setMainDataResult(process([], mainDataState));
+    setMainDataResult2(process([], mainDataState2));
+    setInformation({
+      workType: "N",
+      Ingredients: "",
+      addrgb: "",
+      addrgb_addr: "",
+      addrgb_custnm: "",
+      color: "",
+      custnm: "",
+      cycletime_min: 0,
+      dwgno: "",
+      extra_field1: "",
+      extra_field2: "",
+      extra_field3: "",
+      extra_field5: "",
+      extra_field6: "",
+      extra_field7: null,
+      ingredgb: "",
+      insiz: "",
+      itemnm: "",
+      itemnm2: "",
+      maker: "",
+      moddt: "",
+      ordnum: "",
+      ordseq: 0,
+      orgdiv: "",
+      poregnum: null,
+      print_pc: "",
+      print_userid: "",
+      project: "",
+      prtdt: null,
+      prtqty: 0,
+      qty: 0,
+      qtyunit: "",
+      rcvcustnm2: "",
+      remark: "",
+      remark1: "",
+      saler: "",
+      seq: 0,
+      spec: "",
+      specnum: "",
+      subaddr: "",
+      sublc: "",
+      subnm: "",
+      tagarea: "",
+      tagtemp1: "",
+      tagtemp2: "",
+      tagtemp3: "",
+      tagtemp4: "",
+      tagtemp5: "",
+      totqty: 10,
+      sealno: "",
+    });
+
+    setInformation2({
+      shlife: null,
+      addr: "",
+    });
+  };
+
   const search = () => {
     try {
       if (
@@ -328,6 +396,7 @@ const PR_B0020W_628: React.FC = () => {
       ) {
         throw findMessage(messagesData, "PR_B0020W_628_001");
       } else {
+        resetAllGrid();
         setFilters((prev) => ({
           ...prev,
           isSearch: true,
@@ -445,6 +514,7 @@ const PR_B0020W_628: React.FC = () => {
         "@p_itemnm": filters.itemnm,
         "@p_ordnum": "",
         "@p_ordseq": 0,
+        "@p_find_row_value": filters.find_row_value,
       },
     };
     try {
@@ -458,7 +528,26 @@ const PR_B0020W_628: React.FC = () => {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.ordkey == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -467,18 +556,75 @@ const PR_B0020W_628: React.FC = () => {
       });
 
       if (totalRowCnt > 0) {
-        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.ordkey == filters.find_row_value);
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          if (selectedRow.cnt > 0) {
+            setFilters2((prev) => ({
+              ...prev,
+              orgdiv: selectedRow.orgdiv,
+              ordnum: selectedRow.ordnum,
+              ordseq: selectedRow.ordseq,
+              isSearch: true,
+              pgNum: 1,
+            }));
+          } else {
+            setParaData2({
+              workType: "N",
+              orgdiv: sessionOrgdiv,
+              dlvdt: selectedRow.dlvdt,
+              ordsiz: selectedRow.ordsiz,
+              custnm: selectedRow.custnm,
+              itemcd: selectedRow.itemcd,
+              rcvcustnm: selectedRow.rcvcustnm,
+              specsize: selectedRow.specsize,
+              qty: selectedRow.qty,
+              custabbr: selectedRow.custabbr,
+              itemsts: selectedRow.itemsts,
+              itemdiv: selectedRow.itemdiv,
+              inspecsize: selectedRow.inspecsize,
+              custcd: selectedRow.custcd,
 
-        if (rows[0].cnt > 0) {
-          setFilters2((prev) => ({
-            ...prev,
-            orgdiv: rows[0].orgdiv,
-            ordnum: rows[0].ordnum,
-            ordseq: rows[0].ordseq,
-            isSearch: true,
-            pgNum: 1,
-          }));
+              ordnum: selectedRow.ordnum,
+              ordseq: selectedRow.ordseq,
+            });
+          }
         } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+
+          if (rows[0].cnt > 0) {
+            setFilters2((prev) => ({
+              ...prev,
+              orgdiv: rows[0].orgdiv,
+              ordnum: rows[0].ordnum,
+              ordseq: rows[0].ordseq,
+              isSearch: true,
+              pgNum: 1,
+            }));
+          } else {
+            setParaData2({
+              workType: "N",
+              orgdiv: sessionOrgdiv,
+              dlvdt: rows[0].dlvdt,
+              ordsiz: rows[0].ordsiz,
+              custnm: rows[0].custnm,
+              itemcd: rows[0].itemcd,
+              rcvcustnm: rows[0].rcvcustnm,
+              specsize: rows[0].specsize,
+              qty: rows[0].qty,
+              custabbr: rows[0].custabbr,
+              itemsts: rows[0].itemsts,
+              itemdiv: rows[0].itemdiv,
+              inspecsize: rows[0].inspecsize,
+              custcd: rows[0].custcd,
+
+              ordnum: rows[0].ordnum,
+              ordseq: rows[0].ordseq,
+            });
+          }
         }
       } else {
         setInformation({
@@ -571,6 +717,7 @@ const PR_B0020W_628: React.FC = () => {
         "@p_itemnm": filters.itemnm,
         "@p_ordnum": filters2.ordnum,
         "@p_ordseq": filters2.ordseq,
+        "@p_find_row_value": "",
       },
     };
     try {
@@ -773,6 +920,25 @@ const PR_B0020W_628: React.FC = () => {
         pgNum: 1,
       }));
     } else {
+      setParaData2({
+        workType: "N",
+        orgdiv: sessionOrgdiv,
+        dlvdt: selectedRowData.dlvdt,
+        ordsiz: selectedRowData.ordsiz,
+        custnm: selectedRowData.custnm,
+        itemcd: selectedRowData.itemcd,
+        rcvcustnm: selectedRowData.rcvcustnm,
+        specsize: selectedRowData.specsize,
+        qty: selectedRowData.qty,
+        custabbr: selectedRowData.custabbr,
+        itemsts: selectedRowData.itemsts,
+        itemdiv: selectedRowData.itemdiv,
+        inspecsize: selectedRowData.inspecsize,
+        custcd: selectedRowData.custcd,
+
+        ordnum: selectedRowData.ordnum,
+        ordseq: selectedRowData.ordseq,
+      });
     }
   };
 
@@ -1132,6 +1298,26 @@ const PR_B0020W_628: React.FC = () => {
     stddt: convertDateToStr(Information2.shlife),
   });
 
+  const [ParaData2, setParaData2] = useState({
+    workType: "",
+    orgdiv: sessionOrgdiv,
+    dlvdt: "",
+    ordsiz: "",
+    custnm: "",
+    itemcd: "",
+    rcvcustnm: "",
+    specsize: 0,
+    qty: 0,
+    custabbr: "",
+    itemsts: "",
+    itemdiv: "",
+    inspecsize: 0,
+    custcd: "",
+
+    ordnum: "",
+    ordseq: 0,
+  });
+
   const para: Iparameters = {
     procedureName: "P_PR_B0020W_628_Sub1_S",
     pageNumber: 0,
@@ -1143,6 +1329,34 @@ const PR_B0020W_628: React.FC = () => {
       "@p_ordseq": ParaData.ordseq_s,
       "@p_addrgb": ParaData.addrgb_s,
       "@stddt": ParaData.stddt,
+    },
+  };
+
+  const para2: Iparameters = {
+    procedureName: "P_PR_B0020W_628_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData2.workType,
+      "@p_orgdiv": ParaData2.orgdiv,
+      "@p_dlvdt": ParaData2.dlvdt,
+      "@p_spec": ParaData2.ordsiz,
+      "@p_custnm": ParaData2.custnm,
+      "@p_itemcd": ParaData2.itemcd,
+      "@p_rcvcustnm": ParaData2.rcvcustnm,
+      "@p_specsize": ParaData2.specsize,
+      "@p_qty": ParaData2.qty,
+      "@p_custabbr": ParaData2.custabbr,
+      "@p_itemsts": ParaData2.itemsts,
+      "@p_itemdiv": ParaData2.itemdiv,
+      "@p_inspecsize": ParaData2.inspecsize,
+      "@p_custcd": ParaData2.custcd,
+
+      "@p_ordnum": ParaData2.ordnum,
+      "@p_ordseq": ParaData2.ordseq,
+
+      "@p_userid": sessionUserId,
+      "@p_pc": sessionpc,
     },
   };
 
@@ -1176,6 +1390,56 @@ const PR_B0020W_628: React.FC = () => {
         ordseq_s: "",
         workType: "",
         stddt: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (permissions.save && ParaData2.workType != "") {
+      fetchTodoGridSaved2();
+    }
+  }, [ParaData2, permissions]);
+
+  const fetchTodoGridSaved2 = async () => {
+    if (!permissions.save) return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setParaData2({
+        workType: "",
+        orgdiv: sessionOrgdiv,
+        dlvdt: "",
+        ordsiz: "",
+        custnm: "",
+        itemcd: "",
+        rcvcustnm: "",
+        specsize: 0,
+        qty: 0,
+        custabbr: "",
+        itemsts: "",
+        itemdiv: "",
+        inspecsize: 0,
+        custcd: "",
+
+        ordnum: "",
+        ordseq: 0,
       });
     } else {
       console.log("[오류 발생]");
@@ -1985,6 +2249,8 @@ const PR_B0020W_628: React.FC = () => {
                   take={page.take}
                   pageable={true}
                   onPageChange={pageChange}
+                  ref={gridRef}
+                  rowHeight={30}
                   //정렬기능
                   sortable={true}
                   onSortChange={onMainSortChange}
