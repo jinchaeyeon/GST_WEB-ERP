@@ -536,7 +536,7 @@ const MA_A2020W_628: React.FC = () => {
         if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = item;
           newData2.rowstatus = "D";
-          setDeletedMainRows([...deletedMainRows, newData2]);
+          setDeletedMainRows((prev) => [...prev, newData2]);
         }
         Object.push(index);
       }
