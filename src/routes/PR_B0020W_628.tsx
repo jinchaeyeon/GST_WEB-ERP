@@ -379,11 +379,16 @@ const PR_B0020W_628: React.FC = () => {
       totqty: 10,
       sealno: "",
     });
-
-    setInformation2({
-      shlife: null,
-      addr: "",
-    });
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+      setInformation2({
+        shlife: null,
+        addr: defaultOption.find((item: any) => item.id == "addr")?.valueCode,
+      });
+    }
   };
 
   const search = () => {
