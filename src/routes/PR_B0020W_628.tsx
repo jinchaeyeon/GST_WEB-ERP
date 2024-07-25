@@ -1379,11 +1379,11 @@ const PR_B0020W_628: React.FC = () => {
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", itemcd = "", sealno = "" } = item;
+        const { ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
-        dataArr.seq_s.push(sealno);
+        dataArr.seq_s.push("1");
       });
 
       setParaData((prev) => ({
@@ -1413,11 +1413,11 @@ const PR_B0020W_628: React.FC = () => {
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", itemcd = "", sealno = "" } = item;
+        const { ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
-        dataArr.seq_s.push(sealno);
+        dataArr.seq_s.push("2");
       });
 
       setParaData((prev) => ({
