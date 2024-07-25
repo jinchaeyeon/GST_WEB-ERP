@@ -323,8 +323,7 @@ const AC_B6080W_628: React.FC = () => {
     var parts = parseFloat(sum).toString().split(".");
     return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       </td>
     ) : (
       <td></td>
@@ -391,6 +390,17 @@ const AC_B6080W_628: React.FC = () => {
     } else {
       alert("데이터가 없습니다.");
     }
+  };
+
+  const CustomNumberCell = (props: any) => {
+    let value = props.dataItem[props.field];
+    let integerValue = Math.trunc(value); 
+    
+    return (
+      <td style={{ textAlign: 'right' }}>
+        {integerValue.toLocaleString()} 
+      </td>
+    );
   };
 
   return (
@@ -500,7 +510,7 @@ const AC_B6080W_628: React.FC = () => {
                           dateField.includes(item.fieldName)
                             ? CenterCell
                             : numberField.includes(item.fieldName)
-                            ? NumberCell
+                            ? CustomNumberCell
                             : undefined
                         }
                         footerCell={

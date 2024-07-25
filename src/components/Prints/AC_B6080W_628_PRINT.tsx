@@ -136,22 +136,22 @@ const AC_B6080W_628_PRINT = (data: any) => {
                       <tr key={item2.rownum}>
                         <td>{item2.ym}월</td>                    
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.iwlamt)}
+                          {numberWithCommas(Math.trunc(item2.iwlamt))}
                         </td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.wonamt)}
+                          {numberWithCommas(Math.trunc(item2.wonamt))}
                         </td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.taxamt)}
+                          {numberWithCommas(Math.trunc(item2.taxamt))}
                         </td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.totamt)}
+                          {numberWithCommas(Math.trunc(item2.totamt))}
                         </td>
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.colamt)}
+                          {numberWithCommas(Math.trunc(item2.colamt))}
                         </td>  
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.janamt)}
+                          {numberWithCommas(Math.trunc(item2.janamt))}
                         </td>
                       </tr>
                     ))}
@@ -159,32 +159,32 @@ const AC_B6080W_628_PRINT = (data: any) => {
                       <td>합 계</td>                      
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_iwlamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_iwlamt))
                           : 0}
                       </td>                    
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_wonamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_wonamt))
                           : 0}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_taxamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_taxamt))
                           : 0}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_totamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_totamt))
                           : 0}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_colamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_colamt))
                           : 0}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
                         {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_janamt)
+                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_janamt))
                           : 0}
                       </td>
                     </tr>
