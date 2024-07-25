@@ -1987,7 +1987,9 @@ const PR_B0020W_628: React.FC = () => {
   };
 
   const onTextAreaClick = () => {
-    setTextAreaWindowVisible(true);
+    if (mainDataResult.total > 0) {
+      setTextAreaWindowVisible(true);
+    }
   };
 
   return (
