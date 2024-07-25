@@ -710,7 +710,7 @@ const MA_B2500W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="매입현황조회"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

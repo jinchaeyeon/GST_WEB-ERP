@@ -1526,7 +1526,7 @@ const CM_A3000W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 hierarchy={true}
-                fileName="자료실"
+                fileName={getMenuName()}
               >
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>자료리스트</GridTitle>
@@ -1585,7 +1585,7 @@ const CM_A3000W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export2 = exporter)}
                 data={subDataResult.data}
-                fileName="자료실"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -1922,7 +1922,7 @@ const CM_A3000W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 hierarchy={true}
-                fileName="자료실"
+                fileName={getMenuName()}
               >
                 <GridTitleContainer className="ButtonContainer">
                   <GridTitle>자료리스트</GridTitle>
@@ -1963,7 +1963,7 @@ const CM_A3000W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export2 = exporter)}
                 data={subDataResult.data}
-                fileName="자료실"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}

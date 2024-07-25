@@ -1369,7 +1369,7 @@ const HU_A1060W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="증명서발급"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight }}
@@ -1569,7 +1569,7 @@ const HU_A1060W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="증명서발급"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}

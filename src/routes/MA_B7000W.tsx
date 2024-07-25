@@ -1142,7 +1142,7 @@ const MA_B7000: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="재고조회"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1257,7 +1257,7 @@ const MA_B7000: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="재고조회"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1360,7 +1360,7 @@ const MA_B7000: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="재고조회"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1450,7 +1450,7 @@ const MA_B7000: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="재고조회"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1545,7 +1545,7 @@ const MA_B7000: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="재고조회"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -1627,7 +1627,7 @@ const MA_B7000: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="재고조회"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}

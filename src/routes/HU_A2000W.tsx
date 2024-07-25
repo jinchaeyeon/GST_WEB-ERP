@@ -1073,7 +1073,7 @@ const HU_A2000W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="워크캘린더"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

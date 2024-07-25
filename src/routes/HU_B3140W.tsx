@@ -1760,7 +1760,7 @@ const HU_B3140W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="급상여분석정보"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight : webheight }}
@@ -1847,7 +1847,7 @@ const HU_B3140W: React.FC = () => {
                 _export2 = exporter;
               }}
               group={group}
-              fileName="급상여분석정보"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight2 : webheight2 }}
@@ -1959,7 +1959,7 @@ const HU_B3140W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="급상여분석정보"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight3 }}
@@ -2047,7 +2047,7 @@ const HU_B3140W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="급상여분석정보"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight4 }}
@@ -2125,7 +2125,7 @@ const HU_B3140W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="급상여분석정보"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight3 }}
@@ -2195,7 +2195,7 @@ const HU_B3140W: React.FC = () => {
                   ref={(exporter) => {
                     _export4 = exporter;
                   }}
-                  fileName="급상여분석정보"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight4 }}
@@ -2269,7 +2269,7 @@ const HU_B3140W: React.FC = () => {
               ref={(exporter) => {
                 _export5 = exporter;
               }}
-              fileName="급상여분석정보"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight5 : webheight5 }}
@@ -2338,7 +2338,7 @@ const HU_B3140W: React.FC = () => {
               ref={(exporter) => {
                 _export6 = exporter;
               }}
-              fileName="급상여분석정보"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight6 : webheight6 }}

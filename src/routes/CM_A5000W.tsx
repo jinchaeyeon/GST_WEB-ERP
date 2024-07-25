@@ -2065,7 +2065,7 @@ const CM_A5000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="컨설팅(문의·답변)관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

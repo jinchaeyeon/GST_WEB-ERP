@@ -1080,7 +1080,7 @@ const MA_B2800W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="발주대비입고현황"
+            fileName={getMenuName()}
           >
             <Grid
               style={{ height: !isMobile ? webheight : mobileheight }}

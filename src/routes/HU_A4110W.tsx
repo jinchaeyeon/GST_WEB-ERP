@@ -1232,7 +1232,7 @@ const HU_A4110W: React.FC = () => {
                       ref={(exporter) => {
                         _export = exporter;
                       }}
-                      fileName="POINT ZONE"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -1372,7 +1372,7 @@ const HU_A4110W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="POINT ZONE"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1573,7 +1573,7 @@ const HU_A4110W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="POINT ZONE"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight2 }}
@@ -1690,7 +1690,7 @@ const HU_A4110W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="POINT ZONE"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight3 }}

@@ -963,7 +963,7 @@ const HU_A2040W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="일근태업로드"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

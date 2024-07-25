@@ -2534,7 +2534,7 @@ const BA_A0040: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="품목관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -2954,7 +2954,7 @@ const BA_A0040: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="품목관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -3252,7 +3252,7 @@ const BA_A0040: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="품목관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}
@@ -3693,7 +3693,7 @@ const BA_A0040: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="품목관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight4 }}

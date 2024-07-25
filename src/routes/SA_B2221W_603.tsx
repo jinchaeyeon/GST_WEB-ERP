@@ -887,7 +887,7 @@ const SA_B2221: React.FC = () => {
                       ref={(exporter) => {
                         _export = exporter;
                       }}
-                      fileName="수주집계(품목)"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -996,7 +996,7 @@ const SA_B2221: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="수주집계(품목)"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -1226,7 +1226,7 @@ const SA_B2221: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="수주집계(품목)"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -1672,7 +1672,7 @@ const SA_B2221: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="수주집계(품목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -1755,7 +1755,7 @@ const SA_B2221: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="수주집계(품목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -1904,7 +1904,7 @@ const SA_B2221: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="수주집계(품목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}

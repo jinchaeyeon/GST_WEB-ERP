@@ -1505,7 +1505,7 @@ const CR_A0010W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="고객관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

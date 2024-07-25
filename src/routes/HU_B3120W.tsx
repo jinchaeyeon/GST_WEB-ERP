@@ -1245,7 +1245,7 @@ const HU_B3120W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="개인별 명세"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight }}
@@ -1401,7 +1401,7 @@ const HU_B3120W: React.FC = () => {
                             ref={(exporter) => {
                               _export2 = exporter;
                             }}
-                            fileName="개인별 명세"
+                            fileName={getMenuName()}
                           >
                             <Grid
                               style={{
@@ -1506,7 +1506,7 @@ const HU_B3120W: React.FC = () => {
                             ref={(exporter) => {
                               _export3 = exporter;
                             }}
-                            fileName="개인별 명세"
+                            fileName={getMenuName()}
                           >
                             <Grid
                               style={{
@@ -1691,7 +1691,7 @@ const HU_B3120W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="개인별 명세"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}
@@ -1850,7 +1850,7 @@ const HU_B3120W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="개인별 명세"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}
@@ -1927,7 +1927,7 @@ const HU_B3120W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="개인별 명세"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}

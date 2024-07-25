@@ -915,7 +915,7 @@ const AC_A5020W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="세금계산서확정"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

@@ -662,7 +662,7 @@ const HU_A6000W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="일용직 인사관리"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

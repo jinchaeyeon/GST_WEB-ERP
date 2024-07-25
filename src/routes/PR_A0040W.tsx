@@ -1916,7 +1916,7 @@ const PR_A0040W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="표준공정도"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -2037,7 +2037,7 @@ const PR_A0040W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="표준공정도"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -2220,7 +2220,7 @@ const PR_A0040W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="표준공정도"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -2346,7 +2346,7 @@ const PR_A0040W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="표준공정도"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -2440,7 +2440,7 @@ const PR_A0040W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="표준공정도"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -2607,7 +2607,7 @@ const PR_A0040W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="표준공정도"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}

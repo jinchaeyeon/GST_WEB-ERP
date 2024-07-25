@@ -1126,7 +1126,7 @@ const AC_A1000W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="대체전표"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

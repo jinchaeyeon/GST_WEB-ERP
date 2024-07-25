@@ -695,7 +695,7 @@ const MA_B2700W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="요약정보"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

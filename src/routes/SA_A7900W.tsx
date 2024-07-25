@@ -1511,7 +1511,7 @@ const SA_A7900W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="미수금/미지급 기초등록"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight : webheight }}
@@ -1605,7 +1605,7 @@ const SA_A7900W: React.FC = () => {
             ref={(exporter) => {
               _export2 = exporter;
             }}
-            fileName="미수금/미지급 기초등록"
+            fileName={getMenuName()}
           >
             <Grid
               style={{ height: isMobile ? mobileheight2 : webheight2 }}

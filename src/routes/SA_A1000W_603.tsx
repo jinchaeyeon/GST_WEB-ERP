@@ -4748,7 +4748,7 @@ const SA_A1000W_603: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="프로젝트관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -6059,7 +6059,7 @@ const SA_A1000W_603: React.FC = () => {
                         ref={(exporter) => {
                           _export2 = exporter;
                         }}
-                        fileName="프로젝트관리"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{
@@ -7271,7 +7271,7 @@ const SA_A1000W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="프로젝트관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -7852,7 +7852,7 @@ const SA_A1000W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="프로젝트관리"
+                    fileName={getMenuName()}
                   >
                     <GridTitleContainer className="ButtonContainer6">
                       <GridTitle>
@@ -7987,7 +7987,7 @@ const SA_A1000W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export4 = exporter;
                       }}
-                      fileName="프로젝트관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight10 }}
@@ -8098,7 +8098,7 @@ const SA_A1000W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export5 = exporter;
                     }}
-                    fileName="프로젝트관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight11 }}
@@ -8201,7 +8201,7 @@ const SA_A1000W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export6 = exporter;
                     }}
-                    fileName="프로젝트관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight12 }}
@@ -8675,7 +8675,7 @@ const SA_A1000W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="프로젝트관리"
+                      fileName={getMenuName()}
                     >
                       <GridTitleContainer className="ButtonContainer6">
                         <GridTitle>코멘트</GridTitle>
@@ -8755,7 +8755,7 @@ const SA_A1000W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export4 = exporter;
                       }}
-                      fileName="프로젝트관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight4 }}
@@ -8834,7 +8834,7 @@ const SA_A1000W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export5 = exporter;
                       }}
-                      fileName="프로젝트관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight5 }}
@@ -8920,7 +8920,7 @@ const SA_A1000W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export6 = exporter;
                       }}
-                      fileName="프로젝트관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight6 }}
@@ -9037,7 +9037,7 @@ const SA_A1000W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export7 = exporter;
                     }}
-                    fileName="프로젝트관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight13 }}
@@ -9166,7 +9166,7 @@ const SA_A1000W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export7 = exporter;
                     }}
-                    fileName="프로젝트관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight7 }}

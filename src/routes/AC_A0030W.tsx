@@ -1853,7 +1853,7 @@ const AC_A0030W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="계정관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }} //76vh
@@ -2332,7 +2332,7 @@ const AC_A0030W: React.FC = () => {
                           ref={(exporter) => {
                             _export2 = exporter;
                           }}
-                          fileName="계정관리"
+                          fileName={getMenuName()}
                         >
                           <Grid
                             style={{
@@ -2508,7 +2508,7 @@ const AC_A0030W: React.FC = () => {
                         ref={(exporter) => {
                           _export3 = exporter;
                         }}
-                        fileName="계정관리"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{
@@ -2634,7 +2634,7 @@ const AC_A0030W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="계정관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -3042,7 +3042,7 @@ const AC_A0030W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="계정관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }} // 65
@@ -3204,7 +3204,7 @@ const AC_A0030W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="계정관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}

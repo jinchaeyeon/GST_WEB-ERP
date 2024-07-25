@@ -1097,7 +1097,7 @@ const PS_A0060W_301: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="휴일관리"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

@@ -715,7 +715,7 @@ const PR_B0020W: React.FC = () => {
                   _export = exporter;
                 }}
                 group={group}
-                fileName="바코드 출력"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -938,7 +938,7 @@ const PR_B0020W: React.FC = () => {
                   _export = exporter;
                 }}
                 group={group}
-                fileName="바코드 출력"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}

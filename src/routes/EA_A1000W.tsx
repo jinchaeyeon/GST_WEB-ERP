@@ -2192,7 +2192,7 @@ const EA_A1000: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="결재라인지정"
+                fileName={getMenuName()}
               >
                 <Grid
                   data={process(
@@ -2359,7 +2359,7 @@ const EA_A1000: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="결재라인지정"
+                fileName={getMenuName()}
               >
                 <Grid
                   data={process(
@@ -2513,7 +2513,7 @@ const EA_A1000: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="결재라인지정"
+                fileName={getMenuName()}
               >
                 <Grid
                   data={process(
@@ -2630,7 +2630,7 @@ const EA_A1000: React.FC = () => {
                 ref={(exporter) => {
                   _export4 = exporter;
                 }}
-                fileName="결재라인지정"
+                fileName={getMenuName()}
               >
                 <Grid
                   data={process(
@@ -2758,7 +2758,7 @@ const EA_A1000: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="결재라인지정"
+                fileName={getMenuName()}
               >
                 <Grid
                   data={process(
@@ -2900,7 +2900,7 @@ const EA_A1000: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="결재라인지정"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     data={process(
@@ -3029,7 +3029,7 @@ const EA_A1000: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="결재라인지정"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       data={process(
@@ -3132,7 +3132,7 @@ const EA_A1000: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="결재라인지정"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       data={process(

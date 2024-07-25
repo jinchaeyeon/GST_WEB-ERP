@@ -1628,7 +1628,7 @@ const AC_A1040W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="지출결의서-자동전표"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1783,7 +1783,7 @@ const AC_A1040W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="지출결의서-자동전표"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -1889,7 +1889,7 @@ const AC_A1040W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="지출결의서-자동전표"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -2030,7 +2030,7 @@ const AC_A1040W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="지출결의서-자동전표"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

@@ -558,7 +558,7 @@ const HU_B3180W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="출퇴근부_월별"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

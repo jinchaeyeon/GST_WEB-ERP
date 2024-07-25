@@ -689,7 +689,7 @@ const AC_A3100W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="고정자산MASTER"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

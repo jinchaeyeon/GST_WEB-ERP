@@ -1355,7 +1355,7 @@ const Page: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="공통코드정보"
+                  fileName={getMenuName()}
                   group={group}
                 >
                   <Grid
@@ -1446,7 +1446,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   data={detailDataResult.data}
-                  fileName="공통코드정보"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1667,7 +1667,7 @@ const Page: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="공통코드정보"
+                fileName={getMenuName()}
                 group={group}
               >
                 <Grid
@@ -1742,7 +1742,7 @@ const Page: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export2 = exporter)}
                 data={detailDataResult.data}
-                fileName="공통코드정보"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}

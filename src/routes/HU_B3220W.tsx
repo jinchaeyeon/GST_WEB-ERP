@@ -868,7 +868,7 @@ const HU_B3220W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="사회보험현황집계표"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -946,7 +946,7 @@ const HU_B3220W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="사회보험현황집계표"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1034,7 +1034,7 @@ const HU_B3220W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="사회보험현황집계표"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -1098,7 +1098,7 @@ const HU_B3220W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="사회보험현황집계표"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

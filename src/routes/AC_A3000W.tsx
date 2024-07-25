@@ -680,7 +680,7 @@ const AC_A3000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="감가상각비현황"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -772,7 +772,7 @@ const AC_A3000W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="감가상각비현황"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -863,7 +863,7 @@ const AC_A3000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="감가상각비현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -941,7 +941,7 @@ const AC_A3000W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="감가상각비현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

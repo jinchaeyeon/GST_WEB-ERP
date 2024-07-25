@@ -1658,7 +1658,7 @@ const PR_A9100W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="재공품기초재고등록"
+            fileName={getMenuName()}
           >
             <Grid
               style={{ height: isMobile ? mobileheight : webheight }}

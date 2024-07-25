@@ -783,7 +783,7 @@ const MA_B3100: React.FC = () => {
                       ref={(exporter) => {
                         _export = exporter;
                       }}
-                      fileName="매입집계(품목)"
+                      fileName={getMenuName()}
                     >
                       <GridTitleContainer className="ButtonContainer">
                         <ButtonContainer
@@ -898,7 +898,7 @@ const MA_B3100: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="매입집계(품목)"
+                      fileName={getMenuName()}
                     >
                       <GridTitleContainer className="ButtonContainer">
                         <ButtonContainer>
@@ -1139,7 +1139,7 @@ const MA_B3100: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="매입집계(품목)"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -1591,7 +1591,7 @@ const MA_B3100: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="매입집계(품목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -1677,7 +1677,7 @@ const MA_B3100: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="매입집계(품목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -1824,7 +1824,7 @@ const MA_B3100: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="매입집계(품목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}

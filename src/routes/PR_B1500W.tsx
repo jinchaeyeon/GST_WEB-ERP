@@ -489,7 +489,7 @@ const PR_B1500W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="설비가동현황모니터링"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

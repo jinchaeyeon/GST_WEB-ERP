@@ -1305,7 +1305,7 @@ const MA_A3300W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="기타입고"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1430,7 +1430,7 @@ const MA_A3300W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="기타입고"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1541,7 +1541,7 @@ const MA_A3300W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="기타입고"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1637,7 +1637,7 @@ const MA_A3300W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="기타입고"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

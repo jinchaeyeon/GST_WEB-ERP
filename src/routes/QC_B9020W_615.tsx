@@ -780,7 +780,7 @@ const QC_B9020W_615: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="온습도 모니터링"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1175,7 +1175,7 @@ const QC_B9020W_615: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="온습도 모니터링"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}

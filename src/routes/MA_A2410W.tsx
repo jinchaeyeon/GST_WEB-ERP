@@ -1104,7 +1104,7 @@ const MA_A2410W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="외주처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1209,7 +1209,7 @@ const MA_A2410W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="외주처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1331,7 +1331,7 @@ const MA_A2410W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="외주처리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1417,7 +1417,7 @@ const MA_A2410W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="외주처리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

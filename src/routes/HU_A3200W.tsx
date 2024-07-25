@@ -1212,7 +1212,7 @@ const HU_A3200W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="사회보험고지내역"
+            fileName={getMenuName()}
           >
             <Grid
               style={{ height: isMobile ? mobileheight : webheight }}

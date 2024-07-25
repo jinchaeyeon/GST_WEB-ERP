@@ -1015,9 +1015,7 @@ const SA_A1100W_603: React.FC = () => {
             data.tables[0].Rows[0].enddt == ""
               ? null
               : toDate(data.tables[0].Rows[0].enddt),
-          wonamt: Math.ceil(
-            data.tables[0].Rows[0].wonamt
-          ),
+          wonamt: Math.ceil(data.tables[0].Rows[0].wonamt),
           project: data.tables[0].Rows[0].project,
           strdt:
             data.tables[0].Rows[0].strdt == ""
@@ -2774,7 +2772,7 @@ const SA_A1100W_603: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="계약관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -3115,9 +3113,7 @@ const SA_A1100W_603: React.FC = () => {
                             <Input
                               name="wonamt"
                               type="text"
-                              value={numberWithCommas3(
-                                Information.wonamt
-                              )}
+                              value={numberWithCommas3(Information.wonamt)}
                               style={{
                                 textAlign: "end",
                               }}
@@ -3216,7 +3212,7 @@ const SA_A1100W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export6 = exporter;
                     }}
-                    fileName="계약관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight4 }}
@@ -3362,7 +3358,7 @@ const SA_A1100W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="계약관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight5 }}
@@ -3505,7 +3501,7 @@ const SA_A1100W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="계약관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight3 }}
@@ -3787,9 +3783,7 @@ const SA_A1100W_603: React.FC = () => {
                           <Input
                             name="wonamt"
                             type="text"
-                            value={numberWithCommas3(
-                              Information.wonamt
-                            )}
+                            value={numberWithCommas3(Information.wonamt)}
                             style={{
                               textAlign: "end",
                             }}
@@ -3856,7 +3850,7 @@ const SA_A1100W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="계약관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}
@@ -3974,7 +3968,7 @@ const SA_A1100W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="계약관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}
@@ -4101,7 +4095,7 @@ const SA_A1100W_603: React.FC = () => {
                   ref={(exporter) => {
                     _export6 = exporter;
                   }}
-                  fileName="계약관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight4 }}

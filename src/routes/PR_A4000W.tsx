@@ -2104,7 +2104,7 @@ const PR_A4000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="생산실적관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -2254,7 +2254,7 @@ const PR_A4000W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="생산실적관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -2361,7 +2361,7 @@ const PR_A4000W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="생산실적관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -2452,7 +2452,7 @@ const PR_A4000W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="생산실적관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight2 }}
@@ -2555,7 +2555,7 @@ const PR_A4000W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="생산실적관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}
@@ -2671,7 +2671,7 @@ const PR_A4000W: React.FC = () => {
               ref={(exporter) => {
                 _export4 = exporter;
               }}
-              fileName="생산실적관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

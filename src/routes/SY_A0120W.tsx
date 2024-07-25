@@ -505,7 +505,7 @@ const SY_A0120: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="로그인 현황"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

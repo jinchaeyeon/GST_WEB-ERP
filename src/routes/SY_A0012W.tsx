@@ -1485,7 +1485,7 @@ const SY_A0120: React.FC = () => {
             <ExcelExport
               ref={(exporter) => (_export = exporter)}
               data={mainDataResult.data}
-              fileName="사용자 정보"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

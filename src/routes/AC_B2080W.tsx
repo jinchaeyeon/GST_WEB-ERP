@@ -1193,7 +1193,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -1283,7 +1283,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight3 }}
@@ -1386,7 +1386,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight2 }}
@@ -1464,7 +1464,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight3 }}
@@ -1616,7 +1616,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight5 }}
@@ -1706,7 +1706,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight6 }}
@@ -1811,7 +1811,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight5 }}
@@ -1889,7 +1889,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight6 }}
@@ -2043,7 +2043,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export5 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight8 }}
@@ -2133,7 +2133,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export6 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight9 }}
@@ -2238,7 +2238,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export5 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight8 }}
@@ -2316,7 +2316,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export6 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight9 }}
@@ -2467,7 +2467,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export7 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight11 }}
@@ -2557,7 +2557,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export8 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight12 }}
@@ -2662,7 +2662,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export7 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight11 }}
@@ -2740,7 +2740,7 @@ const AC_B2080W: React.FC = () => {
                     ref={(exporter) => {
                       _export8 = exporter;
                     }}
-                    fileName="제조/손익 명세서"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight12 }}

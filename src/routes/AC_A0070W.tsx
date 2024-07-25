@@ -1399,7 +1399,7 @@ const AC_A0070W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="기초잔액"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }} //76vh
@@ -1726,7 +1726,7 @@ const AC_A0070W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="기초잔액"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight3 }}
@@ -1837,7 +1837,7 @@ const AC_A0070W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="기초잔액"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }} //76vh
@@ -2115,7 +2115,7 @@ const AC_A0070W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="기초잔액"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }} // 65

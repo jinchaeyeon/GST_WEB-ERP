@@ -1045,7 +1045,7 @@ const QC_B0030W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="LOT추적"
+                  fileName={getMenuName()}
                 >
                   {filters.dtgb == "A" ? (
                     <Grid
@@ -1226,7 +1226,7 @@ const QC_B0030W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="LOT추적"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1332,7 +1332,7 @@ const QC_B0030W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="LOT추적"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight3 }}
@@ -1413,7 +1413,7 @@ const QC_B0030W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="LOT추적"
+              fileName={getMenuName()}
             >
               {filters.dtgb == "A" ? (
                 <Grid
@@ -1562,7 +1562,7 @@ const QC_B0030W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="LOT추적"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -1652,7 +1652,7 @@ const QC_B0030W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="LOT추적"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}

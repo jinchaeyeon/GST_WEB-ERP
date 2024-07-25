@@ -1326,7 +1326,7 @@ const BA_A0070W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="환율관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1443,7 +1443,7 @@ const BA_A0070W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="환율관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -1567,7 +1567,7 @@ const BA_A0070W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="환율관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1663,7 +1663,7 @@ const BA_A0070W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="환율관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

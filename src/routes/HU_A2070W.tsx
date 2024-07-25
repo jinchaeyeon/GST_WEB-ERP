@@ -1342,7 +1342,7 @@ const HU_A2070W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="출퇴근관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1472,7 +1472,7 @@ const HU_A2070W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="출퇴근관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1572,7 +1572,7 @@ const HU_A2070W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="출퇴근관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -1682,7 +1682,7 @@ const HU_A2070W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="출퇴근관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}

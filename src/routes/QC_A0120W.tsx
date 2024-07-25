@@ -571,7 +571,7 @@ const QC_A0120: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="불량내역조회"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

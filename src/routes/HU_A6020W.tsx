@@ -3037,7 +3037,7 @@ FROM HU072T WHERE paycd = '4'`;
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="일용직 일근태"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{

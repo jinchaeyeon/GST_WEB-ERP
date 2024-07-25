@@ -900,7 +900,7 @@ const HU_B2140W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="근태모니터링"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1004,7 +1004,7 @@ const HU_B2140W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="근태모니터링"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1104,7 +1104,7 @@ const HU_B2140W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="근태모니터링"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight3 }}
@@ -1198,7 +1198,7 @@ const HU_B2140W: React.FC = () => {
                   ref={(exporter) => {
                     _export4 = exporter;
                   }}
-                  fileName="근태모니터링"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight4 }}
@@ -1294,7 +1294,7 @@ const HU_B2140W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="근태모니터링"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -1368,7 +1368,7 @@ const HU_B2140W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="근태모니터링"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -1442,7 +1442,7 @@ const HU_B2140W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="근태모니터링"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}
@@ -1517,7 +1517,7 @@ const HU_B2140W: React.FC = () => {
               ref={(exporter) => {
                 _export4 = exporter;
               }}
-              fileName="근태모니터링"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight4 }}

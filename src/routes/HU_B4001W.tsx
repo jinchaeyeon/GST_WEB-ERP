@@ -978,7 +978,7 @@ const HU_B4001W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="연차사용현황(개인)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -1066,7 +1066,7 @@ const HU_B4001W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="연차사용현황(개인)"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight3 }}
@@ -1241,7 +1241,7 @@ const HU_B4001W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="연차사용현황(개인)"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -1314,7 +1314,7 @@ const HU_B4001W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="연차사용현황(개인)"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}

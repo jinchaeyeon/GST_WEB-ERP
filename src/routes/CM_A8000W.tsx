@@ -1787,7 +1787,7 @@ const CM_A8000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="ValueBox"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -1863,7 +1863,7 @@ const CM_A8000W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="ValueBox"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -1938,7 +1938,7 @@ const CM_A8000W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="ValueBox"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -2054,7 +2054,7 @@ const CM_A8000W: React.FC = () => {
                 ref={(exporter) => {
                   _export4 = exporter;
                 }}
-                fileName="ValueBox"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -2170,7 +2170,7 @@ const CM_A8000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="ValueBox"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -2228,7 +2228,7 @@ const CM_A8000W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="ValueBox"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -2285,7 +2285,7 @@ const CM_A8000W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="ValueBox"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}
@@ -2393,7 +2393,7 @@ const CM_A8000W: React.FC = () => {
                 ref={(exporter) => {
                   _export4 = exporter;
                 }}
-                fileName="ValueBox"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight4 }}

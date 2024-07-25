@@ -555,7 +555,7 @@ const SA_B3101W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="매입매출현황"
+              fileName={getMenuName()}
             >
               <SwiperSlide key={1}>
                 <GridContainer>
@@ -758,7 +758,7 @@ const SA_B3101W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="매입매출현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}

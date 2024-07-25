@@ -1067,7 +1067,7 @@ const QC_A0060W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="검사표준서"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1161,7 +1161,7 @@ const QC_A0060W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="검사표준서"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1282,7 +1282,7 @@ const QC_A0060W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="검사표준서"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1373,7 +1373,7 @@ const QC_A0060W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="검사표준서"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

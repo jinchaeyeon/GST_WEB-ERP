@@ -2423,7 +2423,7 @@ const CM_A1600: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="Scheduler"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{
@@ -2665,7 +2665,7 @@ const CM_A1600: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="Scheduler"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}
@@ -2991,7 +2991,7 @@ const CM_A1600: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="Scheduler"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

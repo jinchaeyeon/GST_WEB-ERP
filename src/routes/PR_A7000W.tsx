@@ -2665,7 +2665,7 @@ const PR_A7000W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="작업지시"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight }}
@@ -2788,7 +2788,7 @@ const PR_A7000W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="작업지시"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -2927,7 +2927,7 @@ const PR_A7000W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="작업지시"
+                    fileName={getMenuName()}
                     group={group}
                   >
                     <Grid
@@ -3032,7 +3032,7 @@ const PR_A7000W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="작업지시"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -3127,7 +3127,7 @@ const PR_A7000W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="작업지시"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight2 }}
@@ -3253,7 +3253,7 @@ const PR_A7000W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="작업지시"
+                  fileName={getMenuName()}
                   group={group}
                 >
                   <Grid
@@ -3541,7 +3541,7 @@ const PR_A7000W: React.FC = () => {
               ref={(exporter) => {
                 _export4 = exporter;
               }}
-              fileName="작업지시"
+              fileName={getMenuName()}
               group={group2}
             >
               <Grid

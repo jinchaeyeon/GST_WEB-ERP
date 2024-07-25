@@ -2591,7 +2591,7 @@ const PR_A1100W: React.FC = () => {
                 _export = exporter;
               }}
               group={group}
-              fileName="계획생산"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -2770,7 +2770,7 @@ const PR_A1100W: React.FC = () => {
                         _export2 = exporter;
                       }}
                       group={group2}
-                      fileName="계획생산"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight2 }}
@@ -2936,7 +2936,7 @@ const PR_A1100W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="계획생산"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight3 }}
@@ -3073,7 +3073,7 @@ const PR_A1100W: React.FC = () => {
                         _export2 = exporter;
                       }}
                       group={group2}
-                      fileName="계획생산"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}
@@ -3226,7 +3226,7 @@ const PR_A1100W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="계획생산"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight3 }}

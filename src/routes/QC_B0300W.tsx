@@ -655,8 +655,8 @@ const QC_B0300W: React.FC = () => {
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
-          }}
-          fileName="단기공정능력현황"
+          }} 
+          fileName={getMenuName()}
         >
           <GridTitleContainer className="ButtonContainer">
             <GridTitle>요약정보</GridTitle>

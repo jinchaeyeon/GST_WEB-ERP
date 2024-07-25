@@ -1405,7 +1405,7 @@ const SY_A0125W: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   hierarchy={true}
-                  fileName="부서관리"
+                  fileName={getMenuName()}
                 >
                   <TreeList
                     style={{
@@ -1642,7 +1642,7 @@ const SY_A0125W: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   data={subDataResult.data}
-                  fileName="부서관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1732,7 +1732,7 @@ const SY_A0125W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 hierarchy={true}
-                fileName="부서관리"
+                fileName={getMenuName()}
               >
                 <TreeList
                   style={{
@@ -1902,7 +1902,7 @@ const SY_A0125W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export2 = exporter)}
                 data={subDataResult.data}
-                fileName="부서관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}

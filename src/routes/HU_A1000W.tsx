@@ -1184,7 +1184,7 @@ const HU_A1000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="인사관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -1319,7 +1319,7 @@ const HU_A1000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="인사관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}

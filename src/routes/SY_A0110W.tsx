@@ -383,7 +383,7 @@ const SY_A0110: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="사용자 이용 현황"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

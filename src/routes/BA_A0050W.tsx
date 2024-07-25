@@ -2263,7 +2263,7 @@ const BA_A0050: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
-                  fileName="BOM관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -2391,7 +2391,7 @@ const BA_A0050: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   data={subDataResult.data}
-                  fileName="BOM관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -2527,7 +2527,7 @@ const BA_A0050: React.FC = () => {
                   <ExcelExport
                     ref={(exporter) => (_export3 = exporter)}
                     data={subData2Result.data}
-                    fileName="BOM관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight3 }}
@@ -2627,7 +2627,7 @@ const BA_A0050: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
-                  fileName="BOM관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}
@@ -2722,7 +2722,7 @@ const BA_A0050: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   data={subDataResult.data}
-                  fileName="BOM관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}
@@ -2834,7 +2834,7 @@ const BA_A0050: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export3 = exporter)}
                   data={subData2Result.data}
-                  fileName="BOM관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight3 }}

@@ -460,7 +460,7 @@ const AC_B6080W_628: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="미지급현황"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

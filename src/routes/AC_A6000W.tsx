@@ -2412,7 +2412,7 @@ const AC_A6000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="자금계획"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -2600,7 +2600,7 @@ const AC_A6000W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="자금계획"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -2811,7 +2811,7 @@ const AC_A6000W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="자금계획"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight2 }}
@@ -2951,7 +2951,7 @@ const AC_A6000W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="자금계획"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight3 }}

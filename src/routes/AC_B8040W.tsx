@@ -905,7 +905,7 @@ const AC_B8040W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="부가세비교"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1007,7 +1007,7 @@ const AC_B8040W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="부가세비교"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -1101,7 +1101,7 @@ const AC_B8040W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="부가세비교"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight3 }}
@@ -1181,7 +1181,7 @@ const AC_B8040W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="부가세비교"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1259,7 +1259,7 @@ const AC_B8040W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="부가세비교"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -1338,7 +1338,7 @@ const AC_B8040W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="부가세비교"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}

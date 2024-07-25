@@ -552,7 +552,7 @@ const HU_B1040W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="인사상세조회"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

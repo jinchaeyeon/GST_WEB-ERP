@@ -1201,7 +1201,7 @@ const QC_A6000: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="최종검사"
+            fileName={getMenuName()}
           >
             <Grid
               style={{

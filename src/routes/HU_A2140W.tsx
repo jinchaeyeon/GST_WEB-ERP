@@ -1512,7 +1512,7 @@ const HU_A2140W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="근태허가신청"
+            fileName={getMenuName()}
           >
             <Grid
               style={{

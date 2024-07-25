@@ -599,7 +599,7 @@ const AppInner: React.FC = () => {
   }, []);
 
   function link(str: any) {
-    if (str == "Home" || str == "") {
+    if (str == "Home" || str == "" || str == undefined || str == null) {
       if (currentTheme == "yellow") {
         return MainAdminCRM;
       } else if (currentTheme == "navy") {

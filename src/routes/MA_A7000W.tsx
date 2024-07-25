@@ -1909,7 +1909,7 @@ const MA_A7000W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="기초재고등록"
+            fileName={getMenuName()}
           >
             <Grid
               style={{ height: !isMobile ? webheight : mobileheight }}

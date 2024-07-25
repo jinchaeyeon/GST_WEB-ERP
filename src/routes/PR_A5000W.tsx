@@ -1303,7 +1303,7 @@ const PR_A5000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="완제품입고"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1469,7 +1469,7 @@ const PR_A5000W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="완제품입고"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -1576,7 +1576,7 @@ const PR_A5000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="완제품입고"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1726,7 +1726,7 @@ const PR_A5000W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="완제품입고"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

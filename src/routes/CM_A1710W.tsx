@@ -730,7 +730,7 @@ const CM_A1710W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="사내연락망"
+          fileName={getMenuName()}
         >
           <Grid
             style={{
