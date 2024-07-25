@@ -26,6 +26,7 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import CenterCell from "../components/Cells/CenterCell";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -57,11 +58,12 @@ import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2500W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import NumberFloatCell from "../components/Cells/NumberFloatCell";
-import CenterCell from "../components/Cells/CenterCell";
 
 const dateField = ["outdt"];
 const numberField = ["wonamt", "taxamt", "totamt"];
-const floatfield = ["qty", "hsqty", "unp", "bnatur_insiz"];
+const floatfield = ["qty", "hsqty"];
+const floatfield2 = ["unp"];
+const floatfield3 = [ "bnatur_insiz"];
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
@@ -368,8 +370,28 @@ const MA_B2500W_628: React.FC = () => {
     var parts = parseFloat(sum).toString().split(".");
     return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+      </td>
+    ) : (
+      <td></td>
+    );
+  };
+
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) => {
+      if (props.field !== undefined && item["total_" + props.field] !== undefined) {
+        sum = parseFloat(item["total_" + props.field]) || 0;
+      }
+    });
+  
+    let roundedSum = sum.toFixed(2); // 소수점 둘째 자리까지 표시
+    var parts = roundedSum.toString().split(".");
+  
+    return !isNaN(parseFloat(roundedSum)) ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+          (parts[1] ? "." + parts[1] : ".00")}
       </td>
     ) : (
       <td></td>
@@ -448,6 +470,28 @@ const MA_B2500W_628: React.FC = () => {
     } else {
       alert("데이터가 없습니다.");
     }
+  };
+
+  const CustomNumberCell = (props: any) => {
+    let value = props.dataItem[props.field];
+    let integerValue = Math.round(value); 
+    
+    return (
+      <td style={{ textAlign: 'right' }}>
+        {integerValue.toLocaleString()} 
+      </td>
+    );
+  };
+
+  const CustomFloatCell = (props: any) => {
+    let value = props.dataItem[props.field];
+    let floatValue = parseFloat(value).toFixed(1); 
+    
+    return (
+      <td style={{ textAlign: 'right' }}>
+        {floatValue.toLocaleString()}
+      </td>
+    );
   };
 
   return (
@@ -588,8 +632,12 @@ const MA_B2500W_628: React.FC = () => {
                           dateField.includes(item.fieldName)
                             ? DateCell
                             : numberField.includes(item.fieldName)
-                            ? NumberCell
+                            ? CustomNumberCell
                             : floatfield.includes(item.fieldName)
+                            ? NumberFloatCell
+                            : floatfield2.includes(item.fieldName)
+                            ? CustomFloatCell
+                            : floatfield3.includes(item.fieldName)
                             ? NumberFloatCell
                             : CenterCell
                         }
@@ -599,7 +647,7 @@ const MA_B2500W_628: React.FC = () => {
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell2
                             : floatfield.includes(item.fieldName)
-                            ? gridSumQtyFooterCell2
+                            ? gridSumQtyFooterCell
                             : undefined
                         }
                       ></GridColumn>

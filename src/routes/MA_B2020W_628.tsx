@@ -656,7 +656,7 @@ const MA_B2020W_628: React.FC = () => {
     let sum = 0;  
     mainDataResult.data.forEach((item) => {
       if (props.field !== undefined && item["total_" + props.field] !== undefined) {
-        sum += parseFloat(item["total_" + props.field]) || 0;  
+        sum = parseFloat(item["total_" + props.field]) || 0;  
       }
     });
       
