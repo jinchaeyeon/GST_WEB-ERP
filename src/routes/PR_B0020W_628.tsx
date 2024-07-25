@@ -20,6 +20,7 @@ import SwiperCore from "swiper";
 import "swiper/css";
 import {
   ButtonContainer,
+  ButtonInInput,
   FilterBox,
   FormBoxFNF,
   FormBoxWrap,
@@ -67,6 +68,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import PR_B0020W_628_Window from "../components/Windows/PR_B0020W_628_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B0020W_628_C";
@@ -155,6 +157,9 @@ const PR_B0020W_628: React.FC = () => {
       };
     }
   }, [customOptionData, webheight, webheight2, bizComponentData]);
+
+  const [TextAreaWindowVisible, setTextAreaWindowVisible] =
+    useState<boolean>(false);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1914,6 +1919,10 @@ const PR_B0020W_628: React.FC = () => {
     }));
   };
 
+  const onTextAreaClick = () => {
+    setTextAreaWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -2416,6 +2425,14 @@ const PR_B0020W_628: React.FC = () => {
                           value={Information.Ingredients}
                           onChange={InputChange}
                         />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onTextAreaClick}
+                            icon="reorder"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
                       </td>
                     </tr>
                     <tr>
@@ -2591,6 +2608,19 @@ const PR_B0020W_628: React.FC = () => {
             </GridContainer>
           </GridContainerWrap>
         </>
+      )}
+      {TextAreaWindowVisible && (
+        <PR_B0020W_628_Window
+          setVisible={setTextAreaWindowVisible}
+          setData={(str) => {
+            setInformation((prev) => ({
+              ...prev,
+              Ingredients: str.Ingredients,
+              ingredgb: str.ingredgb,
+            }));
+          }}
+          data={Information}
+        />
       )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
