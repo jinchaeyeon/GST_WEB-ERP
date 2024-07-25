@@ -73,6 +73,8 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_B0020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import ReactToPrint, { useReactToPrint } from "react-to-print";
+import PrintComponent from "../components/Prints/PR_B0020W_628_out_PRINT";
 
 type TdataArr = {
   ordnum_s: string[];
@@ -1401,7 +1403,13 @@ const PR_B0020W_628: React.FC = () => {
         seq_s: dataArr.seq_s.join("|"),
       }));
     }
+    handlePrint();
   };
+  const printComponentRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    content: () => printComponentRef.current,
+  });
 
   const onInPrint = () => {
     if (!permissions.print) return;
@@ -2101,6 +2109,14 @@ const PR_B0020W_628: React.FC = () => {
                   >
                     겉지출력
                   </Button>
+                  <div style={{ display: "none" }}>
+                    <PrintComponent
+                      ref={printComponentRef}
+                      datas={mainDataResult.data.filter(
+                        (item) => item.chk === true
+                      )}
+                    />
+                  </div>
                   <Button
                     onClick={onInPrint}
                     fillMode="outline"
