@@ -274,6 +274,18 @@ const PR_B0020W_628: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
+    if (name == "cycletime_min") {
+      if (Information.extra_field3 == 4) {
+        setInformation((prev) => {
+          const newDate = new Date(prev.poregnum);
+          newDate.setDate(newDate.getDate() + parseInt(value));
+          return {
+            ...prev,
+            extra_field7: newDate,
+          };
+        });
+      }
+    }
     setInformation((prev) => ({
       ...prev,
       [name]: value,
@@ -292,6 +304,89 @@ const PR_B0020W_628: React.FC = () => {
   const RadioChange = (e: any) => {
     const { name, value } = e;
 
+    if (name == "extra_field3") {
+      if (value == 1) {
+        if (
+          convertDateToStr(Information.poregnum).substring(0, 4) < "1997" ||
+          convertDateToStr(Information.poregnum).substring(6, 8) > "31" ||
+          convertDateToStr(Information.poregnum).substring(6, 8) < "01" ||
+          convertDateToStr(Information.poregnum).substring(6, 8).length != 2
+        ) {
+          alert("제조일자가 없습니다.");
+          return false;
+        } else {
+          setInformation((prev) => {
+            const newDate = new Date(prev.poregnum);
+            newDate.setFullYear(newDate.getFullYear() + 1);
+            newDate.setDate(newDate.getDate() - 1);
+            return {
+              ...prev,
+              extra_field7: newDate,
+            };
+          });
+        }
+      } else if (value == 2) {
+        if (
+          convertDateToStr(Information.poregnum).substring(0, 4) < "1997" ||
+          convertDateToStr(Information.poregnum).substring(6, 8) > "31" ||
+          convertDateToStr(Information.poregnum).substring(6, 8) < "01" ||
+          convertDateToStr(Information.poregnum).substring(6, 8).length != 2
+        ) {
+          alert("제조일자가 없습니다.");
+          return false;
+        } else {
+          setInformation((prev) => {
+            const newDate = new Date(prev.poregnum);
+            newDate.setMonth(newDate.getMonth() + 9);
+            newDate.setDate(newDate.getDate() - 1);
+            return {
+              ...prev,
+              extra_field7: newDate,
+            };
+          });
+        }
+      } else if (value == 3) {
+        if (
+          convertDateToStr(Information.poregnum).substring(0, 4) < "1997" ||
+          convertDateToStr(Information.poregnum).substring(6, 8) > "31" ||
+          convertDateToStr(Information.poregnum).substring(6, 8) < "01" ||
+          convertDateToStr(Information.poregnum).substring(6, 8).length != 2
+        ) {
+          alert("제조일자가 없습니다.");
+          return false;
+        } else {
+          setInformation((prev) => {
+            const newDate = new Date(prev.poregnum);
+            newDate.setDate(newDate.getDate() + 3);
+            return {
+              ...prev,
+              extra_field7: newDate,
+            };
+          });
+        }
+      } else if (value == 4) {
+        if (
+          convertDateToStr(Information.poregnum).substring(0, 4) < "1997" ||
+          convertDateToStr(Information.poregnum).substring(6, 8) > "31" ||
+          convertDateToStr(Information.poregnum).substring(6, 8) < "01" ||
+          convertDateToStr(Information.poregnum).substring(6, 8).length != 2
+        ) {
+          alert("제조일자가 없습니다.");
+          return false;
+        } else {
+          setInformation((prev) => {
+            const newDate = new Date(prev.poregnum);
+            newDate.setDate(
+              newDate.getDate() + parseInt(Information.cycletime_min)
+            );
+            return {
+              ...prev,
+              extra_field7: newDate,
+            };
+          });
+        }
+      }
+    }
     setInformation((prev) => ({
       ...prev,
       [name]: value,
