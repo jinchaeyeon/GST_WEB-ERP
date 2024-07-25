@@ -190,7 +190,7 @@ const AC_B6080W_628_PRINT = (data: any) => {
                     </tr>
                   </tbody>
                 </table>
-                <div style={{ pageBreakBefore: "always" }} />
+                <div style={{ pageBreakBefore: "avoid" }} />
               </>
             ) : (
               ""

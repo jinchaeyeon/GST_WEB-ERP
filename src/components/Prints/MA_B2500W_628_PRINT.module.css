@@ -22,12 +22,52 @@
 
     .printable {
         display: block;
+        font-size: 10px;
+    }
+
+    .printable .tg td, .printable .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border: solid 1px #000;
+        height: 0.5cm !important; 
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: table-cell;
+        vertical-align: middle;
+        text-align: left;
+        padding-left: 3px;
+    }
+
+    .printable .tg th {
+        background-color: #e6e6e6;
+        text-align: center; 
+        height: 0.65cm !important;
+    }
+
+    .printable .tg .tg-baqh {
+        text-align: center;
+        vertical-align: middle;
+        height: 0.5cm !important;
+        font-size: 10px;
     }
 
     .non-printable {
         display: none;
     }
 
+    .header_wrap {
+        display: table-header-group; 
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .page-break {
+        page-break-inside: avoid; 
+    }
 }
 
 body {
