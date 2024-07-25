@@ -76,6 +76,7 @@ type TdataArr = {
   ordnum_s: string[];
   ordseq_s: string[];
   itemcd_s: string[];
+  seq_s: string[];
 };
 let targetRowIndex: null | number = null;
 const DATA_ITEM_KEY = "num";
@@ -1307,13 +1308,15 @@ const PR_B0020W_628: React.FC = () => {
         ordnum_s: [],
         ordseq_s: [],
         itemcd_s: [],
+        seq_s: []
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", itemcd = "" } = item;
+        const { ordnum = "", ordseq = "", itemcd = "", seq = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
+        dataArr.seq_s.push(seq);
       });
 
       setParaData((prev) => ({
@@ -1323,9 +1326,43 @@ const PR_B0020W_628: React.FC = () => {
         ordnum_s: dataArr.ordnum_s.join("|"),
         ordseq_s: dataArr.ordseq_s.join("|"),
         itemcd_s: dataArr.itemcd_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
       }));
     }
   };
+
+  const onCancel = () => {
+    if (!permissions.save) return;
+    const datas = mainDataResult.data.filter((item) => item.chk == true);
+    let valid = true;
+
+    if (valid == true) {
+      let dataArr: TdataArr = {
+        ordnum_s: [],
+        ordseq_s: [],
+        itemcd_s: [],
+        seq_s: []
+      };
+
+      datas.forEach((item: any, idx: number) => {
+        const { ordnum = "", ordseq = "", itemcd = "", seq = "" } = item;
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.seq_s.push(seq);
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "cancel",
+        addrgb: Information2.addr,
+        ordnum_s: dataArr.ordnum_s.join("|"),
+        ordseq_s: dataArr.ordseq_s.join("|"),
+        itemcd_s: dataArr.itemcd_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
+      }));
+    }
+  }
 
   const onUpdateShlife = async () => {
     if (!permissions.save) return;
@@ -1361,13 +1398,15 @@ const PR_B0020W_628: React.FC = () => {
         ordnum_s: [],
         ordseq_s: [],
         itemcd_s: [],
+        seq_s: []
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", itemcd = "" } = item;
+        const { ordnum = "", ordseq = "", itemcd = "", seq = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
+        dataArr.seq_s.push(seq);
       });
 
       setParaData((prev) => ({
@@ -1377,6 +1416,7 @@ const PR_B0020W_628: React.FC = () => {
         ordnum_s: dataArr.ordnum_s.join("|"),
         ordseq_s: dataArr.ordseq_s.join("|"),
         itemcd_s: dataArr.itemcd_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
       }));
     }
   };
@@ -1387,6 +1427,7 @@ const PR_B0020W_628: React.FC = () => {
     ordnum_s: "",
     ordseq_s: "",
     itemcd_s: "",
+    seq_s: "",
     addrgb: "",
     stddt: "",
   });
@@ -1536,6 +1577,7 @@ const PR_B0020W_628: React.FC = () => {
         ordnum_s: "",
         ordseq_s: "",
         itemcd_s: "",
+        seq_s: "",
         workType: "",
         stddt: "",
       });
@@ -1989,6 +2031,7 @@ const PR_B0020W_628: React.FC = () => {
                     속지출력
                   </Button>
                   <Button
+                          onClick={onCancel}
                     icon="x"
                     fillMode="outline"
                     themeColor={"primary"}
