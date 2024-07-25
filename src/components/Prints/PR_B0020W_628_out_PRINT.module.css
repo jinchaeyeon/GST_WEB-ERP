@@ -1,0 +1,168 @@
+@media print {
+    @page {
+      size: landscape;
+      margin: 1cm;
+    }
+  
+    body {
+      -webkit-print-color-adjust: exact;
+    }
+  
+    .print_container {
+      display: block;
+      width: 100%;
+      page-break-before: always;
+    }
+  
+    .print_page {
+      page-break-after: always;
+      break-after: page;
+      text-align: left;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+  
+    /*************************************** 겉지 - 좌측테이블 ***************************************/
+    .rotate_text {
+      -ms-transform: rotate(90deg); 
+      transform: rotate(90deg);    
+      position: absolute;
+      left: 0cm; 
+      top: 0.8cm;
+      float: left;
+      height: 5cm;
+      width: 8cm;
+    }
+  
+    .rotate_text ul li:nth-child(1) span {
+      font-size: 32px;
+      font-weight: 500;
+    }
+  
+    .rotate_text ul li:nth-child(2) span {
+      font-size: 24px;
+    }
+  
+    .rotate_text ul li:nth-child(3) span {
+      font-size: 24px;
+      font-weight: bold;
+    }
+  
+    .rotate_text ul li:nth-child(4) span {
+      font-size: 24px;
+    }
+  
+    .rotate_text ul li:nth-child(5) span {
+      font-size: 32px;
+      font-weight: bold;
+    }
+  
+    .rotate_text ul li:nth-child(6),
+    .rotate_text ul li:nth-child(7) { 
+      height: .6cm;
+    }
+  
+    .rotate_text ul li:nth-child(6) span,
+    .rotate_text ul li:nth-child(7) span {
+      font-size: 16px;
+    }
+  
+    /*************************************** 겉지 - 우측테이블 ***************************************/
+    .right_table ul li:nth-child(1),
+    .right_table ul li:nth-child(2),
+    .right_table ul li:nth-child(3),
+    .right_table ul li:nth-child(4) {
+      margin-left: 2cm;
+    }
+  
+    .right_table {
+      padding-left: 6.5cm;
+    }
+  
+    .right_table ul li:nth-child(1) span {
+      font-size: 1.9em;
+      font-weight: 900;
+    }
+  
+    .right_table ul li:nth-child(2) span {
+      font-size: 28px;
+    }
+  
+    .right_table ul li:nth-child(3) > span:nth-child(1) {
+      display: inline-block;
+      font-size: 20px;
+      font-weight: bold;
+      width: 6cm;    
+    }
+  
+    .right_table ul li:nth-child(3) > span:nth-child(2) {
+      font-size: 20px;
+    }
+  
+    .right_table ul li:nth-child(3) > span:nth-child(2) span {
+      font-size: 20px;
+    }
+  
+    .right_table ul li:nth-child(4) > span:nth-child(1),
+    .right_table ul li:nth-child(4) > span:nth-child(2) {
+      font-size: 20px;
+    }
+  
+    .right_table ul li:nth-child(4) > span:nth-child(1) {
+      width: 6.5cm;
+      display: inline-block;
+    }
+  
+    .right_table ul li:nth-child(5) div:nth-child(1) {
+      display: inline-block;
+      vertical-align: top;
+    }
+  
+    .right_table ul li:nth-child(5) div:nth-child(1) span {
+      font-size: 18px;
+      vertical-align: top;
+    }
+  
+    .right_table ul li:nth-child(5) div:nth-child(2) {
+      display: inline-block;    
+      float: right;
+    }
+  
+    .right_table ul li:nth-child(5) div:nth-child(2) > span {
+      display: block;        
+    }
+  
+    .right_table ul li:nth-child(6) span {
+      font-size: 18px;
+    }
+  
+    .right_table ul li:nth-child(6) > span:last-child {
+      font-size: 16px;
+      float: right;
+    }
+  
+    .right_table ul li:nth-child(6) > span:nth-child(1) {
+      display: inline-block;
+      width: 5.5cm;    
+    }
+  
+    .right_table ul li:nth-child(8) > span:nth-child(2) {
+      float: right;
+    }
+  
+    .right_table ul li:nth-child(7),
+    .right_table ul li:nth-child(8),
+    .right_table ul li:nth-child(9),
+    .right_table ul li:nth-child(10),
+    .right_table ul li:nth-child(11),
+    .right_table ul li:nth-child(12) {
+      height: .4cm;
+    }
+  
+    .right_table span {
+      font-size: inherit; /*13px*/  
+      vertical-align: top;
+    }
+  }
+  
