@@ -1308,15 +1308,15 @@ const PR_B0020W_628: React.FC = () => {
         ordnum_s: [],
         ordseq_s: [],
         itemcd_s: [],
-        seq_s: []
+        seq_s: [],
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", itemcd = "", seq = "" } = item;
+        const { ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
-        dataArr.seq_s.push(seq);
+        dataArr.seq_s.push("");
       });
 
       setParaData((prev) => ({
@@ -1341,15 +1341,15 @@ const PR_B0020W_628: React.FC = () => {
         ordnum_s: [],
         ordseq_s: [],
         itemcd_s: [],
-        seq_s: []
+        seq_s: [],
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", itemcd = "", seq = "" } = item;
+        const { ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
-        dataArr.seq_s.push(seq);
+        dataArr.seq_s.push("");
       });
 
       setParaData((prev) => ({
@@ -1362,7 +1362,75 @@ const PR_B0020W_628: React.FC = () => {
         seq_s: dataArr.seq_s.join("|"),
       }));
     }
-  }
+  };
+
+  const onOutPrint = () => {
+    if (!permissions.print) return;
+    if (!permissions.save) return;
+    const datas = mainDataResult.data.filter((item) => item.chk == true);
+    let valid = true;
+
+    if (valid == true) {
+      let dataArr: TdataArr = {
+        ordnum_s: [],
+        ordseq_s: [],
+        itemcd_s: [],
+        seq_s: [],
+      };
+
+      datas.forEach((item: any, idx: number) => {
+        const { ordnum = "", ordseq = "", itemcd = "", sealno = "" } = item;
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.seq_s.push(sealno);
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "print",
+        addrgb: Information2.addr,
+        ordnum_s: dataArr.ordnum_s.join("|"),
+        ordseq_s: dataArr.ordseq_s.join("|"),
+        itemcd_s: dataArr.itemcd_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
+      }));
+    }
+  };
+
+  const onInPrint = () => {
+    if (!permissions.print) return;
+    if (!permissions.save) return;
+    const datas = mainDataResult.data.filter((item) => item.chk == true);
+    let valid = true;
+
+    if (valid == true) {
+      let dataArr: TdataArr = {
+        ordnum_s: [],
+        ordseq_s: [],
+        itemcd_s: [],
+        seq_s: [],
+      };
+
+      datas.forEach((item: any, idx: number) => {
+        const { ordnum = "", ordseq = "", itemcd = "", sealno = "" } = item;
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.seq_s.push(sealno);
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "print",
+        addrgb: Information2.addr,
+        ordnum_s: dataArr.ordnum_s.join("|"),
+        ordseq_s: dataArr.ordseq_s.join("|"),
+        itemcd_s: dataArr.itemcd_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
+      }));
+    }
+  };
 
   const onUpdateShlife = async () => {
     if (!permissions.save) return;
@@ -1398,15 +1466,15 @@ const PR_B0020W_628: React.FC = () => {
         ordnum_s: [],
         ordseq_s: [],
         itemcd_s: [],
-        seq_s: []
+        seq_s: [],
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { ordnum = "", ordseq = "", itemcd = "", seq = "" } = item;
+        const { ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
-        dataArr.seq_s.push(seq);
+        dataArr.seq_s.push("");
       });
 
       setParaData((prev) => ({
@@ -1487,6 +1555,7 @@ const PR_B0020W_628: React.FC = () => {
       "@p_ordnum_s": ParaData.ordnum_s,
       "@p_ordseq_s": ParaData.ordseq_s,
       "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_seq_s": ParaData.seq_s,
       "@p_addrgb": ParaData.addrgb,
       "@p_stddt": ParaData.stddt,
       "@p_form_id": "PR_B0020W_628",
@@ -2015,6 +2084,7 @@ const PR_B0020W_628: React.FC = () => {
                     주소/제조 일괄변경
                   </Button>
                   <Button
+                    onClick={onOutPrint}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="print"
@@ -2023,6 +2093,7 @@ const PR_B0020W_628: React.FC = () => {
                     겉지출력
                   </Button>
                   <Button
+                    onClick={onInPrint}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="print"
@@ -2031,7 +2102,7 @@ const PR_B0020W_628: React.FC = () => {
                     속지출력
                   </Button>
                   <Button
-                          onClick={onCancel}
+                    onClick={onCancel}
                     icon="x"
                     fillMode="outline"
                     themeColor={"primary"}
