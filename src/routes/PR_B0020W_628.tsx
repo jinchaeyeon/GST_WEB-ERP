@@ -111,7 +111,7 @@ const PR_B0020W_628: React.FC = () => {
   const sessionCustcd = UseGetValueFromSessionItem("custcd");
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const sessionpc = UseGetValueFromSessionItem("pc");
-
+  const [addstate, setAddstate] = useState(false);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
@@ -316,12 +316,13 @@ const PR_B0020W_628: React.FC = () => {
   };
 
   const resetAllGrid = () => {
+    setAddstate(true);
     setPage(initialPageState);
     setPage2(initialPageState);
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
     setInformation({
-      workType: "N",
+      workType: "",
       Ingredients: "",
       addrgb: "",
       addrgb_addr: "",
@@ -432,7 +433,7 @@ const PR_B0020W_628: React.FC = () => {
   }>({});
 
   const [Information, setInformation] = useState<{ [name: string]: any }>({
-    workType: "N",
+    workType: "",
     Ingredients: "",
     addrgb: "",
     addrgb_addr: "",
@@ -573,7 +574,7 @@ const PR_B0020W_628: React.FC = () => {
             }));
           } else {
             setParaData2({
-              workType: "N",
+              workType: "New",
               orgdiv: sessionOrgdiv,
               dlvdt: selectedRow.dlvdt,
               ordsiz: selectedRow.ordsiz,
@@ -606,7 +607,7 @@ const PR_B0020W_628: React.FC = () => {
             }));
           } else {
             setParaData2({
-              workType: "N",
+              workType: "New",
               orgdiv: sessionOrgdiv,
               dlvdt: rows[0].dlvdt,
               ordsiz: rows[0].ordsiz,
@@ -628,7 +629,7 @@ const PR_B0020W_628: React.FC = () => {
         }
       } else {
         setInformation({
-          workType: "N",
+          workType: "",
           Ingredients: "",
           addrgb: "",
           addrgb_addr: "",
@@ -796,7 +797,7 @@ const PR_B0020W_628: React.FC = () => {
         });
       } else {
         setInformation({
-          workType: "N",
+          workType: "",
           Ingredients: "",
           addrgb: "",
           addrgb_addr: "",
@@ -921,7 +922,7 @@ const PR_B0020W_628: React.FC = () => {
       }));
     } else {
       setParaData2({
-        workType: "N",
+        workType: "New",
         orgdiv: sessionOrgdiv,
         dlvdt: selectedRowData.dlvdt,
         ordsiz: selectedRowData.ordsiz,
@@ -1576,569 +1577,7 @@ const PR_B0020W_628: React.FC = () => {
       </FilterContainer>
       {isMobile ? (
         <>
-          <Swiper
-            onSwiper={(swiper) => {
-              setSwiper(swiper);
-            }}
-            onActiveIndexChange={(swiper) => {
-              index = swiper.activeIndex;
-            }}
-          >
-            <SwiperSlide key={0}>
-              <GridContainer>
-                <GridTitleContainer className="ButtonContainer">
-                  <GridTitle>
-                    요약정보
-                    <Button
-                      themeColor={"primary"}
-                      fillMode={"flat"}
-                      icon={"chevron-right"}
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(1);
-                        }
-                      }}
-                    ></Button>
-                  </GridTitle>
-                  <ButtonContainer>
-                    <div>
-                      <DatePicker
-                        name="shlife"
-                        value={Information2.shlife}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange2}
-                        placeholder=""
-                      />
-                    </div>
-                    <Button
-                      onClick={onUpdateShlife}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                    >
-                      유통기한 일괄변경
-                    </Button>
-                    <div style={{ padding: "4px", width: "57%" }}>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="addr"
-                          value={Information2.addr}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange2}
-                        />
-                      )}
-                    </div>
-                    <Button
-                      onClick={onUpdateAddr}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      disabled={permissions.save ? false : true}
-                    >
-                      주소/제조 일괄변경
-                    </Button>
-                    <div>
-                      <Button
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="print"
-                        disabled={permissions.print ? false : true}
-                      >
-                        겉지출력
-                      </Button>
-                      <Button
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="print"
-                        disabled={permissions.print ? false : true}
-                      >
-                        속지출력
-                      </Button>
-                      <Button
-                        icon="x"
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        disabled={permissions.save ? false : true}
-                      >
-                        출력취소
-                      </Button>
-                    </div>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={mainDataResult.data}
-                  ref={(exporter) => {
-                    _export = exporter;
-                  }}
-                  fileName="태그발행"
-                >
-                  <Grid
-                    style={{
-                      height: mobileheight,
-                    }}
-                    data={process(
-                      mainDataResult.data.map((row) => ({
-                        ...row,
-                        specnum: originListData.find(
-                          (item: any) => item.sub_code == row.specnum
-                        )?.code_name,
-                        itemdiv: itemtypeListData.find(
-                          (item: any) => item.sub_code == row.itemdiv
-                        )?.code_name,
-                        [SELECTED_FIELD]: selectedState[idGetter(row)],
-                      })),
-                      mainDataState
-                    )}
-                    {...mainDataState}
-                    onDataStateChange={onMainDataStateChange}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult.total}
-                    skip={page.skip}
-                    take={page.take}
-                    pageable={true}
-                    onPageChange={pageChange}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onMainItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
-                  >
-                    <GridColumn
-                      field="chk"
-                      title=" "
-                      width="45px"
-                      headerCell={CustomCheckBoxCell2}
-                      cell={CheckBoxCell}
-                    />
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"]
-                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                        ?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : CenterCell
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell
-                                    : numberField2.includes(item.fieldName)
-                                    ? gridSumQtyFooterCell
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide key={1}>
-              <GridContainer>
-                <GridTitleContainer className="ButtonContainer2">
-                  <GridTitle>
-                    <Button
-                      themeColor={"primary"}
-                      fillMode={"flat"}
-                      icon={"chevron-left"}
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(0);
-                        }
-                      }}
-                    ></Button>
-                    출력정보
-                    <Button
-                      themeColor={"primary"}
-                      fillMode={"flat"}
-                      icon={"chevron-right"}
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(2);
-                        }
-                      }}
-                    ></Button>
-                  </GridTitle>
-                </GridTitleContainer>
-                <ExcelExport
-                  data={mainDataResult2.data}
-                  ref={(exporter) => {
-                    _export2 = exporter;
-                  }}
-                  fileName="태그발행"
-                >
-                  <Grid
-                    style={{
-                      height: mobileheight2,
-                    }}
-                    data={process(
-                      mainDataResult2.data.map((row) => ({
-                        ...row,
-                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                      })),
-                      mainDataState2
-                    )}
-                    {...mainDataState2}
-                    onDataStateChange={onMainDataStateChange2}
-                    //선택 기능
-                    dataItemKey={DATA_ITEM_KEY2}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "single",
-                    }}
-                    onSelectionChange={onSelectionChange2}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={mainDataResult2.total}
-                    skip={page2.skip}
-                    take={page2.take}
-                    pageable={true}
-                    onPageChange={pageChange2}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onMainSortChange2}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                  >
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"]
-                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                        ?.map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  numberField.includes(item.fieldName)
-                                    ? NumberCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : CenterCell
-                                }
-                                footerCell={
-                                  item.sortOrder == 0
-                                    ? mainTotalFooterCell2
-                                    : undefined
-                                }
-                              />
-                            )
-                        )}
-                  </Grid>
-                </ExcelExport>
-              </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide key={2}>
-              <GridContainer>
-                <GridTitleContainer className="ButtonContainer3">
-                  <GridTitle>
-                    <Button
-                      themeColor={"primary"}
-                      fillMode={"flat"}
-                      icon={"chevron-left"}
-                      onClick={() => {
-                        if (swiper) {
-                          swiper.slideTo(1);
-                        }
-                      }}
-                    ></Button>
-                    태그정보
-                  </GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="행 저장"
-                      disabled={permissions.save ? false : true}
-                    />
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <FormBoxWrap
-                  border={true}
-                  className="FormBoxWrap"
-                  style={{
-                    // marginTop: `${GAP}px`,
-                    height: mobileheight3,
-                    overflow: "auto",
-                  }}
-                >
-                  <FormBoxFNF>
-                    <tbody>
-                      <tr>
-                        <th>품목명</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="itemnm"
-                            type="text"
-                            value={Information.itemnm}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>규격</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="spec"
-                            type="text"
-                            value={Information.spec}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>원산지</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="specnum"
-                            type="text"
-                            value={Information.specnum}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>중량</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="qty"
-                            type="number"
-                            value={Information.qty}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>식품유형</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="extra_field1"
-                            type="text"
-                            value={Information.extra_field1}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>성분</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="Ingredients"
-                            type="text"
-                            value={Information.Ingredients}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>대리점명</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="custnm"
-                            type="text"
-                            value={Information.custnm}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>납품처명</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="extra_field6"
-                            type="text"
-                            value={Information.extra_field6}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>제조일자</th>
-                        <td colSpan={2}>
-                          <DatePicker
-                            name="poregnum"
-                            value={Information.poregnum}
-                            format="yyyy-MM-dd"
-                            onChange={InputChange}
-                            placeholder=""
-                          />
-                        </td>
-                        <th>포장</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="extra_field2"
-                            type="text"
-                            value={Information.extra_field2}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>유통기한</th>
-                        <td colSpan={5}>
-                          <div className="filter-item-wrap">
-                            <DatePicker
-                              name="extra_field7"
-                              value={Information.extra_field7}
-                              format="yyyy-MM-dd"
-                              onChange={InputChange}
-                              placeholder=""
-                            />
-                            <div className="filter-item-wrap">
-                              <Input
-                                name="cycletime_min"
-                                type="number"
-                                value={Information.cycletime_min}
-                                onChange={InputChange}
-                                style={{ width: "90%" }}
-                              />
-                              일
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td></td>
-                        <td colSpan={5}>
-                          {bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="extra_field3"
-                              value={Information.extra_field3}
-                              bizComponentId="R_Shlife"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>등급</th>
-                        <td>
-                          <Input
-                            name="dwgno"
-                            type="number"
-                            value={Information.dwgno}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>생산년도</th>
-                        <td>
-                          <Input
-                            name="project"
-                            type="number"
-                            value={Information.project}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>형태</th>
-                        <td>
-                          <Input
-                            name="insiz"
-                            type="number"
-                            value={Information.insiz}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>인쇄수</th>
-                        <td colSpan={2}>
-                          <Input
-                            name="prtqty"
-                            type="number"
-                            value={Information.prtqty}
-                            onChange={InputChange}
-                          />
-                        </td>
-                        <th>용지구분</th>
-                        <td colSpan={2}>
-                          {bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="sealno"
-                              value={Information.sealno}
-                              bizComponentId="R_Printgb"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>제조/판매원</th>
-                        <td colSpan={5}>
-                          <Input
-                            name="tagtemp3"
-                            type="text"
-                            value={Information.tagtemp3}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>주의사항</th>
-                        <td colSpan={5}>
-                          <TextArea
-                            name="remark"
-                            rows={3}
-                            value={Information.remark}
-                            onChange={InputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>주소구분</th>
-                        <td colSpan={2}>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="addrgb"
-                              value={Information.addrgb}
-                              bizComponentId="L_BA002_628"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FormBoxFNF>
-                </FormBoxWrap>
-              </GridContainer>
-            </SwiperSlide>
-          </Swiper>
+          
         </>
       ) : (
         <>
@@ -2385,26 +1824,49 @@ const PR_B0020W_628: React.FC = () => {
               >
                 <GridTitle>태그정보</GridTitle>
                 <ButtonContainer>
-                  <Button
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
-                  <Button
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                    disabled={permissions.save ? false : true}
-                  ></Button>
+                  {addstate == true ? (
+                    <Button
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="추가"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        setFilters2((prev) => ({
+                          ...prev,
+                          isSearch: true,
+                          pgNum: 1,
+                        }));
+                        setAddstate(true);
+                      }}
+                      themeColor={"primary"}
+                      icon="reset"
+                      title="재조회"
+                      disabled={permissions.view ? false : true}
+                    ></Button>
+                  )}
                   <Button
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
-                    title="행 저장"
+                    title="저장"
                     disabled={permissions.save ? false : true}
                   />
+                  <Button
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
+                    title="삭제"
+                    disabled={
+                      permissions.save
+                        ? addstate == false
+                          ? true
+                          : false
+                        : true
+                    }
+                  ></Button>
                 </ButtonContainer>
                 <FormBoxFNF>
                   <tbody>
