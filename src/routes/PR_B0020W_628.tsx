@@ -18,7 +18,6 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -49,7 +48,7 @@ import {
   GetPropertyValueByName,
   handleKeyPressSearch,
   setDefaultDate,
-  toDate2,
+  toDate,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -192,10 +191,17 @@ const PR_B0020W_628: React.FC = () => {
   const [originListData, setoriginListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [addrListData, setaddrListData] = React.useState([
+    {
+      sub_code: "",
+      memo: "",
+    },
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setitemtypeListData(getBizCom(bizComponentData, "L_BA066"));
       setoriginListData(getBizCom(bizComponentData, "L_BA065_628"));
+      setaddrListData(getBizCom(bizComponentData, "L_BA002_628"));
     }
   }, [bizComponentData]);
 
@@ -591,6 +597,30 @@ const PR_B0020W_628: React.FC = () => {
 
               ordnum: selectedRow.ordnum,
               ordseq: selectedRow.ordseq,
+              seq: 0,
+              sealno: "",
+              itemnm: "",
+              specnum: "",
+              extra_field1: "",
+              Ingredients: "",
+              poregnum: "",
+              extra_field2: "",
+              extra_field7: "",
+              extra_field3: "",
+              dwgno: "",
+              project: "",
+              insiz: "",
+              subnm: "",
+              sublc: "",
+              subaddr: "",
+              remark: "",
+              maker: "",
+              saler: "",
+              cycletime_min: "",
+              prtqty: "",
+              tagtemp3: "",
+              addrgb: "",
+              tagtemp2: "",
             });
           }
         } else {
@@ -624,6 +654,30 @@ const PR_B0020W_628: React.FC = () => {
 
               ordnum: rows[0].ordnum,
               ordseq: rows[0].ordseq,
+              seq: 0,
+              sealno: "",
+              itemnm: "",
+              specnum: "",
+              extra_field1: "",
+              Ingredients: "",
+              poregnum: "",
+              extra_field2: "",
+              extra_field7: "",
+              extra_field3: "",
+              dwgno: "",
+              project: "",
+              insiz: "",
+              subnm: "",
+              sublc: "",
+              subaddr: "",
+              remark: "",
+              maker: "",
+              saler: "",
+              cycletime_min: "",
+              prtqty: "",
+              tagtemp3: "",
+              addrgb: "",
+              tagtemp2: "",
             });
           }
         }
@@ -758,7 +812,7 @@ const PR_B0020W_628: React.FC = () => {
           extra_field5: rows[0].extra_field5,
           extra_field6: rows[0].extra_field6,
           extra_field7:
-            rows[0].extra_field7 == "" ? null : toDate2(rows[0].extra_field7),
+            rows[0].extra_field7 == "" ? null : toDate(rows[0].extra_field7),
           ingredgb: rows[0].ingredgb,
           insiz: rows[0].insiz,
           itemnm: rows[0].itemnm,
@@ -768,7 +822,7 @@ const PR_B0020W_628: React.FC = () => {
           ordnum: rows[0].ordnum,
           ordseq: rows[0].ordseq,
           orgdiv: rows[0].orgdiv,
-          poregnum: rows[0].poregnum == "" ? null : toDate2(rows[0].poregnum),
+          poregnum: rows[0].poregnum == "" ? null : toDate(rows[0].poregnum),
           print_pc: rows[0].print_pc,
           print_userid: rows[0].print_userid,
           project: rows[0].project,
@@ -910,7 +964,7 @@ const PR_B0020W_628: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    setAddstate(true);
     if (selectedRowData.cnt > 0) {
       setFilters2((prev) => ({
         ...prev,
@@ -939,6 +993,30 @@ const PR_B0020W_628: React.FC = () => {
 
         ordnum: selectedRowData.ordnum,
         ordseq: selectedRowData.ordseq,
+        seq: 0,
+        sealno: "",
+        itemnm: "",
+        specnum: "",
+        extra_field1: "",
+        Ingredients: "",
+        poregnum: "",
+        extra_field2: "",
+        extra_field7: "",
+        extra_field3: "",
+        dwgno: "",
+        project: "",
+        insiz: "",
+        subnm: "",
+        sublc: "",
+        subaddr: "",
+        remark: "",
+        maker: "",
+        saler: "",
+        cycletime_min: "",
+        prtqty: "",
+        tagtemp3: "",
+        addrgb: "",
+        tagtemp2: "",
       });
     }
   };
@@ -954,6 +1032,7 @@ const PR_B0020W_628: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
+    setAddstate(true);
     setInformation({
       workType: "U",
       Ingredients: selectedRowData.Ingredients,
@@ -972,7 +1051,7 @@ const PR_B0020W_628: React.FC = () => {
       extra_field7:
         selectedRowData.extra_field7 == ""
           ? null
-          : toDate2(selectedRowData.extra_field7),
+          : toDate(selectedRowData.extra_field7),
       ingredgb: selectedRowData.ingredgb,
       insiz: selectedRowData.insiz,
       itemnm: selectedRowData.itemnm,
@@ -985,7 +1064,7 @@ const PR_B0020W_628: React.FC = () => {
       poregnum:
         selectedRowData.poregnum == ""
           ? null
-          : toDate2(selectedRowData.poregnum),
+          : toDate(selectedRowData.poregnum),
       print_pc: selectedRowData.print_pc,
       print_userid: selectedRowData.print_userid,
       project: selectedRowData.project,
@@ -1317,6 +1396,31 @@ const PR_B0020W_628: React.FC = () => {
 
     ordnum: "",
     ordseq: 0,
+
+    seq: 0,
+    sealno: "",
+    itemnm: "",
+    specnum: "",
+    extra_field1: "",
+    Ingredients: "",
+    poregnum: "",
+    extra_field2: "",
+    extra_field7: "",
+    extra_field3: "",
+    dwgno: "",
+    project: "",
+    insiz: "",
+    subnm: "",
+    sublc: "",
+    subaddr: "",
+    remark: "",
+    maker: "",
+    saler: "",
+    cycletime_min: "",
+    prtqty: "",
+    tagtemp3: "",
+    addrgb: "",
+    tagtemp2: "",
   });
 
   const para: Iparameters = {
@@ -1358,6 +1462,31 @@ const PR_B0020W_628: React.FC = () => {
 
       "@p_userid": sessionUserId,
       "@p_pc": sessionpc,
+
+      "@p_seq": ParaData2.seq,
+      "@p_usediv": ParaData2.sealno,
+      "@p_itemnm": ParaData2.itemnm,
+      "@p_specnum": ParaData2.specnum,
+      "@p_foodkind": ParaData2.extra_field1,
+      "@p_ingred": ParaData2.Ingredients,
+      "@p_comdt": ParaData2.poregnum,
+      "@p_packing": ParaData2.extra_field2,
+      "@p_shldt": ParaData2.extra_field7,
+      "@p_shlife": ParaData2.extra_field3,
+      "@p_itemgrade": ParaData2.dwgno,
+      "@p_proyr": ParaData2.project,
+      "@p_form": ParaData2.insiz,
+      "@p_subnm": ParaData2.subnm,
+      "@p_sublc": ParaData2.sublc,
+      "@p_subaddr": ParaData2.subaddr,
+      "@p_remark": ParaData2.remark,
+      "@p_maker": ParaData2.maker,
+      "@p_saler": ParaData2.saler,
+      "@p_shlifeday": ParaData2.cycletime_min,
+      "@p_prtqty": ParaData2.prtqty,
+      "@p_tagtemp3": ParaData2.tagtemp3,
+      "@p_addrgb": ParaData2.addrgb,
+      "@p_tagtemp2": ParaData2.tagtemp2,
     },
   };
 
@@ -1402,13 +1531,21 @@ const PR_B0020W_628: React.FC = () => {
   };
 
   useEffect(() => {
-    if (permissions.save && ParaData2.workType != "") {
+    if (
+      permissions.save &&
+      ParaData2.workType != "" &&
+      ParaData.workType != "D"
+    ) {
+      fetchTodoGridSaved2();
+    }
+    if (permissions.delete && ParaData.workType == "D") {
       fetchTodoGridSaved2();
     }
   }, [ParaData2, permissions]);
 
   const fetchTodoGridSaved2 = async () => {
-    if (!permissions.save) return;
+    if (!permissions.save && ParaData2.workType != "D") return;
+    if (!permissions.delete && ParaData2.workType == "D") return;
     let data: any;
     setLoading(true);
     try {
@@ -1443,6 +1580,30 @@ const PR_B0020W_628: React.FC = () => {
 
         ordnum: "",
         ordseq: 0,
+        seq: 0,
+        sealno: "",
+        itemnm: "",
+        specnum: "",
+        extra_field1: "",
+        Ingredients: "",
+        poregnum: "",
+        extra_field2: "",
+        extra_field7: "",
+        extra_field3: "",
+        dwgno: "",
+        project: "",
+        insiz: "",
+        subnm: "",
+        sublc: "",
+        subaddr: "",
+        remark: "",
+        maker: "",
+        saler: "",
+        cycletime_min: "",
+        prtqty: "",
+        tagtemp3: "",
+        addrgb: "",
+        tagtemp2: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -1450,6 +1611,178 @@ const PR_B0020W_628: React.FC = () => {
       alert(data.resultMessage);
     }
     setLoading(false);
+  };
+
+  const onAddClick = () => {
+    if (mainDataResult2.total <= 0) {
+      alert("조회된 자료가 없어 태그를 추가할 수 없습니다.");
+      setAddstate(false);
+      return false;
+    } else {
+      setAddstate(false);
+      const selectedRowData = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      const selectedRowData2 = mainDataResult2.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+      )[0];
+
+      var addrgb =
+        selectedRowData.custcd == "05583"
+          ? "2"
+          : selectedRowData.custcd == "04854"
+          ? "3"
+          : selectedRowData.custcd == "05166"
+          ? "4"
+          : selectedRowData.custcd == "05190"
+          ? "5"
+          : "1";
+
+      setInformation({
+        workType: "N",
+        Ingredients: selectedRowData2.Ingredients,
+        addrgb: addrgb,
+        addrgb_addr: selectedRowData2.addrgb_addr,
+        addrgb_custnm: selectedRowData2.addrgb_custnm,
+        color: selectedRowData2.color,
+        custnm: selectedRowData.custnm,
+        cycletime_min: selectedRowData2.cycletime_min,
+        dwgno: selectedRowData2.dwgno,
+        extra_field1: selectedRowData2.extra_field1,
+        extra_field2: selectedRowData2.extra_field2,
+        extra_field3: selectedRowData2.extra_field3,
+        extra_field5: selectedRowData2.extra_field5,
+        extra_field6: selectedRowData2.rcvcustnm,
+        extra_field7:
+          selectedRowData2.extra_field7 == ""
+            ? null
+            : toDate(selectedRowData2.extra_field7),
+        ingredgb: selectedRowData2.ingredgb,
+        insiz: selectedRowData2.insiz,
+        itemnm: selectedRowData2.itemnm,
+        itemnm2: selectedRowData2.itemnm2,
+        maker: selectedRowData2.maker,
+        moddt: selectedRowData2.moddt,
+        ordnum: selectedRowData2.ordnum,
+        ordseq: selectedRowData2.ordseq,
+        orgdiv: selectedRowData2.orgdiv,
+        poregnum:
+          selectedRowData2.poregnum == ""
+            ? null
+            : toDate(selectedRowData2.poregnum),
+        print_pc: selectedRowData2.print_pc,
+        print_userid: selectedRowData2.print_userid,
+        project: selectedRowData2.project,
+        prtdt: selectedRowData2.prtdt,
+        prtqty: 0,
+        qty: 0,
+        qtyunit: selectedRowData2.qtyunit,
+        rcvcustnm2: selectedRowData2.rcvcustnm2,
+        remark: selectedRowData2.remark,
+        remark1: selectedRowData2.remark1,
+        saler: selectedRowData2.saler,
+        seq: selectedRowData2.seq,
+        spec: selectedRowData2.spec,
+        specnum: selectedRowData2.specnum,
+        subaddr: selectedRowData2.subaddr,
+        sublc: selectedRowData2.sublc,
+        subnm: selectedRowData2.subnm,
+        tagarea: selectedRowData2.tagarea,
+        tagtemp1: selectedRowData2.tagtemp1,
+        tagtemp2: selectedRowData2.tagtemp2,
+        tagtemp3: addrListData.find((item: any) => item.sub_code == addrgb)
+          ?.memo,
+        tagtemp4: selectedRowData2.tagtemp4,
+        tagtemp5: selectedRowData2.tagtemp5,
+        totqty: selectedRowData2.totqty,
+        sealno: "",
+      });
+    }
+  };
+
+  const onSaveClick = () => {
+    if (!permissions.save) return;
+
+    if (Information.sealno == "") {
+      alert("용지구분을 선택해주세요.");
+      return false;
+    }
+    const selectedRow = mainDataResult.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+    const selectedRow2 = mainDataResult.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+    setParaData2((prev) => ({
+      ...prev,
+      workType: Information.workType,
+      orgdiv: Information.orgdiv,
+      dlvdt: selectedRow.dlvdt,
+      ordsiz: Information.spec,
+      custnm: Information.custnm,
+      itemcd: selectedRow.itemcd,
+      rcvcustnm: Information.extra_field6,
+      specsize: selectedRow.specsize,
+      qty: Information.qty,
+      custabbr: selectedRow.custabbr,
+      itemsts: selectedRow.itemsts,
+      itemdiv: selectedRow.itemdiv,
+      inspecsize: selectedRow.inspecsize,
+      custcd: selectedRow.custcd,
+
+      ordnum: Information.ordnum,
+      ordseq: Information.ordseq,
+      seq: Information.seq,
+      sealno: Information.sealno,
+      itemnm: Information.itemnm,
+      specnum: Information.specnum,
+      extra_field1: Information.extra_field1,
+      Ingredients: Information.Ingredients,
+      poregnum:
+        Information.poregnum == null
+          ? ""
+          : convertDateToStr(Information.poregnum),
+      extra_field2: Information.extra_field2,
+      extra_field7:
+        Information.extra_field7 == null
+          ? ""
+          : convertDateToStr(Information.extra_field7),
+      extra_field3: Information.extra_field3,
+      dwgno: Information.dwgno,
+      project: Information.project,
+      insiz: Information.insiz,
+      subnm: Information.subnm,
+      sublc: Information.sublc,
+      subaddr: Information.subaddr,
+      remark: Information.remark,
+      maker: Information.maker,
+      saler: Information.saler,
+      cycletime_min: Information.cycletime_min,
+      prtqty: Information.prtqty,
+      tagtemp3: Information.tagtemp3,
+      addrgb: Information.addrgb,
+      tagtemp2: Information.tagtemp2,
+    }));
+  };
+
+  const onDeleteClick = () => {
+    if (!permissions.delete) return;
+    if (!window.confirm("태그정보를 삭제하시겠습니까?")) {
+      return false;
+    }
+
+    setParaData2((prev) => ({
+      ...prev,
+      workType: "D",
+      orgdiv: Information.orgdiv,
+      ordnum: Information.ordnum,
+      ordseq: Information.ordseq,
+      seq: Information.seq,
+    }));
   };
 
   return (
@@ -1578,9 +1911,7 @@ const PR_B0020W_628: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       {isMobile ? (
-        <>
-          
-        </>
+        <></>
       ) : (
         <>
           <GridContainerWrap>
@@ -1828,10 +2159,17 @@ const PR_B0020W_628: React.FC = () => {
                 <ButtonContainer>
                   {addstate == true ? (
                     <Button
+                      onClick={onAddClick}
                       themeColor={"primary"}
                       icon="plus"
                       title="추가"
-                      disabled={permissions.save ? false : true}
+                      disabled={
+                        permissions.save
+                          ? mainDataResult.total == 0
+                            ? true
+                            : false
+                          : true
+                      }
                     ></Button>
                   ) : (
                     <Button
@@ -1846,24 +2184,40 @@ const PR_B0020W_628: React.FC = () => {
                       themeColor={"primary"}
                       icon="reset"
                       title="재조회"
-                      disabled={permissions.view ? false : true}
+                      disabled={
+                        permissions.view
+                          ? mainDataResult.total == 0
+                            ? true
+                            : false
+                          : true
+                      }
                     ></Button>
                   )}
                   <Button
+                    onClick={onSaveClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
                     title="저장"
-                    disabled={permissions.save ? false : true}
+                    disabled={
+                      permissions.save
+                        ? mainDataResult.total == 0
+                          ? true
+                          : false
+                        : true
+                    }
                   />
                   <Button
+                    onClick={onDeleteClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="delete"
                     title="삭제"
                     disabled={
                       permissions.save
-                        ? addstate == false
+                        ? mainDataResult.total == 0
+                          ? true
+                          : addstate == false
                           ? true
                           : false
                         : true
@@ -2016,7 +2370,7 @@ const PR_B0020W_628: React.FC = () => {
                       <td>
                         <Input
                           name="dwgno"
-                          type="number"
+                          type="text"
                           value={Information.dwgno}
                           onChange={InputChange}
                         />
@@ -2034,7 +2388,7 @@ const PR_B0020W_628: React.FC = () => {
                       <td>
                         <Input
                           name="insiz"
-                          type="number"
+                          type="text"
                           value={Information.insiz}
                           onChange={InputChange}
                         />
