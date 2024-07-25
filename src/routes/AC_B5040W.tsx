@@ -1334,7 +1334,7 @@ const AC_B5040W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="전자세금계산서비교현황"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -1479,7 +1479,7 @@ const AC_B5040W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="전자세금계산서비교현황"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}
@@ -1645,7 +1645,7 @@ const AC_B5040W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="전자세금계산서비교현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight3 : webheight2 }}
@@ -1783,7 +1783,7 @@ const AC_B5040W: React.FC = () => {
               ref={(exporter) => {
                 _export3 = exporter;
               }}
-              fileName="전자세금계산서비교현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight4 : webheight3 }}

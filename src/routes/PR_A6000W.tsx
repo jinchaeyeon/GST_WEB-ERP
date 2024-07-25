@@ -1318,7 +1318,7 @@ const PR_A6000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="비가동관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1421,7 +1421,7 @@ const PR_A6000W: React.FC = () => {
                   _export2 = exporter;
                 }}
                 group={group}
-                fileName="비가동관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -1532,7 +1532,7 @@ const PR_A6000W: React.FC = () => {
                   _export3 = exporter;
                 }}
                 group={group2}
-                fileName="비가동관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight3 }}
@@ -1626,7 +1626,7 @@ const PR_A6000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="비가동관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -1703,7 +1703,7 @@ const PR_A6000W: React.FC = () => {
                   _export2 = exporter;
                 }}
                 group={group}
-                fileName="비가동관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -1801,7 +1801,7 @@ const PR_A6000W: React.FC = () => {
                 _export3 = exporter;
               }}
               group={group2}
-              fileName="비가동관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight3 }}

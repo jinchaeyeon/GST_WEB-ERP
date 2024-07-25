@@ -523,7 +523,7 @@ const AC_B1280W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="단축코드별리스트"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

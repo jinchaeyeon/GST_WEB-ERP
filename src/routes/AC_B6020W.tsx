@@ -358,7 +358,7 @@ const AC_B6020W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="자금현황"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

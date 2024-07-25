@@ -1641,7 +1641,7 @@ const HU_B4010W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="인사고과 모니터링"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1907,7 +1907,7 @@ const HU_B4010W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="인사고과 모니터링"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -2026,7 +2026,7 @@ const HU_B4010W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="인사고과 모니터링"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -2103,7 +2103,7 @@ const HU_B4010W: React.FC = () => {
                       ref={(exporter) => {
                         _export4 = exporter;
                       }}
-                      fileName="인사고과 모니터링"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight7 }}
@@ -2183,7 +2183,7 @@ const HU_B4010W: React.FC = () => {
                       ref={(exporter) => {
                         _export5 = exporter;
                       }}
-                      fileName="인사고과 모니터링"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight8 }}
@@ -2530,7 +2530,7 @@ const HU_B4010W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="인사고과 모니터링"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -2669,7 +2669,7 @@ const HU_B4010W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="인사고과 모니터링"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight5 }}
@@ -2791,7 +2791,7 @@ const HU_B4010W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="인사고과 모니터링"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight6 }}
@@ -2864,7 +2864,7 @@ const HU_B4010W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="인사고과 모니터링"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight7 }}
@@ -2942,7 +2942,7 @@ const HU_B4010W: React.FC = () => {
                     ref={(exporter) => {
                       _export5 = exporter;
                     }}
-                    fileName="인사고과 모니터링"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight8 }}

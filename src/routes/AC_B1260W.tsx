@@ -1070,7 +1070,7 @@ const AC_B1260W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="단축코드별집계"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -1259,7 +1259,7 @@ const AC_B1260W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="단축코드별집계"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}
@@ -1488,7 +1488,7 @@ const AC_B1260W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="단축코드별집계"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight4 }}
@@ -1676,7 +1676,7 @@ const AC_B1260W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="단축코드별집계"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight4 }}
@@ -1902,7 +1902,7 @@ const AC_B1260W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="단축코드별집계"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight6 }}
@@ -2090,7 +2090,7 @@ const AC_B1260W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="단축코드별집계"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight6 }}
@@ -2319,7 +2319,7 @@ const AC_B1260W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="단축코드별집계"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight8 }}
@@ -2507,7 +2507,7 @@ const AC_B1260W: React.FC = () => {
                   ref={(exporter) => {
                     _export4 = exporter;
                   }}
-                  fileName="단축코드별집계"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight9 }}
@@ -2736,7 +2736,7 @@ const AC_B1260W: React.FC = () => {
                     ref={(exporter) => {
                       _export5 = exporter;
                     }}
-                    fileName="단축코드별집계"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight10 }}
@@ -2924,7 +2924,7 @@ const AC_B1260W: React.FC = () => {
                   ref={(exporter) => {
                     _export5 = exporter;
                   }}
-                  fileName="단축코드별집계"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight10 }}

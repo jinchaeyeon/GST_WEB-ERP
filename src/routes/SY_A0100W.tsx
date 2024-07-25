@@ -530,7 +530,7 @@ const App: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="데이터등록현황"
+          fileName={getMenuName()}
           group={group}
         >
           <Grid

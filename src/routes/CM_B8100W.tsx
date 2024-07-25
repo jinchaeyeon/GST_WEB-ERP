@@ -451,7 +451,7 @@ const CM_B8100W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="사용자별 근무현황"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

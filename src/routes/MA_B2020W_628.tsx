@@ -2062,7 +2062,7 @@ const MA_B2020W_628: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="발주관리"
+            fileName={getMenuName()}
           >
             <Grid
               style={{

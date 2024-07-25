@@ -3286,7 +3286,7 @@ const BA_A0020: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="업체관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -4016,7 +4016,7 @@ const BA_A0020: React.FC = () => {
                         ref={(exporter) => {
                           _export2 = exporter;
                         }}
-                        fileName="업체관리"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{
@@ -4161,7 +4161,7 @@ const BA_A0020: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="업체관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -4276,7 +4276,7 @@ const BA_A0020: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="업체관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -4980,7 +4980,7 @@ const BA_A0020: React.FC = () => {
                         ref={(exporter) => {
                           _export2 = exporter;
                         }}
-                        fileName="업체관리"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: webheight3 }}
@@ -5123,7 +5123,7 @@ const BA_A0020: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="업체관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight4 }}

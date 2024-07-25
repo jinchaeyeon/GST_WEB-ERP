@@ -1375,7 +1375,7 @@ const SA_B2000: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="수주처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -1495,7 +1495,7 @@ const SA_B2000: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="수주처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -1614,7 +1614,7 @@ const SA_B2000: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="수주처리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1715,7 +1715,7 @@ const SA_B2000: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="수주처리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

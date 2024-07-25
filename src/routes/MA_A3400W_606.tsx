@@ -1428,7 +1428,7 @@ const MA_A3400W_606: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="출고처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight3 }}
@@ -1525,7 +1525,7 @@ const MA_A3400W_606: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="출고처리"
+                  fileName={getMenuName()}
                 >
                   <GridTitleContainer className="ButtonContainer">
                     <GridTitle>요약정보</GridTitle>

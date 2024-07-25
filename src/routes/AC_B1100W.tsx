@@ -593,7 +593,7 @@ const AC_B1100W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="전표변경이력"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

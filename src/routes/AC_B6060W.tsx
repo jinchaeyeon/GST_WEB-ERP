@@ -1907,7 +1907,7 @@ const AC_B6060W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="집행현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight : webheight }}
@@ -1973,7 +1973,7 @@ const AC_B6060W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="집행현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight2 : webheight2 }}
@@ -2033,7 +2033,7 @@ const AC_B6060W: React.FC = () => {
               ref={(exporter) => {
                 _export3 = exporter;
               }}
-              fileName="집행현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight3 : webheight3 }}
@@ -2096,7 +2096,7 @@ const AC_B6060W: React.FC = () => {
               ref={(exporter) => {
                 _export4 = exporter;
               }}
-              fileName="집행현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight4 : webheight4 }}

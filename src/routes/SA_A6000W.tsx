@@ -2670,7 +2670,7 @@ const SA_A6000W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="판매계획관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight }}
@@ -2792,7 +2792,7 @@ const SA_A6000W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="판매계획관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -2890,7 +2890,7 @@ const SA_A6000W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="판매계획관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -2996,7 +2996,7 @@ const SA_A6000W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="판매계획관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight2 }}
@@ -3136,7 +3136,7 @@ const SA_A6000W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="판매계획관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight3 }}
@@ -3271,7 +3271,7 @@ const SA_A6000W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="판매계획관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight4 }}
@@ -3382,7 +3382,7 @@ const SA_A6000W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="판매계획관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}
@@ -3499,7 +3499,7 @@ const SA_A6000W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="판매계획관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight4 }}

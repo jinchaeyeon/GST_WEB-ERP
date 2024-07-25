@@ -910,7 +910,7 @@ const CM_B1000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="일정조회"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -993,7 +993,7 @@ const CM_B1000W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="일정조회"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1252,7 +1252,7 @@ const CM_B1000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="일정조회"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -1465,7 +1465,7 @@ const CM_B1000W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="일정조회"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}

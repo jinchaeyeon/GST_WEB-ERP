@@ -1302,7 +1302,7 @@ const SY_A0500W: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
-                  fileName="레이아웃 설정"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1453,7 +1453,7 @@ const SY_A0500W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 data={mainDataResult.data}
-                fileName="레이아웃 설정"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}

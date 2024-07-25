@@ -1872,7 +1872,7 @@ const CM_A7000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="고객상담일지"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

@@ -1179,7 +1179,7 @@ const SA_A3000: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="출하지시"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1284,7 +1284,7 @@ const SA_A3000: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="출하지시"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1525,7 +1525,7 @@ const SA_A3000: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="출하지시"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1612,7 +1612,7 @@ const SA_A3000: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="출하지시"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

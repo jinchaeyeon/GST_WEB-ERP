@@ -1265,7 +1265,7 @@ const SA_A2300W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="출하처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1370,7 +1370,7 @@ const SA_A2300W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="출하처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1641,7 +1641,7 @@ const SA_A2300W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="출하처리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1728,7 +1728,7 @@ const SA_A2300W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="출하처리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

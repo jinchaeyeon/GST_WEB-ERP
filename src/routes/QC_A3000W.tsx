@@ -2186,7 +2186,7 @@ const QC_A3000: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="공정검사"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -2321,7 +2321,7 @@ const QC_A3000: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="공정검사"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -2622,7 +2622,7 @@ const QC_A3000: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="공정검사"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight4 }}
@@ -2681,7 +2681,7 @@ const QC_A3000: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="공정검사"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -2795,7 +2795,7 @@ const QC_A3000: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="공정검사"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -3026,7 +3026,7 @@ const QC_A3000: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="공정검사"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight3 }}

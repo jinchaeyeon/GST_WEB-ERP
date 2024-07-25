@@ -1718,7 +1718,7 @@ const SA_A1200W_603: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="계약가능성관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight : webheight }}
@@ -2197,7 +2197,7 @@ const SA_A1200W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="계약가능성관리"
+                    fileName={getMenuName()}
                   >
                     <GridTitleContainer className="ButtonContainer3">
                       <GridTitle>
@@ -2664,7 +2664,7 @@ const SA_A1200W_603: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="계약가능성관리"
+                    fileName={getMenuName()}
                   >
                     <GridTitleContainer className="ButtonContainer4">
                       <GridTitle>코멘트</GridTitle>

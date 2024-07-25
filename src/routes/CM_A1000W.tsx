@@ -1598,7 +1598,7 @@ const CM_A1000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="업무일지"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -2136,7 +2136,7 @@ const CM_A1000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="업무일지"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}

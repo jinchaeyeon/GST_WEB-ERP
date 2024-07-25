@@ -1228,7 +1228,7 @@ const MA_A2000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="자재입고"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1331,7 +1331,7 @@ const MA_A2000W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="자재입고"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1601,7 +1601,7 @@ const MA_A2000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="자재입고"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1687,7 +1687,7 @@ const MA_A2000W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="자재입고"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

@@ -1078,7 +1078,7 @@ const CM_A8250W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="제경비표준"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1179,7 +1179,7 @@ const CM_A8250W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="제경비표준"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -1302,7 +1302,7 @@ const CM_A8250W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="제경비표준"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1387,7 +1387,7 @@ const CM_A8250W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="제경비표준"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

@@ -461,7 +461,7 @@ const AC_B8030W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="부가세 매입/매출장"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

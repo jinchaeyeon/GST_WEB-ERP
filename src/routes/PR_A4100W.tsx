@@ -1329,7 +1329,7 @@ const PR_A4100W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="생산계획현황"
+          fileName={getMenuName()}
           group={group}
         >
           <Grid

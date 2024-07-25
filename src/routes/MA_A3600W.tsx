@@ -1930,7 +1930,7 @@ const MA_A3600W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="전용처리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight }}
@@ -2029,7 +2029,7 @@ const MA_A3600W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="전용처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -2141,7 +2141,7 @@ const MA_A3600W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="전용처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight3 }}
@@ -2271,7 +2271,7 @@ const MA_A3600W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="전용처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -2347,7 +2347,7 @@ const MA_A3600W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="전용처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -2445,7 +2445,7 @@ const MA_A3600W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="전용처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}

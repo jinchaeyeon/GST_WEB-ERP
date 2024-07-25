@@ -1951,7 +1951,7 @@ const MA_B7200W: React.FC = () => {
                       ref={(exporter) => {
                         _export = exporter;
                       }}
-                      fileName="기간재고조회"
+                      fileName={getMenuName()}
                       group={group}
                     >
                       <GridTitleContainer className="ButtonContainer">
@@ -2053,7 +2053,7 @@ const MA_B7200W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="기간재고조회"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight2 }}
@@ -2165,7 +2165,7 @@ const MA_B7200W: React.FC = () => {
                         ref={(exporter) => {
                           _export3 = exporter;
                         }}
-                        fileName="기간재고조회"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: mobileheight3 }}
@@ -2265,7 +2265,7 @@ const MA_B7200W: React.FC = () => {
                   ref={(exporter) => {
                     _export4 = exporter;
                   }}
-                  fileName="기간재고조회"
+                  fileName={getMenuName()}
                   group={group2}
                 >
                   <SwiperSlide key={0}>
@@ -2378,7 +2378,7 @@ const MA_B7200W: React.FC = () => {
                       ref={(exporter) => {
                         _export5 = exporter;
                       }}
-                      fileName="기간재고조회"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight5 }}
@@ -2485,7 +2485,7 @@ const MA_B7200W: React.FC = () => {
                       ref={(exporter) => {
                         _export6 = exporter;
                       }}
-                      fileName="기간재고조회"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight6 }}
@@ -2587,7 +2587,7 @@ const MA_B7200W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="기간재고조회"
+                    fileName={getMenuName()}
                     group={group}
                   >
                     <Grid
@@ -2664,7 +2664,7 @@ const MA_B7200W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="기간재고조회"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}
@@ -2752,7 +2752,7 @@ const MA_B7200W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="기간재고조회"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}
@@ -2845,7 +2845,7 @@ const MA_B7200W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="기간재고조회"
+                    fileName={getMenuName()}
                     group={group2}
                   >
                     <GridTitleContainer className="ButtonContainer4">
@@ -2925,7 +2925,7 @@ const MA_B7200W: React.FC = () => {
                       ref={(exporter) => {
                         _export5 = exporter;
                       }}
-                      fileName="기간재고조회"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight5 }}
@@ -3009,7 +3009,7 @@ const MA_B7200W: React.FC = () => {
                       ref={(exporter) => {
                         _export6 = exporter;
                       }}
-                      fileName="기간재고조회"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight6 }}

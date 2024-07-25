@@ -878,7 +878,7 @@ const SA_B3100W: React.FC = () => {
                       ref={(exporter) => {
                         _export = exporter;
                       }}
-                      fileName="매출집계(품목)"
+                      fileName={getMenuName()}
                     >
                       <GridTitleContainer className="ButtonContainer">
                         <ButtonContainer
@@ -1005,7 +1005,7 @@ const SA_B3100W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="매출집계(풀목)"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -1258,7 +1258,7 @@ const SA_B3100W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="매출집계(풀목)"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -1642,7 +1642,7 @@ const SA_B3100W: React.FC = () => {
                       ref={(exporter) => {
                         _export4 = exporter;
                       }}
-                      fileName="매출집계(풀목)"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -2138,7 +2138,7 @@ const SA_B3100W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="매출집계(풀목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -2224,7 +2224,7 @@ const SA_B3100W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="매출집계(풀목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -2395,7 +2395,7 @@ const SA_B3100W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="매출집계(풀목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -2700,7 +2700,7 @@ const SA_B3100W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="매출집계(풀목)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}

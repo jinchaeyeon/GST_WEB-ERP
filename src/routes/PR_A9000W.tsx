@@ -2793,7 +2793,7 @@ const PR_A9000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="재공품 기타입출고"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -2937,7 +2937,7 @@ const PR_A9000W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="재공품 기타입출고"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{

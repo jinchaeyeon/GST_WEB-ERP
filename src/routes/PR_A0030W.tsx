@@ -1617,7 +1617,7 @@ const PR_A0030W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="공정패턴관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1863,7 +1863,7 @@ const PR_A0030W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="공정패턴관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight3 }}
@@ -1985,7 +1985,7 @@ const PR_A0030W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="공정패턴관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight4 }}
@@ -2079,7 +2079,7 @@ const PR_A0030W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="공정패턴관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -2271,7 +2271,7 @@ const PR_A0030W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="공정패턴관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight2 }}
@@ -2380,7 +2380,7 @@ const PR_A0030W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="공정패턴관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight3 }}

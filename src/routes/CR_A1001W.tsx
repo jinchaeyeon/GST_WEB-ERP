@@ -595,7 +595,7 @@ const Page: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="일별 출석 및 부가서비스 관리"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

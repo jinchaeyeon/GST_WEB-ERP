@@ -1259,7 +1259,7 @@ const SY_A0025W: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
-                  fileName="관리번호 채번정보"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1784,7 +1784,7 @@ const SY_A0025W: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   data={subDataResult.data}
-                  fileName="관리번호 채번정보"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1887,7 +1887,7 @@ const SY_A0025W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 data={mainDataResult.data}
-                fileName="관리번호 채번정보"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -2303,7 +2303,7 @@ const SY_A0025W: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export2 = exporter)}
                 data={subDataResult.data}
-                fileName="관리번호 채번정보"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}

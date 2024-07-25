@@ -765,7 +765,7 @@ const SA_B2410: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="출고현황"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

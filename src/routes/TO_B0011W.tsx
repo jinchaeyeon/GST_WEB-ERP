@@ -653,7 +653,7 @@ const TO_B0011W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="목형재고조회"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

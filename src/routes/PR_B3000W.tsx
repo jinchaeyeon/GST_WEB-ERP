@@ -619,7 +619,7 @@ const PR_B3000W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="작업일보"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

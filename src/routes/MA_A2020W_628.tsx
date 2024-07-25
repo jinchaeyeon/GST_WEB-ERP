@@ -862,7 +862,7 @@ const MA_A2020W_628: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="발주현황출력"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

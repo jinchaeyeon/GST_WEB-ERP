@@ -916,7 +916,7 @@ const CR_A1100W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="출석관리"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

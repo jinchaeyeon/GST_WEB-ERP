@@ -1805,7 +1805,7 @@ const SA_A1001W_603: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="견적관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -2131,7 +2131,7 @@ const SA_A1001W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="견적관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{
@@ -2405,7 +2405,7 @@ const SA_A1001W_603: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="견적관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}

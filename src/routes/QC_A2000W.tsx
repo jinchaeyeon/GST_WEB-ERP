@@ -2675,7 +2675,7 @@ const QC_A2000: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="수입검사"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -2801,7 +2801,7 @@ const QC_A2000: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="수입검사"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight2 }}
@@ -2946,7 +2946,7 @@ const QC_A2000: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="수입검사"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight3 }}
@@ -3069,7 +3069,7 @@ const QC_A2000: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="수입검사"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight2 }}
@@ -3193,7 +3193,7 @@ const QC_A2000: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="수입검사"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight3 }}

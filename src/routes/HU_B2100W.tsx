@@ -698,7 +698,7 @@ const HU_B2100W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="일근태 월별조회"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -795,7 +795,7 @@ const HU_B2100W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="일근태 월별조회"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -875,7 +875,7 @@ const HU_B2100W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="일근태 월별조회"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -958,7 +958,7 @@ const HU_B2100W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="일근태 월별조회"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

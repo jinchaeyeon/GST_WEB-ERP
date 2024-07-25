@@ -609,7 +609,7 @@ const AC_B1300W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="분개장"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

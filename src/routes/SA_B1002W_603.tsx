@@ -704,7 +704,7 @@ const SA_B1002W_603: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="견적현황조회"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

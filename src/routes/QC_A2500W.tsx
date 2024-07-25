@@ -1189,7 +1189,7 @@ const QC_A2500W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="NCR관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1311,7 +1311,7 @@ const QC_A2500W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="NCR관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{
@@ -1405,7 +1405,7 @@ const QC_A2500W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="NCR관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1509,7 +1509,7 @@ const QC_A2500W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="NCR관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

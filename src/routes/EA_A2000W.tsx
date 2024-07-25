@@ -1401,7 +1401,7 @@ const EA_A2000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="결재관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1531,7 +1531,7 @@ const EA_A2000W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="결재관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -1647,7 +1647,7 @@ const EA_A2000W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="결재관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight3 }}
@@ -1896,7 +1896,7 @@ const EA_A2000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="결재관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}
@@ -2004,7 +2004,7 @@ const EA_A2000W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="결재관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}
@@ -2094,7 +2094,7 @@ const EA_A2000W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="결재관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}

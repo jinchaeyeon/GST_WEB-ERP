@@ -1297,7 +1297,7 @@ const HU_A4100W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="복지포인트등록"
+            fileName={getMenuName()}
           >
             <Grid
               style={{ height: isMobile ? mobileheight : webheight }}

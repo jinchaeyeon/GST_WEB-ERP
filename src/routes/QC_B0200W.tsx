@@ -1454,7 +1454,7 @@ const QC_B0200W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="검사실적현황"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -1577,7 +1577,7 @@ const QC_B0200W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="검사실적현황"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight2 }}
@@ -1705,7 +1705,7 @@ const QC_B0200W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="검사실적현황"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight3 }}
@@ -1796,7 +1796,7 @@ const QC_B0200W: React.FC = () => {
                       ref={(exporter) => {
                         _export4 = exporter;
                       }}
-                      fileName="검사실적현황"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight4 }}
@@ -1885,7 +1885,7 @@ const QC_B0200W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="검사실적현황"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}
@@ -1978,7 +1978,7 @@ const QC_B0200W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="검사실적현황"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight3 }}
@@ -2051,7 +2051,7 @@ const QC_B0200W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="검사실적현황"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight4 }}

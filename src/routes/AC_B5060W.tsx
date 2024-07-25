@@ -1291,7 +1291,7 @@ const AC_B5060W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="세금계산서합계표"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight }}
@@ -1378,7 +1378,7 @@ const AC_B5060W: React.FC = () => {
                           ref={(exporter) => {
                             _export2 = exporter;
                           }}
-                          fileName="세금계산서합계표"
+                          fileName={getMenuName()}
                         >
                           <Grid
                             style={{
@@ -1463,7 +1463,7 @@ const AC_B5060W: React.FC = () => {
                           ref={(exporter) => {
                             _export3 = exporter;
                           }}
-                          fileName="세금계산서합계표"
+                          fileName={getMenuName()}
                         >
                           <Grid
                             style={{
@@ -1553,7 +1553,7 @@ const AC_B5060W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="세금계산서합계표"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}
@@ -1621,7 +1621,7 @@ const AC_B5060W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="세금계산서합계표"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}
@@ -1699,7 +1699,7 @@ const AC_B5060W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="세금계산서합계표"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}
@@ -1828,7 +1828,7 @@ const AC_B5060W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="세금계산서합계표"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight5 }}
@@ -1915,7 +1915,7 @@ const AC_B5060W: React.FC = () => {
                           ref={(exporter) => {
                             _export5 = exporter;
                           }}
-                          fileName="세금계산서합계표"
+                          fileName={getMenuName()}
                         >
                           <Grid
                             style={{
@@ -2000,7 +2000,7 @@ const AC_B5060W: React.FC = () => {
                           ref={(exporter) => {
                             _export6 = exporter;
                           }}
-                          fileName="세금계산서합계표"
+                          fileName={getMenuName()}
                         >
                           <Grid
                             style={{
@@ -2090,7 +2090,7 @@ const AC_B5060W: React.FC = () => {
                   ref={(exporter) => {
                     _export4 = exporter;
                   }}
-                  fileName="세금계산서합계표"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight5 }}
@@ -2158,7 +2158,7 @@ const AC_B5060W: React.FC = () => {
                       ref={(exporter) => {
                         _export5 = exporter;
                       }}
-                      fileName="세금계산서합계표"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight6 }}
@@ -2236,7 +2236,7 @@ const AC_B5060W: React.FC = () => {
                       ref={(exporter) => {
                         _export6 = exporter;
                       }}
-                      fileName="세금계산서합계표"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight7 }}

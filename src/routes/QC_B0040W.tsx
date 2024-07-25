@@ -1492,7 +1492,7 @@ const QC_B0040W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="LOT정추적"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1607,7 +1607,7 @@ const QC_B0040W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="LOT정추적"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1725,7 +1725,7 @@ const QC_B0040W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="LOT정추적"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight3 }}
@@ -1822,7 +1822,7 @@ const QC_B0040W: React.FC = () => {
                   ref={(exporter) => {
                     _export4 = exporter;
                   }}
-                  fileName="LOT정추적"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight4 }}
@@ -1905,7 +1905,7 @@ const QC_B0040W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="LOT정추적"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1987,7 +1987,7 @@ const QC_B0040W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="LOT정추적"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}
@@ -2073,7 +2073,7 @@ const QC_B0040W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="LOT정추적"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}
@@ -2154,7 +2154,7 @@ const QC_B0040W: React.FC = () => {
                 ref={(exporter) => {
                   _export4 = exporter;
                 }}
-                fileName="LOT정추적"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight4 }}

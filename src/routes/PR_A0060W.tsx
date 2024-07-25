@@ -2633,7 +2633,7 @@ const PR_A0060: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="설비관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -3084,7 +3084,7 @@ const PR_A0060: React.FC = () => {
                         ref={(exporter) => {
                           _export2 = exporter;
                         }}
-                        fileName="설비관리"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: mobileheight3 }}
@@ -3227,7 +3227,7 @@ const PR_A0060: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="설비관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -3665,7 +3665,7 @@ const PR_A0060: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="설비관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}

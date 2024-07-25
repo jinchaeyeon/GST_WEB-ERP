@@ -672,7 +672,7 @@ const SA_B2200W_603: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="수주현황조회"
+          fileName={getMenuName()}
         >
           <GridTitleContainer className="ButtonContainer">
             <GridTitle>요약정보</GridTitle>

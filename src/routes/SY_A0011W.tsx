@@ -1493,7 +1493,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
-                  fileName="사용자 그룹"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1593,7 +1593,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   hierarchy={true}
-                  fileName="사용자 그룹"
+                  fileName={getMenuName()}
                 >
                   <TreeList
                     style={{
@@ -1660,7 +1660,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export3 = exporter)}
                   hierarchy={true}
-                  fileName="사용자 그룹"
+                  fileName={getMenuName()}
                 >
                   <TreeList
                     style={{
@@ -1729,7 +1729,7 @@ const Page: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 data={mainDataResult.data}
-                fileName="사용자 그룹"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -1814,7 +1814,7 @@ const Page: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export2 = exporter)}
                 hierarchy={true}
-                fileName="사용자 그룹"
+                fileName={getMenuName()}
               >
                 <TreeList
                   style={{
@@ -1863,7 +1863,7 @@ const Page: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export3 = exporter)}
                 hierarchy={true}
-                fileName="사용자 그룹"
+                fileName={getMenuName()}
               >
                 <TreeList
                   style={{

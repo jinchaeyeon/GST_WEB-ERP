@@ -593,7 +593,7 @@ const AC_A1120W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="전표리스트"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

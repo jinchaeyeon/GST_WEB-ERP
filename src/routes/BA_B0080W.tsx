@@ -639,7 +639,7 @@ const BA_B0080W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="단가조회"
+          fileName={getMenuName()}
         >
           {isMobile ? (
             <Grid

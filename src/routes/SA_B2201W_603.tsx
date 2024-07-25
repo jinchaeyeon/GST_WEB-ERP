@@ -826,7 +826,7 @@ const SA_B2201W_603: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="수주잔고조회"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -925,7 +925,7 @@ const SA_B2201W_603: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="수주잔고조회"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight2 }}
@@ -1008,7 +1008,7 @@ const SA_B2201W_603: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="수주잔고조회"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1091,7 +1091,7 @@ const SA_B2201W_603: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="수주잔고조회"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

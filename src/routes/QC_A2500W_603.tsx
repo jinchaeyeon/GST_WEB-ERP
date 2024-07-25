@@ -1935,7 +1935,7 @@ const QC_A2500W_603: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="컴플레인관리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

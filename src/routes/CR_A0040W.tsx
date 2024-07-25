@@ -917,7 +917,7 @@ const CR_A0040W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="회원권 리스트"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

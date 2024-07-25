@@ -673,7 +673,7 @@ const HU_B2120W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="근태집계현황"
+              fileName={getMenuName()}
               group={group}
             >
               <Grid
@@ -743,7 +743,7 @@ const HU_B2120W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="근태집계현황"
+              fileName={getMenuName()}
               group={group2}
             >
               <Grid

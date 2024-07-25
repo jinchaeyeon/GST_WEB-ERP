@@ -1130,7 +1130,7 @@ const MA_B7201W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="기간재고조회(품목별)"
+                  fileName={getMenuName()}
                   group={group}
                 >
                   <Grid
@@ -1224,7 +1224,7 @@ const MA_B7201W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="기간재고조회(품목별)"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1332,7 +1332,7 @@ const MA_B7201W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="기간재고조회(품목별)"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight3 }}
@@ -1423,7 +1423,7 @@ const MA_B7201W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="기간재고조회(품목별)"
+                fileName={getMenuName()}
                 group={group}
               >
                 <Grid
@@ -1499,7 +1499,7 @@ const MA_B7201W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="기간재고조회(품목별)"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}
@@ -1584,7 +1584,7 @@ const MA_B7201W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="기간재고조회(품목별)"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight3 }}

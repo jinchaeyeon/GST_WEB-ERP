@@ -1450,7 +1450,7 @@ const HU_A5020W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="퇴직연금"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1621,7 +1621,7 @@ const HU_A5020W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="퇴직연금"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}

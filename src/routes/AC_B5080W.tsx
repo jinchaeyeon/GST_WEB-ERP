@@ -1219,7 +1219,7 @@ const AC_B5080W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="계산서&전표체크"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight : webheight }}
@@ -1307,7 +1307,7 @@ const AC_B5080W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="계산서&전표체크"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight2 : webheight2 }}
@@ -1404,7 +1404,7 @@ const AC_B5080W: React.FC = () => {
               ref={(exporter) => {
                 _export3 = exporter;
               }}
-              fileName="계산서&전표체크"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight3 : webheight3 }}
@@ -1498,7 +1498,7 @@ const AC_B5080W: React.FC = () => {
               ref={(exporter) => {
                 _export4 = exporter;
               }}
-              fileName="계산서&전표체크"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight4 : webheight4 }}
@@ -1598,7 +1598,7 @@ const AC_B5080W: React.FC = () => {
               ref={(exporter) => {
                 _export5 = exporter;
               }}
-              fileName="계산서&전표체크"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight5 : webheight5 }}
@@ -1689,7 +1689,7 @@ const AC_B5080W: React.FC = () => {
               ref={(exporter) => {
                 _export6 = exporter;
               }}
-              fileName="계산서&전표체크"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight6 : webheight6 }}
@@ -1789,7 +1789,7 @@ const AC_B5080W: React.FC = () => {
               ref={(exporter) => {
                 _export7 = exporter;
               }}
-              fileName="계산서&전표체크"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: isMobile ? mobileheight7 : webheight7 }}

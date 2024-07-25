@@ -889,7 +889,7 @@ const MA_A0010W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="적재장소마스터"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

@@ -951,7 +951,7 @@ const CM_B1101W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="고객대응시간분석"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight }}
@@ -1030,7 +1030,7 @@ const CM_B1101W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="고객대응시간분석"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -1122,7 +1122,7 @@ const CM_B1101W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="고객대응시간분석"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -1210,7 +1210,7 @@ const CM_B1101W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="고객대응시간분석"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}
@@ -1289,7 +1289,7 @@ const CM_B1101W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="고객대응시간분석"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}
@@ -1365,7 +1365,7 @@ const CM_B1101W: React.FC = () => {
               ref={(exporter) => {
                 _export3 = exporter;
               }}
-              fileName="고객대응시간분석"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight3 }}

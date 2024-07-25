@@ -2117,7 +2117,7 @@ const PR_B0020W_628: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="태그발행"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -2215,7 +2215,7 @@ const PR_B0020W_628: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="태그발행"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{

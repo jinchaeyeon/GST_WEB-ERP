@@ -1191,7 +1191,7 @@ const BA_A0021W_603: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="고객이력관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1594,7 +1594,7 @@ const BA_A0021W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="고객이력관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight4 }}
@@ -1687,7 +1687,7 @@ const BA_A0021W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="고객이력관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight5 }}
@@ -1776,7 +1776,7 @@ const BA_A0021W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export4 = exporter;
                       }}
-                      fileName="고객이력관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight6 }}
@@ -1946,7 +1946,7 @@ const BA_A0021W_603: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="고객이력관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight }}
@@ -2315,7 +2315,7 @@ const BA_A0021W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="고객이력관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight3 }}
@@ -2408,7 +2408,7 @@ const BA_A0021W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="고객이력관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight4 }}
@@ -2497,7 +2497,7 @@ const BA_A0021W_603: React.FC = () => {
                       ref={(exporter) => {
                         _export4 = exporter;
                       }}
-                      fileName="고객이력관리"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight5 }}

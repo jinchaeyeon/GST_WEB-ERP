@@ -4384,7 +4384,7 @@ const HU_A3040W: React.FC = () => {
                       ref={(exporter) => {
                         _export = exporter;
                       }}
-                      fileName="연금보험료"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight }}
@@ -4482,7 +4482,7 @@ const HU_A3040W: React.FC = () => {
                         ref={(exporter) => {
                           _export2 = exporter;
                         }}
-                        fileName="연금보험료"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: mobileheight2 }}
@@ -4616,7 +4616,7 @@ const HU_A3040W: React.FC = () => {
                       ref={(exporter) => {
                         _export3 = exporter;
                       }}
-                      fileName="연금보험료"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight3 }}
@@ -4714,7 +4714,7 @@ const HU_A3040W: React.FC = () => {
                         ref={(exporter) => {
                           _export4 = exporter;
                         }}
-                        fileName="연금보험료"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: mobileheight4 }}
@@ -4854,7 +4854,7 @@ const HU_A3040W: React.FC = () => {
                       ref={(exporter) => {
                         _export5 = exporter;
                       }}
-                      fileName="연금보험료"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: mobileheight5 }}
@@ -4952,7 +4952,7 @@ const HU_A3040W: React.FC = () => {
                         ref={(exporter) => {
                           _export6 = exporter;
                         }}
-                        fileName="연금보험료"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: mobileheight6 }}
@@ -5171,7 +5171,7 @@ const HU_A3040W: React.FC = () => {
                     ref={(exporter) => {
                       _export = exporter;
                     }}
-                    fileName="연금보험료"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight }}
@@ -5267,7 +5267,7 @@ const HU_A3040W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="연금보험료"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}
@@ -5387,7 +5387,7 @@ const HU_A3040W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="연금보험료"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight3 }}
@@ -5483,7 +5483,7 @@ const HU_A3040W: React.FC = () => {
                       ref={(exporter) => {
                         _export4 = exporter;
                       }}
-                      fileName="연금보험료"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight4 }}
@@ -5609,7 +5609,7 @@ const HU_A3040W: React.FC = () => {
                     ref={(exporter) => {
                       _export5 = exporter;
                     }}
-                    fileName="연금보험료"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: webheight5 }}
@@ -5705,7 +5705,7 @@ const HU_A3040W: React.FC = () => {
                       ref={(exporter) => {
                         _export6 = exporter;
                       }}
-                      fileName="연금보험료"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight6 }}

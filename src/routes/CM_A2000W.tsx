@@ -734,7 +734,7 @@ const CM_A2000W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="업무지시요청"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

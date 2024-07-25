@@ -1494,7 +1494,7 @@ const HU_A3020W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="지급항목"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{
@@ -1619,7 +1619,7 @@ const HU_A3020W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="지급항목"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{

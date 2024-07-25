@@ -1255,7 +1255,7 @@ const CM_A7010W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="상담일지"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: isMobile ? mobileheight : webheight }}
@@ -1782,7 +1782,7 @@ const CM_A7010W: React.FC = () => {
                       ref={(exporter) => {
                         _export = exporter;
                       }}
-                      fileName="상담일지"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight }}

@@ -998,7 +998,7 @@ const HU_A2100W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="근무시간관리"
+            fileName={getMenuName()}
           >
             <Grid
               style={{ height: mobileheight }}
@@ -1109,7 +1109,7 @@ const HU_A2100W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
-            fileName="근무시간관리"
+            fileName={getMenuName()}
           >
             <Grid
               style={{ height: webheight }}

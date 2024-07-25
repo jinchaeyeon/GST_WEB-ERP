@@ -2189,7 +2189,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
-                  fileName="사용자 권한"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -2321,7 +2321,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   data={detailDataResult.data}
-                  fileName="사용자 권한"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -2428,7 +2428,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export3 = exporter)}
                   hierarchy={true}
-                  fileName="사용자 권한"
+                  fileName={getMenuName()}
                 >
                   <TreeList
                     style={{
@@ -2483,7 +2483,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export4 = exporter)}
                   hierarchy={true}
-                  fileName="사용자 권한"
+                  fileName={getMenuName()}
                 >
                   <TreeList
                     style={{
@@ -2557,7 +2557,7 @@ const Page: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 data={mainDataResult.data}
-                fileName="사용자 권한"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -2658,7 +2658,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export2 = exporter)}
                   data={detailDataResult.data}
-                  fileName="사용자 권한"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}
@@ -2750,7 +2750,7 @@ const Page: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export3 = exporter)}
                   hierarchy={true}
-                  fileName="사용자 권한"
+                  fileName={getMenuName()}
                 >
                   <TreeList
                     style={{ height: webheight3, overflow: "auto" }}
@@ -2798,7 +2798,7 @@ const Page: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export4 = exporter)}
                 hierarchy={true}
-                fileName="사용자 권한"
+                fileName={getMenuName()}
               >
                 <TreeList
                   style={{

@@ -823,7 +823,7 @@ const CM_A0000W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="공지사항"
+          fileName={getMenuName()}
         >
           <Grid
             style={{

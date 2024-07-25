@@ -1083,7 +1083,7 @@ const SA_A8000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="수금처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -1186,7 +1186,7 @@ const SA_A8000W: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="수금처리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight2 }}
@@ -1380,7 +1380,7 @@ const SA_A8000W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="수금처리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -1466,7 +1466,7 @@ const SA_A8000W: React.FC = () => {
               ref={(exporter) => {
                 _export2 = exporter;
               }}
-              fileName="수금처리"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight2 }}

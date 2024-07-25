@@ -436,7 +436,7 @@ const HU_B3160W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="급상여이체명부"
+          fileName={getMenuName()}
         >
           <Grid
             style={{ height: isMobile ? mobileheight : webheight }}

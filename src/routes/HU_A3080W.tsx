@@ -5162,7 +5162,7 @@ const HU_A3080W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="지급공제처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -5327,7 +5327,7 @@ const HU_A3080W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="지급공제처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -5497,7 +5497,7 @@ const HU_A3080W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="지급공제처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -5659,7 +5659,7 @@ const HU_A3080W: React.FC = () => {
                 ref={(exporter) => {
                   _export4 = exporter;
                 }}
-                fileName="지급공제처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{
@@ -5821,7 +5821,7 @@ const HU_A3080W: React.FC = () => {
                 ref={(exporter) => {
                   _export5 = exporter;
                 }}
-                fileName="지급공제처리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{

@@ -1868,7 +1868,7 @@ const BA_A0080: React.FC = () => {
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={subDataResult.data}
-                  fileName="단가관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -2030,7 +2030,7 @@ const BA_A0080: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="단가관리"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -2168,7 +2168,7 @@ const BA_A0080: React.FC = () => {
               <ExcelExport
                 ref={(exporter) => (_export = exporter)}
                 data={subDataResult.data}
-                fileName="단가관리"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight }}
@@ -2307,7 +2307,7 @@ const BA_A0080: React.FC = () => {
                   ref={(exporter) => {
                     _export2 = exporter;
                   }}
-                  fileName="단가관리"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: webheight2 }}
@@ -2440,10 +2440,7 @@ const BA_A0080: React.FC = () => {
         />
       )}
       {CopyWindowVisible2 && (
-        <CopyWindow2
-          setVisible={setCopyWindowVisible2}
-          modal={true}
-        />
+        <CopyWindow2 setVisible={setCopyWindowVisible2} modal={true} />
       )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

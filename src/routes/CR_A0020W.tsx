@@ -724,7 +724,7 @@ const CR_A0020W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="반려견 정보"
+          fileName={getMenuName()}
         >
           <GridTitleContainer className="ButtonContainer">
             <GridTitle>반려견 리스트</GridTitle>

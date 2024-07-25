@@ -2652,7 +2652,7 @@ const MA_A3500W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
-                  fileName="자재불출"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight }}
@@ -2864,7 +2864,7 @@ const MA_A3500W: React.FC = () => {
                         ref={(exporter) => {
                           _export2 = exporter;
                         }}
-                        fileName="자재불출"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: mobileheight2 }}
@@ -3071,7 +3071,7 @@ const MA_A3500W: React.FC = () => {
                             ref={(exporter) => {
                               _export4 = exporter;
                             }}
-                            fileName="자재불출"
+                            fileName={getMenuName()}
                           >
                             <Grid
                               style={{
@@ -3277,7 +3277,7 @@ const MA_A3500W: React.FC = () => {
                             ref={(exporter) => {
                               _export5 = exporter;
                             }}
-                            fileName="자재불출"
+                            fileName={getMenuName()}
                           >
                             <Grid
                               style={{
@@ -3440,7 +3440,7 @@ const MA_A3500W: React.FC = () => {
                   ref={(exporter) => {
                     _export3 = exporter;
                   }}
-                  fileName="자재불출"
+                  fileName={getMenuName()}
                 >
                   <Grid
                     style={{ height: mobileheight5 }}
@@ -3554,7 +3554,7 @@ const MA_A3500W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="자재불출"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -3729,7 +3729,7 @@ const MA_A3500W: React.FC = () => {
                       ref={(exporter) => {
                         _export2 = exporter;
                       }}
-                      fileName="자재불출"
+                      fileName={getMenuName()}
                     >
                       <Grid
                         style={{ height: webheight2 }}
@@ -3869,7 +3869,7 @@ const MA_A3500W: React.FC = () => {
                         ref={(exporter) => {
                           _export4 = exporter;
                         }}
-                        fileName="자재불출"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: webheight3 }}
@@ -4012,7 +4012,7 @@ const MA_A3500W: React.FC = () => {
                         ref={(exporter) => {
                           _export5 = exporter;
                         }}
-                        fileName="자재불출"
+                        fileName={getMenuName()}
                       >
                         <Grid
                           style={{ height: webheight4 }}
@@ -4142,7 +4142,7 @@ const MA_A3500W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="자재불출"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight5 }}

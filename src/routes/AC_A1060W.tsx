@@ -1779,7 +1779,7 @@ const AC_A1060W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
-                fileName="매출전표(수출)"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: mobileheight }}
@@ -1904,7 +1904,7 @@ const AC_A1060W: React.FC = () => {
                     ref={(exporter) => {
                       _export2 = exporter;
                     }}
-                    fileName="매출전표(수출)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight2 }}
@@ -1982,7 +1982,7 @@ const AC_A1060W: React.FC = () => {
                     ref={(exporter) => {
                       _export3 = exporter;
                     }}
-                    fileName="매출전표(수출)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight3 }}
@@ -2065,7 +2065,7 @@ const AC_A1060W: React.FC = () => {
                     ref={(exporter) => {
                       _export4 = exporter;
                     }}
-                    fileName="매출전표(수출)"
+                    fileName={getMenuName()}
                   >
                     <Grid
                       style={{ height: mobileheight4 }}
@@ -2188,7 +2188,7 @@ const AC_A1060W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
-              fileName="매출전표(수출)"
+              fileName={getMenuName()}
             >
               <Grid
                 style={{ height: webheight }}
@@ -2296,7 +2296,7 @@ const AC_A1060W: React.FC = () => {
                 ref={(exporter) => {
                   _export2 = exporter;
                 }}
-                fileName="매출전표(수출)"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight2 }}
@@ -2374,7 +2374,7 @@ const AC_A1060W: React.FC = () => {
                 ref={(exporter) => {
                   _export3 = exporter;
                 }}
-                fileName="매출전표(수출)"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight3 }}
@@ -2457,7 +2457,7 @@ const AC_A1060W: React.FC = () => {
                 ref={(exporter) => {
                   _export4 = exporter;
                 }}
-                fileName="매출전표(수출)"
+                fileName={getMenuName()}
               >
                 <Grid
                   style={{ height: webheight4 }}
