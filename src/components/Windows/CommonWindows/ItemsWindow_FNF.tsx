@@ -163,7 +163,7 @@ const ItemWindow_FNF = ({
     itemdiv: "",
     spec: "",
     specsize: "",
-    gubun: "2",
+    gubun: "1",
     itemsts: "",
     itemacnt: "",
     orgdiv: sessionOrgdiv,

@@ -937,7 +937,7 @@ const MA_B2020W_628: React.FC = () => {
       field == "taxamt" ||
       field == "itemtype" ||
       field == "edityn" ||
-      field == "itemacnt"
+      field == "itemacnt" 
     ) {
       valid = false;
       return false;
