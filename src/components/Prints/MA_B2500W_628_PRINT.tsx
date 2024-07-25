@@ -74,15 +74,20 @@ const MA_B2500W_628_PRINT = (data: any) => {
 
   const componentRef = useRef(null);
 
-// 숫자를 포맷하는 함수
-const formatNumber = (numStr: string) => {
-  const parsedNum = parseFloat(numStr);
-  if (isNaN(parsedNum)) return "0.00";
-  const flooredNum = Math.floor(parsedNum * 100) / 100;
-  const formattedNum = flooredNum.toFixed(2);
+  // 숫자를 포맷하는 함수
+  const formatNumber = (numStr: string) => {
+    const parsedNum = parseFloat(numStr);
+    if (isNaN(parsedNum)) return "0.00";
+    const flooredNum = Math.floor(parsedNum * 100) / 100;
+    const formattedNum = flooredNum.toFixed(2);
 
-  return formattedNum.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
+    return formattedNum.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+  
+  const itemsPerPage = 47; // 페이지당 항목 수
+  const totalPages = mainDataResult
+    ? Math.ceil(mainDataResult.length / itemsPerPage)
+    : 0;
 
   return (
     <LandscapePrint>
@@ -104,111 +109,124 @@ const formatNumber = (numStr: string) => {
       </ButtonContainer>
 
       <div className={styles.printable} ref={componentRef}>
-        <div className={styles.header_wrap}>
-          <div className={styles.left}>
-            <p>
-              기간: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
-              {dateformat2(convertDateToStr(data.data.todt))}
-            </p>
-          </div>
-          <div className={styles.center}>
-            <h1>매입 현황</h1>
-          </div>
-          <div className={styles.right}>
-            <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
-          </div>
-        </div>
-
-        {mainDataResult !== null &&
-          mainDataResult.map((item1: any, idx1: number) =>
-            idx1 == 0 || idx1 % total == 0 ? (
-              <>
-                <table className={styles.tg}>
-                  <colgroup>
-                    <col width="10%" />
-                    <col width="20%" />
-                    <col width="5%" />
-                    <col width="10%" />
-                    <col width="10%" />
-                    <col width="10%" />
-                    <col width="10%" />
-                    <col width="10%" />
-                    <col width="15%" />
-                    <col width="10%" />
-                  </colgroup>
-                  <tbody>
-                    <tr style={{ backgroundColor: "#e6e6e6" }}>
-                      <th>매입일자</th>
-                      <th>품목명</th>
-                      <th>단위</th>
-                      <th>수량</th>
-                      <th>단가</th>
-                      <th>금액</th>
-                      <th>세액</th>
-                      <th>합계액</th>
-                      <th>납품처</th>
-                      <th>원산지</th>
+        {Array.from({ length: totalPages }).map((_, pageIndex) => (
+          <div key={pageIndex} className={styles.page}>
+            <div className={styles.header_wrap}>
+              <div className={styles.left}>
+                <p>
+                  기간: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
+                  {dateformat2(convertDateToStr(data.data.todt))}
+                </p>
+              </div>
+              <div className={styles.center}>
+                <h1>매입 현황</h1>
+              </div>
+              <div className={styles.right}>
+                <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
+              </div>
+            </div>
+            <table className={styles.tg}>
+              <colgroup>
+                <col width="10%" />
+                <col width="20%" />
+                <col width="5%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="10%" />
+                <col width="15%" />
+                <col width="10%" />
+              </colgroup>
+              <thead>
+                <tr style={{ backgroundColor: "#e6e6e6" }}>
+                  <th>매입일자</th>
+                  <th>품목명</th>
+                  <th>단위</th>
+                  <th>수량</th>
+                  <th>단가</th>
+                  <th>금액</th>
+                  <th>세액</th>
+                  <th>합계액</th>
+                  <th>납품처</th>
+                  <th>원산지</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mainDataResult
+                  .slice(
+                    pageIndex * itemsPerPage,
+                    (pageIndex + 1) * itemsPerPage
+                  )
+                  .map((item: any, idx: number) => (
+                    <tr key={item.rownum}>
+                      <td style={{ textAlign: "center" }}>
+                        {dateformat2(item.outdt)}
+                      </td>
+                      <td>{item.itemnm}</td>
+                      <td style={{ textAlign: "center" }}>{item.qtyunit}</td>
+                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                        {formatNumber(item.qty)}
+                      </td>
+                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                        {numberWithCommas(Math.trunc(item.unp))}
+                      </td>
+                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                        {numberWithCommas(Math.trunc(item.wonamt))}
+                      </td>
+                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                        {numberWithCommas(Math.trunc(item.taxamt))}
+                      </td>
+                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                        {numberWithCommas(Math.trunc(item.totamt))}
+                      </td>
+                      <td>{item.rcvcustnm}</td>
+                      <td>{item.specnum}</td>
                     </tr>
-                    {mainDataResult.map((item2: any, idx2: number) => (
-                      <tr key={item2.rownum}>
-                        <td style={{ textAlign: "center"}}>{dateformat2(item2.outdt)}</td>
-                        <td>{item2.itemnm}</td>
-                        <td style={{ textAlign: "center"}}>{item2.qtyunit}</td>
-                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {formatNumber(item2.qty)}
-                        </td>
-                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.unp)}
-                        </td>
-                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(Math.trunc(item2.wonamt))}
-                        </td>
-                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(Math.trunc(item2.taxamt))}
-                        </td>
-                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(Math.trunc(item2.totamt))}
-                        </td>
-                        <td>{item2.rcvcustnm}</td>
-                        <td>{item2.specnum}</td>
-                      </tr>
-                    ))}
-                    <tr style={{ backgroundColor: "#e6e6e6" }}>
-                      <td style={{ textAlign: "center"}}>계</td>
-                      <td style={{ textAlign: "center"}}>{total + "건"}</td>
-                      <td></td>
-                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total > 0
-                          ? formatNumber(mainDataResult[0].total_qty)
-                          : 0}
-                      </td>
-                      <td></td>
-                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total > 0
-                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_wonamt))
-                          : 0}
-                      </td>
-                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total > 0
-                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_taxamt))
-                          : 0}
-                      </td>
-                      <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total > 0
-                          ? numberWithCommas(Math.trunc(mainDataResult[0].total_totamt))
-                          : 0}
-                      </td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div style={{ pageBreakBefore: "always" }} />
-              </>
-            ) : (
-              ""
-            )
-          )}
+                  ))}
+                {pageIndex === totalPages - 1 && (
+                  <tr style={{ backgroundColor: "#e6e6e6" }}>
+                    <td style={{ textAlign: "center" }}>계</td>
+                    <td style={{ textAlign: "center" }}>{total + "건"}</td>
+                    <td></td>
+                    <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                      {total > 0
+                        ? formatNumber(mainDataResult[0].total_qty || 0)
+                        : 0}
+                    </td>
+                    <td></td>
+                    <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                      {total > 0
+                        ? numberWithCommas(
+                            Math.trunc(mainDataResult[0].total_wonamt || 0)
+                          )
+                        : 0}
+                    </td>
+                    <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                      {total > 0
+                        ? numberWithCommas(
+                            Math.trunc(mainDataResult[0].total_taxamt || 0)
+                          )
+                        : 0}
+                    </td>
+                    <td style={{ textAlign: "right", paddingRight: "3px" }}>
+                      {total > 0
+                        ? numberWithCommas(
+                            Math.trunc(mainDataResult[0].total_totamt || 0)
+                          )
+                        : 0}
+                    </td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            {pageIndex < totalPages - 1 && (
+              <div className={styles.pageBreak}></div>
+            )}
+          </div>
+        ))}
       </div>
     </LandscapePrint>
   );

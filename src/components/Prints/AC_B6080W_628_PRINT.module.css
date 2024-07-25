@@ -7,13 +7,11 @@
         margin-bottom: 0cm;
         margin-left: 1cm;
     }
-
-    html,
-    body {
+    
+    html, body {
         border: 0;
         margin: 0;
         padding: 0;
-        margin-top: 0px;
     }
 
     body {
@@ -22,12 +20,36 @@
 
     .printable {
         display: block;
+        font-size: 12px;
+        page-break-before: avoid;
     }
 
     .non-printable {
         display: none;
     }
 
+    .printable .tg td, .printable .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border: solid 1px #000;
+        height: 0.65cm !important; 
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: table-cell;
+        vertical-align: middle;
+        text-align: left;
+        padding-left: 3px;
+        page-break-before: avoid;
+    }
+
+    .printable .tg th {
+        background-color: #e6e6e6;
+        text-align: center; 
+        height: 0.65cm !important;
+    }
 }
 
 body {
