@@ -61,6 +61,7 @@ const Main: React.FC = () => {
   const [webheight2, setWebHeight2] = useState(0);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionCustcd = UseGetValueFromSessionItem("custcd");
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
 
   useLayoutEffect(() => {
     height = getHeight(".ButtonContainer");
@@ -143,7 +144,7 @@ const Main: React.FC = () => {
       workType: "U1",
       orgdiv: selectedRowData.ORGDIV,
       datnum: selectedRowData.DATNUM,
-      prsnnum: selectedRowData.PRSNNUM,
+      prsnnum: sessionUserId,
     }));
   };
   const onOrderSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -699,7 +700,13 @@ const Main: React.FC = () => {
       )}
       {detailWindowVisible && (
         <NoticeWindow_FNF
-          setVisible={setDetailWindowVisible}
+          setVisible={(boolean) => {
+            setDetailWindowVisible(boolean);
+            setFilters2((prev) => ({
+              ...prev,
+              isSearch: true
+            }))
+          }}
           data={
             noticeDataResult.total > 0
               ? noticeDataResult.data.filter(
