@@ -1325,7 +1325,7 @@ const PR_B0020W_628: React.FC = () => {
   const onUpdateShlife = async () => {
     if (!permissions.save) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true);
-    console.log(datas);
+
     let valid = true;
 
     if (
@@ -1448,8 +1448,7 @@ const PR_B0020W_628: React.FC = () => {
       "@p_pc": sessionpc,
     },
   };
-  console.log(Information2.shlife);
-  console.log(ParaData);
+
   const para2: Iparameters = {
     procedureName: "P_PR_B0020W_628_S",
     pageNumber: 0,

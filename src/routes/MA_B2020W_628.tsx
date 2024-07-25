@@ -39,12 +39,14 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import NumberFloatCell from "../components/Cells/NumberFloatCell";
 import {
   GetPropertyValueByName,
+  ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -61,7 +63,7 @@ import {
   getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
-  toDate,
+  toDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -82,7 +84,6 @@ import { IItemData, IWindowPosition } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CenterCell from "../components/Cells/CenterCell";
 
 let valid = false;
 let valid2 = false;
@@ -92,7 +93,8 @@ var height2 = 0;
 let deletedMainRows: object[] = [];
 const DATA_ITEM_KEY = "num";
 const numberField = ["wonamt", "taxamt", "unp"];
-const numberField2 = ["qty", "hsqty", "wonamt", "taxamt"];
+const numberField2 = ["qty", "hsqty"];
+const numberField3 = ["wonamt", "taxamt"];
 const dateField = ["dlvdt"];
 const commandField = ["itemcd"];
 const requiredField = ["dlvdt", "itemcd", "qty"];
@@ -652,26 +654,43 @@ const MA_B2020W_628: React.FC = () => {
   };
 
   // 소수점 셋째 자리에서 반올림하여 소수점 둘째 자리까지 표현
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = 0;  
-    mainDataResult.data.forEach((item) => {
-      if (props.field !== undefined && item["total_" + props.field] !== undefined) {
-        sum = parseFloat(item["total_" + props.field]) || 0;  
-      }
-    });
-      
-    let roundedSum = (Math.round(sum * 100) / 100).toFixed(2); 
-    var parts = roundedSum.toString().split(".");
-  
-    return !isNaN(parseFloat(roundedSum)) ? (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : ".00")}
-      </td>
-    ) : (
-      <td></td>
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
     );
-  };;
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {ThreeNumberceil(sum).toFixed(2)}
+      </td>
+    );
+  };
+
+  const editNumberFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {ThreeNumberceil(sum)}
+      </td>
+    );
+  };
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -937,7 +956,7 @@ const MA_B2020W_628: React.FC = () => {
       field == "taxamt" ||
       field == "itemtype" ||
       field == "edityn" ||
-      field == "itemacnt" 
+      field == "itemacnt"
     ) {
       valid = false;
       return false;
@@ -2143,7 +2162,9 @@ const MA_B2020W_628: React.FC = () => {
                             item.sortOrder == 0
                               ? mainTotalFooterCell
                               : numberField2.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
+                              ? editNumberFooterCell
+                              : numberField3.includes(item.fieldName)
+                              ? editNumberFooterCell2
                               : undefined
                           }
                         ></GridColumn>
