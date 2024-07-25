@@ -35,18 +35,19 @@ const CenterCell = (props: GridCellProps) => {
     }
   };
 
-  const defaultRendering = (
-    <td
-      style={{ textAlign: "center" }}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-    >
-      {isInEdit ? <Input value={value} onChange={handleChange} /> : value}
-    </td>
-  );
+  const defaultRendering =
+    rowType == "groupHeader" ? null : (
+      <td
+        style={{ textAlign: "center" }}
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+      >
+        {isInEdit ? <Input value={value} onChange={handleChange} /> : value}
+      </td>
+    );
 
   return render == undefined
-    ? null
+    ? defaultRendering
     : render?.call(undefined, defaultRendering, props);
 };
 
