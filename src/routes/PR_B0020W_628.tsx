@@ -174,7 +174,7 @@ const PR_B0020W_628: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        mydiv: defaultOption.find((item: any) => item.id == "mydiv")?.valueCode,
+        load_place: defaultOption.find((item: any) => item.id == "load_place")?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         prodiv: defaultOption.find((item: any) => item.id == "prodiv")
           ?.valueCode,
@@ -220,7 +220,7 @@ const PR_B0020W_628: React.FC = () => {
     frdt: new Date(),
     todt: new Date(),
     custcd: sessionCustcd,
-    mydiv: "",
+    load_place: "",
     finyn: "",
     prodiv: "",
     kind: "",
@@ -2032,7 +2032,7 @@ const PR_B0020W_628: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
-                    name="mydiv"
+                    name="load_place"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
