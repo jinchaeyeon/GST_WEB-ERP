@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { dateformat4 } from "../CommonFunction";
+import { dateformat4, UseGetValueFromSessionItem } from "../CommonFunction";
 import styles from "./PR_B0020W_628_PRINT.module.css";
 
 interface PrintComponentProps {
@@ -9,8 +9,25 @@ interface PrintComponentProps {
 
 const PrintComponent = forwardRef<HTMLDivElement, PrintComponentProps>(
   ({ data, type }, ref) => {
+    const custcd = UseGetValueFromSessionItem("custcd");
+
     return (
-      <div ref={ref} id={type == 1 ? styles.printable2 : styles.printable1}>
+      <div
+        ref={ref}
+        id={
+          custcd == "03874" || custcd == "04928"
+            ? type == 1
+              ? `${styles.printable2} osung`
+              : `${styles.printable1} osung`
+            : custcd == "04373"
+            ? type == 1
+              ? `${styles.printable2} wave`
+              : `${styles.printable1} wave`
+            : type == 1
+            ? styles.printable2
+            : styles.printable1
+        }
+      >
         {type == 1 ? (
           <>
             <style type="text/css" media="print">

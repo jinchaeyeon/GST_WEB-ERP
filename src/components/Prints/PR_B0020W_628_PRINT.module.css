@@ -522,40 +522,40 @@ li {
 
 /*************************************** 속지 - 오성 ***************************************/
 
-#printable1.osung li:nth-child(4) {
+#printable1#osung li:nth-child(4) {
 	height: .7cm;
 }
 
-#printable1.osung li:nth-child(4) .right {
+#printable1#osung li:nth-child(4) .right {
 	text-align: right;
 }
 
-#printable1.osung li:nth-child(6) {
+#printable1#osung li:nth-child(6) {
 	height: auto;
 }
 
-#printable1.osung li:nth-child(4)>span,
-#printable1.osung li:nth-child(7) img,
-#printable1.osung li:nth-child(7) span.right,
-#printable1.osung li:nth-child(8) div.right {
+#printable1#osung li:nth-child(4)>span,
+#printable1#osung li:nth-child(7) img,
+#printable1#osung li:nth-child(7) span.right,
+#printable1#osung li:nth-child(8) div.right {
 	display: none;
 }
 
-#printable1.osung li:last-child {
+#printable1#osung li:last-child {
 	text-align: center;
 }
 
 /*************************************** 속지 - 파도소리 ***************************************/
 
-#printable1.wave li:nth-child(6) {
+#printable1#wave li:nth-child(6) {
 	height: auto;
 }
 
-#printable1.wave li:nth-child(14) span {
+#printable1#wave li:nth-child(14) span {
 	font-size: 12px;
 }
 
-#printable1.wave li:last-child {
+#printable1#wave li:last-child {
 	text-align: center;
 }
 
