@@ -95,35 +95,34 @@ const MA_B2020W_628_PRINT = (data: any) => {
           content={() => componentRef.current}
         />
       </ButtonContainer>
-
       <div className={styles.printable} ref={componentRef}>
-        <div className={styles.header_wrap}>
-          <div className={styles.left}>
-            <p>
-              납품예정기간: {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
-              {dateformat2(convertDateToStr(data.data.todt))}
-            </p>
-          </div>
-          <div className={styles.center}>
-            <h1>발주 List</h1>
-          </div>
-          <div className={styles.right}>
-            <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
-          </div>
-        </div>
-
         {mainDataResult !== null &&
           mainDataResult.map((item1: any, idx1: number) =>
-            idx1 == 0 || idx1 % total == 0 ? (
+            idx1 == 0 || idx1 % 42 == 0 ? (
               <>
+                <div className={styles.header_wrap}>
+                  <div className={styles.left}>
+                    <p>
+                      납품예정기간:{" "}
+                      {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
+                      {dateformat2(convertDateToStr(data.data.todt))}
+                    </p>
+                  </div>
+                  <div className={styles.center}>
+                    <h1>발주 List</h1>
+                  </div>
+                  <div className={styles.right}>
+                    <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
+                  </div>
+                </div>
                 <table className={styles.tg}>
                   <colgroup>
-                    <col width="10%" />
+                    <col width="15%" />
                     <col width="20%" />
                     <col width="15%" />
                     <col width="10%" />
                     <col width="15%" />
-                    <col width="20%" />
+                    <col width="15%" />
                     <col width="10%" />
                   </colgroup>
                   <tbody>
@@ -136,40 +135,64 @@ const MA_B2020W_628_PRINT = (data: any) => {
                       <th>비고</th>
                       <th>단가</th>
                     </tr>
-                    {mainDataResult.map((item2: any, idx2: number) => (
-                      <tr key={item2.rownum}>
-                        <td style={{ textAlign: "center" }}>
-                          {dateformat2(item2.dlvdt)}
-                        </td>
-                        <td>{item2.itemnm}</td>
-                        <td>{item2.spec}</td>
-                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.qty) + item2.qtyunit}
-                        </td>
-                        <td>{item2.rcvcustnm}</td>
-                        <td>{item2.remark}</td>
-                        <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                          {numberWithCommas(item2.unp)}
-                        </td>
-                      </tr>
-                    ))}
-                    <tr
-                      style={{
-                        backgroundColor: "#e6e6e6",
-                        textAlign: "center",
-                      }}
-                    >
-                      <td colSpan={2}>계</td>
-                      <td>{total + "건"}</td>
-                      <td>
-                        {total > 0
-                          ? numberWithCommas(mainDataResult[0].total_qty)
-                          : 0}
-                      </td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
+                    {mainDataResult.map((item2: any, idx2: number) =>
+                      idx1 + 42 > idx2 && idx1 <= idx2 ? (
+                        <>
+                          <tr key={item2.rownum}>
+                            <td style={{ textAlign: "center" }}>
+                              {dateformat2(item2.dlvdt)}
+                            </td>
+                            <td>{item2.itemnm}</td>
+                            <td>{item2.spec}</td>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "3px",
+                              }}
+                            >
+                              {numberWithCommas(item2.qty) + item2.qtyunit}
+                            </td>
+                            <td>{item2.rcvcustnm}</td>
+                            <td>{item2.remark}</td>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                paddingRight: "3px",
+                              }}
+                            >
+                              {numberWithCommas(item2.unp)}
+                            </td>
+                          </tr>
+                          {idx2 == total - 1 ? (
+                            <>
+                              <tr
+                                style={{
+                                  backgroundColor: "#e6e6e6",
+                                  textAlign: "center",
+                                }}
+                              >
+                                <td colSpan={2}>계</td>
+                                <td>{total + "건"}</td>
+                                <td>
+                                  {total > 0
+                                    ? numberWithCommas(
+                                        mainDataResult[0].total_qty
+                                      )
+                                    : 0}
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                              </tr>
+                            </>
+                          ) : (
+                            <></>
+                          )}
+                        </>
+                      ) : (
+                        ""
+                      )
+                    )}
                   </tbody>
                 </table>
                 <div style={{ pageBreakBefore: "always" }} />
