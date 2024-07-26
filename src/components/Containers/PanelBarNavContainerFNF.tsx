@@ -1003,7 +1003,7 @@ const PanelBarNavContainer = (props: any) => {
           <TopTitle>
             <div style={{ width: "30px" }}></div>
             <AppName theme={"#303fad"}>
-              <Logo size="32px" name={"FNF"} />
+              <Logo size="128px" name={"FNF"} />
             </AppName>
             <Button
               icon="menu"
