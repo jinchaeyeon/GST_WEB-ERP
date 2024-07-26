@@ -122,8 +122,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
                         type: "s",
                         temp_count: 1,
                         temp_qty: isInteger(sum_qty),
-                        temp_sqty:
-                          sum_sqty == 0 ? "" : isInteger(sum_sqty),
+                        temp_sqty: sum_sqty == 0 ? "" : isInteger(sum_sqty),
                       };
 
                       array.push(temp2);
@@ -143,16 +142,8 @@ const MA_B2020W_628_PRINT = (data: any) => {
                       let temp2 = {
                         type: "s",
                         temp_count: sum_count,
-                        temp_qty:
-                          sum_temp_qty == 0
-                            ? isInteger(sum_qty)
-                            : isInteger(sum_temp_qty),
-                        temp_sqty:
-                          sum_temp_sqty == 0
-                            ? sum_sqty == 0
-                              ? ""
-                              : isInteger(sum_temp_sqty)
-                            : isInteger(sum_temp_sqty),
+                        temp_qty: isInteger(sum_qty),
+                        temp_sqty: isInteger(sum_sqty),
                       };
 
                       array.push(temp2);
@@ -214,16 +205,8 @@ const MA_B2020W_628_PRINT = (data: any) => {
                       let temp2 = {
                         type: "s",
                         temp_count: sum_count,
-                        temp_qty:
-                          sum_temp_qty == 0
-                            ? isInteger(sum_qty)
-                            : isInteger(sum_temp_qty),
-                        temp_sqty:
-                          sum_temp_sqty == 0
-                            ? sum_sqty == 0
-                              ? ""
-                              : isInteger(sum_temp_sqty)
-                            : isInteger(sum_temp_sqty),
+                        temp_qty: isInteger(sum_qty),
+                        temp_sqty: isInteger(sum_sqty),
                       };
 
                       array.push(temp2);
@@ -296,22 +279,10 @@ const MA_B2020W_628_PRINT = (data: any) => {
                       let temp2 = {
                         type: "s",
                         temp_count: sum_count,
-                        temp_qty:
-                          sum_temp_qty == 0
-                            ? isInteger(sum_qty)
-                            : isInteger(sum_temp_qty),
-                        temp_amt:
-                          sum_temp_amt == 0
-                            ? isInteger(sum_amt)
-                            : isInteger(sum_temp_amt),
-                        temp_taxamt:
-                          sum_temp_taxamt == 0
-                            ? isInteger(sum_taxamt)
-                            : isInteger(sum_temp_taxamt),
-                        temp_totamt:
-                          sum_temp_qty == 0
-                            ? isInteger(sum_totamt)
-                            : isInteger(sum_temp_totamt),
+                        temp_qty: isInteger(sum_qty),
+                        temp_amt: isInteger(sum_amt),
+                        temp_taxamt: isInteger(sum_taxamt),
+                        temp_totamt: isInteger(sum_totamt),
                       };
 
                       array.push(temp2);
