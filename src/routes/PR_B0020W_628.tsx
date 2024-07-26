@@ -65,9 +65,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
-import PrintComponent2 from "../components/Prints/PR_B0020W_628_in_PRINT";
-import PrintComponent from "../components/Prints/PR_B0020W_628_out_PRINT";
+import PrintComponent from "../components/Prints/PR_B0020W_628_PRINT";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
@@ -1471,6 +1469,7 @@ const PR_B0020W_628: React.FC = () => {
   };
 
   const [list, setList] = useState<any[]>([]);
+  const [type, setType] = useState<any>(1);
 
   const onOutPrint = () => {
     if (!permissions.print) return;
@@ -1520,6 +1519,7 @@ const PR_B0020W_628: React.FC = () => {
           let array = rows.filter(
             (item: { sealno: string }) => item.sealno == "1"
           );
+          setType(1);
           setList((prev) => [...prev, ...array]);
         }
         setLoading(false);
@@ -1555,19 +1555,16 @@ const PR_B0020W_628: React.FC = () => {
         itemcd_s: dataArr.itemcd_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),
       }));
+      handlePrint();
     } else {
       alert("데이터가 없습니다.");
     }
   };
 
-  const printComponentRef = useRef(null);
-  const printComponentRef2 = useRef(null);
+  const printComponentRef = useRef<HTMLDivElement>(null)
 
   const handlePrint = useReactToPrint({
     content: () => printComponentRef.current,
-  });
-  const handlePrint2 = useReactToPrint({
-    content: () => printComponentRef2.current,
   });
 
   const onInPrint = () => {
@@ -1618,6 +1615,7 @@ const PR_B0020W_628: React.FC = () => {
           let array = rows.filter(
             (item: { sealno: string }) => item.sealno == "2"
           );
+          setType(2);
           setList((prev) => [...prev, ...array]);
         }
         setLoading(false);
@@ -1630,7 +1628,7 @@ const PR_B0020W_628: React.FC = () => {
       };
 
       datas.forEach((item: any, idx: number) => {
-        const { orgdiv= "", ordnum = "", ordseq = "", itemcd = "" } = item;
+        const { orgdiv = "", ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
         dataArr.itemcd_s.push(itemcd);
@@ -1653,6 +1651,7 @@ const PR_B0020W_628: React.FC = () => {
         itemcd_s: dataArr.itemcd_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),
       }));
+      handlePrint();
     } else {
       alert("데이터가 없습니다.");
     }
@@ -1860,15 +1859,6 @@ const PR_B0020W_628: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      if (ParaData.workType == "print") {
-        console.log(ParaData.seq_s);
-        console.log(ParaData.seq_s.charAt(0));
-        if(ParaData.seq_s.charAt(0) == "1") {
-          handlePrint();
-        } else {
-          handlePrint2();
-        }
-      }
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -2337,9 +2327,6 @@ const PR_B0020W_628: React.FC = () => {
                   >
                     겉지출력
                   </Button>
-                  <div style={{ display: "none" }}>
-                    <PrintComponent ref={printComponentRef} data={list} />
-                  </div>
                   <Button
                     onClick={onInPrint}
                     fillMode="outline"
@@ -2350,7 +2337,11 @@ const PR_B0020W_628: React.FC = () => {
                     속지출력
                   </Button>
                   <div style={{ display: "none" }}>
-                    <PrintComponent2 ref={printComponentRef2} data={list} />
+                    <PrintComponent
+                      ref={printComponentRef}
+                      data={list}
+                      type={type}
+                    />
                   </div>
                   <Button
                     onClick={onCancel}
