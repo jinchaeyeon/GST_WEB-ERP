@@ -1,5 +1,6 @@
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   getSelectedState,
@@ -10,7 +11,8 @@ import {
   GridHeaderCellProps,
   GridItemChangeEvent,
   GridPageChangeEvent,
-  GridSelectionChangeEvent,
+  GridRowProps,
+  GridSelectionChangeEvent
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useState } from "react";
@@ -56,7 +58,6 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import MA_A2020W_628_PRINT from "../components/Prints/MA_A2020W_628_PRINT";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
@@ -66,7 +67,6 @@ import { IWindowPosition } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 
 var height = 0;
 var height2 = 0;
@@ -693,6 +693,46 @@ const MA_A2020W_628: React.FC = () => {
     setLoading(false);
   };
 
+  const rowRender = (
+    trElement: React.ReactElement<HTMLTableRowElement>,
+    props: GridRowProps
+  ) => {
+    const available2 = props.dataItem.kind == 2;
+    const available3 = props.dataItem.kind == 3;
+    const blue = { color: "blue" };
+    const red = { color: "red" };
+    const trProps: any = {
+      style: available2 ? blue : available3 ? red : undefined,
+    };
+
+    return React.cloneElement(
+      trElement,
+      { ...trProps },
+      trElement.props.children as any
+    );
+  };
+
+  const customDateCell = (props: any) => {
+    const { dataItem } = props;
+    const style =
+      dataItem.kind === 2 ? "red" : dataItem.kind === 3 ? "blue" : "";
+    return <DateCell color={style} {...props} />;
+  };
+
+  const customNumberCell = (props: any) => {
+    const { dataItem } = props;
+    const style =
+      dataItem.kind === 2 ? "red" : dataItem.kind === 3 ? "blue" : "";
+    return <NumberCell color={style} {...props} />;
+  };
+
+  const customNumberCommaCell = (props: any) => {
+    const { dataItem } = props;
+    const style =
+      dataItem.kind === 2 ? "red" : dataItem.kind === 3 ? "blue" : "";
+    return <NumberCommaCell color={style} {...props} />;
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -714,7 +754,7 @@ const MA_A2020W_628: React.FC = () => {
             <tr>
               <th>납기일자</th>
               <td>
-              <div style={{ display: "flex", gap: "10px" }}>
+                <div style={{ display: "flex", gap: "10px" }}>
                   <DatePicker
                     name="frdt"
                     value={filters.frdt}
@@ -913,7 +953,7 @@ const MA_A2020W_628: React.FC = () => {
             resizable={true}
             onItemChange={onMainItemChange}
             cellRender={customCellRender}
-            rowRender={customRowRender}
+            rowRender={rowRender}
             editField={EDIT_FIELD}
           >
             <GridColumn
@@ -936,11 +976,11 @@ const MA_A2020W_628: React.FC = () => {
                         width={item.width}
                         cell={
                           numberField.includes(item.fieldName)
-                            ? NumberCell
+                            ? customNumberCell
                             : dateField.includes(item.fieldName)
-                            ? DateCell
+                            ? customDateCell
                             : floatField.includes(item.fieldName)
-                            ? NumberCommaCell
+                            ? customNumberCommaCell
                             : CenterCell
                         }
                         footerCell={
