@@ -55,7 +55,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
     const parameters: Iparameters = {
       procedureName: "P_MA_A2020W_628_Q",
       pageNumber: para.pgNum,
-      pageSize: para.pgSize,
+      pageSize: 500,
       parameters: {
         "@p_work_type": "PRINT",
         "@p_orgdiv": para.orgdiv,
