@@ -1555,7 +1555,6 @@ const PR_B0020W_628: React.FC = () => {
         itemcd_s: dataArr.itemcd_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),
       }));
-      handlePrint();
     } else {
       alert("데이터가 없습니다.");
     }
@@ -1651,7 +1650,6 @@ const PR_B0020W_628: React.FC = () => {
         itemcd_s: dataArr.itemcd_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),
       }));
-      handlePrint();
     } else {
       alert("데이터가 없습니다.");
     }
@@ -1859,6 +1857,9 @@ const PR_B0020W_628: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
+      if (ParaData.workType == "print") {
+        handlePrint();
+      }
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
