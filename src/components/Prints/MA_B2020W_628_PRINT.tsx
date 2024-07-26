@@ -98,7 +98,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
       <div className={styles.printable} ref={componentRef}>
         {mainDataResult !== null &&
           mainDataResult.map((item1: any, idx1: number) =>
-            idx1 == 0 || idx1 % 42 == 0 ? (
+            idx1 == 0 || idx1 % 32 == 0 ? (
               <>
                 <div className={styles.header_wrap}>
                   <div className={styles.left}>
@@ -136,7 +136,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
                       <th>단가</th>
                     </tr>
                     {mainDataResult.map((item2: any, idx2: number) =>
-                      idx1 + 42 > idx2 && idx1 <= idx2 ? (
+                      idx1 + 32 > idx2 && idx1 <= idx2 ? (
                         <>
                           <tr key={item2.rownum}>
                             <td style={{ textAlign: "center" }}>
@@ -195,7 +195,6 @@ const MA_B2020W_628_PRINT = (data: any) => {
                     )}
                   </tbody>
                 </table>
-                <div style={{ pageBreakBefore: "always" }} />
               </>
             ) : (
               ""
