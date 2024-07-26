@@ -1471,17 +1471,20 @@ const PR_B0020W_628: React.FC = () => {
   const [list, setList] = useState<any[]>([]);
   const [type, setType] = useState<any>(1);
 
-  const onOutPrint = () => {
+  const printComponentRef = useRef<HTMLDivElement>(null);
+
+  const [isReadyToPrint, setIsReadyToPrint] = useState(false);
+
+  const onOutPrint = async () => {
     if (!permissions.print) return;
     if (!permissions.save) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true);
     if (datas.length > 0) {
-      //그리드 데이터 조회
+      let totalDataFound = false;
       const fetchMainGrid3 = async (filters3: any) => {
         if (!permissions.view) return;
         let data: any;
         setLoading(true);
-        //조회조건 파라미터
         const parameters: Iparameters = {
           procedureName: "P_PR_B0020W_628_Q",
           pageNumber: 1,
@@ -1514,16 +1517,20 @@ const PR_B0020W_628: React.FC = () => {
         if (data.isSuccess == true) {
           const totalRowCnt = data.tables[0].TotalRowCount;
           const rows = data.tables[0].Rows.map((item: any) => ({
-            ...item,
+            ...item,          
           }));
           let array = rows.filter(
             (item: { sealno: string }) => item.sealno == "1"
           );
           setType(1);
-          setList((prev) => [...prev, ...array]);
+          if (array.length > 0) {
+            totalDataFound = true;
+            setList((prev) => [...prev, ...array]);
+          }
         }
         setLoading(false);
       };
+
       let dataArr: TdataArr = {
         ordnum_s: [],
         ordseq_s: [],
@@ -1531,7 +1538,7 @@ const PR_B0020W_628: React.FC = () => {
         seq_s: [],
       };
 
-      datas.forEach((item: any, idx: number) => {
+      const fetchPromises = datas.map((item: any, idx: number) => {
         const { orgdiv = "", ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
@@ -1543,40 +1550,47 @@ const PR_B0020W_628: React.FC = () => {
           ordseq: ordseq,
           pgNum: 1,
         };
-        fetchMainGrid3(filters3);
+        return fetchMainGrid3(filters3);
       });
 
-      setParaData((prev) => ({
-        ...prev,
-        workType: "print",
-        addrgb: Information2.addr,
-        ordnum_s: dataArr.ordnum_s.join("|"),
-        ordseq_s: dataArr.ordseq_s.join("|"),
-        itemcd_s: dataArr.itemcd_s.join("|"),
-        seq_s: dataArr.seq_s.join("|"),
-      }));
+      await Promise.all(fetchPromises);
+
+      if (totalDataFound) {
+        setParaData((prev) => ({
+          ...prev,
+          workType: "print",
+          addrgb: Information2.addr,
+          ordnum_s: dataArr.ordnum_s.join("|"),
+          ordseq_s: dataArr.ordseq_s.join("|"),
+          itemcd_s: dataArr.itemcd_s.join("|"),
+          seq_s: dataArr.seq_s.join("|"),
+        }));
+        setTimeout(() => {
+          setIsReadyToPrint(true);
+        }, 200);
+      } else {
+        alert("체크된 태그 출력 대상 자료가 없습니다.");
+      }
     } else {
       alert("데이터가 없습니다.");
     }
   };
 
-  const printComponentRef = useRef<HTMLDivElement>(null)
-
-  const handlePrint = useReactToPrint({
-    content: () => printComponentRef.current,
-  });
-
-  const onInPrint = () => {
-    if (!permissions.print) return;
-    if (!permissions.save) return;
+  const onInPrint = async () => {
+    if (!permissions.print || !permissions.save) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true);
     if (datas.length > 0) {
-      //그리드 데이터 조회
+      let dataArr: TdataArr = {
+        ordnum_s: [],
+        ordseq_s: [],
+        itemcd_s: [],
+        seq_s: [],
+      };
+      let totalDataFound = false;
       const fetchMainGrid3 = async (filters3: any) => {
         if (!permissions.view) return;
         let data: any;
         setLoading(true);
-        //조회조건 파라미터
         const parameters: Iparameters = {
           procedureName: "P_PR_B0020W_628_Q",
           pageNumber: 1,
@@ -1606,27 +1620,22 @@ const PR_B0020W_628: React.FC = () => {
           data = null;
         }
 
-        if (data.isSuccess == true) {
-          const totalRowCnt = data.tables[0].TotalRowCount;
+        if (data?.isSuccess) {
           const rows = data.tables[0].Rows.map((item: any) => ({
-            ...item,
+            ...item,          
           }));
           let array = rows.filter(
             (item: { sealno: string }) => item.sealno == "2"
           );
-          setType(2);
-          setList((prev) => [...prev, ...array]);
+          if (array.length > 0) {
+            totalDataFound = true;
+            setList((prev) => [...prev, ...array]);
+          }
         }
         setLoading(false);
       };
-      let dataArr: TdataArr = {
-        ordnum_s: [],
-        ordseq_s: [],
-        itemcd_s: [],
-        seq_s: [],
-      };
 
-      datas.forEach((item: any, idx: number) => {
+      const fetchPromises = datas.map((item: any) => {
         const { orgdiv = "", ordnum = "", ordseq = "", itemcd = "" } = item;
         dataArr.ordnum_s.push(ordnum);
         dataArr.ordseq_s.push(ordseq);
@@ -1638,22 +1647,44 @@ const PR_B0020W_628: React.FC = () => {
           ordseq: ordseq,
           pgNum: 1,
         };
-        fetchMainGrid3(filters3);
+        return fetchMainGrid3(filters3);
       });
 
-      setParaData((prev) => ({
-        ...prev,
-        workType: "print",
-        addrgb: Information2.addr,
-        ordnum_s: dataArr.ordnum_s.join("|"),
-        ordseq_s: dataArr.ordseq_s.join("|"),
-        itemcd_s: dataArr.itemcd_s.join("|"),
-        seq_s: dataArr.seq_s.join("|"),
-      }));
+      await Promise.all(fetchPromises);
+
+      if (totalDataFound) {
+        setParaData((prev) => ({
+          ...prev,
+          workType: "print",
+          addrgb: Information2.addr,
+          ordnum_s: dataArr.ordnum_s.join("|"),
+          ordseq_s: dataArr.ordseq_s.join("|"),
+          itemcd_s: dataArr.itemcd_s.join("|"),
+          seq_s: dataArr.seq_s.join("|"),
+        }));
+
+        setType(2);
+        setTimeout(() => {
+          setIsReadyToPrint(true);
+        }, 200);
+      } else {
+        alert("체크된 태그 출력 대상 자료가 없습니다.");
+      }
     } else {
       alert("데이터가 없습니다.");
     }
   };
+
+  useEffect(() => {
+    if (isReadyToPrint) {
+      handlePrint();
+      setIsReadyToPrint(false);
+    }
+  }, [isReadyToPrint]);
+
+  const handlePrint = useReactToPrint({
+    content: () => printComponentRef.current,
+  });
 
   const onUpdateShlife = async () => {
     if (!permissions.save) return;
