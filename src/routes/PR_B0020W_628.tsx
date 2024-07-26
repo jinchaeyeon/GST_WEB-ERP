@@ -426,6 +426,7 @@ const PR_B0020W_628: React.FC = () => {
   };
 
   const resetAllGrid = () => {
+    setValues2(false);
     setAddstate(true);
     setPage(initialPageState);
     setPage2(initialPageState);
@@ -1895,6 +1896,7 @@ const PR_B0020W_628: React.FC = () => {
       if (ParaData.workType == "print") {
         handlePrint();
       }
+      setValues2(false);
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -1946,6 +1948,7 @@ const PR_B0020W_628: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
+      setValues2(false);
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
