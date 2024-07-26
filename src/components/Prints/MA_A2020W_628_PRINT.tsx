@@ -544,6 +544,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
                                     <td colSpan={2}>
                                       소 계({item2.temp_count})
                                     </td>
+                                    <td></td>
                                     <td
                                       style={{
                                         textAlign: "right",
@@ -559,9 +560,6 @@ const MA_B2020W_628_PRINT = (data: any) => {
                                     >
                                       {item2.temp_sqty}
                                     </td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
                                   </tr>
                                   {idx2 == mainDataResult.length - 1 ? (
                                     <>
