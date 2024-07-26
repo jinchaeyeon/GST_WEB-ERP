@@ -221,7 +221,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
             if (idx1 == 0 || idx1 % 34 == 0) {
               rows.map((item2: any, idx2: number) => {
                 if (idx1 + 34 > idx2 && idx1 <= idx2) {
-                  if (idx2 != 0 && before_custnm !== item2.custnm) {
+                  if (idx2 != 0 && before_itemnm !== item2.itemnm) {
                     sum_temp_qty = sum_qty;
                     sum_temp_amt = sum_amt;
                     sum_temp_taxamt = sum_taxamt;
