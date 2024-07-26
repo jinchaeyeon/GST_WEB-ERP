@@ -358,7 +358,7 @@ const PR_B0020W_628: React.FC = () => {
         } else {
           setInformation((prev) => {
             const newDate = new Date(prev.poregnum);
-            newDate.setDate(newDate.getDate() + 3);
+            newDate.setDate(newDate.getDate() + 4);
             return {
               ...prev,
               extra_field7: newDate,
