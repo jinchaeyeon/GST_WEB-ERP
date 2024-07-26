@@ -121,9 +121,9 @@ const MA_B2020W_628_PRINT = (data: any) => {
                       let temp2 = {
                         type: "s",
                         temp_count: 1,
-                        temp_qty: isInteger(sum_temp_qty),
+                        temp_qty: isInteger(sum_qty),
                         temp_sqty:
-                          sum_temp_sqty == 0 ? "" : isInteger(sum_temp_sqty),
+                          sum_sqty == 0 ? "" : isInteger(sum_sqty),
                       };
 
                       array.push(temp2);
@@ -193,8 +193,8 @@ const MA_B2020W_628_PRINT = (data: any) => {
                       let temp2 = {
                         type: "s",
                         temp_count: 1,
-                        temp_qty: isInteger(sum_temp_qty),
-                        temp_sqty: isInteger(sum_temp_sqty),
+                        temp_qty: isInteger(sum_qty),
+                        temp_sqty: isInteger(sum_sqty),
                       };
 
                       array.push(temp2);
@@ -233,8 +233,96 @@ const MA_B2020W_628_PRINT = (data: any) => {
               });
             }
           });
+        } else {
+          rows.map((item1: any, idx1: number) => {
+            if (idx1 == 0 || idx1 % 34 == 0) {
+              rows.map((item2: any, idx2: number) => {
+                if (idx1 + 34 > idx2 && idx1 <= idx2) {
+                  if (idx2 != 0 && before_custnm !== item2.custnm) {
+                    sum_temp_qty = sum_qty;
+                    sum_temp_amt = sum_amt;
+                    sum_temp_taxamt = sum_taxamt;
+                    sum_temp_totamt = sum_totamt;
+                    sum_temp_count = sum_count;
+                    sum_qty = 0;
+                    sum_amt = 0;
+                    sum_taxamt = 0;
+                    sum_totamt = 0;
+                    sum_count = 0;
+                    sum_qty += item2.qty;
+                    sum_amt += item2.amt;
+                    sum_taxamt += item2.taxamt;
+                    sum_totamt += item2.totamt;
+                    sum_count += 1;
+                    before_itemnm = item2.itemnm;
+
+                    let temp = {
+                      type: "s",
+                      temp_count: sum_temp_count,
+                      temp_qty: isInteger(sum_temp_qty),
+                      temp_amt: isInteger(sum_temp_amt),
+                      temp_taxamt: isInteger(sum_temp_taxamt),
+                      temp_totamt: isInteger(sum_temp_totamt),
+                    };
+                    array.push(temp);
+                    array.push(item2);
+
+                    if (idx2 == totalRowCnt - 1) {
+                      let temp2 = {
+                        type: "s",
+                        temp_count: 1,
+                        temp_qty: isInteger(sum_qty),
+                        temp_amt: isInteger(sum_amt),
+                        temp_taxamt: isInteger(sum_taxamt),
+                        temp_totamt: isInteger(sum_totamt),
+                      };
+
+                      array.push(temp2);
+                    }
+                  } else {
+                    sum_qty += item2.qty;
+                    sum_amt += item2.amt;
+                    sum_taxamt += item2.taxamt;
+                    sum_totamt += item2.totamt;
+                    sum_count += 1;
+                    before_itemnm = item2.itemnm;
+
+                    let items3 = {
+                      ...item2,
+                      itemnm: idx2 == 0 ? item2.itemnm : "",
+                    };
+                    array.push(items3);
+                    if (idx2 == totalRowCnt - 1) {
+                      let temp2 = {
+                        type: "s",
+                        temp_count: sum_count,
+                        temp_qty:
+                          sum_temp_qty == 0
+                            ? isInteger(sum_qty)
+                            : isInteger(sum_temp_qty),
+                        temp_amt:
+                          sum_temp_amt == 0
+                            ? isInteger(sum_amt)
+                            : isInteger(sum_temp_amt),
+                        temp_taxamt:
+                          sum_temp_taxamt == 0
+                            ? isInteger(sum_taxamt)
+                            : isInteger(sum_temp_taxamt),
+                        temp_totamt:
+                          sum_temp_qty == 0
+                            ? isInteger(sum_totamt)
+                            : isInteger(sum_temp_totamt),
+                      };
+
+                      array.push(temp2);
+                    }
+                  }
+                }
+              });
+            }
+          });
         }
-        console.log(array);
+
         if (array.length > 0) {
           setMainDataResult(array);
           setTotal(totalRowCnt);
@@ -573,7 +661,211 @@ const MA_B2020W_628_PRINT = (data: any) => {
               )}
           </>
         ) : (
-          <></>
+          <>
+            {mainDataResult !== null &&
+              mainDataResult.map((item1: any, idx1: number) =>
+                idx1 == 0 || idx1 % 34 == 0 ? (
+                  <>
+                    <div className={styles.header_wrap}>
+                      <div className={styles.left}>
+                        <p>{custnm}</p>
+                      </div>
+                      <div className={styles.center}>
+                        <h1>납품현황출력</h1>
+                        <p>
+                          출고일자:{" "}
+                          {dateformat2(convertDateToStr(data.data.frdt))} ~{" "}
+                          {dateformat2(convertDateToStr(data.data.todt))}
+                        </p>
+                      </div>
+                      <div className={styles.right}>
+                        <p>출력일시: {convertDateToStrWithTime2(new Date())}</p>
+                      </div>
+                    </div>
+                    <table className={styles.tg}>
+                      <colgroup>
+                        <col width="20%" />
+                        <col width="15%" />
+                        <col width="10%" />
+                        <col width="10%" />
+                        <col width="15%" />
+                        <col width="15%" />
+                        <col width="15%" />
+                      </colgroup>
+                      <tbody>
+                        <>
+                          <tr
+                            style={{
+                              backgroundColor: "#e6e6e6",
+                              textAlign: "center",
+                            }}
+                          >
+                            <th>품목명</th>
+                            <th>사이즈</th>
+                            <th>수주량(kg)</th>
+                            <th>단가</th>
+                            <th>공급가액</th>
+                            <th>부가세</th>
+                            <th>합계</th>
+                          </tr>
+                          {mainDataResult.map((item2: any, idx2: number) =>
+                            idx1 + 34 > idx2 && idx1 <= idx2 ? (
+                              item2.type == "s" ? (
+                                <>
+                                  <tr
+                                    style={{
+                                      backgroundColor: "#e6e6e6",
+                                      textAlign: "center",
+                                    }}
+                                  >
+                                    <td colSpan={2}>
+                                      소 계 ({item2.temp_count})
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {item2.temp_qty}
+                                    </td>
+                                    <td></td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {item2.temp_amt}
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {item2.temp_taxamt}
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {item2.temp_totamt}
+                                    </td>
+                                  </tr>
+                                  {idx2 == mainDataResult.length - 1 ? (
+                                    <tr
+                                      style={{
+                                        backgroundColor: "#e6e6e6",
+                                        textAlign: "center",
+                                      }}
+                                    >
+                                      <td colSpan={2}>합 계 ({total})</td>
+                                      <td
+                                        style={{
+                                          textAlign: "right",
+                                          paddingRight: "3px",
+                                        }}
+                                      >
+                                        {isInteger(mainDataResult[0].total_qty)}
+                                      </td>
+                                      <td></td>
+                                      <td
+                                        style={{
+                                          textAlign: "right",
+                                          paddingRight: "3px",
+                                        }}
+                                      >
+                                        {isInteger(mainDataResult[0].total_amt)}
+                                      </td>
+                                      <td
+                                        style={{
+                                          textAlign: "right",
+                                          paddingRight: "3px",
+                                        }}
+                                      >
+                                        {isInteger(
+                                          mainDataResult[0].total_taxamt
+                                        )}
+                                      </td>
+                                      <td
+                                        style={{
+                                          textAlign: "right",
+                                          paddingRight: "3px",
+                                        }}
+                                      >
+                                        {isInteger(
+                                          mainDataResult[0].total_totamt
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ) : (
+                                    <></>
+                                  )}
+                                </>
+                              ) : (
+                                <>
+                                  <tr key={item2.rownum}>
+                                    <td>{item2.itemnm}</td>
+                                    <td>{item2.ordsiz}</td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {numberWithCommas(item2.qty)}
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {numberWithCommas(item2.basinvunp)}
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {numberWithCommas(item2.amt)}
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {numberWithCommas(item2.taxamt)}
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "right",
+                                        paddingRight: "3px",
+                                      }}
+                                    >
+                                      {numberWithCommas(item2.totamt)}
+                                    </td>
+                                  </tr>
+                                </>
+                              )
+                            ) : (
+                              <></>
+                            )
+                          )}
+                        </>
+                      </tbody>
+                    </table>
+                  </>
+                ) : (
+                  <></>
+                )
+              )}
+          </>
         )}
       </div>
     </LandscapePrint>
