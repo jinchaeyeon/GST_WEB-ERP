@@ -48,7 +48,7 @@ const MA_B2020W_628_PRINT = (data: any) => {
 
     let rowsarray: any[] = [];
     rows2.map((item: any) => {
-      rowsarray.push(item.ordnum + item.ordseq);
+      rowsarray.push(item.ordnum + item.ordseq + ",");
     });
 
     //조회조건 파라미터

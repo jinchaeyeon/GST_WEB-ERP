@@ -1475,18 +1475,33 @@ const PR_B0020W_628: React.FC = () => {
 
   const [list, setList] = useState<any[]>([]);
   const [type, setType] = useState<any>(1);
-
-  const printComponentRef = useRef<HTMLDivElement>(null);
-
   const [isReadyToPrint, setIsReadyToPrint] = useState(false);
+  const printComponentRef = useRef<HTMLDivElement>(null);
 
   const onOutPrint = async () => {
     if (!permissions.print) return;
     if (!permissions.save) return;
     const datas = mainDataResult.data.filter((item) => item.chk == true);
     if (datas.length > 0) {
-      let totalDataFound = false;
-      const fetchMainGrid3 = async (filters3: any) => {
+      let dataArr: TdataArr = {
+        ordnum_s: [],
+        ordseq_s: [],
+        itemcd_s: [],
+        seq_s: [],
+      };
+
+      const fetchPromises = datas.map(async (item: any, idx: number) => {
+        const { orgdiv = "", ordnum = "", ordseq = "", itemcd = "" } = item;
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.seq_s.push("1");
+        const filters3 = {
+          orgdiv: orgdiv,
+          ordnum: ordnum,
+          ordseq: ordseq,
+          pgNum: 1,
+        };
         if (!permissions.view) return;
         let data: any;
         setLoading(true);
@@ -1520,47 +1535,21 @@ const PR_B0020W_628: React.FC = () => {
         }
 
         if (data.isSuccess == true) {
-          const totalRowCnt = data.tables[0].TotalRowCount;
           const rows = data.tables[0].Rows.map((item: any) => ({
             ...item,
           }));
           let array = rows.filter(
             (item: { sealno: string }) => item.sealno == "1"
           );
-          setType(1);
           if (array.length > 0) {
-            totalDataFound = true;
             setList((prev) => [...prev, ...array]);
           }
         }
         setLoading(false);
-      };
-
-      let dataArr: TdataArr = {
-        ordnum_s: [],
-        ordseq_s: [],
-        itemcd_s: [],
-        seq_s: [],
-      };
-
-      const fetchPromises = datas.map((item: any, idx: number) => {
-        const { orgdiv = "", ordnum = "", ordseq = "", itemcd = "" } = item;
-        dataArr.ordnum_s.push(ordnum);
-        dataArr.ordseq_s.push(ordseq);
-        dataArr.itemcd_s.push(itemcd);
-        dataArr.seq_s.push("1");
-        const filters3 = {
-          orgdiv: orgdiv,
-          ordnum: ordnum,
-          ordseq: ordseq,
-          pgNum: 1,
-        };
-        return fetchMainGrid3(filters3);
       });
 
-      await Promise.all(fetchPromises);
-
-      if (totalDataFound) {
+      await Promise.all(fetchPromises).then(result => {
+        console.log(result)
         setParaData((prev) => ({
           ...prev,
           workType: "print",
@@ -1570,12 +1559,11 @@ const PR_B0020W_628: React.FC = () => {
           itemcd_s: dataArr.itemcd_s.join("|"),
           seq_s: dataArr.seq_s.join("|"),
         }));
+        setType(1);
         setTimeout(() => {
           setIsReadyToPrint(true);
         }, 200);
-      } else {
-        alert("체크된 태그 출력 대상 자료가 없습니다.");
-      }
+      });
     } else {
       alert("데이터가 없습니다.");
     }
@@ -1591,8 +1579,19 @@ const PR_B0020W_628: React.FC = () => {
         itemcd_s: [],
         seq_s: [],
       };
-      let totalDataFound = false;
-      const fetchMainGrid3 = async (filters3: any) => {
+
+      const fetchPromises = datas.map(async (item: any) => {
+        const { orgdiv = "", ordnum = "", ordseq = "", itemcd = "" } = item;
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.seq_s.push("2");
+        const filters3 = {
+          orgdiv: orgdiv,
+          ordnum: ordnum,
+          ordseq: ordseq,
+          pgNum: 1,
+        };
         if (!permissions.view) return;
         let data: any;
         setLoading(true);
@@ -1625,7 +1624,7 @@ const PR_B0020W_628: React.FC = () => {
           data = null;
         }
 
-        if (data?.isSuccess) {
+        if (data.isSuccess) {
           const rows = data.tables[0].Rows.map((item: any) => ({
             ...item,
           }));
@@ -1633,31 +1632,13 @@ const PR_B0020W_628: React.FC = () => {
             (item: { sealno: string }) => item.sealno == "2"
           );
           if (array.length > 0) {
-            totalDataFound = true;
             setList((prev) => [...prev, ...array]);
           }
         }
         setLoading(false);
-      };
-
-      const fetchPromises = datas.map((item: any) => {
-        const { orgdiv = "", ordnum = "", ordseq = "", itemcd = "" } = item;
-        dataArr.ordnum_s.push(ordnum);
-        dataArr.ordseq_s.push(ordseq);
-        dataArr.itemcd_s.push(itemcd);
-        dataArr.seq_s.push("2");
-        const filters3 = {
-          orgdiv: orgdiv,
-          ordnum: ordnum,
-          ordseq: ordseq,
-          pgNum: 1,
-        };
-        return fetchMainGrid3(filters3);
       });
 
-      await Promise.all(fetchPromises);
-
-      if (totalDataFound) {
+      await Promise.all(fetchPromises).then(result => {
         setParaData((prev) => ({
           ...prev,
           workType: "print",
@@ -1667,14 +1648,12 @@ const PR_B0020W_628: React.FC = () => {
           itemcd_s: dataArr.itemcd_s.join("|"),
           seq_s: dataArr.seq_s.join("|"),
         }));
-
+  
         setType(2);
         setTimeout(() => {
           setIsReadyToPrint(true);
         }, 200);
-      } else {
-        alert("체크된 태그 출력 대상 자료가 없습니다.");
-      }
+      })
     } else {
       alert("데이터가 없습니다.");
     }
@@ -1689,6 +1668,10 @@ const PR_B0020W_628: React.FC = () => {
 
   const handlePrint = useReactToPrint({
     content: () => printComponentRef.current,
+    onAfterPrint() {
+      setList([]);
+      setType(1);
+    },
   });
 
   const onUpdateShlife = async () => {
@@ -1893,9 +1876,6 @@ const PR_B0020W_628: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      if (ParaData.workType == "print") {
-        handlePrint();
-      }
       setValues2(false);
       setFilters((prev) => ({
         ...prev,
@@ -1914,7 +1894,6 @@ const PR_B0020W_628: React.FC = () => {
         stddt: "",
       });
       setAddstate(true);
-      setList([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
