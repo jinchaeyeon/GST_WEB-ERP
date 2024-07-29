@@ -1542,14 +1542,17 @@ const PR_B0020W_628: React.FC = () => {
             (item: { sealno: string }) => item.sealno == "1"
           );
           if (array.length > 0) {
-            setList((prev) => [...prev, ...array]);
+            array.map((item: { prtqty: any; }) => {
+              for(var i = 0; i< item.prtqty; i++) {
+                setList((prev) => [...prev, item]);
+              }
+            })
           }
         }
         setLoading(false);
       });
 
       await Promise.all(fetchPromises).then(result => {
-        console.log(result)
         setParaData((prev) => ({
           ...prev,
           workType: "print",
@@ -1632,7 +1635,11 @@ const PR_B0020W_628: React.FC = () => {
             (item: { sealno: string }) => item.sealno == "2"
           );
           if (array.length > 0) {
-            setList((prev) => [...prev, ...array]);
+            array.map((item: { prtqty: any; }) => {
+              for(var i = 0; i< item.prtqty; i++) {
+                setList((prev) => [...prev, item]);
+              }
+            })
           }
         }
         setLoading(false);
