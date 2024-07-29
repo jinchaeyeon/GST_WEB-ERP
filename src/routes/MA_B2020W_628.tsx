@@ -85,6 +85,7 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B2020W_628_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { useHistory } from "react-router-dom";
 
 let valid = false;
 let valid2 = false;
@@ -414,7 +415,7 @@ const MA_B2020W_628: React.FC = () => {
       };
     }
   }, [customOptionData, webheight]);
-
+  const history = useHistory();
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
@@ -426,6 +427,7 @@ const MA_B2020W_628: React.FC = () => {
         "query"
       );
       if (queryParams.has("go")) {
+        history.replace({}, "");
         setFilters((prev) => ({
           ...prev,
           frdt: toDate(queryParams.get("go") as string),
