@@ -1,6 +1,13 @@
-import { Card, CardContent, Grid, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Grid,
+  Paper,
+  Typography
+} from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Input, Switch, TextArea } from "@progress/kendo-react-inputs";
 import React, {
   MutableRefObject,
@@ -18,6 +25,7 @@ import {
   AdminQuestionBox,
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -27,14 +35,20 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import {
+  UseBizComponent,
   UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
+  getBizCom,
   getDeviceHeight,
   getHeight,
+  handleKeyPressSearch,
+  toDate,
 } from "../components/CommonFunction";
-import { PAGE_SIZE } from "../components/CommonString";
+import { GAP, PAGE_SIZE } from "../components/CommonString";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
+import { ICustData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
@@ -48,6 +62,8 @@ var height4 = 0;
 var height5 = 0;
 var height6 = 0;
 var height7 = 0;
+var height8 = 0;
+var height9 = 0;
 
 const PR_A2200W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -104,6 +120,10 @@ const PR_A2200W: React.FC = () => {
     height5 = getHeight(".FormBoxWrap4");
     height6 = getHeight(".ButtonContainer");
     height7 = getHeight(".ButtonContainer2");
+    height8 = getHeight(".FormBoxWrap5");
+    if (mainDataResult3.total > 0) {
+      height9 = getHeight(".ButtonContainer3");
+    }
 
     const handleWindowResize = () => {
       let deviceWidth = document.documentElement.clientWidth;
@@ -112,9 +132,9 @@ const PR_A2200W: React.FC = () => {
       setMobileHeight2(getDeviceHeight(false) - height - height3 - height7);
       setMobileHeight3(getDeviceHeight(false) - height - height4);
       setMobileHeight4(getDeviceHeight(false) - height - height5);
-      setWebHeight(getDeviceHeight(false) - height - height2);
+      setWebHeight(getDeviceHeight(false) - height - height2 - height8);
       setWebHeight2(getDeviceHeight(false) - height - height3);
-      setWebHeight3(getDeviceHeight(false) - height - height4);
+      setWebHeight3(getDeviceHeight(false) - height - height4 - height9);
       setWebHeight4(getDeviceHeight(false) - height);
     };
     handleWindowResize();
@@ -124,6 +144,19 @@ const PR_A2200W: React.FC = () => {
     };
   }, [step, webheight, webheight2, webheight3, webheight4, isCaptured]);
 
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_sysUserMaster_001", setBizComponentData);
+
+  //공통코드 리스트 조회 ()
+  const [userListData, setUserListData] = React.useState([
+    { user_id: "", user_name: "" },
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
+    }
+  }, [bizComponentData]);
   const search = () => {
     resetInformation();
     setFilters((prev) => ({
@@ -428,6 +461,24 @@ const PR_A2200W: React.FC = () => {
     comment: "",
   });
 
+  const [information2, setInformation2] = useState({
+    devmngnum: "",
+    project: "",
+    findt: "",
+    recdt: "",
+    custnm: "",
+    custcd: "",
+    finexpdt: "",
+    number: 0,
+    pjtmanager: "",
+    pjtperson: "",
+    finchkdt: "",
+    revperson: "",
+    cotracdt: "",
+    midchkdt: "",
+    remark1: "",
+  });
+
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -467,6 +518,7 @@ const PR_A2200W: React.FC = () => {
       comment: "",
     });
   };
+
   const onCheckClick = (datas: any) => {
     resetInformation();
 
@@ -486,6 +538,23 @@ const PR_A2200W: React.FC = () => {
     if (swiper && isMobile) {
       swiper.slideTo(1);
     }
+    setInformation2({
+      cotracdt: datas.cotracdt,
+      custcd: datas.custcd,
+      custnm: datas.custnm,
+      devmngnum: datas.devmngnum,
+      finchkdt: datas.finchkdt,
+      findt: datas.findt,
+      finexpdt: datas.finexpdt,
+      midchkdt: datas.midchkdt,
+      number: datas.number,
+      pjtmanager: datas.pjtmanager,
+      pjtperson: datas.pjtperson,
+      project: datas.project,
+      recdt: datas.recdt,
+      revperson: datas.revperson,
+      remark1: datas.remark1,
+    });
   };
 
   const onCheckClick2 = (datas: any) => {
@@ -505,6 +574,9 @@ const PR_A2200W: React.FC = () => {
       attdatnum: datas.attdatnum,
       isSearch: true,
     }));
+    if (!isMobile) {
+      setStep(2);
+    }
   };
 
   useEffect(() => {
@@ -858,6 +930,38 @@ const PR_A2200W: React.FC = () => {
     if (paraData.workType !== "" && permissions.save) fetchTodoGridSaved();
   }, [paraData, permissions]);
 
+  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+
+  const onCustWndClick = () => {
+    setCustWindowVisible(true);
+  };
+
+  const setCustData = (data: ICustData) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        custcd: data.custcd,
+        custnm: data.custnm,
+      };
+    });
+  };
+
+  const groupByLocation = (items: any) => {
+    return items.reduce(
+      (groups: { [x: string]: any[] }, item: { setup_location: string }) => {
+        const location = item.setup_location || "Unknown";
+        if (!groups[location]) {
+          groups[location] = [];
+        }
+        groups[location].push(item);
+        return groups;
+      },
+      {}
+    );
+  };
+
+  const groupedItems = groupByLocation(mainDataResult2.data);
+
   return (
     <>
       {isMobile ? (
@@ -885,7 +989,11 @@ const PR_A2200W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </TitleContainer>
-              <FormBoxWrap border={true} className="FormBoxWrap">
+              <FormBoxWrap
+                border={true}
+                className="FormBoxWrap"
+                onKeyPress={(e) => handleKeyPressSearch(e, search)}
+              >
                 <FormBox>
                   <tbody>
                     <tr>
@@ -918,7 +1026,7 @@ const PR_A2200W: React.FC = () => {
                           backgroundColor:
                             item.devmngnum == information.devmngnum
                               ? "#d6d8f9"
-                              : "white",
+                              : "#f0f4ff",
                           height: "80px",
                         }}
                       >
@@ -983,7 +1091,11 @@ const PR_A2200W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </TitleContainer>
-              <FormBoxWrap border={true} className="FormBoxWrap2">
+              <FormBoxWrap
+                border={true}
+                className="FormBoxWrap2"
+                onKeyPress={(e) => handleKeyPressSearch(e, search2)}
+              >
                 <FormBox>
                   <tbody>
                     <tr>
@@ -1015,42 +1127,87 @@ const PR_A2200W: React.FC = () => {
                   overflowY: "auto",
                 }}
               >
-                {mainDataResult2.data.map((item, idx) => (
-                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <AdminQuestionBox key={idx}>
-                      <Card
+                <Grid container spacing={2}>
+                  {Object.keys(groupedItems).map((location, idx) => (
+                    <Grid item xs={12} key={idx}>
+                      {/* {idx > 0 && (
+                        <Grid item xs={12}>
+                          <Divider style={{ margin: "4px 0" }} />
+                        </Grid>
+                      )} */}
+                      <Paper
                         style={{
-                          width: "100%",
-                          cursor: "pointer",
-                          backgroundColor:
-                            item.setup_hw_num == information.setup_hw_num
-                              ? "#d6d8f9"
-                              : "white",
-                          height: "80px",
+                          backgroundColor: "white",
+                          padding: "10px",
+                          borderRadius: "0",
                         }}
+                        elevation={0}
                       >
-                        <CardContent
-                          onClick={() => onCheckClick2(item)}
+                        <Typography
+                          variant="subtitle1"
                           style={{
-                            textAlign: "left",
-                            padding: "8px",
-                            height: "100%",
+                            marginBottom: "16px",
+                            backgroundColor: "#f0f2f5",
+                            borderRadius: "5px",
+                            padding: "5px",
+                            fontWeight: 600,
                           }}
                         >
-                          <div style={{ height: "40px" }}>
-                            <Typography variant="h6">
-                              {item.setup_hw_name}
-                            </Typography>
-                          </div>
-
-                          <Typography variant="body2" color="text.secondary">
-                            {item.setup_location}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </AdminQuestionBox>
-                  </Grid>
-                ))}
+                          {location}
+                        </Typography>
+                        <Grid container spacing={2}>
+                          {groupedItems[location].map(
+                            (item: any, itemIdx: any) => (
+                              <Grid
+                                item
+                                xs={12}
+                                sm={12}
+                                md={12}
+                                lg={12}
+                                xl={12}
+                                key={itemIdx}
+                              >
+                                <Card
+                                  style={{
+                                    width: "100%",
+                                    cursor: "pointer",
+                                    backgroundColor:
+                                      item.setup_hw_num ===
+                                      information.setup_hw_num
+                                        ? "#d6d8f9"
+                                        : "#f0f4ff",
+                                    height: "80px",
+                                  }}
+                                  onClick={() => onCheckClick2(item)}
+                                >
+                                  <CardContent
+                                    style={{
+                                      textAlign: "left",
+                                      padding: "8px",
+                                      height: "100%",
+                                    }}
+                                  >
+                                    <div style={{ height: "40px" }}>
+                                      <Typography variant="h6">
+                                        {item.setup_hw_name}
+                                      </Typography>
+                                    </div>
+                                    <Typography
+                                      variant="body2"
+                                      color="text.secondary"
+                                    >
+                                      {item.setup_location}
+                                    </Typography>
+                                  </CardContent>
+                                </Card>
+                              </Grid>
+                            )
+                          )}
+                        </Grid>
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
               </GridContainer>
             </GridContainer>
           </SwiperSlide>
@@ -1061,7 +1218,16 @@ const PR_A2200W: React.FC = () => {
               <GridContainer style={{ width: "100%", overflow: "auto" }}>
                 <TitleContainer className="TitleContainer">
                   <Title>사진 및 코멘트</Title>
-                  <ButtonContainer>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <GridTitle>
+                      <span style={{ fontWeight: 600, fontSize: "18px" }}>
+                        {information.setup_hw_name}
+                      </span>
+                      {"  "}
+                      <span style={{ color: "#b0b0b0" }}>
+                        {information.setup_location}
+                      </span>
+                    </GridTitle>
                     <Switch
                       onChange={(event: any) => {
                         setInformation((prev) => ({
@@ -1447,11 +1613,11 @@ const PR_A2200W: React.FC = () => {
                 </ButtonContainer>
               </TitleContainer>
               <FormBoxWrap
-                style={{ width: "20%", float: "right" }}
+                style={{ width: "20%", float: "right", marginBottom: GAP }}
                 border={true}
                 className="FormBoxWrap"
               >
-                <FormBox>
+                <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
                   <tbody>
                     <tr>
                       <th>업체명</th>
@@ -1461,6 +1627,202 @@ const PR_A2200W: React.FC = () => {
                           type="text"
                           value={filters.custnm}
                           onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <FormBoxWrap
+                style={{ width: "100%" }}
+                border={true}
+                className="FormBoxWrap5"
+              >
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>개발관리번호</th>
+                      <td>
+                        <Input
+                          name="devmngnum"
+                          type="text"
+                          value={information2.devmngnum}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>프로젝트</th>
+                      <td colSpan={4}>
+                        <Input
+                          name="project"
+                          type="text"
+                          value={information2.project}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>완료일</th>
+                      <td>
+                        <DatePicker
+                          value={
+                            information2.findt == ""
+                              ? null
+                              : toDate(information2.findt)
+                          }
+                          name="findt"
+                          format={"yyyy-MM-dd"}
+                          placeholder=""
+                        />
+                      </td>
+                      <th>작성일</th>
+                      <td>
+                        <DatePicker
+                          value={
+                            information2.recdt == ""
+                              ? null
+                              : toDate(information2.recdt)
+                          }
+                          name="recdt"
+                          format={"yyyy-MM-dd"}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
+                      <th>업체명</th>
+                      <td>
+                        <Input
+                          name="custcd"
+                          type="text"
+                          value={information2.custcd}
+                          onChange={filterInputChange}
+                          className="required"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onCustWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={information2.custnm}
+                          className="required"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>사업종료일</th>
+                      <td>
+                        <DatePicker
+                          value={
+                            information2.finexpdt == ""
+                              ? null
+                              : toDate(information2.finexpdt)
+                          }
+                          name="finexpdt"
+                          format={"yyyy-MM-dd"}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
+                      <th>차수</th>
+                      <td>
+                        <Input
+                          name="number"
+                          type="string"
+                          value={information2.number}
+                          className="required"
+                        />
+                      </td>
+                      <th>담당PM</th>
+                      <td>
+                        <Input
+                          name="pjtmanager"
+                          type="string"
+                          value={
+                            userListData.find(
+                              (item: any) =>
+                                item.user_id == information2.pjtmanager
+                            )?.user_name
+                          }
+                          className="required"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>담당팀장</th>
+                      <td>
+                        <Input
+                          name="pjtperson"
+                          type="string"
+                          value={
+                            userListData.find(
+                              (item: any) =>
+                                item.user_id == information2.pjtperson
+                            )?.user_name
+                          }
+                          className="required"
+                        />
+                      </td>
+                      <th>최종점검일</th>
+                      <td>
+                        <DatePicker
+                          value={
+                            information2.finchkdt == ""
+                              ? null
+                              : toDate(information2.finchkdt)
+                          }
+                          name="finchkdt"
+                          format={"yyyy-MM-dd"}
+                          placeholder=""
+                        />
+                      </td>
+                      <th>감리위원</th>
+                      <td>
+                        <Input
+                          name="revperson"
+                          type="string"
+                          value={information2.revperson}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>사업시작일</th>
+                      <td>
+                        <DatePicker
+                          value={
+                            information2.cotracdt == ""
+                              ? null
+                              : toDate(information2.cotracdt)
+                          }
+                          name="cotracdt"
+                          format={"yyyy-MM-dd"}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
+                      <th>중간점검일</th>
+                      <td>
+                        <DatePicker
+                          value={
+                            information2.midchkdt == ""
+                              ? null
+                              : toDate(information2.midchkdt)
+                          }
+                          name="midchkdt"
+                          format={"yyyy-MM-dd"}
+                          placeholder=""
+                        />
+                      </td>
+                      <th>비고</th>
+                      <td colSpan={2}>
+                        <Input
+                          name="remark1"
+                          type="string"
+                          value={information2.remark1}
                         />
                       </td>
                     </tr>
@@ -1485,7 +1847,7 @@ const PR_A2200W: React.FC = () => {
                             backgroundColor:
                               item.devmngnum == information.devmngnum
                                 ? "#d6d8f9"
-                                : "white",
+                                : "#f0f4ff",
                             height: "80px",
                           }}
                         >
@@ -1561,7 +1923,7 @@ const PR_A2200W: React.FC = () => {
                 border={true}
                 className="FormBoxWrap2"
               >
-                <FormBox>
+                <FormBox onKeyPress={(e) => handleKeyPressSearch(e, search2)}>
                   <tbody>
                     <tr>
                       <th>장비명</th>
@@ -1586,7 +1948,7 @@ const PR_A2200W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              <GridContainer
+              <div
                 style={{
                   height: webheight2,
                   width: "100%",
@@ -1594,44 +1956,81 @@ const PR_A2200W: React.FC = () => {
                 }}
               >
                 <Grid container spacing={2}>
-                  {mainDataResult2.data.map((item, idx) => (
-                    <Grid item xs={12} sm={12} md={6} lg={6} xl={4}>
-                      <AdminQuestionBox key={idx}>
-                        <Card
+                  {Object.keys(groupedItems).map((location, idx) => (
+                    <Grid item xs={12} key={idx}>
+                      <Paper
+                        style={{
+                          backgroundColor: "white",
+                          padding: "10px",
+                          borderRadius: "0",
+                        }}
+                        elevation={0}
+                      >
+                        <Typography
+                          variant="h5"
                           style={{
-                            width: "100%",
-                            cursor: "pointer",
-                            backgroundColor:
-                              item.setup_hw_num == information.setup_hw_num
-                                ? "#d6d8f9"
-                                : "white",
-                            height: "80px",
+                            marginBottom: "16px",
+                            backgroundColor: "#f0f2f5",
+                            borderRadius: "5px",
+                            padding: "8px",
                           }}
                         >
-                          <CardContent
-                            onClick={() => onCheckClick2(item)}
-                            style={{
-                              textAlign: "left",
-                              padding: "8px",
-                              height: "100%",
-                            }}
-                          >
-                            <div style={{ height: "40px" }}>
-                              <Typography variant="h6">
-                                {item.setup_hw_name}
-                              </Typography>
-                            </div>
-
-                            <Typography variant="body2" color="text.secondary">
-                              {item.setup_location}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </AdminQuestionBox>
+                          {location}
+                        </Typography>
+                        <Grid container spacing={2}>
+                          {groupedItems[location].map(
+                            (item: any, itemIdx: any) => (
+                              <Grid
+                                item
+                                xs={12}
+                                sm={6}
+                                md={4}
+                                lg={3}
+                                xl={2}
+                                key={itemIdx}
+                              >
+                                <Card
+                                  style={{
+                                    width: "100%",
+                                    cursor: "pointer",
+                                    backgroundColor:
+                                      item.setup_hw_num ===
+                                      information.setup_hw_num
+                                        ? "#d6d8f9"
+                                        : "#f0f4ff",
+                                    height: "80px",
+                                  }}
+                                  onClick={() => onCheckClick2(item)}
+                                >
+                                  <CardContent
+                                    style={{
+                                      textAlign: "left",
+                                      padding: "8px",
+                                      height: "100%",
+                                    }}
+                                  >
+                                    <div style={{ height: "40px" }}>
+                                      <Typography variant="h6">
+                                        {item.setup_hw_name}
+                                      </Typography>
+                                    </div>
+                                    <Typography
+                                      variant="body2"
+                                      color="text.secondary"
+                                    >
+                                      {item.setup_location}
+                                    </Typography>
+                                  </CardContent>
+                                </Card>
+                              </Grid>
+                            )
+                          )}
+                        </Grid>
+                      </Paper>
                     </Grid>
                   ))}
                 </Grid>
-              </GridContainer>
+              </div>
             </GridContainer>
           ) : (
             <GridContainer>
@@ -1724,6 +2123,7 @@ const PR_A2200W: React.FC = () => {
                   )}
                 </ButtonContainer>
               </TitleContainer>
+
               {isCaptured ? (
                 <video
                   ref={videoRef}
@@ -1757,6 +2157,19 @@ const PR_A2200W: React.FC = () => {
                       </>
                     ))}
                   </Carousel>
+                  <GridTitleContainer
+                    style={{
+                      flexDirection: "column",
+                    }}
+                    className="ButtonContainer3"
+                  >
+                    <GridTitle style={{ fontWeight: 600, fontSize: "18px" }}>
+                      {information.setup_hw_name}
+                    </GridTitle>
+                    <GridTitle style={{ color: "#b0b0b0" }}>
+                      {information.setup_location}
+                    </GridTitle>
+                  </GridTitleContainer>
                   <FormBoxWrap className="FormBoxWrap3">
                     <GridTitleContainer>
                       <GridTitle>
@@ -1802,7 +2215,25 @@ const PR_A2200W: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <div style={{ width: "100%", height: webheight3 }}></div>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: webheight3,
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      flexDirection: "column",
+                    }}
+                    className="ButtonContainer3"
+                  >
+                    <GridTitleContainer style={{ flexDirection: "column" }}>
+                      <GridTitle style={{ fontWeight: 600, fontSize: "18px" }}>
+                        {information.setup_hw_name}
+                      </GridTitle>
+                      <GridTitle style={{ color: "#b0b0b0" }}>
+                        {information.setup_location}
+                      </GridTitle>
+                    </GridTitleContainer>
+                  </div>
                   <FormBoxWrap className="FormBoxWrap3">
                     <GridTitleContainer>
                       <GridTitle>
@@ -1850,6 +2281,14 @@ const PR_A2200W: React.FC = () => {
             </GridContainer>
           )}
         </>
+      )}
+      {custWindowVisible && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible}
+          workType={"N"}
+          setData={setCustData}
+          modal={true}
+        />
       )}
     </>
   );
