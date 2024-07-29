@@ -39,6 +39,7 @@ import {
 } from "../CommonStyled";
 import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
 import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -47,6 +48,7 @@ import {
   convertDateToStr,
   dateformat,
   dateformat2,
+  findMessage,
   getBizCom,
   getDeviceHeight,
   getGridItemChangedData,
@@ -107,9 +109,13 @@ const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY3_1 = "num";
 const DATA_ITEM_KEY3_2 = "num";
 const DATA_ITEM_KEY4 = "num";
+const DATA_ITEM_KEY4_1 = "num";
+const DATA_ITEM_KEY5 = "num";
+const DATA_ITEM_KEY5_1 = "num";
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 let targetRowIndex4: null | number = null;
+let targetRowIndex5: null | number = null;
 const dateField = ["cotracdt", "paydt", "acntdt", "brwdt", "enddt", "pubdt"];
 const numberField = [
   "monsaveamt",
@@ -122,7 +128,7 @@ const numberField = [
   "cramt",
   "brwamt",
   "intamt",
-  "pubamt"
+  "pubamt",
 ];
 const numberField2 = [
   "monsaveamt",
@@ -132,8 +138,9 @@ const numberField2 = [
   "cramt",
   "brwamt",
   "intamt",
-  "pubamt"
+  "pubamt",
 ];
+const checkField = ["useyn"];
 let deletedMainRows2_1: object[] = [];
 let deletedMainRows3_1: object[] = [];
 
@@ -141,6 +148,7 @@ const AC_A0050W: React.FC = () => {
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
   let gridRef4: any = useRef(null);
+  let gridRef5: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   let deviceWidth = document.documentElement.clientWidth;
@@ -179,9 +187,12 @@ const AC_A0050W: React.FC = () => {
   const idGetter3_1 = getter(DATA_ITEM_KEY3_1);
   const idGetter3_2 = getter(DATA_ITEM_KEY3_2);
   const idGetter4 = getter(DATA_ITEM_KEY4);
+  const idGetter4_1 = getter(DATA_ITEM_KEY4_1);
+  const idGetter5 = getter(DATA_ITEM_KEY5);
+  const idGetter5_1 = getter(DATA_ITEM_KEY5_1);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_AC022, L_AC210, L_AC030, L_AC023, L_dptcd_001, L_BA020, L_AC046, R_USEYN_only",
+    "L_sysUserMaster_001, L_cordiv, L_AC198, L_AC028, L_AC029, L_AC027, R_NOTEDIV, L_AC022, L_AC210, L_AC030, L_AC023, L_dptcd_001, L_BA020, L_AC046, R_USEYN_only",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -194,12 +205,19 @@ const AC_A0050W: React.FC = () => {
   const [notedivListData, setnotedivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [creditdivListData, setcreditdivListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [cordivListData, setcordivListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
       setbankacntdivListData(getBizCom(bizComponentData, "L_AC023"));
       setnotedivListData(getBizCom(bizComponentData, "L_AC022"));
+      setcreditdivListData(getBizCom(bizComponentData, "L_AC198"));
+      setcordivListData(getBizCom(bizComponentData, "L_cordiv"));
     }
   }, [bizComponentData]);
 
@@ -212,6 +230,8 @@ const AC_A0050W: React.FC = () => {
   const [mobileheight3_1, setMobileHeight3_1] = useState(0);
   const [mobileheight3_2, setMobileHeight3_2] = useState(0);
   const [mobileheight3_3, setMobileHeight3_3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight4_1, setMobileHeight4_1] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
   const [webheight2_1, setWebHeight2_1] = useState(0);
@@ -220,6 +240,9 @@ const AC_A0050W: React.FC = () => {
   const [webheight3_1, setWebHeight3_1] = useState(0);
   const [webheight3_2, setWebHeight3_2] = useState(0);
   const [webheight4, setWebHeight4] = useState(0);
+  const [webheight4_1, setWebHeight4_1] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
+  const [webheight5_1, setWebHeight5_1] = useState(0);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".k-tabstrip-items-wrapper");
@@ -240,6 +263,8 @@ const AC_A0050W: React.FC = () => {
         setMobileHeight3_1(getDeviceHeight(true) - height - height2 - height4);
         setMobileHeight3_2(getDeviceHeight(true) - height - height2 - height5);
         setMobileHeight3_3(getDeviceHeight(true) - height - height2 - height6);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height3);
+        setMobileHeight4_1(getDeviceHeight(true) - height - height2 - height4);
         setWebHeight(getDeviceHeight(false) - height - height2);
         setWebHeight(getDeviceHeight(false) - height - height2);
         setWebHeight2((getDeviceHeight(true) - height - height2) / 2 - height3);
@@ -253,6 +278,13 @@ const AC_A0050W: React.FC = () => {
         );
         setWebHeight3_2((getDeviceHeight(true) - height - height2) / 2);
         setWebHeight4((getDeviceHeight(true) - height - height2) / 2 - height3);
+        setWebHeight4_1(
+          (getDeviceHeight(true) - height - height2) / 2 - height5
+        );
+        setWebHeight5((getDeviceHeight(true) - height - height2) / 2 - height3);
+        setWebHeight5_1(
+          (getDeviceHeight(true) - height - height2) / 2 - height5
+        );
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
@@ -270,6 +302,9 @@ const AC_A0050W: React.FC = () => {
     webheight3_1,
     webheight3_2,
     webheight4,
+    webheight4_1,
+    webheight5,
+    webheight5_1,
     tabSelected,
     tabSelected2,
   ]);
@@ -311,6 +346,16 @@ const AC_A0050W: React.FC = () => {
           ?.valueCode,
         isSearch: true,
       }));
+      setFilters5((prev) => ({
+        ...prev,
+        creditdiv: defaultOption.find((item: any) => item.id == "creditdiv")
+          ?.valueCode,
+        cordiv: defaultOption.find((item: any) => item.id == "cordiv")
+          ?.valueCode,
+        useyn3: defaultOption.find((item: any) => item.id == "useyn3")
+          ?.valueCode,
+        isSearch: true,
+      }));
     }
   }, [customOptionData]);
 
@@ -348,6 +393,15 @@ const AC_A0050W: React.FC = () => {
   const [mainDataState4, setMainDataState4] = useState<State>({
     sort: [],
   });
+  const [mainDataState4_1, setMainDataState4_1] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState5, setMainDataState5] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState5_1, setMainDataState5_1] = useState<State>({
+    sort: [],
+  });
   const [tempState2_1, setTempState2_1] = useState<State>({
     sort: [],
   });
@@ -375,6 +429,15 @@ const AC_A0050W: React.FC = () => {
   const [mainDataResult4, setMainDataResult4] = useState<DataResult>(
     process([], mainDataState4)
   );
+  const [mainDataResult4_1, setMainDataResult4_1] = useState<DataResult>(
+    process([], mainDataState4_1)
+  );
+  const [mainDataResult5, setMainDataResult5] = useState<DataResult>(
+    process([], mainDataState5)
+  );
+  const [mainDataResult5_1, setMainDataResult5_1] = useState<DataResult>(
+    process([], mainDataState5_1)
+  );
   const [tempResult2_1, setTempResult2_1] = useState<DataResult>(
     process([], tempState2_1)
   );
@@ -400,6 +463,15 @@ const AC_A0050W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [selectedState4, setSelectedState4] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState4_1, setSelectedState4_1] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState5, setSelectedState5] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState5_1, setSelectedState5_1] = useState<{
     [id: string]: boolean | number[];
   }>({});
   //조회조건 초기값
@@ -483,6 +555,39 @@ const AC_A0050W: React.FC = () => {
     custnm: "",
     pubbank: "",
     remark1: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+  const [filters4_1, setFilters4_1] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "Q2",
+    notenum: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
+  const [filters5, setFilters5] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "List",
+    creditcd: "",
+    creditdiv: "",
+    custcd: "",
+    custnm: "",
+    creditnum: "",
+    cordiv: "",
+    creditnm: "",
+    remark: "",
+    useyn3: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
+  const [filters5_1, setFilters5_1] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "DETAIL",
+    creditcd: "",
     pgNum: 1,
     isSearch: false,
   });
@@ -553,6 +658,64 @@ const AC_A0050W: React.FC = () => {
     redeem: 0,
     remark: "",
     strdmdt: null,
+  });
+
+  const [infomation3, setInfomation3] = useState<{ [name: string]: any }>({
+    workType: "N",
+    acntcd: "",
+    acntnm: "",
+    bankcd: "",
+    banknm: "",
+    custcd: "",
+    custnm: "",
+    dptcd: "",
+    enddt: new Date(),
+    endorser1: "",
+    endorser2: "",
+    findrow_key: "",
+    notedec: "",
+    notediv: "1",
+    notekind: "",
+    noteloca: "",
+    notenum: "",
+    notests: "",
+    orgdiv: sessionOrgdiv,
+    pgmdiv: "",
+    pubamt: 0,
+    pubbank: "",
+    pubdt: new Date(),
+    pubperson: "",
+    remark1: "",
+    replace_bankcd: "",
+    replace_banknm: "",
+    replace_custcd: "",
+    replace_custnm: "",
+    replacedt: null,
+    returndt: null,
+  });
+
+  const [infomation5, setInfomation5] = useState<{ [name: string]: any }>({
+    workType: "N",
+    attdatnum: "",
+    bankacntnum: "",
+    cordiv: "",
+    creditcd: "",
+    creditdiv: "",
+    creditnm: "",
+    creditnum: "",
+    custcd: "",
+    custnm: "",
+    exprdt: null,
+    files: "",
+    findrow_key: "",
+    orgdiv: sessionOrgdiv,
+    paydt: null,
+    person: "",
+    rcvcustcd: "",
+    rcvcustnm: "",
+    remark: "",
+    repreregno: "",
+    useyn: "Y",
   });
 
   const filterInputChange = (e: any) => {
@@ -661,19 +824,104 @@ const AC_A0050W: React.FC = () => {
     }));
   };
 
+  const InputChange4 = (e: any) => {
+    const { value, name } = e.target;
+
+    setInfomation3((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const RadioChange4 = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation3((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const ComboBoxChange4 = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation3((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterInputChange5 = (e: any) => {
+    const { value, name } = e.target;
+
+    setFilters5((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterComboBoxChange5 = (e: any) => {
+    const { name, value } = e;
+
+    setFilters5((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const InputChange5 = (e: any) => {
+    const { value, name } = e.target;
+
+    setInfomation5((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const ComboBoxChange5 = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation5((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const RadioChange5 = (e: any) => {
+    const { name, value } = e;
+
+    setInfomation5((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const [accountWindowVisible, setAccountWindowVisible] =
     useState<boolean>(false);
   const [accountWindowVisible2, setAccountWindowVisible2] =
     useState<boolean>(false);
   const [accountWindowVisible3, setAccountWindowVisible3] =
     useState<boolean>(false);
+  const [accountWindowVisible4, setAccountWindowVisible4] =
+    useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [custWindowVisible3, setCustWindowVisible3] = useState<boolean>(false);
   const [custWindowVisible4, setCustWindowVisible4] = useState<boolean>(false);
+  const [custWindowVisible5, setCustWindowVisible5] = useState<boolean>(false);
+  const [custWindowVisible6, setCustWindowVisible6] = useState<boolean>(false);
+  const [custWindowVisible7, setCustWindowVisible7] = useState<boolean>(false);
+  const [custWindowVisible8, setCustWindowVisible8] = useState<boolean>(false);
+  const [custWindowVisible9, setCustWindowVisible9] = useState<boolean>(false);
+  const [custWindowVisible10, setCustWindowVisible10] =
+    useState<boolean>(false);
+  const [custWindowVisible11, setCustWindowVisible11] =
+    useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
   const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
+    useState<boolean>(false);
+  const [attachmentsWindowVisible5, setAttachmentsWindowVisible5] =
     useState<boolean>(false);
   const [excelAttachmentsWindowVisible, setExcelAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -682,6 +930,9 @@ const AC_A0050W: React.FC = () => {
   };
   const onAttachmentsWndClick2 = () => {
     setAttachmentsWindowVisible2(true);
+  };
+  const onAttachmentsWndClick5 = () => {
+    setAttachmentsWindowVisible5(true);
   };
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -695,6 +946,27 @@ const AC_A0050W: React.FC = () => {
   const onCustWndClick4 = () => {
     setCustWindowVisible4(true);
   };
+  const onCustWndClick5 = () => {
+    setCustWindowVisible5(true);
+  };
+  const onCustWndClick6 = () => {
+    setCustWindowVisible6(true);
+  };
+  const onCustWndClick7 = () => {
+    setCustWindowVisible7(true);
+  };
+  const onCustWndClick8 = () => {
+    setCustWindowVisible8(true);
+  };
+  const onCustWndClick9 = () => {
+    setCustWindowVisible9(true);
+  };
+  const onCustWndClick10 = () => {
+    setCustWindowVisible10(true);
+  };
+  const onCustWndClick11 = () => {
+    setCustWindowVisible11(true);
+  };
   const onAccountWndClick = () => {
     setAccountWindowVisible(true);
   };
@@ -703,6 +975,9 @@ const AC_A0050W: React.FC = () => {
   };
   const onAccountWndClick3 = () => {
     setAccountWindowVisible3(true);
+  };
+  const onAccountWndClick4 = () => {
+    setAccountWindowVisible4(true);
   };
   const onExcelAttachmentsWndClick = () => {
     setExcelAttachmentsWindowVisible(true);
@@ -722,6 +997,13 @@ const AC_A0050W: React.FC = () => {
   };
   const setAcntData3 = (data: any) => {
     setInfomation2((prev) => ({
+      ...prev,
+      acntcd: data.acntcd,
+      acntnm: data.acntnm,
+    }));
+  };
+  const setAcntData4 = (data: any) => {
+    setInfomation3((prev) => ({
       ...prev,
       acntcd: data.acntcd,
       acntnm: data.acntnm,
@@ -763,6 +1045,69 @@ const AC_A0050W: React.FC = () => {
       };
     });
   };
+  const setCustData5 = (data: ICustData) => {
+    setInfomation3((prev: any) => {
+      return {
+        ...prev,
+        custcd: data.custcd,
+        custnm: data.custnm,
+      };
+    });
+  };
+  const setCustData6 = (data: ICustData) => {
+    setInfomation3((prev: any) => {
+      return {
+        ...prev,
+        bankcd: data.custcd,
+        banknm: data.custnm,
+      };
+    });
+  };
+  const setCustData7 = (data: ICustData) => {
+    setInfomation3((prev: any) => {
+      return {
+        ...prev,
+        replace_custcd: data.custcd,
+        replace_custnm: data.custnm,
+      };
+    });
+  };
+  const setCustData8 = (data: ICustData) => {
+    setInfomation3((prev: any) => {
+      return {
+        ...prev,
+        replace_bankcd: data.custcd,
+        replace_banknm: data.custnm,
+      };
+    });
+  };
+  const setCustData9 = (data: ICustData) => {
+    setFilters5((prev: any) => {
+      return {
+        ...prev,
+        custcd: data.custcd,
+        custnm: data.custnm,
+      };
+    });
+  };
+  const setCustData10 = (data: ICustData) => {
+    setInfomation5((prev: any) => {
+      return {
+        ...prev,
+        custcd: data.custcd,
+        custnm: data.custnm,
+      };
+    });
+  };
+  const setCustData11 = (data: ICustData) => {
+    setInfomation5((prev: any) => {
+      return {
+        ...prev,
+        rcvcustcd: data.custcd,
+        rcvcustnm: data.custnm,
+      };
+    });
+  };
   const getAttachmentsData = (data: IAttachmentData) => {
     setInfomation((prev) => {
       return {
@@ -785,6 +1130,17 @@ const AC_A0050W: React.FC = () => {
       };
     });
   };
+  const getAttachmentsData5 = (data: IAttachmentData) => {
+    setInfomation5((prev) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
+  };
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page2, setPage2] = useState(initialPageState);
   const [page2_1, setPage2_1] = useState(initialPageState);
@@ -793,9 +1149,17 @@ const AC_A0050W: React.FC = () => {
   const [page3_1, setPage3_1] = useState(initialPageState);
   const [page3_2, setPage3_2] = useState(initialPageState);
   const [page4, setPage4] = useState(initialPageState);
+  const [page4_1, setPage4_1] = useState(initialPageState);
+  const [page5, setPage5] = useState(initialPageState);
+  const [page5_1, setPage5_1] = useState(initialPageState);
   const pageChange2 = (event: GridPageChangeEvent) => {
     const { page } = event;
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage2_1(initialPageState);
     setPage2_2(initialPageState);
     setFilters2_1((prev) => ({
@@ -852,6 +1216,12 @@ const AC_A0050W: React.FC = () => {
   };
   const pageChange3 = (event: GridPageChangeEvent) => {
     const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage3_1(initialPageState);
     setPage3_2(initialPageState);
     setFilters3_1((prev) => ({
@@ -911,6 +1281,13 @@ const AC_A0050W: React.FC = () => {
   const pageChange4 = (event: GridPageChangeEvent) => {
     const { page } = event;
 
+    setPage4_1(initialPageState);
+    setFilters4_1((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+    }));
+
     setFilters4((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
@@ -919,6 +1296,66 @@ const AC_A0050W: React.FC = () => {
     }));
 
     setPage4({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange4_1 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters4_1((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+
+    setPage4_1({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange5 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+    setPage5_1(initialPageState);
+    setFilters5_1((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+    }));
+
+    setFilters5((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+
+    setPage5({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange5_1 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters5_1((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+
+    setPage5_1({
       skip: page.skip,
       take: initialPageState.take,
     });
@@ -1748,10 +2185,131 @@ const AC_A0050W: React.FC = () => {
             : rows.find((row: any) => row.notenum == filters4.find_row_value);
         if (selectedRow != undefined) {
           setSelectedState4({ [selectedRow[DATA_ITEM_KEY4]]: true });
+          setInfomation3({
+            workType: "U",
+            acntcd: selectedRow.acntcd,
+            acntnm: selectedRow.acntnm,
+            bankcd: selectedRow.bankcd,
+            banknm: selectedRow.banknm,
+            custcd: selectedRow.custcd,
+            custnm: selectedRow.custnm,
+            dptcd: selectedRow.dptcd,
+            enddt: toDate(selectedRow.enddt),
+            endorser1: selectedRow.endorser1,
+            endorser2: selectedRow.endorser2,
+            findrow_key: selectedRow.findrow_key,
+            notedec: selectedRow.notedec,
+            notediv: selectedRow.notediv,
+            notekind: selectedRow.notekind,
+            noteloca: selectedRow.noteloca,
+            notenum: selectedRow.notenum,
+            notests: selectedRow.notests,
+            orgdiv: selectedRow.orgdiv,
+            pgmdiv: selectedRow.pgmdiv,
+            pubamt: selectedRow.pubamt,
+            pubbank: selectedRow.pubbank,
+            pubdt: toDate(selectedRow.pubdt),
+            pubperson: selectedRow.pubperson,
+            remark1: selectedRow.remark1,
+            replace_bankcd: selectedRow.replace_bankcd,
+            replace_banknm: selectedRow.replace_banknm,
+            replace_custcd: selectedRow.replace_custcd,
+            replace_custnm: selectedRow.replace_custnm,
+            replacedt:
+              selectedRow.replacedt == ""
+                ? null
+                : toDate(selectedRow.replacedt),
+            returndt:
+              selectedRow.returndt == "" ? null : toDate(selectedRow.returndt),
+          });
+
+          setFilters4_1((prev) => ({
+            ...prev,
+            isSearch: true,
+            notenum: selectedRow.notenum,
+            pgNum: 1,
+          }));
+          setPage4_1(initialPageState);
         } else {
           setSelectedState4({ [rows[0][DATA_ITEM_KEY4]]: true });
+          setInfomation3({
+            workType: "U",
+            acntcd: rows[0].acntcd,
+            acntnm: rows[0].acntnm,
+            bankcd: rows[0].bankcd,
+            banknm: rows[0].banknm,
+            custcd: rows[0].custcd,
+            custnm: rows[0].custnm,
+            dptcd: rows[0].dptcd,
+            enddt: toDate(rows[0].enddt),
+            endorser1: rows[0].endorser1,
+            endorser2: rows[0].endorser2,
+            findrow_key: rows[0].findrow_key,
+            notedec: rows[0].notedec,
+            notediv: rows[0].notediv,
+            notekind: rows[0].notekind,
+            noteloca: rows[0].noteloca,
+            notenum: rows[0].notenum,
+            notests: rows[0].notests,
+            orgdiv: rows[0].orgdiv,
+            pgmdiv: rows[0].pgmdiv,
+            pubamt: rows[0].pubamt,
+            pubbank: rows[0].pubbank,
+            pubdt: toDate(rows[0].pubdt),
+            pubperson: rows[0].pubperson,
+            remark1: rows[0].remark1,
+            replace_bankcd: rows[0].replace_bankcd,
+            replace_banknm: rows[0].replace_banknm,
+            replace_custcd: rows[0].replace_custcd,
+            replace_custnm: rows[0].replace_custnm,
+            replacedt:
+              rows[0].replacedt == "" ? null : toDate(rows[0].replacedt),
+            returndt: rows[0].returndt == "" ? null : toDate(rows[0].returndt),
+          });
+          setFilters4_1((prev) => ({
+            ...prev,
+            isSearch: true,
+            notenum: rows[0].notenum,
+            pgNum: 1,
+          }));
+          setPage4_1(initialPageState);
         }
       } else {
+        setInfomation3({
+          workType: "N",
+          acntcd: "",
+          acntnm: "",
+          bankcd: "",
+          banknm: "",
+          custcd: "",
+          custnm: "",
+          dptcd: "",
+          enddt: new Date(),
+          endorser1: "",
+          endorser2: "",
+          findrow_key: "",
+          notedec: "",
+          notediv: "1",
+          notekind: "",
+          noteloca: "",
+          notenum: "",
+          notests: "",
+          orgdiv: sessionOrgdiv,
+          pgmdiv: "",
+          pubamt: 0,
+          pubbank: "",
+          pubdt: new Date(),
+          pubperson: "",
+          remark1: "",
+          replace_bankcd: "",
+          replace_banknm: "",
+          replace_custcd: "",
+          replace_custnm: "",
+          replacedt: null,
+          returndt: null,
+        });
+        setPage4_1(initialPageState);
+        setMainDataResult4_1(process([], mainDataState4_1));
       }
     } else {
       console.log("[오류 발생]");
@@ -1759,6 +2317,310 @@ const AC_A0050W: React.FC = () => {
     }
     // 필터 isSearch false처리, pgNum 세팅
     setFilters4((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchMainGrid4_1 = async (filters4_1: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A0050W_tab4_Q",
+      pageNumber: filters4_1.pgNum,
+      pageSize: filters4_1.pgSize,
+      parameters: {
+        "@p_work_type": filters4_1.workType,
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_notenum": filters4_1.notenum,
+        "@p_notediv": filters4.notediv,
+        "@p_notekind": filters4.notekind,
+        "@p_custcd": filters4.custcd,
+        "@p_custnm": filters4.custnm,
+        "@p_pubbank": filters4.pubbank,
+        "@p_dtgb": filters4.dtgb,
+        "@p_frdt": convertDateToStr(filters4.frdt),
+        "@p_todt": convertDateToStr(filters4.todt),
+        "@p_remark1": filters4.remark1,
+        "@p_notests": filters4.notests,
+
+        "@p_find_row_value": filters4.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult4_1((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        setSelectedState4_1({ [rows[0][DATA_ITEM_KEY4_1]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters4_1((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchMainGrid5 = async (filters5: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A0050W_tab5_Q",
+      pageNumber: filters5.pgNum,
+      pageSize: filters5.pgSize,
+      parameters: {
+        "@p_work_type": filters5.workType,
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_creditcd": filters5.creditcd,
+        "@p_creditnum": filters5.creditnum,
+        "@p_creditnm": filters5.creditnm,
+        "@p_creditdiv": filters5.creditdiv,
+        "@p_cordiv": filters5.cordiv,
+        "@p_custcd": filters5.custcd,
+        "@p_custnm": filters5.custnm,
+        "@p_useyn": filters5.useyn3,
+        "@p_remark": filters5.remark,
+        "@p_find_row_value": filters5.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+      if (filters5.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef5.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.creditcd == filters5.find_row_value
+          );
+          targetRowIndex5 = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage5({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef5.current) {
+          targetRowIndex5 = 0;
+        }
+      }
+
+      setMainDataResult5((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters5.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.creditcd == filters5.find_row_value);
+        if (selectedRow != undefined) {
+          setSelectedState5({ [selectedRow[DATA_ITEM_KEY5]]: true });
+          setInfomation5({
+            workType: "U",
+            attdatnum: selectedRow.attdatnum,
+            bankacntnum: selectedRow.bankacntnum,
+            cordiv: selectedRow.cordiv,
+            creditcd: selectedRow.creditcd,
+            creditdiv: selectedRow.creditdiv,
+            creditnm: selectedRow.creditnm,
+            creditnum: selectedRow.creditnum,
+            custcd: selectedRow.custcd,
+            custnm: selectedRow.custnm,
+            exprdt:
+              selectedRow.exprdt == "" ? null : toDate(selectedRow.exprdt),
+            files: selectedRow.files,
+            findrow_key: selectedRow.findrow_key,
+            orgdiv: selectedRow.orgdiv,
+            paydt: selectedRow.paydt == "" ? null : toDate(selectedRow.paydt),
+            person: selectedRow.person,
+            rcvcustcd: selectedRow.rcvcustcd,
+            rcvcustnm: selectedRow.rcvcustnm,
+            remark: selectedRow.remark,
+            repreregno: selectedRow.repreregno,
+            useyn: selectedRow.useyn,
+          });
+          setFilters5_1((prev) => ({
+            ...prev,
+            isSearch: true,
+            creditcd: selectedRow.creditcd,
+            pgNum: 1,
+          }));
+          setPage5_1(initialPageState);
+        } else {
+          setSelectedState5({ [rows[0][DATA_ITEM_KEY5]]: true });
+          setInfomation5({
+            workType: "U",
+            attdatnum: rows[0].attdatnum,
+            bankacntnum: rows[0].bankacntnum,
+            cordiv: rows[0].cordiv,
+            creditcd: rows[0].creditcd,
+            creditdiv: rows[0].creditdiv,
+            creditnm: rows[0].creditnm,
+            creditnum: rows[0].creditnum,
+            custcd: rows[0].custcd,
+            custnm: rows[0].custnm,
+            exprdt: rows[0].exprdt == "" ? null : toDate(rows[0].exprdt),
+            files: rows[0].files,
+            findrow_key: rows[0].findrow_key,
+            orgdiv: rows[0].orgdiv,
+            paydt: rows[0].paydt == "" ? null : toDate(rows[0].paydt),
+            person: rows[0].person,
+            rcvcustcd: rows[0].rcvcustcd,
+            rcvcustnm: rows[0].rcvcustnm,
+            remark: rows[0].remark,
+            repreregno: rows[0].repreregno,
+            useyn: rows[0].useyn,
+          });
+          setFilters5_1((prev) => ({
+            ...prev,
+            isSearch: true,
+            creditcd: rows[0].creditcd,
+            pgNum: 1,
+          }));
+          setPage5_1(initialPageState);
+        }
+      } else {
+        setInfomation5({
+          workType: "N",
+          attdatnum: "",
+          bankacntnum: "",
+          cordiv: "",
+          creditcd: "",
+          creditdiv: "",
+          creditnm: "",
+          creditnum: "",
+          custcd: "",
+          custnm: "",
+          exprdt: null,
+          files: "",
+          findrow_key: "",
+          orgdiv: sessionOrgdiv,
+          paydt: null,
+          person: "",
+          rcvcustcd: "",
+          rcvcustnm: "",
+          remark: "",
+          repreregno: "",
+          useyn: "Y",
+        });
+        setPage5_1(initialPageState);
+        setMainDataResult5_1(process([], mainDataState5_1));
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters5((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchMainGrid5_1 = async (filters5_1: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A0050W_tab5_Q",
+      pageNumber: filters5_1.pgNum,
+      pageSize: filters5_1.pgSize,
+      parameters: {
+        "@p_work_type": filters5_1.workType,
+        "@p_orgdiv": sessionOrgdiv,
+        "@p_creditcd": filters5_1.creditcd,
+        "@p_creditnum": filters5.creditnum,
+        "@p_creditnm": filters5.creditnm,
+        "@p_creditdiv": filters5.creditdiv,
+        "@p_cordiv": filters5.cordiv,
+        "@p_custcd": filters5.custcd,
+        "@p_custnm": filters5.custnm,
+        "@p_useyn": filters5.useyn3,
+        "@p_remark": filters5.remark,
+        "@p_find_row_value": filters5.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult5_1((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        setSelectedState5_1({ [rows[0][DATA_ITEM_KEY5_1]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters5_1((prev) => ({
       ...prev,
       pgNum:
         data && data.hasOwnProperty("pageNumber")
@@ -1853,6 +2715,72 @@ const AC_A0050W: React.FC = () => {
         remark: "",
         strdmdt: null,
       });
+    } else if (tabSelected == 3) {
+      setPage4(initialPageState);
+      setPage4_1(initialPageState);
+      setMainDataResult4(process([], mainDataState4));
+      setMainDataResult4_1(process([], mainDataState4_1));
+      setInfomation3({
+        workType: "N",
+        acntcd: "",
+        acntnm: "",
+        bankcd: "",
+        banknm: "",
+        custcd: "",
+        custnm: "",
+        dptcd: "",
+        enddt: new Date(),
+        endorser1: "",
+        endorser2: "",
+        findrow_key: "",
+        notedec: "",
+        notediv: "1",
+        notekind: "",
+        noteloca: "",
+        notenum: "",
+        notests: "",
+        orgdiv: sessionOrgdiv,
+        pgmdiv: "",
+        pubamt: 0,
+        pubbank: "",
+        pubdt: new Date(),
+        pubperson: "",
+        remark1: "",
+        replace_bankcd: "",
+        replace_banknm: "",
+        replace_custcd: "",
+        replace_custnm: "",
+        replacedt: null,
+        returndt: null,
+      });
+    } else if (tabSelected == 4) {
+      setPage5(initialPageState);
+      setPage5_1(initialPageState);
+      setMainDataResult5(process([], mainDataState5));
+      setMainDataResult5_1(process([], mainDataState5_1));
+      setInfomation5({
+        workType: "N",
+        attdatnum: "",
+        bankacntnum: "",
+        cordiv: "",
+        creditcd: "",
+        creditdiv: "",
+        creditnm: "",
+        creditnum: "",
+        custcd: "",
+        custnm: "",
+        exprdt: null,
+        files: "",
+        findrow_key: "",
+        orgdiv: sessionOrgdiv,
+        paydt: null,
+        person: "",
+        rcvcustcd: "",
+        rcvcustnm: "",
+        remark: "",
+        repreregno: "",
+        useyn: "Y",
+      });
     }
   };
 
@@ -1893,7 +2821,43 @@ const AC_A0050W: React.FC = () => {
           swiper.slideTo(0);
         }
       } else if (tabSelected == 3) {
-        setFilters4((prev) => ({
+        try {
+          if (
+            filters4.dtgb == null ||
+            filters4.dtgb == "" ||
+            filters4.dtgb == undefined
+          ) {
+            throw findMessage(messagesData, "AC_A0050W_001");
+          } else if (
+            convertDateToStr(filters4.frdt).substring(0, 4) < "1997" ||
+            convertDateToStr(filters4.frdt).substring(6, 8) > "31" ||
+            convertDateToStr(filters4.frdt).substring(6, 8) < "01" ||
+            convertDateToStr(filters4.frdt).substring(6, 8).length != 2
+          ) {
+            throw findMessage(messagesData, "AC_A0050W_001");
+          } else if (
+            convertDateToStr(filters4.todt).substring(0, 4) < "1997" ||
+            convertDateToStr(filters4.todt).substring(6, 8) > "31" ||
+            convertDateToStr(filters4.todt).substring(6, 8) < "01" ||
+            convertDateToStr(filters4.todt).substring(6, 8).length != 2
+          ) {
+            throw findMessage(messagesData, "AC_A0050W_001");
+          } else {
+            setFilters4((prev) => ({
+              ...prev,
+              pgNum: 1,
+              find_row_value: "",
+              isSearch: true,
+            }));
+            if (isMobile && swiper) {
+              swiper.slideTo(0);
+            }
+          }
+        } catch (e) {
+          alert(e);
+        }
+      } else if (tabSelected == 4) {
+        setFilters5((prev) => ({
           ...prev,
           pgNum: 1,
           find_row_value: "",
@@ -2036,6 +3000,60 @@ const AC_A0050W: React.FC = () => {
   }, [filters4, permissions, customOptionData, bizComponentData]);
 
   useEffect(() => {
+    if (
+      filters4_1.isSearch &&
+      permissions.view &&
+      customOptionData !== null &&
+      bizComponentData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters4_1);
+      setFilters4_1((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid4_1(deepCopiedFilters);
+    }
+  }, [filters4_1, permissions, customOptionData, bizComponentData]);
+
+  useEffect(() => {
+    if (
+      filters5.isSearch &&
+      permissions.view &&
+      customOptionData !== null &&
+      bizComponentData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters5);
+      setFilters5((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid5(deepCopiedFilters);
+    }
+  }, [filters5, permissions, customOptionData, bizComponentData]);
+
+  useEffect(() => {
+    if (
+      filters5_1.isSearch &&
+      permissions.view &&
+      customOptionData !== null &&
+      bizComponentData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters5_1);
+      setFilters5_1((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid5_1(deepCopiedFilters);
+    }
+  }, [filters5_1, permissions, customOptionData, bizComponentData]);
+
+  useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex2 !== null && gridRef2.current) {
       gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
@@ -2059,6 +3077,14 @@ const AC_A0050W: React.FC = () => {
     }
   }, [mainDataResult4]);
 
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex5 !== null && gridRef5.current) {
+      gridRef5.current.scrollIntoView({ rowIndex: targetRowIndex5 });
+      targetRowIndex5 = null;
+    }
+  }, [mainDataResult5]);
+
   let _export2: any;
   let _export2_1: any;
   let _export2_2: any;
@@ -2066,6 +3092,9 @@ const AC_A0050W: React.FC = () => {
   let _export3_1: any;
   let _export3_2: any;
   let _export4: any;
+  let _export4_1: any;
+  let _export5: any;
+  let _export5_1: any;
   const exportExcel = () => {
     if (tabSelected == 1) {
       if (tabSelected2 == 0) {
@@ -2120,10 +3149,38 @@ const AC_A0050W: React.FC = () => {
         }
       }
     } else if (tabSelected == 3) {
-      if (_export4 !== null && _export4 !== undefined) {
-        const optionsGridOne = _export4.workbookOptions();
-        optionsGridOne.sheets[0].title = "요약정보";
-        _export4.save(optionsGridOne);
+      if (tabSelected2 == 0) {
+        if (_export4 !== null && _export4 !== undefined) {
+          const optionsGridOne = _export4.workbookOptions();
+          optionsGridOne.sheets[0].title = "요약정보";
+          _export4.save(optionsGridOne);
+        }
+      } else if (tabSelected2 == 1) {
+        if (_export4 !== null && _export4 !== undefined) {
+          const optionsGridOne = _export4.workbookOptions();
+          const optionsGridTwo = _export4_1.workbookOptions();
+          optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+          optionsGridOne.sheets[0].title = "요약정보";
+          optionsGridOne.sheets[1].title = "상세정보";
+          _export4.save(optionsGridOne);
+        }
+      }
+    } else if (tabSelected == 4) {
+      if (tabSelected2 == 0) {
+        if (_export5 !== null && _export5 !== undefined) {
+          const optionsGridOne = _export5.workbookOptions();
+          optionsGridOne.sheets[0].title = "요약정보";
+          _export5.save(optionsGridOne);
+        }
+      } else if (tabSelected2 == 1) {
+        if (_export5 !== null && _export5 !== undefined) {
+          const optionsGridOne = _export5.workbookOptions();
+          const optionsGridTwo = _export5_1.workbookOptions();
+          optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+          optionsGridOne.sheets[0].title = "요약정보";
+          optionsGridOne.sheets[1].title = "상세정보";
+          _export5.save(optionsGridOne);
+        }
       }
     }
   };
@@ -2166,6 +3223,13 @@ const AC_A0050W: React.FC = () => {
         pgNum: 1,
         find_row_value: "",
       }));
+    } else if (tabSelected == 4) {
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: "",
+      }));
     }
   };
   const handleSelectTab2 = (e: any) => {
@@ -2193,6 +3257,15 @@ const AC_A0050W: React.FC = () => {
   };
   const onMainDataStateChange4 = (event: GridDataStateChangeEvent) => {
     setMainDataState4(event.dataState);
+  };
+  const onMainDataStateChange4_1 = (event: GridDataStateChangeEvent) => {
+    setMainDataState4_1(event.dataState);
+  };
+  const onMainDataStateChange5 = (event: GridDataStateChangeEvent) => {
+    setMainDataState5(event.dataState);
+  };
+  const onMainDataStateChange5_1 = (event: GridDataStateChangeEvent) => {
+    setMainDataState5_1(event.dataState);
   };
   //그리드 푸터
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
@@ -2296,6 +3369,48 @@ const AC_A0050W: React.FC = () => {
     );
   };
 
+  const mainTotalFooterCell4_1 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult4_1.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult4_1.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const mainTotalFooterCell5 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult5.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult5.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const mainTotalFooterCell5_1 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult5_1.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult5_1.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
@@ -2383,6 +3498,48 @@ const AC_A0050W: React.FC = () => {
   const gridSumQtyFooterCell4 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult4.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
+
+  const gridSumQtyFooterCell4_1 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult4_1.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
+
+  const gridSumQtyFooterCell5_1 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult5_1.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
     if (sum != undefined) {
@@ -2621,13 +3778,140 @@ const AC_A0050W: React.FC = () => {
   const onSelectionChange4 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState3,
-      dataItemKey: DATA_ITEM_KEY3,
+      selectedState: selectedState4,
+      dataItemKey: DATA_ITEM_KEY4,
     });
-    setSelectedState3(newSelectedState);
+    setSelectedState4(newSelectedState);
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+
+    const notediv = notedivListData.find(
+      (item: any) => item.code_name == selectedRowData.notediv
+    )?.sub_code;
+
+    setInfomation3({
+      workType: "U",
+      acntcd: selectedRowData.acntcd,
+      acntnm: selectedRowData.acntnm,
+      bankcd: selectedRowData.bankcd,
+      banknm: selectedRowData.banknm,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      dptcd: selectedRowData.dptcd,
+      enddt: toDate(selectedRowData.enddt),
+      endorser1: selectedRowData.endorser1,
+      endorser2: selectedRowData.endorser2,
+      findrow_key: selectedRowData.findrow_key,
+      notedec: selectedRowData.notedec,
+      notediv: notediv,
+      notekind: selectedRowData.notekind,
+      noteloca: selectedRowData.noteloca,
+      notenum: selectedRowData.notenum,
+      notests: selectedRowData.notests,
+      orgdiv: selectedRowData.orgdiv,
+      pgmdiv: selectedRowData.pgmdiv,
+      pubamt: selectedRowData.pubamt,
+      pubbank: selectedRowData.pubbank,
+      pubdt: toDate(selectedRowData.pubdt),
+      pubperson: selectedRowData.pubperson,
+      remark1: selectedRowData.remark1,
+      replace_bankcd: selectedRowData.replace_bankcd,
+      replace_banknm: selectedRowData.replace_banknm,
+      replace_custcd: selectedRowData.replace_custcd,
+      replace_custnm: selectedRowData.replace_custnm,
+      replacedt:
+        selectedRowData.replacedt == ""
+          ? null
+          : toDate(selectedRowData.replacedt),
+      returndt:
+        selectedRowData.returndt == ""
+          ? null
+          : toDate(selectedRowData.returndt),
+    });
+    setFilters4_1((prev) => ({
+      ...prev,
+      isSearch: true,
+      notenum: selectedRowData.notenum,
+      pgNum: 1,
+    }));
+    setPage4_1(initialPageState);
+    if (isMobile && swiper) {
+      swiper.slideTo(1);
+    }
+  };
+
+  const onSelectionChange4_1 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState4_1,
+      dataItemKey: DATA_ITEM_KEY4_1,
+    });
+    setSelectedState4_1(newSelectedState);
+  };
+
+  const onSelectionChange5 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState5,
+      dataItemKey: DATA_ITEM_KEY5,
+    });
+    setSelectedState5(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    const creditdiv = creditdivListData.find(
+      (item: any) => item.code_name == selectedRowData.creditdiv
+    )?.sub_code;
+
+    const cordiv = cordivListData.find(
+      (item: any) => item.code_name == selectedRowData.cordiv
+    )?.sub_code;
+
+    setInfomation5({
+      workType: "U",
+      attdatnum: selectedRowData.attdatnum,
+      bankacntnum: selectedRowData.bankacntnum,
+      cordiv: cordiv,
+      creditcd: selectedRowData.creditcd,
+      creditdiv: creditdiv,
+      creditnm: selectedRowData.creditnm,
+      creditnum: selectedRowData.creditnum,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      exprdt:
+        selectedRowData.exprdt == "" ? null : toDate(selectedRowData.exprdt),
+      files: selectedRowData.files,
+      findrow_key: selectedRowData.findrow_key,
+      orgdiv: selectedRowData.orgdiv,
+      paydt: selectedRowData.paydt == "" ? null : toDate(selectedRowData.paydt),
+      person: selectedRowData.person,
+      rcvcustcd: selectedRowData.rcvcustcd,
+      rcvcustnm: selectedRowData.rcvcustnm,
+      remark: selectedRowData.remark,
+      repreregno: selectedRowData.repreregno,
+      useyn: selectedRowData.useyn,
+    });
+    setFilters5_1((prev) => ({
+      ...prev,
+      isSearch: true,
+      creditcd: selectedRowData.creditcd,
+      pgNum: 1,
+    }));
+    setPage5_1(initialPageState);
+    if (isMobile && swiper) {
+      swiper.slideTo(1);
+    }
+  };
+
+  const onSelectionChange5_1 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState5_1,
+      dataItemKey: DATA_ITEM_KEY5_1,
+    });
+    setSelectedState5_1(newSelectedState);
   };
 
   const onMainSortChange2 = (e: any) => {
@@ -2653,6 +3937,17 @@ const AC_A0050W: React.FC = () => {
   const onMainSortChange4 = (e: any) => {
     setMainDataState4((prev) => ({ ...prev, sort: e.sort }));
   };
+  const onMainSortChange4_1 = (e: any) => {
+    setMainDataState4_1((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange5 = (e: any) => {
+    setMainDataState5((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const onMainSortChange5_1 = (e: any) => {
+    setMainDataState5_1((prev) => ({ ...prev, sort: e.sort }));
+  };
+
   const onAddClick2 = () => {
     const defaultOption = GetPropertyValueByName(
       customOptionData.menuCustomDefaultOptions,
@@ -2763,6 +4058,99 @@ const AC_A0050W: React.FC = () => {
       redeem: 0,
       remark: "",
       strdmdt: null,
+    });
+  };
+
+  const onAddClick4 = () => {
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+    setPage4_1(initialPageState);
+    setMainDataResult4_1(process([], mainDataState4_1));
+    setTabSelected2(0);
+    setInfomation3({
+      workType: "N",
+      acntcd: "",
+      acntnm: "",
+      bankcd: "",
+      banknm: "",
+      custcd: "",
+      custnm: "",
+      dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+      enddt: new Date(),
+      endorser1: "",
+      endorser2: "",
+      findrow_key: "",
+      notedec: "",
+      notediv: defaultOption.find((item: any) => item.id == "notediv")
+        ?.valueCode,
+      notekind: defaultOption.find((item: any) => item.id == "notekind")
+        ?.valueCode,
+      noteloca: defaultOption.find((item: any) => item.id == "noteloca")
+        ?.valueCode,
+      notenum: "",
+      notests: defaultOption.find((item: any) => item.id == "notests")
+        ?.valueCode,
+      orgdiv: sessionOrgdiv,
+      pgmdiv: "",
+      pubamt: 0,
+      pubbank: "",
+      pubdt: new Date(),
+      pubperson: "",
+      remark1: "",
+      replace_bankcd: "",
+      replace_banknm: "",
+      replace_custcd: "",
+      replace_custnm: "",
+      replacedt: null,
+      returndt: null,
+    });
+  };
+
+  const onAddClick5 = () => {
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+    setPage5_1(initialPageState);
+    setMainDataResult5_1(process([], mainDataState5_1));
+    setTabSelected2(0);
+    setInfomation5({
+      workType: "N",
+      attdatnum: "",
+      bankacntnum: "",
+      cordiv: defaultOption.find((item: any) => item.id == "cordiv")?.valueCode,
+      creditcd: "",
+      creditdiv: defaultOption.find((item: any) => item.id == "creditdiv")
+        ?.valueCode,
+      creditnm: "",
+      creditnum: "",
+      custcd: "",
+      custnm: "",
+      exprdt: null,
+      files: "",
+      findrow_key: "",
+      orgdiv: sessionOrgdiv,
+      paydt: null,
+      person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
+      rcvcustcd: "",
+      rcvcustnm: "",
+      remark: "",
+      repreregno: "",
+      useyn: defaultOption.find((item: any) => item.id == "useyn")?.valueCode,
     });
   };
 
@@ -3378,6 +4766,115 @@ const AC_A0050W: React.FC = () => {
     }
   };
 
+  const onSaveClick4 = () => {
+    if (!permissions.save) return;
+
+    let valid = true;
+
+    if (
+      infomation3.notediv == "" ||
+      infomation3.notediv == undefined ||
+      infomation3.notediv == null ||
+      infomation3.notenum == "" ||
+      infomation3.notenum == undefined ||
+      infomation3.notenum == null ||
+      convertDateToStr(infomation3.pubdt).substring(0, 4) < "1997" ||
+      convertDateToStr(infomation3.pubdt).substring(6, 8) > "31" ||
+      convertDateToStr(infomation3.pubdt).substring(6, 8) < "01" ||
+      convertDateToStr(infomation3.pubdt).substring(6, 8).length != 2 ||
+      convertDateToStr(infomation3.enddt).substring(0, 4) < "1997" ||
+      convertDateToStr(infomation3.enddt).substring(6, 8) > "31" ||
+      convertDateToStr(infomation3.enddt).substring(6, 8) < "01" ||
+      convertDateToStr(infomation3.enddt).substring(6, 8).length != 2
+    ) {
+      valid = false;
+    }
+
+    if (valid != true) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
+
+    setParaData3((prev) => ({
+      ...prev,
+      workType: infomation3.workType,
+      orgdiv: infomation3.orgdiv,
+      notenum: infomation3.notenum,
+      notedec: infomation3.notedec,
+      notediv: infomation3.notediv,
+      notekind: infomation3.notekind,
+      notests: infomation3.notests,
+      noteloca: infomation3.noteloca,
+      enddt:
+        infomation3.enddt == null ? "" : convertDateToStr(infomation3.enddt),
+      custcd: infomation3.custcd,
+      bankcd: infomation3.bankcd,
+      pubdt:
+        infomation3.pubdt == null ? "" : convertDateToStr(infomation3.pubdt),
+      pubbank: infomation3.pubbank,
+      pubperson: infomation3.pubperson,
+      pubamt: infomation3.pubamt,
+      acntcd: infomation3.acntcd,
+      replacedt:
+        infomation3.replacedt == null
+          ? ""
+          : convertDateToStr(infomation3.replacedt),
+      replace_custcd: infomation3.replace_custcd,
+      replace_bankcd: infomation3.replace_bankcd,
+      endorser1: infomation3.endorser1,
+      endorser2: infomation3.endorser2,
+      returndt:
+        infomation3.returndt == null
+          ? ""
+          : convertDateToStr(infomation3.returndt),
+      dptcd: infomation3.dptcd,
+      remark1: infomation3.remark1,
+      pgmdiv: infomation3.pgmdiv,
+    }));
+  };
+
+  const onSaveClick5 = () => {
+    if (!permissions.save) return;
+
+    let valid = true;
+
+    if (
+      infomation5.creditcd == "" ||
+      infomation5.creditcd == undefined ||
+      infomation5.creditcd == null
+    ) {
+      valid = false;
+    }
+
+    if (valid != true) {
+      alert("필수값을 채워주세요.");
+      return;
+    }
+
+    setParaData5((prev) => ({
+      ...prev,
+      workType: infomation5.workType,
+      orgdiv: infomation5.orgdiv,
+      creditcd: infomation5.creditcd,
+      creditnum: infomation5.creditnum,
+      creditnm: infomation5.creditnm,
+      creditdiv: infomation5.creditdiv,
+      cordiv: infomation5.cordiv,
+      repreregno: infomation5.repreregno,
+      person: infomation5.person,
+      exprdt:
+        infomation5.exprdt == null ? "" : convertDateToStr(infomation5.exprdt),
+      custcd: infomation5.custcd,
+      bankacntnum: infomation5.bankacntnum,
+      paydt:
+        infomation5.paydt == null ? "" : convertDateToStr(infomation5.paydt),
+      useyn: infomation5.useyn,
+      remark: infomation5.remark,
+      rcvcustcd: infomation5.rcvcustcd,
+      attdatnum: infomation5.attdatnum,
+    }));
+  };
+
   const [paraData, setParaData] = useState({
     workType: "",
     orgdiv: "",
@@ -3456,6 +4953,54 @@ const AC_A0050W: React.FC = () => {
     payamt_s: "",
     intamt_s: "",
     remark_s: "",
+  });
+
+  const [paraData3, setParaData3] = useState({
+    workType: "",
+    orgdiv: "",
+    notenum: "",
+    notedec: "",
+    notediv: "",
+    notekind: "",
+    notests: "",
+    noteloca: "",
+    enddt: "",
+    custcd: "",
+    bankcd: "",
+    pubdt: "",
+    pubbank: "",
+    pubperson: "",
+    pubamt: 0,
+    acntcd: "",
+    replacedt: "",
+    replace_custcd: "",
+    replace_bankcd: "",
+    endorser1: "",
+    endorser2: "",
+    returndt: "",
+    dptcd: "",
+    remark1: "",
+    pgmdiv: "",
+  });
+
+  const [paraData5, setParaData5] = useState({
+    workType: "",
+    orgdiv: "",
+    creditcd: "",
+    creditnum: "",
+    creditnm: "",
+    creditdiv: "",
+    cordiv: "",
+    repreregno: "",
+    person: "",
+    exprdt: "",
+    custcd: "",
+    bankacntnum: "",
+    paydt: "",
+    useyn: "",
+    remark: "",
+    rcvcustcd: "",
+    attdatnum: "",
   });
 
   const para: Iparameters = {
@@ -3566,6 +5111,73 @@ const AC_A0050W: React.FC = () => {
     },
   };
 
+  const para4: Iparameters = {
+    procedureName: "P_AC_A0050W_tab4_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData3.workType,
+
+      "@p_orgdiv": paraData3.orgdiv,
+      "@p_notenum": paraData3.notenum,
+      "@p_notedec": paraData3.notedec,
+      "@p_notediv": paraData3.notediv,
+      "@p_notekind": paraData3.notekind,
+      "@p_notests": paraData3.notests,
+      "@p_noteloca": paraData3.noteloca,
+      "@p_enddt": paraData3.enddt,
+      "@p_custcd": paraData3.custcd,
+      "@p_bankcd": paraData3.bankcd,
+      "@p_pubdt": paraData3.pubdt,
+      "@p_pubbank": paraData3.pubbank,
+      "@p_pubperson": paraData3.pubperson,
+      "@p_pubamt": paraData3.pubamt,
+      "@p_acntcd": paraData3.acntcd,
+      "@p_replacedt": paraData3.replacedt,
+      "@p_replace_custcd": paraData3.replace_custcd,
+      "@p_replace_bankcd": paraData3.replace_bankcd,
+      "@p_endorser1": paraData3.endorser1,
+      "@p_endorser2": paraData3.endorser2,
+      "@p_returndt": paraData3.returndt,
+      "@p_dptcd": paraData3.dptcd,
+      "@p_remark1": paraData3.remark1,
+      "@p_pgmdiv": paraData3.pgmdiv,
+
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "AC_A0050W",
+    },
+  };
+
+  const para5: Iparameters = {
+    procedureName: "P_AC_A0050W_tab5_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData5.workType,
+
+      "@p_orgdiv": paraData5.orgdiv,
+      "@p_creditcd": paraData5.creditcd,
+      "@p_creditnum": paraData5.creditnum,
+      "@p_creditnm": paraData5.creditnm,
+      "@p_creditdiv": paraData5.creditdiv,
+      "@p_cordiv": paraData5.cordiv,
+      "@p_repreregno": paraData5.repreregno,
+      "@p_person": paraData5.person,
+      "@p_exprdt": paraData5.exprdt,
+      "@p_custcd": paraData5.custcd,
+      "@p_bankacntnum": paraData5.bankacntnum,
+      "@p_paydt": paraData5.paydt,
+      "@p_useyn": paraData5.useyn,
+      "@p_remark": paraData5.remark,
+      "@p_rcvcustcd": paraData5.rcvcustcd,
+      "@p_attdatnum": paraData5.attdatnum,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "AC_A0050W",
+    },
+  };
+
   useEffect(() => {
     if (
       paraData.workType != "" &&
@@ -3591,6 +5203,32 @@ const AC_A0050W: React.FC = () => {
       fetchTodoGridSaved2();
     }
   }, [paraData2, permissions]);
+
+  useEffect(() => {
+    if (
+      paraData3.workType != "" &&
+      permissions.save &&
+      paraData3.workType != "D"
+    ) {
+      fetchTodoGridSaved3();
+    }
+    if (paraData3.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved3();
+    }
+  }, [paraData3, permissions]);
+
+  useEffect(() => {
+    if (
+      paraData5.workType != "" &&
+      permissions.save &&
+      paraData5.workType != "D"
+    ) {
+      fetchTodoGridSaved5();
+    }
+    if (paraData5.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved5();
+    }
+  }, [paraData5, permissions]);
 
   const fetchTodoGridSaved = async () => {
     if (!permissions.save && paraData.workType != "D") return;
@@ -3787,6 +5425,164 @@ const AC_A0050W: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchTodoGridSaved3 = async () => {
+    if (!permissions.save && paraData3.workType != "D") return;
+    if (!permissions.delete && paraData3.workType == "D") return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para4);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      if (paraData3.workType != "D") {
+        setFilters4((prev) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        }));
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
+      } else {
+        const isLastDataDeleted =
+          mainDataResult4.data.length == 1 && filters4.pgNum > 1;
+        const findRowIndex = mainDataResult4.data.findIndex(
+          (row: any) =>
+            row[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+        );
+        setDeletedAttadatnums([infomation3.attdatnum]);
+        resetAllGrid();
+
+        if (isLastDataDeleted) {
+          setPage4({
+            skip: PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+        }
+        setFilters4((prev) => ({
+          ...prev,
+          find_row_value:
+            mainDataResult4.data[findRowIndex < 1 ? 1 : findRowIndex - 1] ==
+            undefined
+              ? ""
+              : mainDataResult4.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+                  .notenum,
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+      }
+      setParaData3({
+        workType: "",
+        orgdiv: "",
+        notenum: "",
+        notedec: "",
+        notediv: "",
+        notekind: "",
+        notests: "",
+        noteloca: "",
+        enddt: "",
+        custcd: "",
+        bankcd: "",
+        pubdt: "",
+        pubbank: "",
+        pubperson: "",
+        pubamt: 0,
+        acntcd: "",
+        replacedt: "",
+        replace_custcd: "",
+        replace_bankcd: "",
+        endorser1: "",
+        endorser2: "",
+        returndt: "",
+        dptcd: "",
+        remark1: "",
+        pgmdiv: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  const fetchTodoGridSaved5 = async () => {
+    if (!permissions.save && paraData5.workType != "D") return;
+    if (!permissions.delete && paraData5.workType == "D") return;
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para5);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      if (paraData5.workType != "D") {
+        setFilters5((prev) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        }));
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
+      } else {
+        const isLastDataDeleted =
+          mainDataResult5.data.length == 1 && filters5.pgNum > 1;
+        const findRowIndex = mainDataResult5.data.findIndex(
+          (row: any) =>
+            row[DATA_ITEM_KEY5] == Object.getOwnPropertyNames(selectedState5)[0]
+        );
+        setDeletedAttadatnums([infomation5.attdatnum]);
+        resetAllGrid();
+
+        if (isLastDataDeleted) {
+          setPage5({
+            skip: PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+        }
+        setFilters5((prev) => ({
+          ...prev,
+          find_row_value:
+            mainDataResult5.data[findRowIndex < 1 ? 1 : findRowIndex - 1] ==
+            undefined
+              ? ""
+              : mainDataResult5.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+                  .creditcd,
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+      }
+      setParaData5({
+        workType: "",
+        orgdiv: "",
+        creditcd: "",
+        creditnum: "",
+        creditnm: "",
+        creditdiv: "",
+        cordiv: "",
+        repreregno: "",
+        person: "",
+        exprdt: "",
+        custcd: "",
+        bankacntnum: "",
+        paydt: "",
+        useyn: "",
+        remark: "",
+        rcvcustcd: "",
+        attdatnum: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick2 = () => {
     if (!permissions.delete) return;
@@ -3828,6 +5624,50 @@ const AC_A0050W: React.FC = () => {
         orgdiv: data.orgdiv,
         brwnum: data.brwnum,
         attdatnum: data.attdatnum,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onDeleteClick4 = () => {
+    if (!permissions.delete) return;
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    if (mainDataResult4.data.length != 0) {
+      const data = mainDataResult4.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+      )[0];
+      setParaData3((prev) => ({
+        ...prev,
+        workType: "D",
+        orgdiv: data.orgdiv,
+        notenum: data.notenum,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onDeleteClick5 = () => {
+    if (!permissions.delete) return;
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    if (mainDataResult5.data.length != 0) {
+      const data = mainDataResult5.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY5] == Object.getOwnPropertyNames(selectedState5)[0]
+      )[0];
+      setParaData5((prev) => ({
+        ...prev,
+        workType: "D",
+        orgdiv: data.orgdiv,
+        creditcd: data.creditcd,
       }));
     } else {
       alert("데이터가 없습니다.");
@@ -4159,7 +5999,6 @@ const AC_A0050W: React.FC = () => {
                       type="text"
                       value={filters2.acntcd}
                       onChange={filterInputChange}
-                      className="required"
                     />
                     <ButtonInInput>
                       <Button
@@ -7397,7 +9236,662 @@ const AC_A0050W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           {isMobile ? (
-            <></>
+            <>
+              <Swiper
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <SwiperSlide key={0}>
+                  <GridContainer>
+                    <GridTitleContainer className="ButtonContainer">
+                      <GridTitle>요약정보</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick4}
+                          themeColor={"primary"}
+                          icon="file-add"
+                          disabled={permissions.save ? false : true}
+                        >
+                          생성
+                        </Button>
+                        <Button
+                          onClick={onDeleteClick4}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="delete"
+                          disabled={permissions.delete ? false : true}
+                        >
+                          삭제
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult4.data}
+                      ref={(exporter) => {
+                        _export4 = exporter;
+                      }}
+                      fileName={getMenuName()}
+                    >
+                      <Grid
+                        style={{ height: mobileheight4 }}
+                        data={process(
+                          mainDataResult4.data.map((row) => ({
+                            ...row,
+                            notediv: notedivListData.find(
+                              (item: any) => item.sub_code == row.notediv
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState4[idGetter4(row)],
+                          })),
+                          mainDataState4
+                        )}
+                        {...mainDataState4}
+                        onDataStateChange={onMainDataStateChange4}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY4}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange4}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult4.total}
+                        skip={page4.skip}
+                        take={page4.take}
+                        pageable={true}
+                        onPageChange={pageChange4}
+                        //원하는 행 위치로 스크롤 기능
+                        ref={gridRef4}
+                        rowHeight={30}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange4}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList4"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell4
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell4
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </SwiperSlide>
+                <SwiperSlide key={1}>
+                  <GridContainer>
+                    <ButtonContainer
+                      className="ButtonContainer"
+                      style={{ justifyContent: "space-between" }}
+                    >
+                      <Button
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(0);
+                          }
+                        }}
+                        icon="arrow-left"
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                      >
+                        이전
+                      </Button>
+                      <div>
+                        <Button
+                          onClick={onSaveClick4}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          disabled={permissions.save ? false : true}
+                        >
+                          저장
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            if (swiper && isMobile) {
+                              swiper.slideTo(2);
+                            }
+                          }}
+                          disabled={infomation3.workType != "N" ? false : true}
+                          icon="arrow-right"
+                          themeColor={"primary"}
+                          fillMode={"outline"}
+                        >
+                          다음
+                        </Button>
+                      </div>
+                    </ButtonContainer>
+                    <FormBoxWrap
+                      border={true}
+                      style={{ height: mobileheight4_1 }}
+                    >
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th>어음구분</th>
+                            <td>
+                              {infomation3.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionRadioGroup
+                                      name="notediv"
+                                      customOptionData={customOptionData}
+                                      changeData={RadioChange4}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentRadioGroup
+                                      name="notediv"
+                                      value={infomation3.notediv}
+                                      bizComponentId="R_NOTEDIV"
+                                      bizComponentData={bizComponentData}
+                                      changeData={RadioChange4}
+                                    />
+                                  )}
+                            </td>
+                            <th>어음번호</th>
+                            <td>
+                              {infomation3.workType == "N" ? (
+                                <Input
+                                  name="notenum"
+                                  type="text"
+                                  value={infomation3.notenum}
+                                  onChange={InputChange4}
+                                  className="required"
+                                />
+                              ) : (
+                                <Input
+                                  name="notenum"
+                                  type="text"
+                                  value={infomation3.notenum}
+                                  className="readonly"
+                                />
+                              )}
+                            </td>
+                            <th>계정과목</th>
+                            <td>
+                              <Input
+                                name="acntcd"
+                                type="text"
+                                value={infomation3.acntcd}
+                                onChange={InputChange4}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onAccountWndClick4}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>계정과목명</th>
+                            <td>
+                              <Input
+                                name="acntnm"
+                                type="text"
+                                value={infomation3.acntnm}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>어음내역</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="notedec"
+                                type="text"
+                                value={infomation3.notedec}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                            <th>배서인1</th>
+                            <td>
+                              <Input
+                                name="endorser1"
+                                type="text"
+                                value={infomation3.endorser1}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                            <th>배서인2</th>
+                            <td>
+                              <Input
+                                name="endorser2"
+                                type="text"
+                                value={infomation3.endorser2}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>업체코드</th>
+                            <td>
+                              <Input
+                                name="custcd"
+                                type="text"
+                                value={infomation3.custcd}
+                                onChange={InputChange4}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick5}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>업체명</th>
+                            <td>
+                              <Input
+                                name="custnm"
+                                type="text"
+                                value={infomation3.custnm}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                            <th>어음종류</th>
+                            <td>
+                              {infomation3.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="notekind"
+                                      value={infomation3.notekind}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange4}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="notekind"
+                                      value={infomation3.notekind}
+                                      bizComponentId="L_AC027"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange4}
+                                    />
+                                  )}
+                            </td>
+                            <th>어음보관장소</th>
+                            <td>
+                              {infomation3.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="noteloca"
+                                      value={infomation3.noteloca}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange4}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="noteloca"
+                                      value={infomation3.noteloca}
+                                      bizComponentId="L_AC029"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange4}
+                                    />
+                                  )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>지급은행</th>
+                            <td>
+                              <Input
+                                name="bankcd"
+                                type="text"
+                                value={infomation3.bankcd}
+                                onChange={InputChange4}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick6}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>지급은행명</th>
+                            <td>
+                              <Input
+                                name="banknm"
+                                type="text"
+                                value={infomation3.banknm}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                            <th>부서</th>
+                            <td>
+                              {infomation3.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="dptcd"
+                                      value={infomation3.dptcd}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange4}
+                                      type="new"
+                                      textField="dptnm"
+                                      valueField="dptcd"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="dptcd"
+                                      value={infomation3.dptcd}
+                                      bizComponentId="L_dptcd_001"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange4}
+                                      textField="dptnm"
+                                      valueField="dptcd"
+                                    />
+                                  )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>발행은행명</th>
+                            <td>
+                              <Input
+                                name="pubbank"
+                                type="text"
+                                value={infomation3.pubbank}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                            <th>발행인</th>
+                            <td>
+                              <Input
+                                name="pubperson"
+                                type="text"
+                                value={infomation3.pubperson}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                            <th>어음상태</th>
+                            <td>
+                              {infomation3.workType == "N"
+                                ? customOptionData !== null && (
+                                    <CustomOptionComboBox
+                                      name="notests"
+                                      value={infomation3.notests}
+                                      customOptionData={customOptionData}
+                                      changeData={ComboBoxChange4}
+                                      type="new"
+                                    />
+                                  )
+                                : bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="notests"
+                                      value={infomation3.notests}
+                                      bizComponentId="L_AC028"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange4}
+                                    />
+                                  )}
+                            </td>
+                            <th>대체일자</th>
+                            <td>
+                              <DatePicker
+                                name="replacedt"
+                                value={infomation3.replacedt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange4}
+                                placeholder=""
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>발행일자</th>
+                            <td>
+                              <DatePicker
+                                name="pubdt"
+                                value={infomation3.pubdt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange4}
+                                placeholder=""
+                                className="required"
+                              />
+                            </td>
+                            <th>만기일자</th>
+                            <td>
+                              <DatePicker
+                                name="enddt"
+                                value={infomation3.enddt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange4}
+                                placeholder=""
+                                className="required"
+                              />
+                            </td>
+                            <th>대체거래처</th>
+                            <td>
+                              <Input
+                                name="replace_custcd"
+                                type="text"
+                                value={infomation3.replace_custcd}
+                                onChange={InputChange4}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick7}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>대체거래처명</th>
+                            <td>
+                              <Input
+                                name="replace_custnm"
+                                type="text"
+                                value={infomation3.replace_custnm}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>발행금액</th>
+                            <td>
+                              <NumericTextBox
+                                name="pubamt"
+                                format={"n2"}
+                                value={infomation3.pubamt}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                            <th>반제일자</th>
+                            <td>
+                              <DatePicker
+                                name="returndt"
+                                value={infomation3.returndt}
+                                format="yyyy-MM-dd"
+                                onChange={InputChange4}
+                                placeholder=""
+                              />
+                            </td>
+                            <th>대체은행</th>
+                            <td>
+                              <Input
+                                name="replace_bankcd"
+                                type="text"
+                                value={infomation3.replace_bankcd}
+                                onChange={InputChange4}
+                              />
+                              <ButtonInInput>
+                                <Button
+                                  onClick={onCustWndClick8}
+                                  icon="more-horizontal"
+                                  fillMode="flat"
+                                />
+                              </ButtonInInput>
+                            </td>
+                            <th>대체은행명</th>
+                            <td>
+                              <Input
+                                name="replace_banknm"
+                                type="text"
+                                value={infomation3.replace_banknm}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>비고</th>
+                            <td colSpan={7}>
+                              <TextArea
+                                value={infomation3.remark1}
+                                name="remark1"
+                                rows={2}
+                                onChange={InputChange4}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </GridContainer>
+                </SwiperSlide>
+                {infomation3.workType != "N" ? (
+                  <>
+                    <SwiperSlide key={2}>
+                      <GridContainer>
+                        <GridTitleContainer className="ButtonContainer2_1">
+                          <ButtonContainer
+                            style={{ justifyContent: "space-between" }}
+                          >
+                            <Button
+                              onClick={() => {
+                                if (swiper && isMobile) {
+                                  swiper.slideTo(1);
+                                }
+                              }}
+                              icon="arrow-left"
+                              themeColor={"primary"}
+                              fillMode={"outline"}
+                            >
+                              이전
+                            </Button>
+                          </ButtonContainer>
+                        </GridTitleContainer>
+                        <ExcelExport
+                          data={mainDataResult4_1.data}
+                          ref={(exporter) => {
+                            _export4_1 = exporter;
+                          }}
+                          fileName={getMenuName()}
+                        >
+                          <Grid
+                            style={{ height: mobileheight4_1 }}
+                            data={process(
+                              mainDataResult4_1.data.map((row) => ({
+                                ...row,
+                                [SELECTED_FIELD]:
+                                  selectedState4_1[idGetter4_1(row)],
+                              })),
+                              mainDataState4_1
+                            )}
+                            {...mainDataState4_1}
+                            onDataStateChange={onMainDataStateChange4_1}
+                            //선택 기능
+                            dataItemKey={DATA_ITEM_KEY4_1}
+                            selectedField={SELECTED_FIELD}
+                            selectable={{
+                              enabled: true,
+                              mode: "single",
+                            }}
+                            onSelectionChange={onSelectionChange4_1}
+                            //스크롤 조회 기능
+                            fixedScroll={true}
+                            total={mainDataResult4_1.total}
+                            skip={page4_1.skip}
+                            take={page4_1.take}
+                            pageable={true}
+                            onPageChange={pageChange4_1}
+                            //정렬기능
+                            sortable={true}
+                            onSortChange={onMainSortChange4_1}
+                            //컬럼순서조정
+                            reorderable={true}
+                            //컬럼너비조정
+                            resizable={true}
+                          >
+                            {customOptionData !== null &&
+                              customOptionData.menuCustomColumnOptions[
+                                "grdList4_1"
+                              ]
+                                ?.sort(
+                                  (a: any, b: any) => a.sortOrder - b.sortOrder
+                                )
+                                ?.map(
+                                  (item: any, idx: number) =>
+                                    item.sortOrder !== -1 && (
+                                      <GridColumn
+                                        key={idx}
+                                        id={item.id}
+                                        field={item.fieldName}
+                                        title={item.caption}
+                                        width={item.width}
+                                        cell={
+                                          numberField.includes(item.fieldName)
+                                            ? NumberCell
+                                            : dateField.includes(item.fieldName)
+                                            ? DateCell
+                                            : undefined
+                                        }
+                                        footerCell={
+                                          item.sortOrder == 0
+                                            ? mainTotalFooterCell4_1
+                                            : numberField2.includes(
+                                                item.fieldName
+                                              )
+                                            ? gridSumQtyFooterCell4_1
+                                            : undefined
+                                        }
+                                      />
+                                    )
+                                )}
+                          </Grid>
+                        </ExcelExport>
+                      </GridContainer>
+                    </SwiperSlide>
+                  </>
+                ) : (
+                  ""
+                )}
+              </Swiper>
+            </>
           ) : (
             <>
               <GridContainer>
@@ -7405,7 +9899,7 @@ const AC_A0050W: React.FC = () => {
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
                     <Button
-                      //onClick={onAddClick2}
+                      onClick={onAddClick4}
                       themeColor={"primary"}
                       icon="file-add"
                       disabled={permissions.save ? false : true}
@@ -7413,7 +9907,7 @@ const AC_A0050W: React.FC = () => {
                       생성
                     </Button>
                     <Button
-                      //onClick={onDeleteClick2}
+                      onClick={onDeleteClick4}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="delete"
@@ -7422,7 +9916,7 @@ const AC_A0050W: React.FC = () => {
                       삭제
                     </Button>
                     <Button
-                      //onClick={onSaveClick2}
+                      onClick={onSaveClick4}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
@@ -7511,6 +10005,1076 @@ const AC_A0050W: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
+              <TabStrip
+                style={{ width: "100%" }}
+                selected={tabSelected2}
+                onSelect={handleSelectTab2}
+                scrollable={isMobile}
+              >
+                <TabStripTab
+                  title="기본정보"
+                  disabled={permissions.view ? false : true}
+                >
+                  <FormBoxWrap border={true} className="FormBoxWrap">
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>어음구분</th>
+                          <td>
+                            {infomation3.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionRadioGroup
+                                    name="notediv"
+                                    customOptionData={customOptionData}
+                                    changeData={RadioChange4}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentRadioGroup
+                                    name="notediv"
+                                    value={infomation3.notediv}
+                                    bizComponentId="R_NOTEDIV"
+                                    bizComponentData={bizComponentData}
+                                    changeData={RadioChange4}
+                                  />
+                                )}
+                          </td>
+                          <th>어음번호</th>
+                          <td>
+                            {infomation3.workType == "N" ? (
+                              <Input
+                                name="notenum"
+                                type="text"
+                                value={infomation3.notenum}
+                                onChange={InputChange4}
+                                className="required"
+                              />
+                            ) : (
+                              <Input
+                                name="notenum"
+                                type="text"
+                                value={infomation3.notenum}
+                                className="readonly"
+                              />
+                            )}
+                          </td>
+                          <th>계정과목</th>
+                          <td>
+                            <Input
+                              name="acntcd"
+                              type="text"
+                              value={infomation3.acntcd}
+                              onChange={InputChange4}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onAccountWndClick4}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>계정과목명</th>
+                          <td>
+                            <Input
+                              name="acntnm"
+                              type="text"
+                              value={infomation3.acntnm}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>어음내역</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="notedec"
+                              type="text"
+                              value={infomation3.notedec}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                          <th>배서인1</th>
+                          <td>
+                            <Input
+                              name="endorser1"
+                              type="text"
+                              value={infomation3.endorser1}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                          <th>배서인2</th>
+                          <td>
+                            <Input
+                              name="endorser2"
+                              type="text"
+                              value={infomation3.endorser2}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>업체코드</th>
+                          <td>
+                            <Input
+                              name="custcd"
+                              type="text"
+                              value={infomation3.custcd}
+                              onChange={InputChange4}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick5}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>업체명</th>
+                          <td>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={infomation3.custnm}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                          <th>어음종류</th>
+                          <td>
+                            {infomation3.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="notekind"
+                                    value={infomation3.notekind}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange4}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="notekind"
+                                    value={infomation3.notekind}
+                                    bizComponentId="L_AC027"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange4}
+                                  />
+                                )}
+                          </td>
+                          <th>어음보관장소</th>
+                          <td>
+                            {infomation3.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="noteloca"
+                                    value={infomation3.noteloca}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange4}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="noteloca"
+                                    value={infomation3.noteloca}
+                                    bizComponentId="L_AC029"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange4}
+                                  />
+                                )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>지급은행</th>
+                          <td>
+                            <Input
+                              name="bankcd"
+                              type="text"
+                              value={infomation3.bankcd}
+                              onChange={InputChange4}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick6}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>지급은행명</th>
+                          <td>
+                            <Input
+                              name="banknm"
+                              type="text"
+                              value={infomation3.banknm}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                          <th>부서</th>
+                          <td>
+                            {infomation3.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="dptcd"
+                                    value={infomation3.dptcd}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange4}
+                                    type="new"
+                                    textField="dptnm"
+                                    valueField="dptcd"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="dptcd"
+                                    value={infomation3.dptcd}
+                                    bizComponentId="L_dptcd_001"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange4}
+                                    textField="dptnm"
+                                    valueField="dptcd"
+                                  />
+                                )}
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>발행은행명</th>
+                          <td>
+                            <Input
+                              name="pubbank"
+                              type="text"
+                              value={infomation3.pubbank}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                          <th>발행인</th>
+                          <td>
+                            <Input
+                              name="pubperson"
+                              type="text"
+                              value={infomation3.pubperson}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                          <th>어음상태</th>
+                          <td>
+                            {infomation3.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="notests"
+                                    value={infomation3.notests}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange4}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="notests"
+                                    value={infomation3.notests}
+                                    bizComponentId="L_AC028"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange4}
+                                  />
+                                )}
+                          </td>
+                          <th>대체일자</th>
+                          <td>
+                            <DatePicker
+                              name="replacedt"
+                              value={infomation3.replacedt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange4}
+                              placeholder=""
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>발행일자</th>
+                          <td>
+                            <DatePicker
+                              name="pubdt"
+                              value={infomation3.pubdt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange4}
+                              placeholder=""
+                              className="required"
+                            />
+                          </td>
+                          <th>만기일자</th>
+                          <td>
+                            <DatePicker
+                              name="enddt"
+                              value={infomation3.enddt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange4}
+                              placeholder=""
+                              className="required"
+                            />
+                          </td>
+                          <th>대체거래처</th>
+                          <td>
+                            <Input
+                              name="replace_custcd"
+                              type="text"
+                              value={infomation3.replace_custcd}
+                              onChange={InputChange4}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick7}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>대체거래처명</th>
+                          <td>
+                            <Input
+                              name="replace_custnm"
+                              type="text"
+                              value={infomation3.replace_custnm}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>발행금액</th>
+                          <td>
+                            <NumericTextBox
+                              name="pubamt"
+                              format={"n2"}
+                              value={infomation3.pubamt}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                          <th>반제일자</th>
+                          <td>
+                            <DatePicker
+                              name="returndt"
+                              value={infomation3.returndt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange4}
+                              placeholder=""
+                            />
+                          </td>
+                          <th>대체은행</th>
+                          <td>
+                            <Input
+                              name="replace_bankcd"
+                              type="text"
+                              value={infomation3.replace_bankcd}
+                              onChange={InputChange4}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick8}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>대체은행명</th>
+                          <td>
+                            <Input
+                              name="replace_banknm"
+                              type="text"
+                              value={infomation3.replace_banknm}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>비고</th>
+                          <td colSpan={7}>
+                            <TextArea
+                              value={infomation3.remark1}
+                              name="remark1"
+                              rows={2}
+                              onChange={InputChange4}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </TabStripTab>
+                <TabStripTab
+                  title="상세정보"
+                  disabled={
+                    permissions.view
+                      ? infomation3.workType == "N"
+                        ? true
+                        : false
+                      : true
+                  }
+                >
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult4_1.data}
+                      ref={(exporter) => {
+                        _export4_1 = exporter;
+                      }}
+                      fileName={getMenuName()}
+                    >
+                      <Grid
+                        style={{ height: webheight4_1 }}
+                        data={process(
+                          mainDataResult4_1.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]:
+                              selectedState4_1[idGetter4_1(row)],
+                          })),
+                          mainDataState4_1
+                        )}
+                        {...mainDataState4_1}
+                        onDataStateChange={onMainDataStateChange4_1}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY4_1}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange4_1}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult4_1.total}
+                        skip={page4_1.skip}
+                        take={page4_1.take}
+                        pageable={true}
+                        onPageChange={pageChange4_1}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange4_1}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList4_1"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell4_1
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell4_1
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+              </TabStrip>
+            </>
+          )}
+        </TabStripTab>
+        <TabStripTab
+          title="신용카드관리"
+          disabled={permissions.view ? false : true}
+        >
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>신용카드단축코드</th>
+                  <td>
+                    <Input
+                      name="creditcd"
+                      type="text"
+                      value={filters5.creditcd}
+                      onChange={filterInputChange5}
+                    />
+                  </td>
+                  <th>결제은행</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={filters5.custcd}
+                      onChange={filterInputChange5}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick9}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>결제은행명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters5.custnm}
+                      onChange={filterInputChange5}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>신용카드번호</th>
+                  <td>
+                    <Input
+                      name="creditnum"
+                      type="text"
+                      value={filters5.creditnum}
+                      onChange={filterInputChange5}
+                    />
+                  </td>
+                  <th>신용카드구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="creditdiv"
+                        value={filters5.creditdiv}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange5}
+                      />
+                    )}
+                  </td>
+                  <th>법인개인구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cordiv"
+                        value={filters5.cordiv}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange5}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>신용카드명</th>
+                  <td>
+                    <Input
+                      name="creditnm"
+                      type="text"
+                      value={filters5.creditnm}
+                      onChange={filterInputChange5}
+                    />
+                  </td>
+                  <th>사용유무</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="useyn3"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>비고</th>
+                  <td>
+                    <Input
+                      name="remark"
+                      type="text"
+                      value={filters5.remark}
+                      onChange={filterInputChange5}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          {isMobile ? (
+            <></>
+          ) : (
+            <>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>요약정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick5}
+                      themeColor={"primary"}
+                      icon="file-add"
+                      disabled={permissions.save ? false : true}
+                    >
+                      생성
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick5}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                      disabled={permissions.delete ? false : true}
+                    >
+                      삭제
+                    </Button>
+                    <Button
+                      onClick={onSaveClick5}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    >
+                      저장
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult5.data}
+                  ref={(exporter) => {
+                    _export5 = exporter;
+                  }}
+                  fileName={getMenuName()}
+                >
+                  <Grid
+                    style={{ height: webheight5 }}
+                    data={process(
+                      mainDataResult5.data.map((row) => ({
+                        ...row,
+                        creditdiv: creditdivListData.find(
+                          (item: any) => item.sub_code == row.creditdiv
+                        )?.code_name,
+                        cordiv: cordivListData.find(
+                          (item: any) => item.sub_code == row.cordiv
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState5[idGetter5(row)],
+                      })),
+                      mainDataState5
+                    )}
+                    {...mainDataState5}
+                    onDataStateChange={onMainDataStateChange5}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY5}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange5}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult5.total}
+                    skip={page5.skip}
+                    take={page5.take}
+                    pageable={true}
+                    onPageChange={pageChange5}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef5}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange5}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList5"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : checkField.includes(item.fieldName)
+                                    ? CheckBoxReadOnlyCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell5
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+              <TabStrip
+                style={{ width: "100%" }}
+                selected={tabSelected2}
+                onSelect={handleSelectTab2}
+                scrollable={isMobile}
+              >
+                <TabStripTab
+                  title="기본정보"
+                  disabled={permissions.view ? false : true}
+                >
+                  <FormBoxWrap border={true} className="FormBoxWrap">
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>신용카드단축코드</th>
+                          <td>
+                            {infomation5.workType == "N" ? (
+                              <Input
+                                name="creditcd"
+                                type="text"
+                                value={infomation5.creditcd}
+                                onChange={InputChange5}
+                                className="required"
+                              />
+                            ) : (
+                              <Input
+                                name="creditcd"
+                                type="text"
+                                value={infomation5.creditcd}
+                                className="readonly"
+                              />
+                            )}
+                          </td>
+                          <th>법인개인구분</th>
+                          <td>
+                            {infomation5.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="cordiv"
+                                    value={infomation5.cordiv}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange5}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="cordiv"
+                                    value={infomation5.cordiv}
+                                    bizComponentId="L_cordiv"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange5}
+                                  />
+                                )}
+                          </td>
+                          <th>결제일자</th>
+                          <td>
+                            <DatePicker
+                              name="paydt"
+                              value={infomation5.paydt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange5}
+                              placeholder=""
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>신용카드명</th>
+                          <td>
+                            <Input
+                              name="creditnm"
+                              type="text"
+                              value={infomation5.creditnm}
+                              onChange={InputChange5}
+                            />
+                          </td>
+                          <th>만료일자</th>
+                          <td>
+                            <DatePicker
+                              name="exprdt"
+                              value={infomation5.exprdt}
+                              format="yyyy-MM-dd"
+                              onChange={InputChange5}
+                              placeholder=""
+                            />
+                          </td>
+                          <th>업체코드</th>
+                          <td>
+                            <Input
+                              name="custcd"
+                              type="text"
+                              value={infomation5.custcd}
+                              onChange={InputChange5}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick10}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>업체명</th>
+                          <td>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={infomation5.custnm}
+                              onChange={InputChange5}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>신용카드번호</th>
+                          <td>
+                            <Input
+                              name="creditnum"
+                              type="text"
+                              value={infomation5.creditnum}
+                              onChange={InputChange5}
+                            />
+                          </td>
+                          <th>담당자</th>
+                          <td>
+                            {infomation5.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="person"
+                                    value={infomation5.person}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange5}
+                                    type="new"
+                                    textField="user_name"
+                                    valueField="user_id"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="person"
+                                    value={infomation5.person}
+                                    bizComponentId="L_sysUserMaster_001"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange5}
+                                    textField="user_name"
+                                    valueField="user_id"
+                                  />
+                                )}
+                          </td>
+                          <th>결제계좌번호</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="bankacntnum"
+                              type="text"
+                              value={infomation5.bankacntnum}
+                              onChange={InputChange5}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>신용카드구분</th>
+                          <td>
+                            {infomation5.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionComboBox
+                                    name="creditdiv"
+                                    value={infomation5.creditdiv}
+                                    customOptionData={customOptionData}
+                                    changeData={ComboBoxChange5}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentComboBox
+                                    name="creditdiv"
+                                    value={infomation5.creditdiv}
+                                    bizComponentId="L_AC198"
+                                    bizComponentData={bizComponentData}
+                                    changeData={ComboBoxChange5}
+                                  />
+                                )}
+                          </td>
+                          <th>주민등록번호</th>
+                          <td>
+                            <Input
+                              name="repreregno"
+                              type="text"
+                              value={infomation5.repreregno}
+                              onChange={InputChange5}
+                            />
+                          </td>
+                          <th>결제은행</th>
+                          <td>
+                            <Input
+                              name="rcvcustcd"
+                              type="text"
+                              value={infomation5.rcvcustcd}
+                              onChange={InputChange5}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                onClick={onCustWndClick11}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>결제은행명</th>
+                          <td>
+                            <Input
+                              name="rcvcustnm"
+                              type="text"
+                              value={infomation5.rcvcustnm}
+                              onChange={InputChange5}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>사용유무</th>
+                          <td>
+                            {infomation5.workType == "N"
+                              ? customOptionData !== null && (
+                                  <CustomOptionRadioGroup
+                                    name="useyn"
+                                    customOptionData={customOptionData}
+                                    changeData={RadioChange5}
+                                    type="new"
+                                  />
+                                )
+                              : bizComponentData !== null && (
+                                  <BizComponentRadioGroup
+                                    name="useyn"
+                                    value={infomation5.useyn}
+                                    bizComponentId="R_USEYN_only"
+                                    bizComponentData={bizComponentData}
+                                    changeData={RadioChange5}
+                                  />
+                                )}
+                          </td>
+                          <th>첨부파일</th>
+                          <td>
+                            <Input
+                              name="files"
+                              type="text"
+                              value={infomation5.files}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onAttachmentsWndClick5}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                          <th>비고</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="remark"
+                              type="text"
+                              value={infomation5.remark}
+                              onChange={InputChange5}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </TabStripTab>
+                <TabStripTab
+                  title="상세정보"
+                  disabled={
+                    permissions.view
+                      ? infomation5.workType == "N"
+                        ? true
+                        : false
+                      : true
+                  }
+                >
+                  <GridContainer>
+                    <ExcelExport
+                      data={mainDataResult5_1.data}
+                      ref={(exporter) => {
+                        _export5_1 = exporter;
+                      }}
+                      fileName={getMenuName()}
+                    >
+                      <Grid
+                        style={{ height: webheight5_1 }}
+                        data={process(
+                          mainDataResult5_1.data.map((row) => ({
+                            ...row,
+                            [SELECTED_FIELD]:
+                              selectedState5_1[idGetter5_1(row)],
+                          })),
+                          mainDataState5_1
+                        )}
+                        {...mainDataState5_1}
+                        onDataStateChange={onMainDataStateChange5_1}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY5_1}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange5_1}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult5_1.total}
+                        skip={page5_1.skip}
+                        take={page5_1.take}
+                        pageable={true}
+                        onPageChange={pageChange5_1}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange5_1}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions["grdList5_1"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      numberField.includes(item.fieldName)
+                                        ? NumberCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder == 0
+                                        ? mainTotalFooterCell5_1
+                                        : numberField2.includes(item.fieldName)
+                                        ? gridSumQtyFooterCell5_1
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+              </TabStrip>
             </>
           )}
         </TabStripTab>
@@ -7533,6 +11097,13 @@ const AC_A0050W: React.FC = () => {
         <AccountWindow
           setVisible={setAccountWindowVisible3}
           setData={setAcntData3}
+          modal={true}
+        />
+      )}
+      {accountWindowVisible4 && (
+        <AccountWindow
+          setVisible={setAccountWindowVisible4}
+          setData={setAcntData4}
           modal={true}
         />
       )}
@@ -7568,6 +11139,62 @@ const AC_A0050W: React.FC = () => {
           modal={true}
         />
       )}
+      {custWindowVisible5 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible5}
+          workType={"N"}
+          setData={setCustData5}
+          modal={true}
+        />
+      )}
+      {custWindowVisible6 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible6}
+          workType={"N"}
+          setData={setCustData6}
+          modal={true}
+        />
+      )}
+      {custWindowVisible7 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible7}
+          workType={"N"}
+          setData={setCustData7}
+          modal={true}
+        />
+      )}
+      {custWindowVisible8 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible8}
+          workType={"N"}
+          setData={setCustData8}
+          modal={true}
+        />
+      )}
+      {custWindowVisible9 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible9}
+          workType={"N"}
+          setData={setCustData9}
+          modal={true}
+        />
+      )}
+      {custWindowVisible10 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible10}
+          workType={"N"}
+          setData={setCustData10}
+          modal={true}
+        />
+      )}
+      {custWindowVisible11 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible11}
+          workType={"N"}
+          setData={setCustData11}
+          modal={true}
+        />
+      )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
@@ -7586,6 +11213,19 @@ const AC_A0050W: React.FC = () => {
           setVisible={setAttachmentsWindowVisible2}
           setData={getAttachmentsData2}
           para={infomation2.attdatnum}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
+          modal={true}
+        />
+      )}
+      {attachmentsWindowVisible5 && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible5}
+          setData={getAttachmentsData5}
+          para={infomation5.attdatnum}
           permission={{
             upload: permissions.save,
             download: permissions.view,

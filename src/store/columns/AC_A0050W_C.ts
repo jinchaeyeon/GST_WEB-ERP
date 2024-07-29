@@ -330,4 +330,145 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList4_1",
+    columns: [
+      {
+        id: "col_acntdt4_1",
+        field: "acntdt",
+        caption: "전표일자",
+        width: 120,
+      },
+      {
+        id: "col_acseq14_1",
+        field: "acseq1",
+        caption: "전표순번1",
+        width: 80,
+      },
+      {
+        id: "col_acseq24_1",
+        field: "acseq2",
+        caption: "전표순번2",
+        width: 80,
+      },
+      {
+        id: "col_dramt4_1",
+        field: "dramt",
+        caption: "차변금액",
+        width: 100,
+      },
+      {
+        id: "col_cramt4_1",
+        field: "cramt",
+        caption: "대변금액",
+        width: 100,
+      },
+      {
+        id: "col_remark34_1",
+        field: "remark3",
+        caption: "적요",
+        width: 200,
+      },
+    ],
+  },
+  {
+    gridName: "grdList5",
+    columns: [
+      {
+        id: "col_creditcd",
+        field: "creditcd",
+        caption: "신용카드단축코드",
+        width: 120,
+      },
+      {
+        id: "col_creditdiv",
+        field: "creditdiv",
+        caption: "신용카드구분",
+        width: 120,
+      },
+      {
+        id: "col_creditnum",
+        field: "creditnum",
+        caption: "신용카드번호",
+        width: 150,
+      },
+      {
+        id: "col_creditnm",
+        field: "creditnm",
+        caption: "신용카드명",
+        width: 150,
+      },
+      {
+        id: "col_cordiv",
+        field: "cordiv",
+        caption: "법인개인구분",
+        width: 120,
+      },
+      {
+        id: "col_custnm5",
+        field: "custnm",
+        caption: "결제은행",
+        width: 150,
+      },
+      {
+        id: "col_paydt5",
+        field: "paydt",
+        caption: "결제일자",
+        width: 120,
+      },
+      {
+        id: "col_useyn",
+        field: "useyn",
+        caption: "사용유무",
+        width: 100,
+      },
+      {
+        id: "col_remark6",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+    ],
+  },
+  {
+    gridName: "grdList5_1",
+    columns: [
+      {
+        id: "col_acntdt5_1",
+        field: "acntdt",
+        caption: "전표일자",
+        width: 120,
+      },
+      {
+        id: "col_acseq15_1",
+        field: "acseq1",
+        caption: "전표순번1",
+        width: 80,
+      },
+      {
+        id: "col_acseq25_1",
+        field: "acseq2",
+        caption: "전표순번2",
+        width: 80,
+      },
+      {
+        id: "col_dramt5_1",
+        field: "dramt",
+        caption: "차변금액",
+        width: 100,
+      },
+      {
+        id: "col_cramt5_1",
+        field: "cramt",
+        caption: "대변금액",
+        width: 100,
+      },
+      {
+        id: "col_remark35_1",
+        field: "remark3",
+        caption: "적요",
+        width: 200,
+      },
+    ],
+  },
 ];
