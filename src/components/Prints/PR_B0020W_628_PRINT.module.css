@@ -431,12 +431,12 @@ li {
 }
 
 #printable2 ul:nth-child(2) li:nth-child(1) span {
-	font-size: 1.9em;
+	font-size: 28px;
 	font-weight: 900;
 }
 
 #printable2 ul:nth-child(2) li:nth-child(2) span {
-	font-size: 28px;
+	font-size: 24px;
 }
 
 #printable2 ul:nth-child(2) li:nth-child(3)>span:nth-child(1) {
