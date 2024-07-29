@@ -181,8 +181,7 @@ const PrintComponent = forwardRef<HTMLDivElement, PrintComponentProps>(
                     <li>
                       사이즈:
                       <span>
-                        {item.ordsiz}
-                        {item.insiz}
+                        {item.spec}
                       </span>
                     </li>
                     <li>
