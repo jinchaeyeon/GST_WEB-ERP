@@ -1132,6 +1132,7 @@ const HU_B4000W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1164,6 +1165,7 @@ const HU_B4000W: React.FC = () => {
     setSubFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage2({
@@ -1177,6 +1179,7 @@ const HU_B4000W: React.FC = () => {
     setSubFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage3({
@@ -1190,6 +1193,7 @@ const HU_B4000W: React.FC = () => {
     setSubFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage4({
@@ -1203,6 +1207,7 @@ const HU_B4000W: React.FC = () => {
     setAdjFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage5({

@@ -88,6 +88,7 @@ const MA_A2300W_615: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -102,6 +103,7 @@ const MA_A2300W_615: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

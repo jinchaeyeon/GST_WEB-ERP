@@ -157,11 +157,13 @@ const AC_B8040W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setFilters3((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage2(initialPageState);
@@ -169,6 +171,7 @@ const AC_B8040W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -183,6 +186,7 @@ const AC_B8040W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -197,6 +201,7 @@ const AC_B8040W: React.FC = () => {
     setFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

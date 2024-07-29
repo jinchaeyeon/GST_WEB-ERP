@@ -258,6 +258,7 @@ const CM_A1600W_603: React.FC = () => {
     setTodoFilter((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -272,6 +273,7 @@ const CM_A1600W_603: React.FC = () => {
     setUserFilter((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

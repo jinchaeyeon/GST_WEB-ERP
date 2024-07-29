@@ -150,6 +150,7 @@ const SY_A0025W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -161,6 +162,7 @@ const SY_A0025W: React.FC = () => {
       ...prev,
       pgNum: 1,
       isSearch: true,
+      find_row_value: "",
     }));
 
     setPage2(initialPageState);
@@ -171,6 +173,7 @@ const SY_A0025W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

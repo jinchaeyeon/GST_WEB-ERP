@@ -1083,11 +1083,13 @@ const HU_A4000W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
 
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1103,6 +1105,7 @@ const HU_A4000W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1124,27 +1127,33 @@ const HU_A4000W: React.FC = () => {
     setFilters5((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters6((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters7((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters8((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters9((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
 
     setFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1160,6 +1169,7 @@ const HU_A4000W: React.FC = () => {
     setFilters5((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1175,6 +1185,7 @@ const HU_A4000W: React.FC = () => {
     setFilters6((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1190,6 +1201,7 @@ const HU_A4000W: React.FC = () => {
     setFilters7((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1205,6 +1217,7 @@ const HU_A4000W: React.FC = () => {
     setFilters8((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1220,6 +1233,7 @@ const HU_A4000W: React.FC = () => {
     setFilters9((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

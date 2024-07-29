@@ -408,6 +408,7 @@ const QC_A2000: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     if (unsavedName.length > 0) {
@@ -426,6 +427,7 @@ const QC_A2000: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     if (unsavedName.length > 0) {
@@ -451,6 +453,7 @@ const QC_A2000: React.FC = () => {
     setDetailFilters2((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

@@ -490,6 +490,7 @@ const AC_B5060W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -505,6 +506,7 @@ const AC_B5060W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -520,10 +522,11 @@ const AC_B5060W: React.FC = () => {
     setFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
-    setPage({
+    setPage3({
       skip: page.skip,
       take: initialPageState.take,
     });

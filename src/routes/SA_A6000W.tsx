@@ -308,12 +308,14 @@ const SA_A6000W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setPage2(initialPageState);
 
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -329,6 +331,7 @@ const SA_A6000W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -344,12 +347,14 @@ const SA_A6000W: React.FC = () => {
     setFilters4((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setPage4(initialPageState);
     deletedMainRows = [];
     setFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -365,6 +370,7 @@ const SA_A6000W: React.FC = () => {
     setFilters4((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

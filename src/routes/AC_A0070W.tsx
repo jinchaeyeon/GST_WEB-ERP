@@ -797,6 +797,7 @@ const AC_A0070W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / page.take) + 1,
+      find_row_value: "",
       isSearch: true,
       pgGap: 0,
     }));
@@ -813,6 +814,7 @@ const AC_A0070W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / page.take) + 1,
+      find_row_value: "",
       isSearch: true,
       pgGap: 0,
     }));

@@ -1189,6 +1189,7 @@ const PR_A5000W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1203,6 +1204,7 @@ const PR_A5000W: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

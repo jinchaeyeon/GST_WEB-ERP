@@ -420,18 +420,22 @@ const BA_A0020W_603: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters3((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters4((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -449,6 +453,7 @@ const BA_A0020W_603: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -466,6 +471,7 @@ const BA_A0020W_603: React.FC = () => {
     setFilters3((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -483,6 +489,7 @@ const BA_A0020W_603: React.FC = () => {
     setFilters4((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

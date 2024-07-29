@@ -130,6 +130,7 @@ const QC_B0200W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -145,11 +146,13 @@ const QC_B0200W: React.FC = () => {
       ...prev,
       isSearch: true,
       pgNum: 1,
+      find_row_value: "",
     }));
     setDetailFilters3((prev) => ({
       ...prev,
       isSearch: true,
       pgNum: 1,
+      find_row_value: "",
     }));
     setPage3(initialPageState);
     setPage4(initialPageState);
@@ -157,6 +160,7 @@ const QC_B0200W: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -172,6 +176,7 @@ const QC_B0200W: React.FC = () => {
     setDetailFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -187,6 +192,7 @@ const QC_B0200W: React.FC = () => {
     setDetailFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

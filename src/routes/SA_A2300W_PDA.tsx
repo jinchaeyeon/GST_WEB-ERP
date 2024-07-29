@@ -411,6 +411,7 @@ const SA_A2300_PDA: React.FC = () => {
     setCustomerFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -746,6 +747,7 @@ const SA_A2300_PDA: React.FC = () => {
     setOrderFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1150,6 +1152,7 @@ const SA_A2300_PDA: React.FC = () => {
     setLotFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

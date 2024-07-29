@@ -1302,12 +1302,14 @@ const PR_B0020W_628: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
 
     setPage2(initialPageState);
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1323,6 +1325,7 @@ const PR_B0020W_628: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

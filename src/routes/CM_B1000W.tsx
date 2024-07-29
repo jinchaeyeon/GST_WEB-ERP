@@ -692,6 +692,7 @@ const CM_B1000W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -706,6 +707,7 @@ const CM_B1000W: React.FC = () => {
     setSubFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

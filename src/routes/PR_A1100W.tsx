@@ -219,6 +219,7 @@ const PR_A1100W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -233,12 +234,14 @@ const PR_A1100W: React.FC = () => {
     setMaterialFilters((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage3(initialPageState);
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -253,6 +256,7 @@ const PR_A1100W: React.FC = () => {
     setMaterialFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

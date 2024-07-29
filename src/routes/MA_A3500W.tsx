@@ -165,6 +165,7 @@ const MA_A3500W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -179,6 +180,7 @@ const MA_A3500W: React.FC = () => {
     setInfomation((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -193,12 +195,14 @@ const MA_A3500W: React.FC = () => {
     setInfomation3((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage4(initialPageState);
     setInfomation2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -213,6 +217,7 @@ const MA_A3500W: React.FC = () => {
     setInfomation3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

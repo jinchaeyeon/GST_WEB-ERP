@@ -182,6 +182,7 @@ const KendoWindow = ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
+      find_row_value: "",
     }));
 
     setPage({

@@ -3086,6 +3086,7 @@ const BA_A0020: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -3104,11 +3105,13 @@ const BA_A0020: React.FC = () => {
     setsubFilters((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setsubFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
   };
@@ -3119,6 +3122,7 @@ const BA_A0020: React.FC = () => {
     setsubFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -3133,6 +3137,7 @@ const BA_A0020: React.FC = () => {
     setsubFilters2((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

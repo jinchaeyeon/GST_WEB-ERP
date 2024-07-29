@@ -264,6 +264,7 @@ const SY_A0125W: React.FC = () => {
     setsubFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

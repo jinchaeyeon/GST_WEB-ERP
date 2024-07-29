@@ -231,11 +231,13 @@ const MA_A2410W: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
 
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -251,6 +253,7 @@ const MA_A2410W: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

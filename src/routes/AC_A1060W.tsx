@@ -332,6 +332,7 @@ const AC_A1060W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -346,6 +347,7 @@ const AC_A1060W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -360,6 +362,7 @@ const AC_A1060W: React.FC = () => {
     setFilters3((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -374,6 +377,7 @@ const AC_A1060W: React.FC = () => {
     setFilters4((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

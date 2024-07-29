@@ -151,6 +151,7 @@ const SA_B2410: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -165,6 +166,7 @@ const SA_B2410: React.FC = () => {
       workType: "detail",
       isSearch: true,
       pgNum: 1,
+      find_row_value: "",
     }));
   };
 
@@ -174,6 +176,7 @@ const SA_B2410: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -187,6 +190,7 @@ const SA_B2410: React.FC = () => {
       workType: "detail2",
       isSearch: true,
       pgNum: 1,
+      find_row_value: "",
     }));
   };
 
@@ -196,6 +200,7 @@ const SA_B2410: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -209,6 +214,7 @@ const SA_B2410: React.FC = () => {
       ...prev,
       isSearch: true,
       pgNum: 1,
+      find_row_value: "",
     }));
   };
   const pageChange4 = (event: GridPageChangeEvent) => {
@@ -217,6 +223,7 @@ const SA_B2410: React.FC = () => {
     setDetailFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -231,6 +238,7 @@ const SA_B2410: React.FC = () => {
     setDetailFilters1((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

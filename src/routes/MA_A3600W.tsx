@@ -520,12 +520,14 @@ const MA_A3600W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setPage2(initialPageState);
 
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -540,6 +542,7 @@ const MA_A3600W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

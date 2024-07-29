@@ -435,6 +435,8 @@ const Page: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
+      find_row_value2: "",
       isSearch: true,
     }));
 
@@ -450,6 +452,8 @@ const Page: React.FC = () => {
     setDetailFilter((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
+      find_row_value2: "",
       isSearch: true,
     }));
 

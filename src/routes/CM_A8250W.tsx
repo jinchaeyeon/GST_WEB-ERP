@@ -154,6 +154,7 @@ const CM_A8250W: React.FC = () => {
     setMainFilters((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -162,6 +163,7 @@ const CM_A8250W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -177,6 +179,7 @@ const CM_A8250W: React.FC = () => {
     setMainFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

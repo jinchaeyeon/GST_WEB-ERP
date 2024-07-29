@@ -187,6 +187,7 @@ const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

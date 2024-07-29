@@ -2099,6 +2099,7 @@ const CM_A4100W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     if (unsavedName.length > 0) {
@@ -2118,6 +2119,7 @@ const CM_A4100W: React.FC = () => {
     setsubFilters((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     if (unsavedName.length > 0) {
@@ -2131,6 +2133,7 @@ const CM_A4100W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -2150,6 +2153,7 @@ const CM_A4100W: React.FC = () => {
     setsubFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

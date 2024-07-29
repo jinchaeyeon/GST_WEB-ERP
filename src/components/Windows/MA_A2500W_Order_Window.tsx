@@ -499,11 +499,13 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setDetailFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage2(initialPageState);
@@ -511,6 +513,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -526,6 +529,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -541,6 +545,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     setDetailFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

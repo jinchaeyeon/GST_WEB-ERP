@@ -1278,6 +1278,7 @@ const HU_A6020W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage({
@@ -1291,6 +1292,7 @@ const HU_A6020W: React.FC = () => {
     setFilters3((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage3({

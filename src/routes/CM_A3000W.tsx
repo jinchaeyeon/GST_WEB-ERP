@@ -201,6 +201,7 @@ const CM_A3000W: React.FC = () => {
     setsubFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     if (unsavedName.length > 0) {

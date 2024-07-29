@@ -120,11 +120,13 @@ const HU_B3220W: React.FC = () => {
       ...prev,
       isSearch: true,
       pgNum: 1,
+      find_row_value: "",
     }));
     setPage2(initialPageState);
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -140,6 +142,7 @@ const HU_B3220W: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

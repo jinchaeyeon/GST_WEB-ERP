@@ -116,6 +116,7 @@ const AC_A1000W_Note_Window = ({
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

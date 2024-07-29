@@ -1293,6 +1293,7 @@ const HU_A5020W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     if (unsavedName.length > 0) {

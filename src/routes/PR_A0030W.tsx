@@ -155,12 +155,14 @@ const PR_A0030W: React.FC = () => {
     setsubFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage3(initialPageState);
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     setPage({
@@ -177,6 +179,7 @@ const PR_A0030W: React.FC = () => {
     setsubFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
   };
@@ -187,6 +190,7 @@ const PR_A0030W: React.FC = () => {
     setsubFilters2((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

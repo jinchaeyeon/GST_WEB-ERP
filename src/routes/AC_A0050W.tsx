@@ -801,14 +801,17 @@ const AC_A0050W: React.FC = () => {
     setFilters2_1((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters2_2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -823,6 +826,7 @@ const AC_A0050W: React.FC = () => {
     setFilters2_1((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -837,6 +841,7 @@ const AC_A0050W: React.FC = () => {
     setFilters2_2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -852,14 +857,17 @@ const AC_A0050W: React.FC = () => {
     setFilters3_1((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters3_2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -875,6 +883,7 @@ const AC_A0050W: React.FC = () => {
     setFilters3_1((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -889,6 +898,7 @@ const AC_A0050W: React.FC = () => {
     setFilters3_2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -904,6 +914,7 @@ const AC_A0050W: React.FC = () => {
     setFilters4((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

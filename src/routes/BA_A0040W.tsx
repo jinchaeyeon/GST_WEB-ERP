@@ -2335,6 +2335,7 @@ const BA_A0040: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
     if (unsavedName.length > 0) {
@@ -2353,6 +2354,7 @@ const BA_A0040: React.FC = () => {
     setsubFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

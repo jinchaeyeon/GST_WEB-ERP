@@ -137,12 +137,14 @@ const MA_A2400W: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
 
     setPage2(initialPageState);
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -158,12 +160,14 @@ const MA_A2400W: React.FC = () => {
     setDetailFilters2((prev) => ({
       ...prev,
       pgNum: 1,
+      find_row_value: "",
     }));
     setPage3(initialPageState);
 
     setDetailFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -179,6 +183,7 @@ const MA_A2400W: React.FC = () => {
     setDetailFilters2((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

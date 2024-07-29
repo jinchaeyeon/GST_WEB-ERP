@@ -1222,6 +1222,7 @@ const SA_A1100W_603: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1236,6 +1237,7 @@ const SA_A1100W_603: React.FC = () => {
     setSubFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1250,6 +1252,7 @@ const SA_A1100W_603: React.FC = () => {
     setSubFilters2((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -1264,6 +1267,7 @@ const SA_A1100W_603: React.FC = () => {
     setSubFilters6((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 

@@ -217,6 +217,7 @@ const HU_B4001W: React.FC = () => {
     setUseFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
@@ -232,6 +233,7 @@ const HU_B4001W: React.FC = () => {
     setAdjFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
       isSearch: true,
     }));
 
