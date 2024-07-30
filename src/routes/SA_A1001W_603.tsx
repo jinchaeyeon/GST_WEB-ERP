@@ -1107,13 +1107,7 @@ const SA_A1001W_603: React.FC = () => {
     });
 
     if (valid != true) {
-      if (
-        !window.confirm(
-          `견적 재산출을 진행하시겠습니까? \n (계약건에는 반영이 되지 않습니다.)`
-        )
-      ) {
-        return false;
-      }
+      alert("이미 처리된 계약입니다.");
     }
 
     let dataArr: TdataArr = {
@@ -1486,12 +1480,13 @@ const SA_A1001W_603: React.FC = () => {
 
   const enterEdit = (dataItem: any, field: string) => {
     if (
-      field == "margin" ||
-      field == "marginamt" ||
-      field == "discount" ||
-      field == "discountamt" ||
       field == "chk" ||
-      field == "finalquowonamt"
+      (dataItem.confinyn != "Y" &&
+      (field == "margin" ||
+        field == "marginamt" ||
+        field == "discount" ||
+        field == "discountamt" ||
+        field == "finalquowonamt"))
     ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
