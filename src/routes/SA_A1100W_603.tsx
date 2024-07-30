@@ -134,6 +134,7 @@ const NumberField = [
   "week_r",
   "qty_t",
   "totqty",
+  "quoamt",
 ];
 
 const NumberField2 = ["wonamt", "amt", "totamt"];
@@ -141,7 +142,7 @@ const NumberField2 = ["wonamt", "amt", "totamt"];
 const customField = ["insert_userid"];
 
 const centerField = ["num"];
-const centerField2 = ["seq"];
+const centerField2 = ["seq", "tkyn", "wgtyn"];
 const requiredField = ["paydt", "amt"];
 let temp = 0;
 let temp2 = 0;
@@ -356,6 +357,7 @@ const SA_A1100W_603: React.FC = () => {
     files: "",
     quonum: "",
     quorev: 0,
+    quoamt: 0,
   });
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -1034,6 +1036,7 @@ const SA_A1100W_603: React.FC = () => {
           quonum: data.tables[0].Rows[0].quonum,
           quorev: data.tables[0].Rows[0].quorev,
           taxdiv: data.tables[0].Rows[0].taxdiv,
+          quomat: data.tables[0].Rows[0].quoamt,
         }));
       } else {
         setInformation((prev) => ({
@@ -1060,6 +1063,7 @@ const SA_A1100W_603: React.FC = () => {
           quonum: "",
           quorev: 0,
           taxdiv: "",
+          quoamt: 0,
         }));
       }
       setMainDataResult2({
@@ -2463,6 +2467,7 @@ const SA_A1100W_603: React.FC = () => {
         quonum: selectRow.quonum,
         quorev: selectRow.quorev,
         quoseq: selectRow.quoseq,
+        quoamt: selectRow.quoamt,
         recdt: selectRow.recdt,
         remark: selectRow.remark,
         seq: temp2,
