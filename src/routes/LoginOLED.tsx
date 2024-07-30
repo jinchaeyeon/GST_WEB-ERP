@@ -22,6 +22,7 @@ import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loader from "../components/Loader";
 import Loading from "../components/Loading";
 import FindIDPWWindow from "../components/Windows/CommonWindows/FindIDPWWindow";
+import SignUpWindow from "../components/Windows/CommonWindows/SignUpWindow";
 import { isLoading } from "../store/atoms";
 
 interface IFormData {
@@ -69,6 +70,7 @@ const Login: React.FC = () => {
   }, []);
 
   const [idpwWindowVisible, setIdpwWindowVisible] = useState(false);
+  const [signupWindowVisible, setSignUpWindowVisible] = useState(false);
 
   const handleSubmit = (data: { [name: string]: any }) => {
     processLogin(data);
@@ -226,7 +228,7 @@ const Login: React.FC = () => {
                   themeColor={"dark"}
                   size="small"
                   type="button"
-                  onClick={() => console.log("gg1")}
+                  onClick={() => setSignUpWindowVisible(true)}
                 >
                   회원가입
                 </Button>
@@ -241,6 +243,9 @@ const Login: React.FC = () => {
       </LoginImg>
       {idpwWindowVisible && (
         <FindIDPWWindow setVisible={setIdpwWindowVisible} modal={true} />
+      )}
+      {signupWindowVisible && (
+        <SignUpWindow setVisible={setSignUpWindowVisible} modal={true} />
       )}
     </div>
   );
