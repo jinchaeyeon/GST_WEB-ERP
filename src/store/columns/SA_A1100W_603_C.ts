@@ -123,7 +123,7 @@ export const gridList: Array<TGrid> = [
         id: "col_seq",
         field: "seq",
         caption: "No",
-        width: 60,
+        width: 70,
       },
       {
         id: "col_contractgb",

@@ -650,7 +650,11 @@ const SA_A1100W_603: React.FC = () => {
             height5
         );
         setWebHeight4(
-          (getDeviceHeight(false) - height - height2 - height7 - height8) / 2 -
+          getDeviceHeight(false) -
+            height -
+            height2 -
+            height7 -
+            height8 -
             height6
         );
       };
