@@ -1184,10 +1184,7 @@ const SA_A1001W_603: React.FC = () => {
     let valid3 = false;
 
     dataItem.map((item) => {
-      if (item.quounp == 0) {
-        valid = true;
-      }
-      if (item.confinyn == "Y") {
+        if (item.confinyn == "Y") {
         valid2 = true;
       }
       if (item.finyn != "Y") {
@@ -1205,10 +1202,6 @@ const SA_A1001W_603: React.FC = () => {
       return false;
     }
 
-    if (valid != false) {
-      alert("견적원가가 0인 항목은 산출이 불가능합니다.");
-      return false;
-    }
 
     let dataArr: TdataArr = {
       quoseq_s: [],
