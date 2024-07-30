@@ -3,7 +3,12 @@ import { Field, Form, FormElement } from "@progress/kendo-react-form";
 import { useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import { LoginAppName, LoginBox, LoginImg } from "../CommonStyled";
+import {
+  ButtonContainer,
+  LoginAppName,
+  LoginBox,
+  LoginImg,
+} from "../CommonStyled";
 import { FormCheckBox2, FormInput } from "../components/Editors";
 import { useApi } from "../hooks/api";
 import {
@@ -16,6 +21,7 @@ import { resetLocalStorage } from "../components/CommonFunction";
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loader from "../components/Loader";
 import Loading from "../components/Loading";
+import FindIDPWWindow from "../components/Windows/CommonWindows/FindIDPWWindow";
 import { isLoading } from "../store/atoms";
 
 interface IFormData {
@@ -61,6 +67,8 @@ const Login: React.FC = () => {
       window.location.href = "/Home";
     }
   }, []);
+
+  const [idpwWindowVisible, setIdpwWindowVisible] = useState(false);
 
   const handleSubmit = (data: { [name: string]: any }) => {
     processLogin(data);
@@ -178,7 +186,7 @@ const Login: React.FC = () => {
         <Form
           initialValues={information}
           onSubmit={handleSubmit}
-          render={() => (
+          render={(formRenderProps) => (
             <FormElement>
               <fieldset className={"k-form-fieldset"}>
                 <Field name={"userId"} label={"ID"} component={FormInput} />
@@ -194,9 +202,35 @@ const Login: React.FC = () => {
                   component={FormCheckBox2}
                 />
               </fieldset>
-              <Button className="login-btn" themeColor={"primary"} size="large">
+              <Button
+                className="login-btn"
+                themeColor={"primary"}
+                size="large"
+                type="submit"
+                onClick={() => formRenderProps.onSubmit}
+              >
                 Login
               </Button>
+              <ButtonContainer>
+                <Button
+                  fillMode="flat"
+                  themeColor={"dark"}
+                  size="small"
+                  type="button"
+                  onClick={() => setIdpwWindowVisible(true)}
+                >
+                  아이디/비밀번호 찾기
+                </Button>
+                <Button
+                  fillMode="flat"
+                  themeColor={"dark"}
+                  size="small"
+                  type="button"
+                  onClick={() => console.log("gg1")}
+                >
+                  회원가입
+                </Button>
+              </ButtonContainer>
             </FormElement>
           )}
         ></Form>
@@ -205,6 +239,9 @@ const Login: React.FC = () => {
       <LoginImg>
         <LoginAppName></LoginAppName>
       </LoginImg>
+      {idpwWindowVisible && (
+        <FindIDPWWindow setVisible={setIdpwWindowVisible} modal={true} />
+      )}
     </div>
   );
 };
