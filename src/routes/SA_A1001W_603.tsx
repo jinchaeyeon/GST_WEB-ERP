@@ -1529,58 +1529,77 @@ const SA_A1001W_603: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult2.data) {
-      const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              marginamt:
-                editedField == "margin"
-                  ? Math.ceil(item.quounp * (item.margin / 100))
-                  : item.marginamt == 0
-                  ? 0
-                  : item.marginamt,
-              discountamt:
-                editedField == "discount"
-                  ? Math.ceil(item.quounp * (item.discount / 100))
-                  : item.discountamt == 0
-                  ? 0
-                  : item.discountamt,
-              finalquowonamt:
-                editedField == "finalquowonamt"
-                  ? item.finalquowonamt
-                  : Math.ceil(
-                      item.quounp +
-                        (editedField == "margin"
-                          ? Math.ceil(item.quounp * (item.margin / 100))
-                          : item.marginamt == 0
-                          ? 0
-                          : item.marginamt)
-                    ) -
-                    (editedField == "discount"
-                      ? Math.ceil(item.quounp * (item.discount / 100))
-                      : item.discountamt == 0
-                      ? 0
-                      : item.discountamt),
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult2((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+      if (editedField != "chk") {
+        const newData = mainDataResult2.data.map((item) =>
+          item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                marginamt:
+                  editedField == "margin"
+                    ? Math.ceil(item.quounp * (item.margin / 100))
+                    : item.marginamt == 0
+                    ? 0
+                    : item.marginamt,
+                discountamt:
+                  editedField == "discount"
+                    ? Math.ceil(item.quounp * (item.discount / 100))
+                    : item.discountamt == 0
+                    ? 0
+                    : item.discountamt,
+                finalquowonamt:
+                  editedField == "finalquowonamt"
+                    ? item.finalquowonamt
+                    : Math.ceil(
+                        item.quounp +
+                          (editedField == "margin"
+                            ? Math.ceil(item.quounp * (item.margin / 100))
+                            : item.marginamt == 0
+                            ? 0
+                            : item.marginamt)
+                      ) -
+                      (editedField == "discount"
+                        ? Math.ceil(item.quounp * (item.discount / 100))
+                        : item.discountamt == 0
+                        ? 0
+                        : item.discountamt),
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult2((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        const newData = mainDataResult2.data.map((item) => ({
+          ...item,
+          [EDIT_FIELD]: undefined,
+        }));
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult2((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,

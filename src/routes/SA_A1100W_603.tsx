@@ -1611,37 +1611,35 @@ const SA_A1100W_603: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (dataItem.contractgb != "계약") {
-      if (field == "amt" || field == "remark") {
-        const newData = mainDataResult2.data.map((item) =>
-          item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
-            ? {
-                ...item,
-                [EDIT_FIELD]: field,
-              }
-            : { ...item, [EDIT_FIELD]: undefined }
-        );
+    if (field == "amt" || field == "remark") {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
 
-        setTempResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-        setMainDataResult2((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      } else {
-        setTempResult((prev) => {
-          return {
-            data: mainDataResult2.data,
-            total: prev.total,
-          };
-        });
-      }
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult2.data,
+          total: prev.total,
+        };
+      });
     }
   };
   const enterEdit6 = (dataItem: any, field: string) => {
