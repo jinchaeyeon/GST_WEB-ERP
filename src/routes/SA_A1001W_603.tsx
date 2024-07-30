@@ -1184,7 +1184,7 @@ const SA_A1001W_603: React.FC = () => {
     let valid3 = false;
 
     dataItem.map((item) => {
-        if (item.confinyn == "Y") {
+      if (item.confinyn == "Y") {
         valid2 = true;
       }
       if (item.finyn != "Y") {
@@ -1201,7 +1201,6 @@ const SA_A1001W_603: React.FC = () => {
       alert("견적 산출을 진행해주세요.");
       return false;
     }
-
 
     let dataArr: TdataArr = {
       quoseq_s: [],
@@ -1491,7 +1490,8 @@ const SA_A1001W_603: React.FC = () => {
       field == "marginamt" ||
       field == "discount" ||
       field == "discountamt" ||
-      field == "chk"
+      field == "chk" ||
+      field == "finalquowonamt"
     ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
@@ -1547,19 +1547,21 @@ const SA_A1001W_603: React.FC = () => {
                   ? 0
                   : item.discountamt,
               finalquowonamt:
-                Math.ceil(
-                  item.quounp +
-                    (editedField == "margin"
-                      ? Math.ceil(item.quounp * (item.margin / 100))
-                      : item.marginamt == 0
+                editedField == "finalquowonamt"
+                  ? item.finalquowonamt
+                  : Math.ceil(
+                      item.quounp +
+                        (editedField == "margin"
+                          ? Math.ceil(item.quounp * (item.margin / 100))
+                          : item.marginamt == 0
+                          ? 0
+                          : item.marginamt)
+                    ) -
+                    (editedField == "discount"
+                      ? Math.ceil(item.quounp * (item.discount / 100))
+                      : item.discountamt == 0
                       ? 0
-                      : item.marginamt)
-                ) -
-                (editedField == "discount"
-                  ? Math.ceil(item.quounp * (item.discount / 100))
-                  : item.discountamt == 0
-                  ? 0
-                  : item.discountamt),
+                      : item.discountamt),
               [EDIT_FIELD]: undefined,
             }
           : {

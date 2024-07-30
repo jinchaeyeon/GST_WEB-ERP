@@ -28,9 +28,9 @@ const themes = {
 const defaultTheme = path.includes("localhost")
   ? //WEB ERP개발할떄 바꿀부분입니다.
     //"yellow"
-    //"blue"
+    "blue"
     //"navy"
-    "orange"
+    //"orange"
   : path.split("/")[2].split(".")[1] == "ddgd"
   ? "yellow"
   : path.split("/")[2].split(".")[0] == "fnf-test" //추후수정
