@@ -4,7 +4,7 @@ const {
 const nodeSass = require("node-sass");
 const { series } = require("gulp");
 
-const themes = ["WEBERP", "FNF", "DDGD"];
+const themes = ["WEBERP", "FNF", "DDGD", "OLED"];
 
 function buildStyles(cb) {
   themes.forEach((theme) => {

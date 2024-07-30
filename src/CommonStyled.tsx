@@ -5,6 +5,7 @@ import logoFNF from "./img/fnf_main_logo.jpg";
 import loginBgSrc from "./img/login_bg.png";
 import logoDDGD from "./img/login_ddgd.png";
 import logoWEBERP from "./img/login_web_erp.png";
+import logoOLED from "./img/logoOLED.png";
 import logoSrc from "./img/logo.png";
 import processStsSrc from "./img/process_16.png";
 import successStsSrc from "./img/success_16.png";
@@ -1211,6 +1212,8 @@ export const Logo = styled.div<TLogo>`
       ? logoBIO
       : props.name == "FNF"
       ? logoFNF
+      : props.name == "OLED"
+      ? logoOLED
       : logoWEBERP});
   background-size: contain;
   background-repeat: no-repeat;
