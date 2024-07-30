@@ -142,7 +142,7 @@ const NumberField2 = ["wonamt", "amt", "totamt"];
 const customField = ["insert_userid"];
 
 const centerField = ["num"];
-const centerField2 = ["seq"];
+const centerField2 = ["seq", "tkyn", "wgtyn"];
 const requiredField = ["paydt", "amt"];
 let temp = 0;
 let temp2 = 0;
@@ -586,7 +586,6 @@ const SA_A1100W_603: React.FC = () => {
           ThreeNumberceil(
             Math.ceil(ThreeNumberceil(Math.ceil(item.amt)) * 0.1)
           ),
-        quoamt: ThreeNumberceil(Math.ceil(item.quoamt)),
         rowstatus: item.rowstatus == "N" ? "N" : "U",
       }));
 
