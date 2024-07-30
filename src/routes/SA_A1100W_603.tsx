@@ -98,7 +98,6 @@ type TdataArr = {
   rowstatus_s: string[];
   seq_s: string[];
   wonamt_s: string[];
-  taxdiv_s: string[];
   amt_s: string[];
   contractgb_s: string[];
   quonum_s: string[];
@@ -358,6 +357,7 @@ const SA_A1100W_603: React.FC = () => {
     quonum: "",
     quorev: 0,
     quoamt: 0,
+    taxdiv: "",
   });
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -1974,7 +1974,6 @@ const SA_A1100W_603: React.FC = () => {
     quorev: 0,
     rowstatus_s: "",
     wonamt_s: "",
-    taxdiv_s: "",
     amt_s: "",
     contractgb_s: "",
     quonum_s: "",
@@ -2016,7 +2015,7 @@ const SA_A1100W_603: React.FC = () => {
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_seq_s": ParaData.seq_s,
       "@p_wonamt_s": ParaData.wonamt_s,
-      "@p_taxdiv_s": ParaData.taxdiv_s,
+      "@p_taxdiv": Information.taxdiv,
       "@p_amt_s": ParaData.amt_s,
       "@p_contractgb_s": ParaData.contractgb_s,
       "@p_quonum_s": ParaData.quonum_s,
@@ -2050,7 +2049,6 @@ const SA_A1100W_603: React.FC = () => {
         rowstatus_s: [],
         seq_s: [],
         wonamt_s: [],
-        taxdiv_s: [],
         amt_s: [],
         contractgb_s: [],
         quonum_s: [],
@@ -2064,7 +2062,6 @@ const SA_A1100W_603: React.FC = () => {
           amt = "",
           seq = "",
           wonamt = "",
-          taxdiv = "",
           contractgb = "",
           quonum = "",
           quorev = "",
@@ -2074,7 +2071,6 @@ const SA_A1100W_603: React.FC = () => {
         dataArr.rowstatus_s.push(rowstatus);
         dataArr.seq_s.push(seq);
         dataArr.wonamt_s.push(wonamt);
-        dataArr.taxdiv_s.push(taxdiv);
         dataArr.amt_s.push(amt);
         dataArr.contractgb_s.push(contractgb);
         dataArr.quonum_s.push(quonum);
@@ -2088,7 +2084,6 @@ const SA_A1100W_603: React.FC = () => {
           amt = "",
           seq = "",
           wonamt = "",
-          taxdiv = "",
           contractgb = "",
           quonum = "",
           quorev = "",
@@ -2098,7 +2093,6 @@ const SA_A1100W_603: React.FC = () => {
         dataArr.rowstatus_s.push("D");
         dataArr.seq_s.push(seq);
         dataArr.wonamt_s.push(wonamt);
-        dataArr.taxdiv_s.push(taxdiv);
         dataArr.amt_s.push(amt);
         dataArr.contractgb_s.push(contractgb);
         dataArr.quonum_s.push(quonum);
@@ -2114,7 +2108,6 @@ const SA_A1100W_603: React.FC = () => {
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),
         wonamt_s: dataArr.wonamt_s.join("|"),
-        taxdiv_s: dataArr.taxdiv_s.join("|"),
         amt_s: dataArr.amt_s.join("|"),
         contractgb_s: dataArr.contractgb_s.join("|"),
         quonum_s: dataArr.quonum_s.join("|"),
@@ -2285,7 +2278,6 @@ const SA_A1100W_603: React.FC = () => {
         quorev: 0,
         rowstatus_s: "",
         wonamt_s: "",
-        taxdiv_s: "",
         amt_s: "",
         contractgb_s: "",
         quonum_s: "",
@@ -2478,6 +2470,7 @@ const SA_A1100W_603: React.FC = () => {
         week_b: selectRow.week_b,
         week_r: selectRow.week_r,
         wonamt: selectRow.wonamt,
+        wgtyn: selectRow.wgtyn,
         rowstatus: "N",
       };
 
