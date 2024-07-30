@@ -136,7 +136,7 @@ const NumberField = [
   "quoamt",
 ];
 
-const NumberField2 = ["wonamt", "amt", "totamt"];
+const NumberField2 = ["wonamt", "amt", "totamt", "quoamt"];
 
 const customField = ["insert_userid"];
 
