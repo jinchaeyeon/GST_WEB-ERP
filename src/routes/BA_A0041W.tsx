@@ -1907,6 +1907,7 @@ const BA_A0041W: React.FC = () => {
                   saveExcel={() => saveExcel}
                   permissions={permissions}
                   style={{ marginLeft: "15px" }}
+                  disabled={permissions.save ? false : true}
                 />
                 <Button
                   title="Export Excel"
@@ -2064,6 +2065,7 @@ const BA_A0041W: React.FC = () => {
                   saveExcel={() => saveExcel}
                   permissions={permissions}
                   style={{ marginLeft: "15px" }}
+                  disabled={permissions.save ? false : true}
                 />
                 <Button
                   title="Export Excel"

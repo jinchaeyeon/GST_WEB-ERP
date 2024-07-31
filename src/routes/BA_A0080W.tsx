@@ -1968,7 +1968,13 @@ const BA_A0080: React.FC = () => {
                           saveExcel={saveExcel}
                           permissions={permissions}
                           style={{ marginLeft: "15px" }}
-                          disabled={filters.itemacnt == "" ? true : false}
+                          disabled={
+                            permissions.save
+                              ? filters.itemacnt == ""
+                                ? true
+                                : false
+                              : true
+                          }
                         />
                         <Button
                           title="Export Excel"
@@ -2246,7 +2252,13 @@ const BA_A0080: React.FC = () => {
                       saveExcel={saveExcel}
                       permissions={permissions}
                       style={{ marginLeft: "15px" }}
-                      disabled={filters.itemacnt == "" ? true : false}
+                      disabled={
+                        permissions.save
+                          ? filters.itemacnt == ""
+                            ? true
+                            : false
+                          : true
+                      }
                     />
                     <Button
                       title="Export Excel"

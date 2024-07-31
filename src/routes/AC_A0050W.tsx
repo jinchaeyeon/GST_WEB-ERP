@@ -6055,6 +6055,7 @@ const AC_A0050W: React.FC = () => {
                             print: true,
                           }}
                           style={{ marginLeft: "5px", marginRight: "5px" }}
+                          disabled={permissions.save ? false : true}
                         />
                         <Button
                           title="Export Excel"
@@ -6062,6 +6063,7 @@ const AC_A0050W: React.FC = () => {
                           icon="file"
                           fillMode="outline"
                           themeColor={"primary"}
+                          disabled={permissions.view ? false : true}
                         >
                           엑셀양식
                         </Button>
@@ -6833,6 +6835,7 @@ const AC_A0050W: React.FC = () => {
                         delete: true,
                         print: true,
                       }}
+                      disabled={permissions.save ? false : true}
                       style={{ marginLeft: "5px", marginRight: "5px" }}
                     />
                     <Button
@@ -6841,6 +6844,7 @@ const AC_A0050W: React.FC = () => {
                       icon="file"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.view ? false : true}
                     >
                       엑셀양식
                     </Button>

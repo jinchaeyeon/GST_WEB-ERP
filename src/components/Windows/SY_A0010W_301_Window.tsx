@@ -1504,6 +1504,7 @@ const KendoWindow = ({
                         print: true,
                       }}
                       style={{ marginLeft: "15px" }}
+                      disabled={permissions.save ? false : true}
                     />
                     <Button
                       title="Export Excel"
@@ -1511,6 +1512,7 @@ const KendoWindow = ({
                       icon="file"
                       fillMode="outline"
                       themeColor={"primary"}
+                      disabled={permissions.view ? false : true}
                     >
                       엑셀양식
                     </Button>
@@ -1950,6 +1952,7 @@ const KendoWindow = ({
                   print: true,
                 }}
                 style={{ marginLeft: "15px" }}
+                disabled={permissions.save ? false : true}
               />
               <Button
                 title="Export Excel"
@@ -1957,6 +1960,7 @@ const KendoWindow = ({
                 icon="file"
                 fillMode="outline"
                 themeColor={"primary"}
+                disabled={permissions.view ? false : true}
               >
                 엑셀양식
               </Button>

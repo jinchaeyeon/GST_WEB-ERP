@@ -1040,7 +1040,7 @@ const SA_A1100W_603: React.FC = () => {
           quonum: data.tables[0].Rows[0].quonum,
           quorev: data.tables[0].Rows[0].quorev,
           taxdiv: data.tables[0].Rows[0].taxdiv,
-          quomat: data.tables[0].Rows[0].quoamt,
+          quoamt: data.tables[0].Rows[0].quoamt,
         }));
       } else {
         setInformation((prev) => ({
@@ -1611,7 +1611,7 @@ const SA_A1100W_603: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if ((field == "amt" && dataItem.contractgb == "변경계약") || field == "remark") {
+    if (field == "amt" || field == "remark") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -3063,7 +3063,17 @@ const SA_A1100W_603: React.FC = () => {
                         </tr>
                         <tr>
                           <th>견적금액</th>
-                          <td></td>
+                          <td>
+                            <Input
+                              name="quoamt"
+                              type="text"
+                              value={numberWithCommas3(Information.quoamt)}
+                              style={{
+                                textAlign: "end",
+                              }}
+                              className="readonly"
+                            />
+                          </td>
                         </tr>
                         <tr>
                           <th>계약금액</th>
@@ -3747,7 +3757,17 @@ const SA_A1100W_603: React.FC = () => {
                             className="required"
                           />
                         </td>
-                        <td></td>
+                        <td>
+                          <Input
+                            name="quoamt"
+                            type="text"
+                            value={numberWithCommas3(Information.quoamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            className="readonly"
+                          />
+                        </td>
                         <td>
                           <Input
                             name="contraamt"
