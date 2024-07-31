@@ -84,4 +84,39 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList2",
+    columns: [
+      {
+        id: "col_original_name",
+        field: "original_name",
+        caption: "파일명",
+        width: 150,
+      },
+      {
+        id: "col_file_size",
+        field: "file_size",
+        caption: "파일 SIZE",
+        width: 100,
+      },
+      {
+        id: "col_user_name",
+        field: "user_name",
+        caption: "등록자",
+        width: 120,
+      },
+      {
+        id: "col_insert_time",
+        field: "insert_time",
+        caption: "등록일자",
+        width: 150,
+      },
+      {
+        id: "col_attdatnum",
+        field: "attdatnum",
+        caption: "첨부번호",
+        width: 150,
+      },
+    ],
+  },
 ];

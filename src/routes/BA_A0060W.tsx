@@ -8,14 +8,18 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
+import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
 import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -29,6 +33,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
@@ -39,6 +44,7 @@ import {
   findMessage,
   getBizCom,
   getDeviceHeight,
+  getGridItemChangedData,
   getHeight,
   getMenuName,
   GetPropertyValueByName,
@@ -54,6 +60,7 @@ import {
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -61,9 +68,10 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { IItemData } from "../hooks/interfaces";
+import { IAttachmentData, IItemData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   deletedNameState,
@@ -73,19 +81,19 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-
+var index = 0;
 var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
-var height5 = 0;
 const DATA_ITEM_KEY = "num";
-const DATA_ITEM_KEY2 = "num";
+const DATA_ITEM_KEY2 = "saved_name";
 let targetRowIndex: null | number = null;
 const dateField = ["recdt"];
-const NumberField = ["dwgrev"];
+const NumberField = ["dwgrev", "file_size"];
 const checkField = ["useyn"];
 const BA_A0060W: React.FC = () => {
+  const [revstate, setRevState] = useState(false);
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -119,42 +127,34 @@ const BA_A0060W: React.FC = () => {
   );
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
-
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [mobileheight3, setMobileHeight3] = useState(0);
   const [webheight, setWebHeight] = useState(0);
-  const [webheight2, setWebHeight2] = useState(0);
-  const [webheight3, setWebHeight3] = useState(0);
+  const [WebHeight2, setWebHeight2] = useState(0);
   const [tabSelected, setTabSelected] = React.useState(0);
+  const [attachmentNumber, setAttachmentNumber] = useState<string>("");
+  const excelsInput: any = React.useRef();
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");
       height2 = getHeight(".ButtonContainer2");
-      if (height3 == 0 && !isMobile) {
-        setTabSelected(0);
-        height3 = getHeight(".FormBoxWrap");
-      }
-      height4 = getHeight(".k-tabstrip-items-wrapper");
-      height5 = getHeight(".TitleContainer");
+      height3 = getHeight(".k-tabstrip-items-wrapper");
+      height4 = getHeight(".TitleContainer");
       if (!isMobile && tabSelected == 2) {
         setTabSelected(0);
       }
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
-        setMobileHeight(getDeviceHeight(true) - height5 - height);
-        setMobileHeight2(getDeviceHeight(true) - height4 - height5);
-        setMobileHeight3(getDeviceHeight(true) - height4 - height5 - height2);
-        setWebHeight(
-          (getDeviceHeight(true) - height5 - height3 - height4 - height) / 2
-        );
+        setMobileHeight(getDeviceHeight(true) - height4 - height);
+        setMobileHeight2(getDeviceHeight(true) - height4);
+        setMobileHeight3(getDeviceHeight(true) - height4 - height2);
+        setWebHeight((getDeviceHeight(true) - height4) / 2 - height);
         setWebHeight2(
-          (getDeviceHeight(true) - height5 - height3 - height4 - height) / 2
-        );
-        setWebHeight3(
-          (getDeviceHeight(true) - height5 - height3 - height4 - height) / 2
+          (getDeviceHeight(true) - height4) / 2 - height3 - height2
         );
       };
       handleWindowResize();
@@ -163,7 +163,7 @@ const BA_A0060W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, tabSelected, webheight, webheight2, webheight3]);
+  }, [customOptionData, tabSelected, webheight, WebHeight2]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -190,10 +190,18 @@ const BA_A0060W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setRevState(false);
+    setValues2(false);
+    setAttachmentNumber("");
     setPage(initialPageState);
-    setPage2(initialPageState);
+    setTabSelected(0);
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
+    setUnsavedAttadatnums([]);
+    setUnsavedName([]);
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+    }
   };
 
   const search = () => {
@@ -254,14 +262,8 @@ const BA_A0060W: React.FC = () => {
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const [page2, setPage2] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
-    setPage2(initialPageState);
-    setFilters2((prev) => ({
-      ...prev,
-      pgNum: 1,
-    }));
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
     }
@@ -275,26 +277,6 @@ const BA_A0060W: React.FC = () => {
       isSearch: true,
     }));
     setPage({
-      ...event.page,
-    });
-  };
-
-  const pageChange2 = (event: GridPageChangeEvent) => {
-    const { page } = event;
-
-    if (unsavedName.length > 0) {
-      setDeletedName(unsavedName);
-    }
-    if (unsavedAttadatnums.length > 0) {
-      setDeletedAttadatnums(unsavedAttadatnums);
-    }
-    setFilters2((prev) => ({
-      ...prev,
-      pgNum: page.skip / page.take + 1,
-      find_row_value: "",
-      isSearch: true,
-    }));
-    setPage2({
       ...event.page,
     });
   };
@@ -322,14 +304,6 @@ const BA_A0060W: React.FC = () => {
     isSearch: false,
   });
 
-  const [filters2, setFilters2] = useState({
-    pgSize: PAGE_SIZE,
-    workType: "ATTACH",
-    attdatnum: "",
-    find_row_value: "",
-    pgNum: 1,
-    isSearch: false,
-  });
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -452,6 +426,11 @@ const BA_A0060W: React.FC = () => {
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          if (selectedRow.attdatnum == "") {
+            setAttachmentNumber("");
+          } else {
+            setAttachmentNumber(selectedRow.attdatnum);
+          }
           setInformation({
             workType: "U",
             apperson: selectedRow.apperson,
@@ -479,14 +458,14 @@ const BA_A0060W: React.FC = () => {
             rev_reason: selectedRow.rev_reason,
             useyn2: selectedRow.useyn,
           });
-          setFilters2((prev) => ({
-            ...prev,
-            isSearch: true,
-            pgNum: 1,
-            attdatnum: selectedRow.attdatnum,
-          }));
+          fetchAttdatnumGrid();
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          if (rows[0].attdatnum == "") {
+            setAttachmentNumber("");
+          } else {
+            setAttachmentNumber(rows[0].attdatnum);
+          }
           setInformation({
             workType: "U",
             apperson: rows[0].apperson,
@@ -514,14 +493,10 @@ const BA_A0060W: React.FC = () => {
             rev_reason: rows[0].rev_reason,
             useyn2: rows[0].useyn,
           });
-          setFilters2((prev) => ({
-            ...prev,
-            isSearch: true,
-            pgNum: 1,
-            attdatnum: selectedRow.attdatnum,
-          }));
+          fetchAttdatnumGrid();
         }
       } else {
+        setAttachmentNumber("");
         setInformation({
           workType: "N",
           apperson: "",
@@ -549,7 +524,6 @@ const BA_A0060W: React.FC = () => {
           rev_reason: "",
           useyn2: "Y",
         });
-        setPage2(initialPageState);
         setMainDataResult2(process([], mainDataState2));
       }
     } else {
@@ -569,70 +543,62 @@ const BA_A0060W: React.FC = () => {
     setLoading(false);
   };
 
-  //그리드 데이터 조회
-  const fetchMainGrid2 = async (filters2: any) => {
+  //그리드 조회
+  const fetchAttdatnumGrid = async () => {
     if (!permissions.view) return;
     let data: any;
-
-    //조회조건 파라미터
-    const parameters: Iparameters = {
-      procedureName: "P_BA_A0060W_Q",
-      pageNumber: filters2.pgNum,
-      pageSize: filters2.pgSize,
-      parameters: {
-        "@p_work_type": filters2.workType,
-        "@p_orgdiv": sessionOrgdiv,
-        "@p_dwgno": filters.dwgno,
-        "@p_dwgspec": filters.dwgspec,
-        "@p_frdt": convertDateToStr(filters.frdt),
-        "@p_todt": convertDateToStr(filters.todt),
-        "@p_person": filters.person,
-        "@p_proccd": filters.proccd,
-        "@p_useyn": filters.useyn,
-        "@p_dwgrev": filters.dwgrev,
-        "@p_itemcd": filters.itemcd,
-        "@p_itemnm": filters.itemnm,
-        "@p_attdatnum": filters2.attdatnum,
-        "@p_poregnum": filters.poregnum,
-        "@p_project": filters.project,
-        "@p_find_row_value": filters.find_row_value,
-      },
+    if (attachmentNumber == "") return;
+    const parameters = {
+      attached: "list?attachmentNumber=" + attachmentNumber,
     };
 
-    setLoading(true);
-
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("file-list", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess == true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+    let result: IAttachmentData = {
+      attdatnum: "",
+      original_name: "",
+      rowCount: 0,
+    };
 
-      setMainDataResult2({
-        data: rows,
-        total: totalRowCnt == -1 ? 0 : totalRowCnt,
-      });
+    if (data !== null) {
+      const totalRowCnt = data.tables[0].RowCount;
+
       if (totalRowCnt > 0) {
-        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
+        const rows = data.tables[0].Rows;
 
-    // 필터 isSearch false처리, pgNum 세팅
-    setFilters2((prev) => ({
-      ...prev,
-      pgNum:
-        data && data.hasOwnProperty("pageNumber")
-          ? data.pageNumber
-          : prev.pgNum,
-      isSearch: false,
-    }));
-    setLoading(false);
+        setMainDataResult2((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
+        });
+
+        result = {
+          attdatnum: rows[0].attdatnum,
+          original_name: rows[0].original_name,
+          rowCount: totalRowCnt,
+        };
+
+        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      } else {
+        setMainDataResult2((prev) => {
+          return {
+            data: [],
+            total: 0,
+          };
+        });
+
+        result = {
+          attdatnum: attachmentNumber,
+          original_name: "",
+          rowCount: 0,
+        };
+      }
+    }
   };
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -673,22 +639,19 @@ const BA_A0060W: React.FC = () => {
     }
   }, [filters, permissions, bizComponentData, customOptionData]);
 
-  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
-      filters2.isSearch &&
       permissions.view &&
       bizComponentData !== null &&
       customOptionData !== null
     ) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(filters2);
-
-      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
-
-      fetchMainGrid2(deepCopiedFilters);
+      if(attachmentNumber == "") {
+        setMainDataResult2(process([], mainDataState2));
+      } else {
+        fetchAttdatnumGrid();
+      }
     }
-  }, [filters2, permissions, bizComponentData, customOptionData]);
+  }, [attachmentNumber, permissions, bizComponentData, customOptionData]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -792,6 +755,12 @@ const BA_A0060W: React.FC = () => {
       (items: any) => items.code_name == selectedRowData.proccd
     )?.sub_code;
 
+    if (selectedRowData.attdatnum == "") {
+      setAttachmentNumber("");
+    } else {
+      setAttachmentNumber(selectedRowData.attdatnum);
+    }
+
     setInformation({
       workType: "U",
       apperson: selectedRowData.apperson,
@@ -819,12 +788,9 @@ const BA_A0060W: React.FC = () => {
       rev_reason: selectedRowData.rev_reason,
       useyn2: selectedRowData.useyn,
     });
-    setFilters2((prev) => ({
-      ...prev,
-      isSearch: true,
-      pgNum: 1,
-      attdatnum: selectedRowData.attdatnum,
-    }));
+    if (isMobile && swiper) {
+      swiper.slideTo(1);
+    }
   };
 
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -833,7 +799,7 @@ const BA_A0060W: React.FC = () => {
       selectedState: selectedState2,
       dataItemKey: DATA_ITEM_KEY2,
     });
-    setSelectedState(newSelectedState);
+    setSelectedState2(newSelectedState);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -881,12 +847,14 @@ const BA_A0060W: React.FC = () => {
       customOptionData.menuCustomDefaultOptions,
       "new"
     );
+    setAttachmentNumber("");
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);
     }
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
+    setMainDataResult2(process([], mainDataState2));
     setInformation({
       workType: "N",
       apperson: "",
@@ -915,6 +883,9 @@ const BA_A0060W: React.FC = () => {
       useyn2: defaultOption.find((item: any) => item.id == "useyn2")?.valueCode,
     });
     setTabSelected(0);
+    if (isMobile && swiper) {
+      swiper.slideTo(1);
+    }
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -932,6 +903,49 @@ const BA_A0060W: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: "D",
+        orgdiv: data.orgdiv,
+        dwgcd: data.dwgcd,
+        dwgrev: data.dwgrev,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onRevDeleteClick = () => {
+    if (!permissions.delete) return;
+    if (!window.confirm("리비전 취소 처리를 하시겠습니까?")) {
+      return false;
+    }
+
+    if (mainDataResult.data.length != 0) {
+      const data = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      setParaData((prev) => ({
+        ...prev,
+        workType: "D",
+        orgdiv: data.orgdiv,
+        dwgcd: data.dwgcd,
+        dwgrev: data.dwgrev,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onRevClick = () => {
+    if (!permissions.save) return;
+
+    if (mainDataResult.data.length != 0) {
+      const data = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      setParaData((prev) => ({
+        ...prev,
+        workType: "REVYN",
         orgdiv: data.orgdiv,
         dwgcd: data.dwgcd,
         dwgrev: data.dwgrev,
@@ -961,9 +975,15 @@ const BA_A0060W: React.FC = () => {
       return;
     }
 
+    if (revstate == true) {
+      if (!window.confirm("리비전 처리를 하시겠습니까?")) {
+        return false;
+      }
+    }
+
     setParaData((prev) => ({
       ...prev,
-      workType: information.workType,
+      workType: revstate == true ? "REV" : information.workType,
       orgdiv: information.orgdiv,
       location: sessionLocation,
       dwgcd: information.dwgcd,
@@ -976,7 +996,7 @@ const BA_A0060W: React.FC = () => {
       itemcd: information.itemcd,
       proccd: information.proccd,
       useyn: information.useyn2,
-      attdatnum: information.attdatnum,
+      attdatnum: attachmentNumber,
       remark: information.remark,
       rev_reason: information.rev_reason,
       aprecdt: information.aprecdt,
@@ -1072,13 +1092,28 @@ const BA_A0060W: React.FC = () => {
 
     if (data.isSuccess == true) {
       if (paraData.workType != "D") {
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: data.returnString,
-          isSearch: true,
-        }));
-        setUnsavedAttadatnums([]);
-        setUnsavedName([]);
+        if (paraData.workType == "REVYN") {
+          setRevState(true);
+          setValues2(false);
+          setTabSelected(0);
+          setAttachmentNumber("");
+          setMainDataResult2(process([], mainDataState2));
+          if (unsavedName.length > 0) {
+            setDeletedName(unsavedName);
+          }
+          if (unsavedAttadatnums.length > 0) {
+            setDeletedAttadatnums(unsavedAttadatnums);
+          }
+          setUnsavedAttadatnums([]);
+          setUnsavedName([]);
+        } else {
+          resetAllGrid();
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            isSearch: true,
+          }));
+        }
       } else {
         const isLastDataDeleted =
           mainDataResult.data.length == 1 && filters.pgNum > 1;
@@ -1086,7 +1121,7 @@ const BA_A0060W: React.FC = () => {
           (row: any) =>
             row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         );
-        setDeletedAttadatnums([information.attdatnum]);
+        setDeletedAttadatnums([attachmentNumber]);
         resetAllGrid();
 
         if (isLastDataDeleted) {
@@ -1138,6 +1173,268 @@ const BA_A0060W: React.FC = () => {
       alert(data.resultMessage);
     }
     setLoading(false);
+  };
+
+  const deleteFiles = () => {
+    if (!permissions.save) return;
+    const datas = mainDataResult2.data.filter((item) => item.chk == true);
+
+    if (datas.length == 0) {
+      alert("선택된 행이 없습니다.");
+      return false;
+    }
+
+    if (!window.confirm("삭제하시겠습니까?")) {
+      return false;
+    }
+    let data: any;
+
+    datas.forEach(async (parameter) => {
+      try {
+        data = await processApi<any>("file-delete", {
+          attached: parameter.saved_name,
+        });
+      } catch (error) {
+        data = null;
+      }
+      fetchAttdatnumGrid();
+    });
+  };
+
+  const upload = () => {
+    const uploadInput = document.getElementById("uploadAttachment");
+    uploadInput!.click();
+  };
+
+  const downloadFiles = async () => {
+    if (!permissions.view) return;
+    // value 가 false인 속성 삭제
+    const datas = mainDataResult2.data.filter((item) => item.chk == true);
+    if (datas.length == 0) {
+      alert("선택된 행이 없습니다.");
+      return false;
+    }
+
+    // const parameter = parameters[0];
+    let response: any;
+
+    datas.forEach(async (parameter) => {
+      try {
+        response = await processApi<any>("file-download", {
+          attached: parameter.saved_name,
+        });
+      } catch (error) {
+        response = null;
+      }
+
+      if (response !== null) {
+        const blob = new Blob([response.data]);
+        // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
+        // const blob = new Blob([this.content], {type: 'text/plain'})
+
+        // blob을 사용해 객체 URL을 생성합니다.
+        const fileObjectUrl = window.URL.createObjectURL(blob);
+
+        // blob 객체 URL을 설정할 링크를 만듭니다.
+        const link = document.createElement("a");
+        link.href = fileObjectUrl;
+        link.style.display = "none";
+
+        // 다운로드 파일 이름을 추출하는 함수
+        const extractDownloadFilename = (response: any) => {
+          if (response.headers) {
+            const disposition = response.headers["content-disposition"];
+            let filename = "";
+            if (disposition) {
+              var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+              var matches = filenameRegex.exec(disposition);
+              if (matches != null && matches[1]) {
+                filename = matches[1].replace(/['"]/g, "");
+              }
+            }
+            return filename;
+          } else {
+            return "";
+          }
+        };
+
+        // 다운로드 파일 이름을 지정 할 수 있습니다.
+        // 일반적으로 서버에서 전달해준 파일 이름은 응답 Header의 Content-Disposition에 설정됩니다.
+        link.download = extractDownloadFilename(response);
+
+        // 다운로드 파일의 이름은 직접 지정 할 수 있습니다.
+        // link.download = "sample-file.xlsx";
+
+        // 링크를 body에 추가하고 강제로 click 이벤트를 발생시켜 파일 다운로드를 실행시킵니다.
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        // 다운로드가 끝난 리소스(객체 URL)를 해제합니다
+      }
+    });
+  };
+
+  const handleFileUpload = async (files: FileList | null) => {
+    if (!permissions.save) return;
+    if (files == null) return false;
+
+    let newAttachmentNumber = "";
+    const promises = [];
+
+    for (const file of files) {
+      // 최초 등록 시, 업로드 후 첨부번호를 가져옴 (다중 업로드 대응)
+      if (!attachmentNumber && !newAttachmentNumber) {
+        newAttachmentNumber = await uploadFile(file);
+        const promise = newAttachmentNumber;
+        promises.push(promise);
+        continue;
+      }
+
+      const promise = newAttachmentNumber
+        ? await uploadFile(file, newAttachmentNumber)
+        : await uploadFile(file);
+      promises.push(promise);
+    }
+
+    const results = await Promise.all(promises);
+
+    // 실패한 파일이 있는지 확인
+    if (results.includes(null)) {
+      alert("파일 업로드에 실패했습니다.");
+    } else {
+      // 모든 파일이 성공적으로 업로드된 경우
+      if (!attachmentNumber) {
+        setAttachmentNumber(newAttachmentNumber);
+      } else {
+        fetchAttdatnumGrid();
+      }
+    }
+  };
+
+  const uploadFile = async (files: File, newAttachmentNumber?: string) => {
+    if (!permissions.save) return;
+    let data: any;
+
+    const filePara = {
+      attached: attachmentNumber
+        ? "attached?attachmentNumber=" + attachmentNumber
+        : newAttachmentNumber
+        ? "attached?attachmentNumber=" + newAttachmentNumber
+        : "attached",
+      files: files, //.FileList,
+    };
+
+    try {
+      data = await processApi<any>("file-upload", filePara);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      data.result.map((item: any) => {
+        setUnsavedName((prev) => [...prev, item.savedFileName]);
+      });
+      return data.attachmentNumber;
+    } else {
+      return data;
+    }
+  };
+
+  const [values2, setValues2] = React.useState<boolean>(false);
+  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
+        chk: !values2,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues2(!values2);
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const onAttItemChange = (event: GridItemChangeEvent) => {
+    getGridItemChangedData(
+      event,
+      mainDataResult2,
+      setMainDataResult2,
+      DATA_ITEM_KEY2
+    );
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const enterEdit = (dataItem: any, field: string) => {
+    if (field == "chk") {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              chk:
+                typeof item.chk == "boolean"
+                  ? item.chk
+                  : item.chk == "Y"
+                  ? true
+                  : false,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = () => {
+    const newData = mainDataResult2.data.map((item) => ({
+      ...item,
+      [EDIT_FIELD]: undefined,
+    }));
+
+    setMainDataResult2((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   };
 
   return (
@@ -1289,344 +1586,1033 @@ const BA_A0060W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <GridTitleContainer className="ButtonContainer">
-          <GridTitle>요약정보</GridTitle>
-          <ButtonContainer>
-            <Button
-              onClick={onAddClick}
-              themeColor={"primary"}
-              icon="file-add"
-              disabled={permissions.save ? false : true}
-            >
-              신규
-            </Button>
-            <Button
-              onClick={onDeleteClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="delete"
-              disabled={permissions.save ? false : true}
-            >
-              삭제
-            </Button>
-            <Button
-              onClick={onSaveClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="save"
-              disabled={permissions.save ? false : true}
-            >
-              저장
-            </Button>
-          </ButtonContainer>
-        </GridTitleContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-          fileName={getMenuName()}
-        >
-          <Grid
-            style={{ height: webheight }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                person: userListData.find(
-                  (items: any) => items.user_id == row.person
-                )?.user_name,
-                proccd: proccdListData.find(
-                  (items: any) => items.sub_code == row.proccd
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+      {isMobile ? (
+        <>
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
             }}
-            onSelectionChange={onSelectionChange}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            //페이지 처리
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-          >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                ?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          checkField.includes(item.fieldName)
-                            ? CheckBoxReadOnlyCell
-                            : NumberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? DateCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
-                )}
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
-      <TabStrip
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-        style={{ width: "100%" }}
-        scrollable={isMobile}
-      >
-        <TabStripTab
-          title="상세정보"
-          disabled={permissions.view ? false : true}
-        >
-          <FormBoxWrap
-            style={{
-              height: webheight2,
-              width: "100%",
-              overflow: "auto",
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
             }}
-            className="FormBoxWrap"
           >
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>일자</th>
-                  <td>
-                    <DatePicker
-                      name="recdt"
-                      value={information.recdt}
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      placeholder=""
-                      className="required"
-                    />
-                  </td>
-                  <th>도면번호</th>
-                  <td>
-                    {information.workType == "N" ? (
-                      <Input
-                        name="dwgno"
-                        type="text"
-                        value={information.dwgno}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    ) : (
-                      <Input
-                        name="dwgno"
-                        type="text"
-                        value={information.dwgno}
-                        className="readonly"
-                      />
+            <SwiperSlide key={0}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>요약정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                      disabled={permissions.save ? false : true}
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                      disabled={permissions.save ? false : true}
+                    >
+                      삭제
+                    </Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    >
+                      저장
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName={getMenuName()}
+                >
+                  <Grid
+                    style={{ height: mobileheight }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        person: userListData.find(
+                          (items: any) => items.user_id == row.person
+                        )?.user_name,
+                        proccd: proccdListData.find(
+                          (items: any) => items.sub_code == row.proccd
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
                     )}
-                  </td>
-                  <th>REV</th>
-                  <td>
-                    <Input
-                      name="dwgrev"
-                      type="text"
-                      value={information.dwgrev}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>도면사양</th>
-                  <td>
-                    <Input
-                      name="dwgspec"
-                      type="text"
-                      value={information.dwgspec}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>품목코드</th>
-                  <td>
-                    <Input
-                      name="itemcd"
-                      type="text"
-                      value={information.itemcd}
-                      onChange={InputChange}
-                    />
-                    <ButtonInInput>
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //페이지 처리
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  checkField.includes(item.fieldName)
+                                    ? CheckBoxReadOnlyCell
+                                    : NumberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <FormBoxWrap style={{ height: mobileheight2 }}>
+                <ButtonContainer style={{ justifyContent: "space-between" }}>
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    icon="arrow-right"
+                  >
+                    이전
+                  </Button>
+                  <div>
+                    <Button
+                      onClick={onRevClick}
+                      themeColor={"primary"}
+                      icon="track-changes"
+                      disabled={permissions.save ? false : true}
+                    >
+                      리비전
+                    </Button>
+                    <Button
+                      onClick={onRevDeleteClick}
+                      themeColor={"primary"}
+                      icon="cancel"
+                      disabled={permissions.save ? false : true}
+                    >
+                      리비전취소
+                    </Button>
+                    {information.workType == "N" ? (
+                      <></>
+                    ) : (
                       <Button
-                        onClick={onItemWndClick2}
-                        icon="more-horizontal"
-                        fillMode="flat"
+                        onClick={() => {
+                          if (swiper && isMobile) {
+                            swiper.slideTo(2);
+                          }
+                        }}
+                        icon="arrow-right"
+                      >
+                        다음
+                      </Button>
+                    )}
+                  </div>
+                </ButtonContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>일자</th>
+                      <td>
+                        <DatePicker
+                          name="recdt"
+                          value={information.recdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
+                      <th>도면번호</th>
+                      <td>
+                        {information.workType == "N" ? (
+                          <Input
+                            name="dwgno"
+                            type="text"
+                            value={information.dwgno}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        ) : (
+                          <Input
+                            name="dwgno"
+                            type="text"
+                            value={information.dwgno}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>REV</th>
+                      <td>
+                        <Input
+                          name="dwgrev"
+                          type="text"
+                          value={information.dwgrev}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>도면사양</th>
+                      <td>
+                        <Input
+                          name="dwgspec"
+                          type="text"
+                          value={information.dwgspec}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>품목코드</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={information.itemcd}
+                          onChange={InputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onItemWndClick2}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>품목명</th>
+                      <td>
+                        <Input
+                          name="itemnm"
+                          type="text"
+                          value={information.itemnm}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>공정</th>
+                      <td>
+                        {information.workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="proccd"
+                                value={information.proccd}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                type="new"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="proccd"
+                                value={information.proccd}
+                                bizComponentId="L_PR010"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                textField="code_name"
+                                valueField="sub_code"
+                              />
+                            )}
+                      </td>
+                      <th>사용여부</th>
+                      <td>
+                        {information.workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionRadioGroup
+                                name="useyn2"
+                                customOptionData={customOptionData}
+                                changeData={RadioChange}
+                                type="new"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="useyn2"
+                                value={information.useyn2}
+                                bizComponentId="R_YESNO"
+                                bizComponentData={bizComponentData}
+                                changeData={RadioChange}
+                              />
+                            )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>프로젝트</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="project"
+                          type="text"
+                          value={information.project}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>공사번호</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="poregnum"
+                          type="text"
+                          value={information.poregnum}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>리비전사유</th>
+                      <td colSpan={5}>
+                        {revstate == true ? (
+                          <Input
+                            name="rev_reason"
+                            type="text"
+                            value={information.rev_reason}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="rev_reason"
+                            type="text"
+                            value={information.rev_reason}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>담당자</th>
+                      <td>
+                        {information.workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="person"
+                                value={information.person}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                type="new"
+                                textField="user_name"
+                                valueField="user_id"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="person"
+                                value={information.person}
+                                bizComponentId="L_sysUserMaster_001"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                textField="user_name"
+                                valueField="user_id"
+                              />
+                            )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>비고</th>
+                      <td colSpan={7}>
+                        <TextArea
+                          value={information.remark}
+                          name="remark"
+                          rows={2}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>첨부파일</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="arrow-right"
+                    >
+                      이전
+                    </Button>
+                    <div>
+                      <Button
+                        onClick={upload}
+                        themeColor={"primary"}
+                        icon={"upload"}
+                        disabled={
+                          permissions.save
+                            ? information.workType == "N"
+                              ? true
+                              : false
+                            : true
+                        }
+                      >
+                        업로드
+                        <input
+                          id="uploadAttachment"
+                          style={{ display: "none" }}
+                          type="file"
+                          multiple
+                          ref={excelsInput}
+                          onChange={(
+                            event: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            handleFileUpload(event.target.files);
+                          }}
+                        />
+                      </Button>
+                      <Button
+                        onClick={downloadFiles}
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                        icon={"download"}
+                        disabled={
+                          permissions.view
+                            ? information.workType == "N"
+                              ? true
+                              : false
+                            : true
+                        }
+                      >
+                        다운로드
+                      </Button>
+                      <Button
+                        onClick={deleteFiles}
+                        themeColor={"primary"}
+                        fillMode={"outline"}
+                        icon={"delete"}
+                        disabled={
+                          permissions.save
+                            ? information.workType == "N"
+                              ? true
+                              : false
+                            : true
+                        }
+                      >
+                        삭제
+                      </Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
+                  }}
+                  fileName={getMenuName()}
+                >
+                  <Grid
+                    style={{ height: mobileheight3 }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //페이지 처리
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    onItemChange={onAttItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="chk"
+                      title=" "
+                      width="45px"
+                      headerCell={CustomCheckBoxCell2}
+                      cell={CheckBoxCell}
+                    />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  checkField.includes(item.fieldName)
+                                    ? CheckBoxReadOnlyCell
+                                    : NumberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </>
+      ) : (
+        <>
+          <GridContainer>
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>요약정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="file-add"
+                  disabled={permissions.save ? false : true}
+                >
+                  신규
+                </Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                  disabled={permissions.save ? false : true}
+                >
+                  삭제
+                </Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  disabled={permissions.save ? false : true}
+                >
+                  저장
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName={getMenuName()}
+            >
+              <Grid
+                style={{ height: webheight }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    person: userListData.find(
+                      (items: any) => items.user_id == row.person
+                    )?.user_name,
+                    proccd: proccdListData.find(
+                      (items: any) => items.sub_code == row.proccd
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                //페이지 처리
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              checkField.includes(item.fieldName)
+                                ? CheckBoxReadOnlyCell
+                                : NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+          <TabStrip
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+            style={{ width: "100%" }}
+            scrollable={isMobile}
+          >
+            <TabStripTab
+              title="상세정보"
+              disabled={permissions.view ? false : true}
+            >
+              <FormBoxWrap>
+                <ButtonContainer>
+                  <Button
+                    onClick={onRevClick}
+                    themeColor={"primary"}
+                    icon="track-changes"
+                    disabled={permissions.save ? false : true}
+                  >
+                    리비전
+                  </Button>
+                  <Button
+                    onClick={onRevDeleteClick}
+                    themeColor={"primary"}
+                    icon="cancel"
+                    disabled={permissions.save ? false : true}
+                  >
+                    리비전취소
+                  </Button>
+                </ButtonContainer>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>일자</th>
+                      <td>
+                        <DatePicker
+                          name="recdt"
+                          value={information.recdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
+                      <th>도면번호</th>
+                      <td>
+                        {information.workType == "N" ? (
+                          <Input
+                            name="dwgno"
+                            type="text"
+                            value={information.dwgno}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        ) : (
+                          <Input
+                            name="dwgno"
+                            type="text"
+                            value={information.dwgno}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>REV</th>
+                      <td>
+                        <Input
+                          name="dwgrev"
+                          type="text"
+                          value={information.dwgrev}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>도면사양</th>
+                      <td>
+                        <Input
+                          name="dwgspec"
+                          type="text"
+                          value={information.dwgspec}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>품목코드</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={information.itemcd}
+                          onChange={InputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onItemWndClick2}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>품목명</th>
+                      <td>
+                        <Input
+                          name="itemnm"
+                          type="text"
+                          value={information.itemnm}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>공정</th>
+                      <td>
+                        {information.workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="proccd"
+                                value={information.proccd}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                type="new"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="proccd"
+                                value={information.proccd}
+                                bizComponentId="L_PR010"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                textField="code_name"
+                                valueField="sub_code"
+                              />
+                            )}
+                      </td>
+                      <th>사용여부</th>
+                      <td>
+                        {information.workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionRadioGroup
+                                name="useyn2"
+                                customOptionData={customOptionData}
+                                changeData={RadioChange}
+                                type="new"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentRadioGroup
+                                name="useyn2"
+                                value={information.useyn2}
+                                bizComponentId="R_YESNO"
+                                bizComponentData={bizComponentData}
+                                changeData={RadioChange}
+                              />
+                            )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>프로젝트</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="project"
+                          type="text"
+                          value={information.project}
+                          onChange={InputChange}
+                        />
+                      </td>
+                      <th>공사번호</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="poregnum"
+                          type="text"
+                          value={information.poregnum}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>리비전사유</th>
+                      <td colSpan={5}>
+                        {revstate == true ? (
+                          <Input
+                            name="rev_reason"
+                            type="text"
+                            value={information.rev_reason}
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <Input
+                            name="rev_reason"
+                            type="text"
+                            value={information.rev_reason}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>담당자</th>
+                      <td>
+                        {information.workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="person"
+                                value={information.person}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                type="new"
+                                textField="user_name"
+                                valueField="user_id"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="person"
+                                value={information.person}
+                                bizComponentId="L_sysUserMaster_001"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                textField="user_name"
+                                valueField="user_id"
+                              />
+                            )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>비고</th>
+                      <td colSpan={7}>
+                        <TextArea
+                          value={information.remark}
+                          name="remark"
+                          rows={2}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </TabStripTab>
+            <TabStripTab
+              title="첨부파일"
+              disabled={
+                permissions.view
+                  ? information.workType != "N"
+                    ? false
+                    : true
+                  : true
+              }
+            >
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>첨부파일</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "flex-start" }}>
+                    <Button
+                      onClick={upload}
+                      themeColor={"primary"}
+                      icon={"upload"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      업로드
+                      <input
+                        id="uploadAttachment"
+                        style={{ display: "none" }}
+                        type="file"
+                        multiple
+                        ref={excelsInput}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          handleFileUpload(event.target.files);
+                        }}
                       />
-                    </ButtonInInput>
-                  </td>
-                  <th>품목명</th>
-                  <td>
-                    <Input
-                      name="itemnm"
-                      type="text"
-                      value={information.itemnm}
-                      className="readonly"
+                    </Button>
+                    <Button
+                      onClick={downloadFiles}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon={"download"}
+                      disabled={permissions.view ? false : true}
+                    >
+                      다운로드
+                    </Button>
+                    <Button
+                      onClick={deleteFiles}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon={"delete"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
+                  }}
+                  fileName={getMenuName()}
+                >
+                  <Grid
+                    style={{ height: WebHeight2 }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //페이지 처리
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    onItemChange={onAttItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="chk"
+                      title=" "
+                      width="45px"
+                      headerCell={CustomCheckBoxCell2}
+                      cell={CheckBoxCell}
                     />
-                  </td>
-                  <th>공정</th>
-                  <td>
-                    {information.workType == "N"
-                      ? customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="proccd"
-                            value={information.proccd}
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                            type="new"
-                          />
-                        )
-                      : bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="proccd"
-                            value={information.proccd}
-                            bizComponentId="L_PR010"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                            textField="code_name"
-                            valueField="sub_code"
-                          />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  checkField.includes(item.fieldName)
+                                    ? CheckBoxReadOnlyCell
+                                    : NumberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
                         )}
-                  </td>
-                  <th>사용여부</th>
-                  <td>
-                    {information.workType == "N"
-                      ? customOptionData !== null && (
-                          <CustomOptionRadioGroup
-                            name="useyn2"
-                            customOptionData={customOptionData}
-                            changeData={RadioChange}
-                            type="new"
-                          />
-                        )
-                      : bizComponentData !== null && (
-                          <BizComponentRadioGroup
-                            name="useyn2"
-                            value={information.useyn2}
-                            bizComponentId="R_YESNO"
-                            bizComponentData={bizComponentData}
-                            changeData={RadioChange}
-                          />
-                        )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>프로젝트</th>
-                  <td colSpan={3}>
-                    <Input
-                      name="project"
-                      type="text"
-                      value={information.project}
-                      onChange={InputChange}
-                    />
-                  </td>
-                  <th>공사번호</th>
-                  <td colSpan={3}>
-                    <Input
-                      name="poregnum"
-                      type="text"
-                      value={information.poregnum}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>리비전사유</th>
-                  <td colSpan={5}>
-                    <Input
-                      name="rev_reason"
-                      type="text"
-                      value={information.rev_reason}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>담당자</th>
-                  <td>
-                    {information.workType == "N"
-                      ? customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="person"
-                            value={information.person}
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                            type="new"
-                            textField="user_name"
-                            valueField="user_id"
-                          />
-                        )
-                      : bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="person"
-                            value={information.person}
-                            bizComponentId="L_sysUserMaster_001"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                            textField="user_name"
-                            valueField="user_id"
-                          />
-                        )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>비고</th>
-                  <td colSpan={7}>
-                    <TextArea
-                      value={information.remark}
-                      name="remark"
-                      rows={2}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-        </TabStripTab>
-        <TabStripTab
-          title="첨부파일"
-          disabled={
-            permissions.view
-              ? information.workType != "N"
-                ? false
-                : true
-              : true
-          }
-        ></TabStripTab>
-      </TabStrip>
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </TabStripTab>
+          </TabStrip>
+        </>
+      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
