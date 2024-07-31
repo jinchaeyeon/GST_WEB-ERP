@@ -1696,7 +1696,12 @@ const BA_A0040: React.FC = () => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
     if (swiper && isMobile) {
       swiper.slideTo(0);
     }

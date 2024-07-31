@@ -99,6 +99,7 @@ const BA_A0021W_603 = lazy(() => import("./routes/BA_A0021W_603"));
 const BA_A0040W = lazy(() => import("./routes/BA_A0040W"));
 const BA_A0041W = lazy(() => import("./routes/BA_A0041W"));
 const BA_A0050W = lazy(() => import("./routes/BA_A0050W"));
+const BA_A0060W = lazy(() => import("./routes/BA_A0060W"));
 const BA_A0070W = lazy(() => import("./routes/BA_A0070W"));
 const BA_A0080W = lazy(() => import("./routes/BA_A0080W"));
 const BA_A0100W = lazy(() => import("./routes/BA_A0100W"));
@@ -713,6 +714,8 @@ const AppInner: React.FC = () => {
       return BA_A0041W;
     } else if (str == "BA_A0050W") {
       return BA_A0050W;
+    } else if (str == "BA_A0060W") {
+      return BA_A0060W;
     } else if (str == "BA_A0070W") {
       return BA_A0070W;
     } else if (str == "BA_A0080W") {
@@ -1192,6 +1195,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/BA_A0040W" component={BA_A0040W} exact />
                     <AuthRoute path="/BA_A0041W" component={BA_A0041W} exact />
                     <AuthRoute path="/BA_A0050W" component={BA_A0050W} exact />
+                    <AuthRoute path="/BA_A0060W" component={BA_A0060W} exact />
                     <AuthRoute path="/BA_A0070W" component={BA_A0070W} exact />
                     <AuthRoute path="/BA_A0080W" component={BA_A0080W} exact />
                     <AuthRoute path="/BA_A0100W" component={BA_A0100W} exact />

@@ -326,18 +326,6 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_amt_list",
-        field: "amt",
-        caption: "금액",
-        width: 100,
-      },
-      {
-        id: "col_taxamt_list",
-        field: "taxamt",
-        caption: "세액",
-        width: 100,
-      },
-      {
         id: "col_contraamt_list",
         field: "contraamt",
         caption: "계약금액",

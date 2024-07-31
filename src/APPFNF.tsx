@@ -99,6 +99,7 @@ const BA_A0021W_603 = lazy(() => import("./routes/BA_A0021W_603"));
 const BA_A0040W = lazy(() => import("./routes/BA_A0040W"));
 const BA_A0041W = lazy(() => import("./routes/BA_A0041W"));
 const BA_A0050W = lazy(() => import("./routes/BA_A0050W"));
+const BA_A0060W = lazy(() => import("./routes/BA_A0060W"));
 const BA_A0070W = lazy(() => import("./routes/BA_A0070W"));
 const BA_A0080W = lazy(() => import("./routes/BA_A0080W"));
 const BA_A0100W = lazy(() => import("./routes/BA_A0100W"));
@@ -428,11 +429,7 @@ const AppInner: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   useEffect(() => {
-    if (
-      token &&
-      userId != "" &&
-      (sessionUserId == "" || sessionUserId == null)
-    )
+    if (token && userId != "" && (sessionUserId == "" || sessionUserId == null))
       fetchSessionItem();
   }, [userId, sessionUserId, token]);
 
@@ -695,7 +692,7 @@ const AppInner: React.FC = () => {
       return AC_B6080W;
     } else if (str == "AC_B6080W_628") {
       return AC_B6080W_628;
-    }else if (str == "AC_B8000W") {
+    } else if (str == "AC_B8000W") {
       return AC_B8000W;
     } else if (str == "AC_B8030W") {
       return AC_B8030W;
@@ -717,6 +714,8 @@ const AppInner: React.FC = () => {
       return BA_A0041W;
     } else if (str == "BA_A0050W") {
       return BA_A0050W;
+    } else if (str == "BA_A0060W") {
+      return BA_A0060W;
     } else if (str == "BA_A0070W") {
       return BA_A0070W;
     } else if (str == "BA_A0080W") {
@@ -1172,7 +1171,11 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/AC_B6040W" component={AC_B6040W} exact />
                     <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
                     <AuthRoute path="/AC_B6080W" component={AC_B6080W} exact />
-                    <AuthRoute path="/AC_B6080W_628" component={AC_B6080W_628} exact />
+                    <AuthRoute
+                      path="/AC_B6080W_628"
+                      component={AC_B6080W_628}
+                      exact
+                    />
                     <AuthRoute path="/AC_B8000W" component={AC_B8000W} exact />
                     <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
                     <AuthRoute path="/AC_B8040W" component={AC_B8040W} exact />
@@ -1193,6 +1196,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/BA_A0040W" component={BA_A0040W} exact />
                     <AuthRoute path="/BA_A0041W" component={BA_A0041W} exact />
                     <AuthRoute path="/BA_A0050W" component={BA_A0050W} exact />
+                    <AuthRoute path="/BA_A0060W" component={BA_A0060W} exact />
                     <AuthRoute path="/BA_A0070W" component={BA_A0070W} exact />
                     <AuthRoute path="/BA_A0080W" component={BA_A0080W} exact />
                     <AuthRoute path="/BA_A0100W" component={BA_A0100W} exact />
@@ -1333,7 +1337,11 @@ const AppInner: React.FC = () => {
                     />
                     <AuthRoute path="/MA_B2100W" component={MA_B2100W} exact />
                     <AuthRoute path="/MA_B2500W" component={MA_B2500W} exact />
-                    <AuthRoute path="/MA_B2500W_628" component={MA_B2500W_628} exact />
+                    <AuthRoute
+                      path="/MA_B2500W_628"
+                      component={MA_B2500W_628}
+                      exact
+                    />
                     <AuthRoute path="/MA_B2700W" component={MA_B2700W} exact />
                     <AuthRoute path="/MA_B2800W" component={MA_B2800W} exact />
                     <AuthRoute path="/MA_B3000W" component={MA_B3000W} exact />
@@ -1362,7 +1370,11 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/PR_A9000W" component={PR_A9000W} exact />
                     <AuthRoute path="/PR_A9100W" component={PR_A9100W} exact />
                     <AuthRoute path="/PR_B0020W" component={PR_B0020W} exact />
-                    <AuthRoute path="/PR_B0020W_628" component={PR_B0020W_628} exact />
+                    <AuthRoute
+                      path="/PR_B0020W_628"
+                      component={PR_B0020W_628}
+                      exact
+                    />
                     <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
                     <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
                     <AuthRoute path="/PR_B1500W" component={PR_B1500W} exact />
