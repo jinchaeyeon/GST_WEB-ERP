@@ -3220,6 +3220,7 @@ const SA_A1100W_603: React.FC = () => {
                                 name="files"
                                 type="text"
                                 value={Information.files}
+                                className="readonly"
                               />
                               <ButtonInInput>
                                 <Button
