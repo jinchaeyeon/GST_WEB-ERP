@@ -74,6 +74,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AC_A1010W_Window from "../components/Windows/AC_A1010W_Window";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
@@ -1739,7 +1740,124 @@ const AC_A1010W: React.FC = () => {
     }));
   };
 
-  const saveExcel = (jsonArr: any[]) => {};
+  const saveExcel = (jsonArr: any[]) => {
+    if (jsonArr.length == 0) {
+      alert("데이터가 없습니다.");
+      return;
+    }
+    const columns: string[] = [
+      "승인일자",
+      "카드사",
+      "카드번호",
+      "가맹점사업자번호",
+      "가맹점명",
+      "공급가액",
+      "세액",
+      "봉사료",
+      "합계금액",
+      "가맹점유형",
+      "업태",
+      "업종",
+      "공제여부",
+      "비고",
+    ];
+
+    let valid = true;
+    jsonArr.map((items: any) => {
+      Object.keys(items).map((item: any) => {
+        if (!columns.includes(item) && valid == true) {
+          valid = false;
+          return;
+        }
+      });
+    });
+
+    if (valid != true) {
+      alert("양식이 맞지 않습니다.");
+      return;
+    }
+
+    jsonArr.map((items) => {
+      const {
+        승인일자 = "",
+        카드사 = "",
+        카드번호 = "",
+        가맹점사업자번호 = "",
+        가맹점명 = "",
+        공급가액 = "",
+        세액 = "",
+        봉사료 = "",
+        합계금액 = "",
+        가맹점유형 = "",
+        업태 = "",
+        업종 = "",
+        공제여부 = "",
+        비고 = "",
+      } = items;
+
+      mainDataResult.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
+        }
+      });
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        ackey: "",
+        acntcd: "",
+        banknm: 카드사 == "" ? "" : 카드사,
+        bizdivnm: 가맹점유형 == "" ? "" : 가맹점유형,
+        bizregnum: 가맹점사업자번호 == "" ? "" : 가맹점사업자번호,
+        chk: "N",
+        compclass: "",
+        compclassnm: 업태 == "" ? "" : 업태,
+        comptype: 업종 == "" ? "" : 업종,
+        creditcd: "",
+        creditnum: 카드번호 == "" ? "" : 카드번호,
+        custcd: "",
+        custnm: 가맹점명 == "" ? "" : 가맹점명,
+        dedyn: "",
+        dedynnm: 공제여부 == "" ? "" : 공제여부,
+        expackey: "",
+        form_id: "AC_A1010W",
+        recdt:
+          승인일자 == ""
+            ? convertDateToStr(new Date())
+            : 승인일자.length == 8
+            ? 승인일자
+            : convertDateToStr(new Date()),
+        regcustnm: "",
+        remark: 비고 == "" ? "" : 비고,
+        remark2: "",
+        seq: 0,
+        splyamt: 공급가액 == "" ? 0 : 공급가액,
+        svcamt: 봉사료 == "" ? 0 : 봉사료,
+        taxamt: 세액 == "" ? 0 : 세액,
+        taxyn: "N",
+        totamt: 합계금액 == "" ? 0 : 합계금액,
+        yyyymm: convertDateToStr(filters.yyyymm).substring(0, 6),
+        rowstatus: "N",
+      };
+
+      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+      setPage((prev) => ({
+        ...prev,
+        skip: 0,
+        take: prev.take + 1,
+      }));
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    });
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
 
   return (
     <>
@@ -1825,7 +1943,7 @@ const AC_A1010W: React.FC = () => {
               style={{}}
             />
             <Button
-              //onClick={onExcelAttachmentsWndClick}
+              onClick={onAttachmentsWndClick}
               icon="file"
               fillMode="outline"
               themeColor={"primary"}
@@ -1961,6 +2079,18 @@ const AC_A1010W: React.FC = () => {
       </GridContainer>
       {DetailWindowVisible && (
         <AC_A1010W_Window setVisible={setDetailWindowVisible} modal={true} />
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          para={"AC_A1010W"}
+          modal={true}
+          permission={{
+            upload: permissions.save,
+            download: permissions.view,
+            delete: permissions.save,
+          }}
+        />
       )}
     </>
   );
