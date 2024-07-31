@@ -64,7 +64,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UsePermissions
+  UsePermissions,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -73,6 +73,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import AC_A1010W_Window from "../components/Windows/AC_A1010W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
@@ -241,6 +242,8 @@ const AC_A1010W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
+  const [DetailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".TitleContainer");
@@ -379,7 +382,10 @@ const AC_A1010W: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        chk: item.chk == "Y" ? true : false,
+      }));
 
       setMainDataResult({
         data: rows,
@@ -665,6 +671,7 @@ const AC_A1010W: React.FC = () => {
         field == "acntcd" ||
         field == "taxyn" ||
         field == "remark2" ||
+        field == "chk" ||
         (dataItem.rowstatus == "N" &&
           field != "expackey" &&
           field != "regcustnm"))
@@ -961,9 +968,14 @@ const AC_A1010W: React.FC = () => {
 
   const onSaveClick = () => {
     if (!permissions.save) return;
-    const dataItem = mainDataResult.data;
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
-    if (dataItem.length == 0 && deletedMainRows) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     let dataArr: any = {
       seq_s: [],
@@ -1022,6 +1034,61 @@ const AC_A1010W: React.FC = () => {
 
       dataArr.seq_s.push(seq);
       dataArr.rowstatus_s.push(rowstatus);
+      dataArr.recdt_s.push(
+        recdt == "99991231" || recdt == undefined ? "" : recdt
+      );
+      dataArr.banknm_s.push(banknm);
+      dataArr.creditnum_s.push(creditnum);
+      dataArr.bizregnum_s.push(bizregnum);
+      dataArr.custnm_s.push(custnm);
+      dataArr.splyamt_s.push(splyamt);
+      dataArr.taxamt_s.push(taxamt);
+      dataArr.svcamt_s.push(svcamt);
+      dataArr.totamt_s.push(totamt);
+      dataArr.bizdivnm_s.push(bizdivnm);
+      dataArr.compclassnm_s.push(compclassnm);
+      dataArr.comptype_s.push(comptype);
+      dataArr.dedynnm_s.push(dedynnm);
+      dataArr.remark_s.push(remark);
+      dataArr.creditcd_s.push(creditcd);
+      dataArr.custcd_s.push(custcd);
+      dataArr.compclass_s.push(compclass);
+      dataArr.acntcd_s.push(acntcd);
+      dataArr.dedyn_s.push(dedyn);
+      dataArr.taxyn_s.push(taxyn == true ? "Y" : taxyn == false ? "N" : taxyn);
+      dataArr.remark2_s.push(remark2);
+    });
+
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const {
+        seq = "",
+        rowstatus = "",
+        recdt = "",
+        banknm = "",
+        creditnum = "",
+        bizregnum = "",
+        custnm = "",
+        splyamt = "",
+        taxamt = "",
+        svcamt = "",
+        totamt = "",
+        bizdivnm = "",
+        compclassnm = "",
+        comptype = "",
+        dedynnm = "",
+        remark = "",
+
+        creditcd = "",
+        custcd = "",
+        compclass = "",
+        acntcd = "",
+        dedyn = "",
+        taxyn = "",
+        remark2 = "",
+      } = item;
+
+      dataArr.seq_s.push(seq);
+      dataArr.rowstatus_s.push("D");
       dataArr.recdt_s.push(
         recdt == "99991231" || recdt == undefined ? "" : recdt
       );
@@ -1188,8 +1255,8 @@ const AC_A1010W: React.FC = () => {
           isSearch: true,
         }));
       } else {
-        if(ParaData.workType == "AUTO") {
-          alert("정상적으로 셋팅되었습니다.")
+        if (ParaData.workType == "AUTO") {
+          alert("정상적으로 셋팅되었습니다.");
         }
         setFilters((prev: any) => ({
           ...prev,
@@ -1286,7 +1353,391 @@ const AC_A1010W: React.FC = () => {
       orgdiv: filters.orgdiv,
       yyyymm: convertDateToStr(filters.yyyymm).substring(0, 6),
     }));
-  }
+  };
+
+  const onSLIP = () => {
+    if (!permissions.save) return;
+    if (!window.confirm(`전표를 등록하시겠습니까?`)) {
+      return false;
+    }
+    const dataItem = mainDataResult.data.filter(
+      (item: any) => item.chk == true || item.chk == "Y"
+    );
+
+    if (dataItem.length == 0) {
+      alert("선택한 데이터가 없습니다.");
+      return false;
+    }
+
+    let dataArr: any = {
+      seq_s: [],
+      rowstatus_s: [],
+      recdt_s: [],
+      banknm_s: [],
+      creditnum_s: [],
+      bizregnum_s: [],
+      custnm_s: [],
+      splyamt_s: [],
+      taxamt_s: [],
+      svcamt_s: [],
+      totamt_s: [],
+      bizdivnm_s: [],
+      compclassnm_s: [],
+      comptype_s: [],
+      dedynnm_s: [],
+      remark_s: [],
+
+      creditcd_s: [],
+      custcd_s: [],
+      compclass_s: [],
+      acntcd_s: [],
+      dedyn_s: [],
+      taxyn_s: [],
+      remark2_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        seq = "",
+        rowstatus = "",
+        recdt = "",
+        banknm = "",
+        creditnum = "",
+        bizregnum = "",
+        custnm = "",
+        splyamt = "",
+        taxamt = "",
+        svcamt = "",
+        totamt = "",
+        bizdivnm = "",
+        compclassnm = "",
+        comptype = "",
+        dedynnm = "",
+        remark = "",
+
+        creditcd = "",
+        custcd = "",
+        compclass = "",
+        acntcd = "",
+        dedyn = "",
+        taxyn = "",
+        remark2 = "",
+      } = item;
+
+      dataArr.seq_s.push(seq);
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.recdt_s.push(
+        recdt == "99991231" || recdt == undefined ? "" : recdt
+      );
+      dataArr.banknm_s.push(banknm);
+      dataArr.creditnum_s.push(creditnum);
+      dataArr.bizregnum_s.push(bizregnum);
+      dataArr.custnm_s.push(custnm);
+      dataArr.splyamt_s.push(splyamt);
+      dataArr.taxamt_s.push(taxamt);
+      dataArr.svcamt_s.push(svcamt);
+      dataArr.totamt_s.push(totamt);
+      dataArr.bizdivnm_s.push(bizdivnm);
+      dataArr.compclassnm_s.push(compclassnm);
+      dataArr.comptype_s.push(comptype);
+      dataArr.dedynnm_s.push(dedynnm);
+      dataArr.remark_s.push(remark);
+      dataArr.creditcd_s.push(creditcd);
+      dataArr.custcd_s.push(custcd);
+      dataArr.compclass_s.push(compclass);
+      dataArr.acntcd_s.push(acntcd);
+      dataArr.dedyn_s.push(dedyn);
+      dataArr.taxyn_s.push(taxyn == true ? "Y" : taxyn == false ? "N" : taxyn);
+      dataArr.remark2_s.push(remark2);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "SLIP",
+      orgdiv: sessionOrgdiv,
+      location: sessionLocation,
+      yyyymm: convertDateToStr(filters.yyyymm).substring(0, 6),
+      seq: dataArr.seq_s.join("|"),
+      rowstatus: dataArr.rowstatus_s.join("|"),
+      recdt: dataArr.recdt_s.join("|"),
+      banknm: dataArr.banknm_s.join("|"),
+      creditnum: dataArr.creditnum_s.join("|"),
+      bizregnum: dataArr.bizregnum_s.join("|"),
+      custnm: dataArr.custnm_s.join("|"),
+      splyamt: dataArr.splyamt_s.join("|"),
+      taxamt: dataArr.taxamt_s.join("|"),
+      svcamt: dataArr.svcamt_s.join("|"),
+      totamt: dataArr.totamt_s.join("|"),
+      bizdivnm: dataArr.bizdivnm_s.join("|"),
+      compclassnm: dataArr.compclassnm_s.join("|"),
+      comptype: dataArr.comptype_s.join("|"),
+      dedynnm: dataArr.dedynnm_s.join("|"),
+      remark: dataArr.remark_s.join("|"),
+
+      creditcd: dataArr.creditcd_s.join("|"),
+      custcd: dataArr.custcd_s.join("|"),
+      compclass: dataArr.compclass_s.join("|"),
+      acntcd: dataArr.acntcd_s.join("|"),
+      dedyn: dataArr.dedyn_s.join("|"),
+      taxyn: dataArr.taxyn_s.join("|"),
+      remark2: dataArr.remark2_s.join("|"),
+    }));
+  };
+
+  const onDrop = () => {
+    if (!permissions.save) return;
+    if (!window.confirm(`전표를 해제하시겠습니까?`)) {
+      return false;
+    }
+    const dataItem = mainDataResult.data.filter(
+      (item: any) => item.chk == true || item.chk == "Y"
+    );
+
+    if (dataItem.length == 0) {
+      alert("선택한 데이터가 없습니다.");
+      return false;
+    }
+
+    let dataArr: any = {
+      seq_s: [],
+      rowstatus_s: [],
+      recdt_s: [],
+      banknm_s: [],
+      creditnum_s: [],
+      bizregnum_s: [],
+      custnm_s: [],
+      splyamt_s: [],
+      taxamt_s: [],
+      svcamt_s: [],
+      totamt_s: [],
+      bizdivnm_s: [],
+      compclassnm_s: [],
+      comptype_s: [],
+      dedynnm_s: [],
+      remark_s: [],
+
+      creditcd_s: [],
+      custcd_s: [],
+      compclass_s: [],
+      acntcd_s: [],
+      dedyn_s: [],
+      taxyn_s: [],
+      remark2_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        seq = "",
+        rowstatus = "",
+        recdt = "",
+        banknm = "",
+        creditnum = "",
+        bizregnum = "",
+        custnm = "",
+        splyamt = "",
+        taxamt = "",
+        svcamt = "",
+        totamt = "",
+        bizdivnm = "",
+        compclassnm = "",
+        comptype = "",
+        dedynnm = "",
+        remark = "",
+
+        creditcd = "",
+        custcd = "",
+        compclass = "",
+        acntcd = "",
+        dedyn = "",
+        taxyn = "",
+        remark2 = "",
+      } = item;
+
+      dataArr.seq_s.push(seq);
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.recdt_s.push(
+        recdt == "99991231" || recdt == undefined ? "" : recdt
+      );
+      dataArr.banknm_s.push(banknm);
+      dataArr.creditnum_s.push(creditnum);
+      dataArr.bizregnum_s.push(bizregnum);
+      dataArr.custnm_s.push(custnm);
+      dataArr.splyamt_s.push(splyamt);
+      dataArr.taxamt_s.push(taxamt);
+      dataArr.svcamt_s.push(svcamt);
+      dataArr.totamt_s.push(totamt);
+      dataArr.bizdivnm_s.push(bizdivnm);
+      dataArr.compclassnm_s.push(compclassnm);
+      dataArr.comptype_s.push(comptype);
+      dataArr.dedynnm_s.push(dedynnm);
+      dataArr.remark_s.push(remark);
+      dataArr.creditcd_s.push(creditcd);
+      dataArr.custcd_s.push(custcd);
+      dataArr.compclass_s.push(compclass);
+      dataArr.acntcd_s.push(acntcd);
+      dataArr.dedyn_s.push(dedyn);
+      dataArr.taxyn_s.push(taxyn == true ? "Y" : taxyn == false ? "N" : taxyn);
+      dataArr.remark2_s.push(remark2);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "DROP",
+      orgdiv: sessionOrgdiv,
+      location: sessionLocation,
+      yyyymm: convertDateToStr(filters.yyyymm).substring(0, 6),
+      seq: dataArr.seq_s.join("|"),
+      rowstatus: dataArr.rowstatus_s.join("|"),
+      recdt: dataArr.recdt_s.join("|"),
+      banknm: dataArr.banknm_s.join("|"),
+      creditnum: dataArr.creditnum_s.join("|"),
+      bizregnum: dataArr.bizregnum_s.join("|"),
+      custnm: dataArr.custnm_s.join("|"),
+      splyamt: dataArr.splyamt_s.join("|"),
+      taxamt: dataArr.taxamt_s.join("|"),
+      svcamt: dataArr.svcamt_s.join("|"),
+      totamt: dataArr.totamt_s.join("|"),
+      bizdivnm: dataArr.bizdivnm_s.join("|"),
+      compclassnm: dataArr.compclassnm_s.join("|"),
+      comptype: dataArr.comptype_s.join("|"),
+      dedynnm: dataArr.dedynnm_s.join("|"),
+      remark: dataArr.remark_s.join("|"),
+
+      creditcd: dataArr.creditcd_s.join("|"),
+      custcd: dataArr.custcd_s.join("|"),
+      compclass: dataArr.compclass_s.join("|"),
+      acntcd: dataArr.acntcd_s.join("|"),
+      dedyn: dataArr.dedyn_s.join("|"),
+      taxyn: dataArr.taxyn_s.join("|"),
+      remark2: dataArr.remark2_s.join("|"),
+    }));
+  };
+
+  const onCust = () => {
+    if (!permissions.save) return;
+    const dataItem = mainDataResult.data.filter(
+      (item: any) => item.taxyn == true || item.taxyn == "Y"
+    );
+
+    if (dataItem.length == 0) {
+      alert("선택한 데이터가 없습니다.");
+      return false;
+    }
+
+    let dataArr: any = {
+      seq_s: [],
+      rowstatus_s: [],
+      recdt_s: [],
+      banknm_s: [],
+      creditnum_s: [],
+      bizregnum_s: [],
+      custnm_s: [],
+      splyamt_s: [],
+      taxamt_s: [],
+      svcamt_s: [],
+      totamt_s: [],
+      bizdivnm_s: [],
+      compclassnm_s: [],
+      comptype_s: [],
+      dedynnm_s: [],
+      remark_s: [],
+
+      creditcd_s: [],
+      custcd_s: [],
+      compclass_s: [],
+      acntcd_s: [],
+      dedyn_s: [],
+      taxyn_s: [],
+      remark2_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        seq = "",
+        rowstatus = "",
+        recdt = "",
+        banknm = "",
+        creditnum = "",
+        bizregnum = "",
+        custnm = "",
+        splyamt = "",
+        taxamt = "",
+        svcamt = "",
+        totamt = "",
+        bizdivnm = "",
+        compclassnm = "",
+        comptype = "",
+        dedynnm = "",
+        remark = "",
+
+        creditcd = "",
+        custcd = "",
+        compclass = "",
+        acntcd = "",
+        dedyn = "",
+        taxyn = "",
+        remark2 = "",
+      } = item;
+
+      dataArr.seq_s.push(seq);
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.recdt_s.push(
+        recdt == "99991231" || recdt == undefined ? "" : recdt
+      );
+      dataArr.banknm_s.push(banknm);
+      dataArr.creditnum_s.push(creditnum);
+      dataArr.bizregnum_s.push(bizregnum);
+      dataArr.custnm_s.push(custnm);
+      dataArr.splyamt_s.push(splyamt);
+      dataArr.taxamt_s.push(taxamt);
+      dataArr.svcamt_s.push(svcamt);
+      dataArr.totamt_s.push(totamt);
+      dataArr.bizdivnm_s.push(bizdivnm);
+      dataArr.compclassnm_s.push(compclassnm);
+      dataArr.comptype_s.push(comptype);
+      dataArr.dedynnm_s.push(dedynnm);
+      dataArr.remark_s.push(remark);
+      dataArr.creditcd_s.push(creditcd);
+      dataArr.custcd_s.push(custcd);
+      dataArr.compclass_s.push(compclass);
+      dataArr.acntcd_s.push(acntcd);
+      dataArr.dedyn_s.push(dedyn);
+      dataArr.taxyn_s.push(taxyn == true ? "Y" : taxyn == false ? "N" : taxyn);
+      dataArr.remark2_s.push(remark2);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "CUST",
+      orgdiv: sessionOrgdiv,
+      location: sessionLocation,
+      yyyymm: convertDateToStr(filters.yyyymm).substring(0, 6),
+      seq: dataArr.seq_s.join("|"),
+      rowstatus: dataArr.rowstatus_s.join("|"),
+      recdt: dataArr.recdt_s.join("|"),
+      banknm: dataArr.banknm_s.join("|"),
+      creditnum: dataArr.creditnum_s.join("|"),
+      bizregnum: dataArr.bizregnum_s.join("|"),
+      custnm: dataArr.custnm_s.join("|"),
+      splyamt: dataArr.splyamt_s.join("|"),
+      taxamt: dataArr.taxamt_s.join("|"),
+      svcamt: dataArr.svcamt_s.join("|"),
+      totamt: dataArr.totamt_s.join("|"),
+      bizdivnm: dataArr.bizdivnm_s.join("|"),
+      compclassnm: dataArr.compclassnm_s.join("|"),
+      comptype: dataArr.comptype_s.join("|"),
+      dedynnm: dataArr.dedynnm_s.join("|"),
+      remark: dataArr.remark_s.join("|"),
+
+      creditcd: dataArr.creditcd_s.join("|"),
+      custcd: dataArr.custcd_s.join("|"),
+      compclass: dataArr.compclass_s.join("|"),
+      acntcd: dataArr.acntcd_s.join("|"),
+      dedyn: dataArr.dedyn_s.join("|"),
+      taxyn: dataArr.taxyn_s.join("|"),
+      remark2: dataArr.remark2_s.join("|"),
+    }));
+  };
 
   const saveExcel = (jsonArr: any[]) => {};
 
@@ -1383,7 +1834,7 @@ const AC_A1010W: React.FC = () => {
               엑셀양식
             </Button>
             <Button
-              //onClick={onExcelAttachmentsWndClick}
+              onClick={() => setDetailWindowVisible(true)}
               icon="track-changes-enable"
               fillMode="outline"
               themeColor={"primary"}
@@ -1401,7 +1852,7 @@ const AC_A1010W: React.FC = () => {
               셋팅
             </Button>
             <Button
-              //onClick={onExcelAttachmentsWndClick}
+              onClick={onCust}
               icon="file-add"
               fillMode="outline"
               themeColor={"primary"}
@@ -1410,7 +1861,7 @@ const AC_A1010W: React.FC = () => {
               업체
             </Button>
             <Button
-              //onClick={onExcelAttachmentsWndClick}
+              onClick={onSLIP}
               icon="check"
               fillMode="outline"
               themeColor={"primary"}
@@ -1419,7 +1870,7 @@ const AC_A1010W: React.FC = () => {
               확정
             </Button>
             <Button
-              //onClick={onExcelAttachmentsWndClick}
+              onClick={onDrop}
               icon="close"
               fillMode="outline"
               themeColor={"primary"}
@@ -1508,6 +1959,9 @@ const AC_A1010W: React.FC = () => {
           </ExcelExport>
         </FormContext.Provider>
       </GridContainer>
+      {DetailWindowVisible && (
+        <AC_A1010W_Window setVisible={setDetailWindowVisible} modal={true} />
+      )}
     </>
   );
 };
