@@ -1825,8 +1825,8 @@ const SA_A1001W_603: React.FC = () => {
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
-                    person: userListData.find(
-                      (items: any) => items.user_id == row.person
+                    chkperson: userListData.find(
+                      (items: any) => items.user_id == row.chkperson
                     )?.user_name,
                     materialtype: materialtypeListData.find(
                       (items: any) => items.sub_code == row.materialtype
