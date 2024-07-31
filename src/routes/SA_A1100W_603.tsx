@@ -1611,7 +1611,7 @@ const SA_A1100W_603: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field == "amt" || field == "remark") {
+    if (field == "amt") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
