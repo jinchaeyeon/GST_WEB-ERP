@@ -638,10 +638,18 @@ const SA_A1100W_603: React.FC = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height2);
-        setMobileHeight2(getDeviceHeight(false) - height - height2 - height3 - height9);
-        setMobileHeight3(getDeviceHeight(false) - height - height2 - height4 - height9);
-        setMobileHeight4(getDeviceHeight(false) - height - height2 - height5 - height9);
-        setMobileHeight5(getDeviceHeight(false) - height - height2 - height6 - height9);
+        setMobileHeight2(
+          getDeviceHeight(false) - height - height2 - height3 - height9
+        );
+        setMobileHeight3(
+          getDeviceHeight(false) - height - height2 - height4 - height9
+        );
+        setMobileHeight4(
+          getDeviceHeight(false) - height - height2 - height5 - height9
+        );
+        setMobileHeight5(
+          getDeviceHeight(false) - height - height2 - height6 - height9
+        );
         setWebHeight(getDeviceHeight(true) - height - height2);
         setWebHeight2(
           (getDeviceHeight(false) - height - height2 - height7 - height8) / 2 -
@@ -2037,6 +2045,43 @@ const SA_A1100W_603: React.FC = () => {
 
   const onSaveClick = () => {
     if (!permissions.save) return;
+    let valid = true;
+    if (
+      convertDateToStr(Information.strdt).substring(0, 4) < "1997" ||
+      convertDateToStr(Information.strdt).substring(6, 8) > "31" ||
+      convertDateToStr(Information.strdt).substring(6, 8) < "01" ||
+      convertDateToStr(Information.strdt).substring(6, 8).length != 2
+    ) {
+      valid = false;
+    } else if (
+      convertDateToStr(Information.enddt).substring(0, 4) < "1997" ||
+      convertDateToStr(Information.enddt).substring(6, 8) > "31" ||
+      convertDateToStr(Information.enddt).substring(6, 8) < "01" ||
+      convertDateToStr(Information.enddt).substring(6, 8).length != 2
+    ) {
+      valid = false;
+    } else if (
+      convertDateToStr(Information.cotracdt).substring(0, 4) < "1997" ||
+      convertDateToStr(Information.cotracdt).substring(6, 8) > "31" ||
+      convertDateToStr(Information.cotracdt).substring(6, 8) < "01" ||
+      convertDateToStr(Information.cotracdt).substring(6, 8).length != 2
+    ) {
+      valid = false;
+    } else if (Information.project == null || Information.project == "") {
+      valid = false;
+    } else if (Information.taxdiv == null || Information.taxdiv == "") {
+      valid = false;
+    } else if (Information.amtunit == null || Information.amtunit == "") {
+      valid = false;
+    } else if (Information.wonchgrat == null || Information.wonchgrat == "") {
+      valid = false;
+    }
+
+    if (valid != true) {
+      alert("필수값을 입력해주세요.");
+      return false;
+    }
+
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus == "N" || item.rowstatus == "U") &&
@@ -3175,7 +3220,6 @@ const SA_A1100W_603: React.FC = () => {
                                 name="files"
                                 type="text"
                                 value={Information.files}
-                                className="readonly"
                               />
                               <ButtonInInput>
                                 <Button
@@ -3498,9 +3542,7 @@ const SA_A1100W_603: React.FC = () => {
                           계약 상세내역
                         </GridTitle>
                       </ButtonContainer>
-                      <ButtonContainer
-                        style={{ flexWrap: "wrap" }}
-                      >
+                      <ButtonContainer style={{ flexWrap: "wrap" }}>
                         <Button
                           themeColor={"primary"}
                           fillMode="outline"
@@ -3862,7 +3904,6 @@ const SA_A1100W_603: React.FC = () => {
                             name="files"
                             type="text"
                             value={Information.files}
-                            className="readonly"
                           />
                           <ButtonInInput>
                             <Button
