@@ -14,7 +14,21 @@ import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 
+export const getColor = () => {
+  const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
+
+  if(currentTheme == "blue") {
+    return "#2289C3";
+  } else if(currentTheme == "yellow") {
+    return "#f5b901";
+  } else if(currentTheme == "navy") {
+    return "#303fad";
+  } else if(currentTheme == "orange") {
+    return "#f1a539";
+  } 
+}
 export const getFormId = () => {
   return (
     window.location.href

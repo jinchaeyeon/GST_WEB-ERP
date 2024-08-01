@@ -8,10 +8,7 @@ import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter } from "react-router-dom";
 import { RecoilRoot } from "recoil";
-import APPDDGD from "./APPDDGD";
-import APPFNF from "./APPFNF";
-import APPOLED from "./APPOLED";
-import APPWEBERP from "./APPWEBERP";
+import APP from "./APP";
 import "./flags.css";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
@@ -49,15 +46,7 @@ root.render(
     <RecoilRoot>
       <HelmetProvider>
         <BrowserRouter>
-          {defaultTheme == "yellow" ? (
-            <APPDDGD />
-          ) : defaultTheme == "navy" ? (
-            <APPFNF />
-          ) : defaultTheme == "orange" ? (
-            <APPOLED />
-          ) : (
-            <APPWEBERP />
-          )}
+           <APP />
         </BrowserRouter>
       </HelmetProvider>
     </RecoilRoot>

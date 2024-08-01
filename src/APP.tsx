@@ -36,10 +36,13 @@ import {
   UseParaPc,
 } from "./components/CommonFunction";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
-import PanelBarNavContainerDDGD from "./components/Containers/PanelBarNavContainerDDGD";
+import { default as PanelBarNavContainer } from "./components/Containers/PanelBarNavContainer";
 import Loader from "./components/Loader";
 import { useApi } from "./hooks/api";
+import Login from "./routes/Login";
 import LoginCRM from "./routes/LoginCRM";
+import LoginFNF from "./routes/LoginFNF";
+import LoginOLED from "./routes/LoginOLED";
 import NotFound from "./routes/NotFound";
 import {
   OSState,
@@ -293,6 +296,7 @@ const MainBIO = lazy(() => import("./routes/MainBIO"));
 const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));
 const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
 const MainFNF = lazy(() => import("./routes/MainFNF"));
+
 load(
   likelySubtags,
   currencyData,
@@ -596,9 +600,9 @@ const AppInner: React.FC = () => {
   const isMobileMenuOpend = useRecoilValue(isMobileMenuOpendState);
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
-  useEffect(() => {
-    switcher({ theme: "yellow" });
-  }, []);
+  // useEffect(() => {
+  //   switcher({ theme: "blue" });
+  // }, []);
 
   function link(str: any) {
     if (str == "Home" || str == "" || str == undefined || str == null) {
@@ -1113,17 +1117,40 @@ const AppInner: React.FC = () => {
         >
           <ErrorBoundary FallbackComponent={ErrorFallback}>
             <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
-
             <Router>
               <Switch>
-                <Route sensitive={false} path="/" component={LoginCRM} exact />
+                {currentTheme == "yellow" ? (
+                  <Route
+                    sensitive={false}
+                    path="/"
+                    component={LoginCRM}
+                    exact
+                  />
+                ) : currentTheme == "navy" ? (
+                  <Route
+                    sensitive={false}
+                    path="/"
+                    component={LoginFNF}
+                    exact
+                  />
+                ) : currentTheme == "orange" ? (
+                  <Route
+                    sensitive={false}
+                    path="/"
+                    component={LoginOLED}
+                    exact
+                  />
+                ) : (
+                  <Route sensitive={false} path="/" component={Login} exact />
+                )}
+
                 <Route
                   sensitive={false}
                   path="/Error"
                   component={NotFound}
                   exact
                 />
-                <PanelBarNavContainerDDGD>
+                <PanelBarNavContainer>
                   <Suspense fallback={<Loader />}>
                     {/* 메인 홈 */}
                     {loginResult ? (
@@ -1133,7 +1160,7 @@ const AppInner: React.FC = () => {
                         exact
                       />
                     ) : (
-                      <AuthRoute path="/Home" component={MainAdminCRM} exact />
+                      <AuthRoute path="/Home" component={Main} exact />
                     )}
 
                     <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
@@ -1521,7 +1548,7 @@ const AppInner: React.FC = () => {
 
                     <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />
                   </Suspense>
-                </PanelBarNavContainerDDGD>
+                </PanelBarNavContainer>
               </Switch>
             </Router>
           </ErrorBoundary>

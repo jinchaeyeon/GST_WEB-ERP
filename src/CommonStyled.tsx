@@ -5,8 +5,8 @@ import logoFNF from "./img/fnf_main_logo.jpg";
 import loginBgSrc from "./img/login_bg.png";
 import logoDDGD from "./img/login_ddgd.png";
 import logoWEBERP from "./img/login_web_erp.png";
-import logoOLED from "./img/logoOLED.png";
 import logoSrc from "./img/logo.png";
+import logoOLED from "./img/logoOLED.png";
 import processStsSrc from "./img/process_16.png";
 import successStsSrc from "./img/success_16.png";
 
@@ -406,7 +406,6 @@ export const FormBox = styled.table`
     }
   }
 `;
-
 
 export const FormBoxFNF = styled.table`
   /* line-height: 1.5; */
@@ -1200,19 +1199,19 @@ export const Modal = styled.div<TModal>`
 /*=================================================
 	// PanelBarNavContainer 종료
 =================================================*/
-type TLogo = { size: string; name: string };
+type TLogo = { size: string; name: string; bio: boolean };
 
 export const Logo = styled.div<TLogo>`
   background: url(${(props) =>
-    props.name == "GST WEB"
-      ? logoWEBERP
-      : props.name == "CRM_DDGD"
-      ? logoDDGD
-      : props.name == "BIO"
+    props.bio == true
       ? logoBIO
-      : props.name == "FNF"
+      : props.name == "blue"
+      ? logoWEBERP
+      : props.name == "yellow"
+      ? logoDDGD
+      : props.name == "navy"
       ? logoFNF
-      : props.name == "OLED"
+      : props.name == "orange"
       ? logoOLED
       : logoWEBERP});
   background-size: contain;
