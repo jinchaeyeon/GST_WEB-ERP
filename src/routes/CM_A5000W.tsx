@@ -84,6 +84,7 @@ import CM_A5000W_Project_Window_PoP from "../components/Windows/CM_A5000W_Projec
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import QC_A2500W_603_Window from "../components/Windows/QC_A2500W_603_Window";
 import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
@@ -1753,19 +1754,39 @@ const CM_A5000W: React.FC = () => {
     }
     setLoading(false);
   };
-
+  const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
+  const onDetailWndClick = () => {
+    setDetailWindowVisible(true);
+  };
   const onAddClick = () => {
-    setWorkType("N");
-    setTabSelected(1);
+    onDetailWndClick();
+  };
+
+  const setData = (data: any) => {
+    setDetailWindowVisible(false);
     const defaultOption = GetPropertyValueByName(
       customOptionData.menuCustomDefaultOptions,
       "new"
     );
+
+    const cpmperson = userListData.find(
+      (items: any) => items.user_name == data.cpmperson
+    );
+
+    setWorkType("N");
+    setTabSelected(1);
+
     setInformation({
       document_id: "자동생성",
-      user_id: "",
-      user_name: "",
-      project: "",
+      user_id:
+        cpmperson == undefined
+          ? data.cpmperson == undefined
+            ? ""
+            : data.cpmperson
+          : cpmperson.user_id,
+      user_name: data.cpmperson == undefined ? "" : data.cpmperson,
+      project: data.quokey == undefined ? "" : data.quokey,
       request_date: setDefaultDate2(customOptionData, "request_date"),
       finexpdt: setDefaultDate2(customOptionData, "finexpdt"),
       require_type: defaultOption.find((item: any) => item.id == "require_type")
@@ -1774,21 +1795,19 @@ const CM_A5000W: React.FC = () => {
         (item: any) => item.id == "completion_method"
       )?.valueCode,
       status: defaultOption.find((item: any) => item.id == "status")?.valueCode,
-      customer_code: "",
-      customernm: "",
+      customer_code: data.custcd == undefined ? "" : data.custcd,
+      customernm: data.custnm == undefined ? "" : data.custnm,
       title: "",
       is_emergency: defaultOption.find((item: any) => item.id == "is_emergency")
         ?.valueCode,
-      quotestnum: "",
-      testnum: "",
+      quotestnum: data.quotestnum == undefined ? "" : data.quotestnum,
+      testnum: data.testnum == undefined ? "" : data.testnum,
       attdatnum: "",
       files: "",
       ref_document_id: "",
-      materialtype: defaultOption.find((item: any) => item.id == "materialtype")
-        ?.valueCode,
-      extra_field2: defaultOption.find((item: any) => item.id == "extra_field2")
-        ?.valueCode,
-      custprsnnm: "",
+      materialtype: data.materialtype == undefined ? "" : data.materialtype,
+      extra_field2: data.extra_field2 == undefined ? "" : data.extra_field2,
+      custprsnnm: data.custprsnnm == undefined ? "" : data.custprsnnm,
     });
     setInformation2({
       document_id: "",
@@ -1802,6 +1821,62 @@ const CM_A5000W: React.FC = () => {
           : defaultOption.find((item: any) => item.id == "person")?.valueCode,
       recdt: new Date(),
     });
+
+    // //컴플레인꺼
+    // setInformation({
+    //   orgdiv: data.orgdiv == undefined ? sessionOrgdiv : data.orgdiv,
+    //   ref_key: data.quokey == undefined ? "" : data.quokey,
+    //   quotestnum: data.quotestnum == undefined ? "" : data.quotestnum,
+    //   testnum: data.testnum == undefined ? "" : data.testnum,
+    //   smperson:
+    //     smperson == undefined
+    //       ? data.person == undefined
+    //         ? ""
+    //         : data.person
+    //       : smperson.user_id,
+    //   cpmperson:
+    //     cpmperson == undefined
+    //       ? data.cpmperson == undefined
+    //         ? ""
+    //         : data.cpmperson
+    //       : cpmperson.user_id,
+    //   ncrdiv: defaultOption.find((item: any) => item.id == "ncrdiv")?.valueCode,
+    //   combytype: defaultOption.find((item: any) => item.id == "combytype")
+    //     ?.valueCode,
+    //   status: defaultOption.find((item: any) => item.id == "status")?.valueCode,
+    //   chkperson:
+    //     chkperson == undefined
+    //       ? data.chkperson == undefined
+    //         ? ""
+    //         : data.chkperson
+    //       : chkperson.prsnnum,
+    //   itemcd: data.itemcd == undefined ? "" : data.itemcd,
+    //   itemnm: data.itemnm == undefined ? "" : data.itemnm,
+    //   baddt: new Date(),
+    //   requiretext: "",
+    //   protext: "",
+    //   errtext: "",
+    //   custcd: data.custcd == undefined ? "" : data.custcd,
+    //   custnm: data.custnm == undefined ? "" : data.custnm,
+    //   datnum: "",
+    //   ordnum: data.ordnum == undefined ? "" : data.ordnum,
+    //   ordseq: data.ordseq == undefined ? 0 : data.ordseq,
+    //   devperson:
+    //     data.devperson == undefined
+    //       ? defaultOption.find((item: any) => item.id == "devperson")?.valueCode
+    //       : data.devperson,
+    //   apperson:
+    //     data.apperson == undefined
+    //       ? defaultOption.find((item: any) => item.id == "apperson")?.valueCode
+    //       : data.apperson,
+    //   chkperson2:
+    //     data.chkperson2 == undefined
+    //       ? defaultOption.find((item: any) => item.id == "chkperson2")
+    //           ?.valueCode
+    //       : data.chkperson2,
+    //   custprsnnm: data.custprsnnm == undefined ? "" : data.custprsnnm,
+    //   qcdt: null,
+    // });
   };
 
   const onCopyClick = () => {
@@ -3734,6 +3809,13 @@ const CM_A5000W: React.FC = () => {
         <ProjectsWindow
           setVisible={setProjectWindowVisible3}
           setData={setProjectData2}
+          modal={true}
+        />
+      )}
+      {detailWindowVisible && (
+        <QC_A2500W_603_Window
+          setVisible={setDetailWindowVisible}
+          setData={setData}
           modal={true}
         />
       )}
