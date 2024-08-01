@@ -51,6 +51,7 @@ import {
   chkScrollHandler,
   convertDateToStr,
   getBizCom,
+  getColor,
   getDeviceHeight,
   getHeight,
   useGeoLocation,
@@ -859,7 +860,7 @@ const Main: React.FC = () => {
                   </Button>
                 </ButtonContainer>
                 <MainWorkStartEndContainer>
-                  <TextContainer theme={"#2289c3"}>
+                  <TextContainer theme={getColor()}>
                     {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
                   </TextContainer>
                   <Button
@@ -1066,7 +1067,7 @@ const Main: React.FC = () => {
               </Button>
             </ButtonContainer>
             <MainWorkStartEndContainer>
-              <TextContainer theme={"#2289c3"}>
+              <TextContainer theme={getColor()}>
                 {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
               </TextContainer>
               <Button
