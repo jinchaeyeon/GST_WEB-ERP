@@ -227,6 +227,7 @@ const Main: React.FC = () => {
         "@p_custcd": filters.custcd,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
+        "@p_user_id": sessionUserId
       },
     };
 
@@ -274,6 +275,7 @@ const Main: React.FC = () => {
         "@p_custcd": filters2.custcd,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
+        "@p_user_id": sessionUserId
       },
     };
 
