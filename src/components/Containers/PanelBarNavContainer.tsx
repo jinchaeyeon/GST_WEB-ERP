@@ -1617,7 +1617,7 @@ const PanelBarNavContainer = (props: any) => {
           <TopTitle>
             <div style={{ width: "30px" }}></div>
             <AppName theme={getColor()}>
-              {currentTheme == "navy" ? (
+              {currentTheme == "navy" || companyCode == "2302BA03" ? (
                 <Logo
                   size="128px"
                   name={currentTheme}
