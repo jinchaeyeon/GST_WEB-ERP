@@ -36,10 +36,11 @@ import {
   UsePermissions,
   convertDateToStr,
   getBizCom,
+  getFormId,
   getHeight,
   getWindowDeviceHeight,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import WindowFilterContainer from "../Containers/WindowFilterContainer";
@@ -713,9 +714,15 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         </GridContainer>
         <BottomContainer className="BottomContainer">
           <ButtonContainer>
-            <Button themeColor={"primary"} onClick={() => setData({})}>
-              미참조
-            </Button>
+            {getFormId() == "CM_A5000W" ? (
+              <></>
+            ) : (
+              <>
+                <Button themeColor={"primary"} onClick={() => setData({})}>
+                  미참조
+                </Button>
+              </>
+            )}
             <Button
               themeColor={"primary"}
               onClick={() =>

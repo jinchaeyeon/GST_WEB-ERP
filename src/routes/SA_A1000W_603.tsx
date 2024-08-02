@@ -116,6 +116,7 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import SA_A1000W_603_Before_Window from "../components/Windows/SA_A1000W_603_Before_Window";
 import SA_A1000W_603_Design2_Window from "../components/Windows/SA_A1000W_603_Design2_Window";
 import SA_A1000W_603_Design3_Window from "../components/Windows/SA_A1000W_603_Design3_Window";
 import SA_A1000W_603_Design4_Window from "../components/Windows/SA_A1000W_603_Design4_Window";
@@ -1122,6 +1123,8 @@ const SA_A1000W_603: React.FC = () => {
   const [designWindowVisible4, setDesignWindowVisible4] =
     useState<boolean>(false);
   const [revWindowVisible, setRevWindowVisible] = useState<boolean>(false);
+  const [beforeWindowVisible, setBeforeWindowVisible] =
+    useState<boolean>(false);
   const onDesignWndClick = () => {
     const data = mainDataResult2.data.filter(
       (item) =>
@@ -3560,6 +3563,159 @@ const SA_A1000W_603: React.FC = () => {
     setTabSelected(1);
   };
 
+  const onCopyClick = () => {
+    if (!permissions.save) return;
+
+    if (mainDataResult.total > 0) {
+      const agency =
+        (Information.agency1 == "" ? "N" : Information.agency1) +
+        "|" +
+        (Information.agency2 == "" ? "N" : Information.agency2) +
+        "|" +
+        (Information.agency3 == "" ? "N" : Information.agency3) +
+        "|" +
+        (Information.agency4 == "" ? "N" : Information.agency4) +
+        "|" +
+        (Information.agency5 == "" ? "N" : Information.agency5) +
+        "|" +
+        (Information.agency6 == "" ? "N" : Information.agency6) +
+        "|" +
+        Information.etcagency;
+
+      const guid =
+        (Information.guid1 == "" ? "N" : Information.guid1) +
+        "|" +
+        (Information.guid2 == "" ? "N" : Information.guid2) +
+        "|" +
+        (Information.guid3 == "" ? "N" : Information.guid3) +
+        "|" +
+        (Information.guid4 == "" ? "N" : Information.guid4) +
+        "|" +
+        (Information.guid5 == "" ? "N" : Information.guid5) +
+        "|" +
+        (Information.guid6 == "" ? "N" : Information.guid6) +
+        "|" +
+        Information.etcguid;
+
+      const glp =
+        (Information.glp1 == "" ? "N" : Information.glp1) +
+        "|" +
+        (Information.glp2 == "" ? "N" : Information.glp2) +
+        "|" +
+        (Information.glp3 == "" ? "N" : Information.glp3) +
+        "|" +
+        (Information.glp4 == "" ? "N" : Information.glp4) +
+        "|" +
+        (Information.glp5 == "" ? "N" : Information.glp5) +
+        "|" +
+        (Information.glp6 == "" ? "N" : Information.glp6) +
+        "|" +
+        Information.etcglp;
+
+      const translatereport =
+        (Information.translate1 == "" ? "N" : Information.translate1) +
+        "|" +
+        (Information.translate2 == "" ? "N" : Information.translate2) +
+        "|" +
+        (Information.translate3 == "" ? "N" : Information.translate3) +
+        "|" +
+        (Information.translate4 == "" ? "N" : Information.translate4) +
+        "|" +
+        Information.etctranslatereport;
+
+      const report =
+        (Information.report1 == "" ? "N" : Information.report1) +
+        "|" +
+        (Information.report2 == "" ? "N" : Information.report2) +
+        "|" +
+        (Information.report3 == "" ? "N" : Information.report3) +
+        "|" +
+        (Information.report4 == "" ? "N" : Information.report4) +
+        "|" +
+        Information.etcreport;
+
+      setParaData({
+        workType: "COPY",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
+        quonum: Information.quonum,
+        quorev: Information.quorev,
+        quoseq: Information.quorev,
+        quotype: Information.quotype,
+        quodt: isValidDate(Information.quodt)
+          ? convertDateToStr(Information.quodt)
+          : "",
+        pubdt: isValidDate(Information.pubdt)
+          ? convertDateToStr(Information.pubdt)
+          : "",
+        rev_reason: Information.rev_reason,
+        person: Information.person,
+        chkperson: Information.chkperson,
+        custcd: Information.custcd,
+        custnm: Information.custnm,
+        remark2: Information.remark2,
+        postcd: Information.postcd,
+        tel: Information.tel,
+        extra_field4: Information.extra_field4,
+        email: Information.email,
+        rcvpostcd: Information.rcvpostcd,
+        rcvtel: Information.rcvtel,
+        extra_field5: Information.extra_field5,
+        rcvemail: Information.rcvemail,
+        extra_field3: Information.extra_field3,
+        extra_field2: Information.extra_field2,
+        materialinfo: Information.materialinfo,
+        agency: agency,
+        reportcnt: Information.reportcnt,
+        transreportcnt: Information.transreportcnt,
+        attdatnum: Information.attdatnum,
+        assayyn: Information.assayyn,
+        assaydt: isValidDate(Information.assaydt)
+          ? convertDateToStr(Information.assaydt)
+          : "",
+        report: report,
+        rcvcustnm: Information.rcvcustnm,
+        rcvcustprsnnm: Information.rcvcustprsnnm,
+        remark3: Information.remark3,
+        materialtype: Information.materialtype,
+        materialindt: isValidDate(Information.materialindt)
+          ? convertDateToStr(Information.materialindt)
+          : "",
+        materialnm: Information.materialnm,
+        guideline: guid,
+        translatereport: translatereport,
+        testenddt: isValidDate(Information.testenddt)
+          ? convertDateToStr(Information.testenddt)
+          : "",
+        teststdt: isValidDate(Information.teststdt)
+          ? convertDateToStr(Information.teststdt)
+          : "",
+        testtype: Information.testtype,
+        remark: Information.remark,
+        custprsnnm: Information.custprsnnm,
+        requestgb: Information.requestgb,
+        glpgb: glp,
+        numbering_id: Information.numbering_id,
+        rowstatus_s: "",
+        quoseq_s: "",
+        itemcd_s: "",
+        itemnm_s: "",
+        glpyn_s: "",
+        startdt_s: "",
+        enddt_s: "",
+        remark_s: "",
+        quonum_s: "",
+        quorev_s: "",
+        progress_status_s: "",
+        userid: userId,
+        pc: pc,
+        form_id: "SA_A1000W_603",
+      });
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
   const [ParaData, setParaData] = useState({
     workType: "",
     orgdiv: "",
@@ -4533,6 +4689,12 @@ const SA_A1000W_603: React.FC = () => {
     );
   };
 
+  const onBeforeClick = () => {
+    setBeforeWindowVisible(true);
+  };
+
+  const setDataBefore = (data: any) => {};
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -4740,6 +4902,14 @@ const SA_A1000W_603: React.FC = () => {
                   신규
                 </Button>
                 <Button
+                  onClick={onCopyClick}
+                  themeColor={"primary"}
+                  icon="copy"
+                  disabled={permissions.save ? false : true}
+                >
+                  복사
+                </Button>
+                <Button
                   onClick={onDeleteClick2}
                   fillMode="outline"
                   themeColor={"primary"}
@@ -4906,6 +5076,16 @@ const SA_A1000W_603: React.FC = () => {
                     }
                   >
                     계획요청취소
+                  </Button>
+                  <Button
+                    onClick={onBeforeClick}
+                    themeColor={"primary"}
+                    icon="folder"
+                    disabled={
+                      permissions.save ? (worktype == "N" ? false : true) : true
+                    }
+                  >
+                    이전의뢰참조
                   </Button>
                   <Button
                     onClick={onSaveClick2}
@@ -6237,6 +6417,16 @@ const SA_A1000W_603: React.FC = () => {
                     }
                   >
                     계획요청취소
+                  </Button>
+                  <Button
+                    onClick={onBeforeClick}
+                    themeColor={"primary"}
+                    icon="folder"
+                    disabled={
+                      permissions.save ? (worktype == "N" ? false : true) : true
+                    }
+                  >
+                    이전의뢰참조
                   </Button>
                   <Button
                     onClick={onSaveClick2}
@@ -9518,6 +9708,19 @@ const SA_A1000W_603: React.FC = () => {
             hidden
           />
         ))
+      )}
+      {beforeWindowVisible && (
+        <SA_A1000W_603_Before_Window
+          setVisible={setBeforeWindowVisible}
+          reloadData={(returnString: string) => {
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: returnString,
+              isSearch: true,
+            }));
+          }}
+          modal={true}
+        />
       )}
     </>
   );
