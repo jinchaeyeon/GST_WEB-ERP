@@ -135,9 +135,13 @@ const CR_A0000W = lazy(() => import("./routes/CR_A0000W"));
 const CR_A0010W = lazy(() => import("./routes/CR_A0010W"));
 const CR_A0020W = lazy(() => import("./routes/CR_A0020W"));
 const CR_A0040W = lazy(() => import("./routes/CR_A0040W"));
+const CR_A1000W = lazy(() => import("./routes/CR_A1000W"));
 const CR_A1001W = lazy(() => import("./routes/CR_A1001W"));
+const CR_A1010W = lazy(() => import("./routes/CR_A1010W"));
+const CR_A1020W = lazy(() => import("./routes/CR_A1020W"));
 const CR_A1100W = lazy(() => import("./routes/CR_A1100W"));
 const CR_A1101W = lazy(() => import("./routes/CR_A1101W"));
+const CR_B1000W = lazy(() => import("./routes/CR_B1000W"));
 const CT_A0111W = lazy(() => import("./routes/CT_A0111W"));
 const EA_A1000W = lazy(() => import("./routes/EA_A1000W"));
 const EA_A2000W = lazy(() => import("./routes/EA_A2000W"));
@@ -785,12 +789,20 @@ const AppInner: React.FC = () => {
       return CR_A0020W;
     } else if (str == "CR_A0040W") {
       return CR_A0040W;
+    } else if (str == "CR_A1000W") {
+      return CR_A1000W;
     } else if (str == "CR_A1001W") {
       return CR_A1001W;
+    } else if (str == "CR_A1010W") {
+      return CR_A1010W;
+    } else if (str == "CR_A1020W") {
+      return CR_A1020W;
     } else if (str == "CR_A1100W") {
       return CR_A1100W;
     } else if (str == "CR_A1101W") {
       return CR_A1101W;
+    } else if (str == "CR_B1000W") {
+      return CR_B1000W;
     } else if (str == "CT_A0111W") {
       return CT_A0111W;
     } else if (str == "EA_A1000W") {
@@ -1280,9 +1292,13 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
                     <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
                     <AuthRoute path="/CR_A0040W" component={CR_A0040W} exact />
+                    <AuthRoute path="/CR_A1000W" component={CR_A1000W} exact />
                     <AuthRoute path="/CR_A1001W" component={CR_A1001W} exact />
+                    <AuthRoute path="/CR_A1010W" component={CR_A1010W} exact />
+                    <AuthRoute path="/CR_A1020W" component={CR_A1020W} exact />
                     <AuthRoute path="/CR_A1100W" component={CR_A1100W} exact />
                     <AuthRoute path="/CR_A1101W" component={CR_A1101W} exact />
+                    <AuthRoute path="/CR_B1000W" component={CR_B1000W} exact />
 
                     <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
 
