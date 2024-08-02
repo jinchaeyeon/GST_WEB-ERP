@@ -511,8 +511,8 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th>의뢰일자기간</th>
-                <td>
+                <th colSpan={2}>의뢰일자기간</th>
+                <td colSpan={2}>
                   <CommonDateRangePicker
                     value={{
                       start: filters.frdt,
