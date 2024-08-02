@@ -28,7 +28,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -78,7 +78,7 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
@@ -229,6 +229,8 @@ const CustomInputCell = (props: GridCellProps) => {
 };
 
 const AC_A1010W: React.FC = () => {
+  const [loginResult] = useRecoilState(loginResultState);
+  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   const [custcd, setCustcd] = useState<string>("");
   const [custnm, setCustnm] = useState<string>("");
   let deviceWidth = document.documentElement.clientWidth;
@@ -2086,9 +2088,9 @@ const AC_A1010W: React.FC = () => {
           para={"AC_A1010W"}
           modal={true}
           permission={{
-            upload: permissions.save,
+            upload: serviceCategory == "MANAGEMENT",
             download: permissions.view,
-            delete: permissions.save,
+            delete: serviceCategory == "MANAGEMENT",
           }}
         />
       )}

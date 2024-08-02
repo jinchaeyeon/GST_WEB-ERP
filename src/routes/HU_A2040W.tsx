@@ -95,7 +95,7 @@ const HU_A2040W: React.FC = () => {
   const location = UseGetValueFromSessionItem("location");
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-
+  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [mobileheight, setMobileHeight] = useState(0);
@@ -1062,9 +1062,9 @@ const HU_A2040W: React.FC = () => {
           para={"HU_A2040W"}
           modal={true}
           permission={{
-            upload: permissions.save,
+            upload: serviceCategory == "MANAGEMENT",
             download: permissions.view,
-            delete: permissions.save,
+            delete: serviceCategory == "MANAGEMENT",
           }}
         />
       )}

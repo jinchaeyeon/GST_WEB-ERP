@@ -424,6 +424,7 @@ const BA_A0080: React.FC = () => {
   });
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   //FormContext에서 받아오기위해 state
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   UsePermissions(setPermissions);
@@ -2475,9 +2476,9 @@ const BA_A0080: React.FC = () => {
           para={"BA_A0080W"}
           modal={true}
           permission={{
-            upload: permissions.save,
+            upload: serviceCategory == "MANAGEMENT",
             download: permissions.view,
-            delete: permissions.save,
+            delete: serviceCategory == "MANAGEMENT",
           }}
         />
       )}

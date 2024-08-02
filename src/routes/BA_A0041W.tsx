@@ -191,6 +191,7 @@ const BA_A0041W: React.FC = () => {
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
@@ -2228,9 +2229,9 @@ const BA_A0041W: React.FC = () => {
           para={"BA_A0041W"}
           modal={true}
           permission={{
-            upload: permissions.save,
+            upload: serviceCategory == "MANAGEMENT",
             download: permissions.view,
-            delete: permissions.save,
+            delete: serviceCategory == "MANAGEMENT",
           }}
         />
       )}

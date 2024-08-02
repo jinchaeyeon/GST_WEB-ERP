@@ -13,7 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -54,7 +54,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -207,6 +207,8 @@ var height = 0;
 var height2 = 0;
 
 const CR_A0040W: React.FC = () => {
+  const [loginResult] = useRecoilState(loginResultState);
+  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1057,9 +1059,9 @@ const CR_A0040W: React.FC = () => {
           para={"CR_A0040W"}
           modal={true}
           permission={{
-            upload: permissions.save,
+            upload: serviceCategory == "MANAGEMENT",
             download: permissions.view,
-            delete: permissions.save,
+            delete: serviceCategory == "MANAGEMENT",
           }}
         />
       )}

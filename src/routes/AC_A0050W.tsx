@@ -87,6 +87,7 @@ import {
   deletedAttadatnumsState,
   deletedNameState,
   isLoading,
+  loginResultState,
   OSState,
   unsavedAttadatnumsState,
   unsavedNameState,
@@ -474,6 +475,8 @@ const AC_A0050W: React.FC = () => {
   const [selectedState5_1, setSelectedState5_1] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const [loginResult] = useRecoilState(loginResultState);
+  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -11243,9 +11246,9 @@ const AC_A0050W: React.FC = () => {
           setVisible={setExcelAttachmentsWindowVisible}
           para={"AC_A0050W"} // 그룹코드에 따라 양식 분리
           permission={{
-            upload: permissions.save,
+            upload: serviceCategory == "MANAGEMENT",
             download: permissions.view,
-            delete: permissions.save,
+            delete: serviceCategory == "MANAGEMENT",
           }}
           modal={true}
         />

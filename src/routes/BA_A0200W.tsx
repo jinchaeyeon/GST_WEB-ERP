@@ -13,7 +13,9 @@ import {
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
 import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   GridContainer,
@@ -58,6 +60,7 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 let temp = 0;
+let index = 0;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -114,7 +117,7 @@ const BA_A0200W: React.FC = () => {
     delete: false,
   });
   UsePermissions(setPermissions);
-
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [webheight, setWebHeight] = useState(0);
@@ -166,6 +169,7 @@ const BA_A0200W: React.FC = () => {
       take: initialPageState.take,
     });
   };
+  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   const sessionLocation = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
@@ -256,6 +260,9 @@ const BA_A0200W: React.FC = () => {
       pgNum: 1,
       find_row_value: "",
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(0);
+    }
   };
   let gridRef: any = useRef(null);
   //조회조건 초기값
@@ -462,6 +469,9 @@ const BA_A0200W: React.FC = () => {
       sub_code: selectedRowData.sub_code,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -672,10 +682,10 @@ const BA_A0200W: React.FC = () => {
             custcd: 업체코드 == null ? "" : 업체코드,
             custnm: 업체명 == null ? "" : 업체명,
             custdiv: custdiv == undefined ? "" : custdiv,
-            bizdiv: bizdiv == null ? "" : bizdiv,
+            bizdiv: bizdiv == undefined ? "" : bizdiv,
             bizregnum: 사업자등록번호 == null ? "" : 사업자등록번호,
-            unpitem: unpitem == null ? "" : unpitem,
-            inunpitem: inunpitem == null ? "" : inunpitem,
+            unpitem: unpitem == undefined ? "" : unpitem,
+            inunpitem: inunpitem == undefined ? "" : inunpitem,
             address: 주소 == null ? "" : 주소,
             email: 이메일 == null ? "" : 이메일,
             phonenum: 전화번호 == null ? "" : 전화번호,
@@ -761,7 +771,7 @@ const BA_A0200W: React.FC = () => {
             user_id: 사용자ID == null ? "" : 사용자ID,
             user_name: 사용자명 == null ? "" : 사용자명,
             dptcd: dptcd == undefined ? "" : dptcd,
-            postcd: postcd == null ? "" : postcd,
+            postcd: postcd == undefined ? "" : postcd,
             tel_no: 전화번호 == null ? "" : 전화번호,
             mobile_no: 핸드폰번호 == null ? "" : 핸드폰번호,
             email: 이메일 == null ? "" : 이메일,
@@ -778,8 +788,208 @@ const BA_A0200W: React.FC = () => {
         });
       }
     } else if (filters2.sub_code == "MAC") {
+      if (jsonArr.length == 0) {
+        alert("데이터가 없습니다.");
+      } else {
+        let valid = true;
+        let valid3 = true;
+        jsonArr.map((item: any) => {
+          Object.keys(item).map((items: any) => {
+            if (items == "설비번호") {
+              valid = false;
+            }
+          });
+        });
+
+        if (valid == true) {
+          alert("양식이 다릅니다. 설비항목의 양식으로 작성해주세요.");
+          return false;
+        }
+
+        jsonArr.map((item: any) => {
+          let valid2 = 0;
+          Object.keys(item).map((items: any) => {
+            if (items == "설비번호") {
+              valid2 += 1;
+            }
+            if (items == "설비명") {
+              valid2 += 1;
+            }
+          });
+          if (valid2 != 2) {
+            valid3 = false;
+          }
+        });
+
+        if (valid3 != true) {
+          alert("필수 값을 채워주세요.");
+          return false;
+        }
+
+        mainDataResult.data.map((item: { num: number }) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
+
+        jsonArr.map((item: any) => {
+          const {
+            설비번호 = "",
+            설비명 = "",
+            설비호기 = "",
+            설비사양 = "",
+            사용여부 = "",
+            비고 = "",
+          } = item;
+
+          const newDataItem = {
+            [DATA_ITEM_KEY2]: ++temp,
+            fxnum: 설비번호 == null ? "" : 설비번호,
+            fxnm: 설비명 == null ? "" : 설비명,
+            fxno: 설비호기 == null ? "" : 설비호기,
+            spec: 설비사양 == null ? "" : 설비사양,
+            useyn: 사용여부 == null ? "N" : 사용여부,
+            remark: 비고 == null ? "" : 비고,
+            rowstatus: "N",
+          };
+
+          setMainDataResult2((prev: { data: any; total: number }) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+          setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+        });
+      }
     } else if (filters2.sub_code == "BAD") {
+      if (jsonArr.length == 0) {
+        alert("데이터가 없습니다.");
+      } else {
+        let valid = true;
+        let valid3 = true;
+        jsonArr.map((item: any) => {
+          Object.keys(item).map((items: any) => {
+            if (items == "불량코드") {
+              valid = false;
+            }
+          });
+        });
+
+        if (valid == true) {
+          alert("양식이 다릅니다. 불량항목의 양식으로 작성해주세요.");
+          return false;
+        }
+
+        jsonArr.map((item: any) => {
+          let valid2 = 0;
+          Object.keys(item).map((items: any) => {
+            if (items == "불량코드") {
+              valid2 += 1;
+            }
+            if (items == "불량명") {
+              valid2 += 1;
+            }
+          });
+          if (valid2 != 2) {
+            valid3 = false;
+          }
+        });
+
+        if (valid3 != true) {
+          alert("필수 값을 채워주세요.");
+          return false;
+        }
+
+        mainDataResult.data.map((item: { num: number }) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
+
+        jsonArr.map((item: any) => {
+          const { 불량코드 = "", 불량명 = "" } = item;
+
+          const newDataItem = {
+            [DATA_ITEM_KEY2]: ++temp,
+            sub_code: 불량코드 == null ? "" : 불량코드,
+            code_name: 불량명 == null ? "" : 불량명,
+            rowstatus: "N",
+          };
+
+          setMainDataResult2((prev: { data: any; total: number }) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+          setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+        });
+      }
     } else if (filters2.sub_code == "PROC") {
+      if (jsonArr.length == 0) {
+        alert("데이터가 없습니다.");
+      } else {
+        let valid = true;
+        let valid3 = true;
+        jsonArr.map((item: any) => {
+          Object.keys(item).map((items: any) => {
+            if (items == "공정코드") {
+              valid = false;
+            }
+          });
+        });
+
+        if (valid == true) {
+          alert("양식이 다릅니다. 공정항목의 양식으로 작성해주세요.");
+          return false;
+        }
+
+        jsonArr.map((item: any) => {
+          let valid2 = 0;
+          Object.keys(item).map((items: any) => {
+            if (items == "공정코드") {
+              valid2 += 1;
+            }
+            if (items == "공정명") {
+              valid2 += 1;
+            }
+          });
+          if (valid2 != 2) {
+            valid3 = false;
+          }
+        });
+
+        if (valid3 != true) {
+          alert("필수 값을 채워주세요.");
+          return false;
+        }
+
+        mainDataResult.data.map((item: { num: number }) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
+
+        jsonArr.map((item: any) => {
+          const { 공정코드 = "", 공정명 = "" } = item;
+
+          const newDataItem = {
+            [DATA_ITEM_KEY2]: ++temp,
+            sub_code: 공정코드 == null ? "" : 공정코드,
+            code_name: 공정명 == null ? "" : 공정명,
+            rowstatus: "N",
+          };
+
+          setMainDataResult2((prev: { data: any; total: number }) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+          setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+        });
+      }
     } else {
       alert("존재하지 않는 코드입니다.");
     }
@@ -1030,6 +1240,92 @@ const BA_A0200W: React.FC = () => {
         user_id: userId,
         values: list2.join("|"),
       }));
+    } else if (filters2.sub_code == "MAC") {
+      let list: any[] = [];
+      let list2: string[] = [];
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          fxnum = "",
+          fxnm = "",
+          fxno = "",
+          spec = "",
+          useyn = "",
+          remark = "",
+        } = item;
+
+        list.push(fxnum);
+        list.push(fxnm);
+        list.push(fxno);
+        list.push(spec);
+        list.push(useyn);
+        list.push(remark);
+
+        list2.push(list.join("/"));
+        list = [];
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "MAC",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
+        form_id: "BA_A0200W",
+        pc: pc,
+        user_id: userId,
+        values: list2.join("|"),
+      }));
+    } else if (filters2.sub_code == "PROC") {
+      let list: any[] = [];
+      let list2: string[] = [];
+      dataItem.forEach((item: any, idx: number) => {
+        const { sub_code = "", code_name = "" } = item;
+
+        list.push(sub_code);
+        list.push(code_name);
+        list.push("Y");
+        list.push("");
+        list.push("");
+        list.push("");
+        list.push("");
+        list.push("");
+
+        list2.push(list.join("/"));
+        list = [];
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "PROC",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
+        form_id: "BA_A0200W",
+        pc: pc,
+        user_id: userId,
+        values: list2.join("|"),
+      }));
+    } else if (filters2.sub_code == "BAD") {
+      let list: any[] = [];
+      let list2: string[] = [];
+      dataItem.forEach((item: any, idx: number) => {
+        const { sub_code = "", code_name = "" } = item;
+
+        list.push(sub_code);
+        list.push(code_name);
+
+        list2.push(list.join("/"));
+        list = [];
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "BAD",
+        orgdiv: sessionOrgdiv,
+        location: sessionLocation,
+        form_id: "BA_A0200W",
+        pc: pc,
+        user_id: userId,
+        values: list2.join("|"),
+      }));
     }
   };
 
@@ -1078,6 +1374,9 @@ const BA_A0200W: React.FC = () => {
         pgNum: prev.pgNum,
         isSearch: true,
       }));
+      if (swiper && isMobile) {
+        swiper.slideTo(0);
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1107,7 +1406,189 @@ const BA_A0200W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       {isMobile ? (
-        <></>
+        <>
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide key={0}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>기본정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="arrow-right"
+                    >
+                      다음
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName={getMenuName()}
+                >
+                  <Grid
+                    style={{ height: mobileheight }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn field="code_name" title="항목" width="120px" />
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>상세정보</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                    >
+                      이전
+                    </Button>
+                    <div>
+                      <ExcelUploadButtons
+                        saveExcel={saveExcel}
+                        permissions={permissions}
+                        style={{ marginLeft: "15px" }}
+                        disabled={permissions.save ? false : true}
+                      />
+                      <Button
+                        title="Export Excel"
+                        onClick={onAttachmentsWndClick}
+                        icon="file"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.view ? false : true}
+                      >
+                        엑셀양식
+                      </Button>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                    </div>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight2 }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                    })),
+                    mainDataState2
+                  )}
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn
+                    field="rowstatus"
+                    title=" "
+                    width="50px"
+                    editable={false}
+                  />
+                  {columnList !== null &&
+                    columnList?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.sub_code}
+                            field={item.code_name}
+                            title={item.extra_field4}
+                            width={"120px"}
+                            cell={
+                              item.extra_field2 == "C"
+                                ? CheckBoxCell
+                                : item.extra_field2 == "S"
+                                ? NumberCell
+                                : item.extra_field2 == "L"
+                                ? CustomComboBoxCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </>
       ) : (
         <GridContainerWrap>
           <GridContainer width="10%">
@@ -1262,9 +1743,9 @@ const BA_A0200W: React.FC = () => {
           para={`BA_A0200W_${filters2.sub_code}`}
           modal={true}
           permission={{
-            upload: permissions.save,
+            upload: serviceCategory == "MANAGEMENT",
             download: permissions.view,
-            delete: permissions.save,
+            delete: serviceCategory == "MANAGEMENT",
           }}
         />
       )}

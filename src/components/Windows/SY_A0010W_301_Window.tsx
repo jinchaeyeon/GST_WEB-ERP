@@ -41,6 +41,7 @@ import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
   deletedNameState,
   isLoading,
+  loginResultState,
   unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters, TPermissions } from "../../store/types";
@@ -56,7 +57,7 @@ import {
   getFormId,
   getGridItemChangedData,
   getHeight,
-  getWindowDeviceHeight
+  getWindowDeviceHeight,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
@@ -104,7 +105,8 @@ const KendoWindow = ({
   UsePermissions(setPermissions);
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const serviceCategory = loginResult ? loginResult.serviceCategory : "";
   let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -2269,9 +2271,9 @@ const KendoWindow = ({
           setVisible={setExcelAttachmentsWindowVisible}
           para={"SY_A0010W_301_" + initialVal.group_code} // 그룹코드에 따라 양식 분리
           permission={{
-            upload: permissions.save,
+            upload: serviceCategory == "MANAGEMENT",
             download: permissions.view,
-            delete: permissions.save,
+            delete: serviceCategory == "MANAGEMENT",
           }}
         />
       )}
