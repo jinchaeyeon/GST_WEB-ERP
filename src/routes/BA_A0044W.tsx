@@ -83,6 +83,7 @@ import { ICustData, IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0044W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 
 let deletedMainRows: object[] = [];
 let temp = 0;
@@ -1653,6 +1654,55 @@ const BA_A0044W: React.FC = () => {
     }
   }, [paraData]);
 
+  const [itemMultiWindowVisible, setItemMultiWindowVisible] =
+    useState<boolean>(false);
+  const onCopyWndClick = () => {
+    setItemMultiWindowVisible(true);
+  };
+
+
+  const addItemData = (itemDatas: IItemData[]) => {
+    mainDataResult.data.map((item) => {
+      if (item[DATA_ITEM_KEY] > temp) {
+        temp = item[DATA_ITEM_KEY];
+      }
+    });
+
+    itemDatas.map((item) => {
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        bassalunp: 0,
+        chk: "",
+        custcd: "",
+        custitemcd: "",
+        custitemnm: "",
+        custnm: "",
+        find_row_key: "",
+        insiz: item.insiz,
+        itemacnt: item.itemacnt,
+        itemcd: item.itemcd,
+        itemlvl2: item.itemlvl2,
+        itemnm: item.itemnm,
+        orgdiv: sessionOrgdiv,
+        recdt: "99991231",
+        seq: 0,
+        unp: 0,
+        unpcalmeth: "",
+        unpitem: "",
+        useyn: "Y",
+        rowstatus: "N",
+      };
+      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    });
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -1771,6 +1821,14 @@ const BA_A0044W: React.FC = () => {
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
+          <Button
+                  themeColor={"primary"}
+                  onClick={onCopyWndClick}
+                  icon="folder-open"
+                  disabled={permissions.save ? false : true}
+                >
+                  품목참조
+                </Button>
             <Button
               onClick={onAddClick}
               themeColor={"primary"}
@@ -1939,6 +1997,13 @@ const BA_A0044W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"ROW_ADD"}
           setData={setItemData}
+          modal={true}
+        />
+      )}
+            {itemMultiWindowVisible && (
+        <ItemsMultiWindow
+          setVisible={setItemMultiWindowVisible}
+          setData={addItemData}
           modal={true}
         />
       )}
