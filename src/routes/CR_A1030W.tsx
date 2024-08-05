@@ -137,14 +137,6 @@ const App = () => {
               permissions={permissions}
             />
           )}
-          <Button
-            onClick={print}
-            fillMode="outline"
-            themeColor={"primary"}
-            icon="print"
-          >
-            출력
-          </Button>
         </ButtonContainer>
       </TitleContainer>
       <GridContainer>
