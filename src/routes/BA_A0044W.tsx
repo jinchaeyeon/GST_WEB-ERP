@@ -76,14 +76,15 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import BA_A0044W_Window from "../components/Windows/BA_A0044W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { ICustData, IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0044W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
 
 let deletedMainRows: object[] = [];
 let temp = 0;
@@ -674,6 +675,7 @@ const BA_A0044W: React.FC = () => {
       isSearch: true,
     }));
   };
+  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
@@ -1385,6 +1387,42 @@ const BA_A0044W: React.FC = () => {
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
+  const onCopyClick = () => {
+    const datas = mainDataResult.data.filter((item) => item.chk == true);
+
+    if (datas.length == 0) {
+      alert("선택된 행이 없습니다.");
+    } else {
+      datas.map((item) => {
+        mainDataResult.data.map((item) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
+
+        const newDataItem = {
+          ...item,
+          [DATA_ITEM_KEY]: ++temp,
+          chk: "",
+          seq: 0,
+          rowstatus: "N",
+        };
+        setMainDataResult((prev) => {
+          return {
+            data: [newDataItem, ...prev.data],
+            total: prev.total + 1,
+          };
+        });
+        setPage((prev) => ({
+          ...prev,
+          skip: 0,
+          take: prev.take + 1,
+        }));
+        setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+      });
+    }
+  };
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
     let Object: any[] = [];
@@ -1413,9 +1451,11 @@ const BA_A0044W: React.FC = () => {
       data: newData,
       total: prev.total - Object.length,
     }));
-    setSelectedState({
-      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
-    });
+    if (Object.length > 0) {
+      setSelectedState({
+        [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+      });
+    }
   };
 
   const onSaveClick = async () => {
@@ -1660,7 +1700,6 @@ const BA_A0044W: React.FC = () => {
     setItemMultiWindowVisible(true);
   };
 
-
   const addItemData = (itemDatas: IItemData[]) => {
     mainDataResult.data.map((item) => {
       if (item[DATA_ITEM_KEY] > temp) {
@@ -1700,6 +1739,54 @@ const BA_A0044W: React.FC = () => {
           total: prev.total + 1,
         };
       });
+    });
+  };
+
+  const onCustAddClick = () => {
+    const datas = mainDataResult.data.filter((item) => item.chk == true);
+
+    if (datas.length == 0) {
+      alert("선택된 행이 없습니다.");
+    } else {
+      let valid = true;
+      datas.map((item) => {
+        if (item.rowstatus != "N") {
+          valid = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("신규건만 업체등록이 가능합니다.");
+      } else {
+        setCustWindowVisible2(true);
+      }
+    }
+  };
+
+  const reloadData = (custcd: string, custnm: string) => {
+    const newData = mainDataResult.data.map((item) =>
+      item.chk == true
+        ? {
+            ...item,
+            custcd: custcd,
+            custnm: custnm,
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
     });
   };
 
@@ -1821,19 +1908,34 @@ const BA_A0044W: React.FC = () => {
         <GridTitleContainer className="ButtonContainer">
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
-          <Button
-                  themeColor={"primary"}
-                  onClick={onCopyWndClick}
-                  icon="folder-open"
-                  disabled={permissions.save ? false : true}
-                >
-                  품목참조
-                </Button>
+            <Button
+              themeColor={"primary"}
+              onClick={onCustAddClick}
+              icon="edit"
+              disabled={permissions.save ? false : true}
+            >
+              업체일괄등록
+            </Button>
+            <Button
+              themeColor={"primary"}
+              onClick={onCopyWndClick}
+              icon="folder-open"
+              disabled={permissions.save ? false : true}
+            >
+              품목참조
+            </Button>
             <Button
               onClick={onAddClick}
               themeColor={"primary"}
               icon="plus"
               title="행 추가"
+              disabled={permissions.save ? false : true}
+            ></Button>
+            <Button
+              onClick={onCopyClick}
+              themeColor={"primary"}
+              icon="copy"
+              title="행 복사"
               disabled={permissions.save ? false : true}
             ></Button>
             <Button
@@ -2000,10 +2102,17 @@ const BA_A0044W: React.FC = () => {
           modal={true}
         />
       )}
-            {itemMultiWindowVisible && (
+      {itemMultiWindowVisible && (
         <ItemsMultiWindow
           setVisible={setItemMultiWindowVisible}
           setData={addItemData}
+          modal={true}
+        />
+      )}
+      {custWindowVisible2 && (
+        <BA_A0044W_Window
+          setVisible={setCustWindowVisible2}
+          reloadData={reloadData}
           modal={true}
         />
       )}
