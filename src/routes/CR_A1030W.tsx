@@ -279,87 +279,89 @@ const App = () => {
             </FormBoxWrap>
           </GridContainer>
         </GridContainerWrap>
-        <FormBoxWrap border={true}>
+        <GridContainer>
           <GridTitleContainer>
             <GridTitle>Wafer 및 시편정보</GridTitle>
           </GridTitleContainer>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>의뢰형태</th>
-                <td>
-                  {information.workType == "N"
-                    ? customOptionData !== null && (
-                        <CustomOptionRadioGroup
-                          name="quotype"
-                          customOptionData={customOptionData}
-                          changeData={RadioChange}
-                          type="new"
-                        />
-                      )
-                    : bizComponentData !== null && (
-                        <BizComponentRadioGroup
-                          name="quotype"
-                          value={information.quotype}
-                          bizComponentId="R_quotype"
-                          bizComponentData={bizComponentData}
-                          changeData={RadioChange}
-                        />
-                      )}
-                </td>
-                <th>사전협의자</th>
-                <td>
-                  <Input
-                    name="user_name"
-                    type="text"
-                    value={information.user_name}
-                    onChange={InputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      type="button"
-                      icon="more-horizontal"
-                      fillMode="flat"
-                      onClick={onPrsnnumWndClick}
+          <FormBoxWrap border={true}>
+            <FormBox>
+              <tbody>
+                <tr>
+                  <th>의뢰형태</th>
+                  <td>
+                    {information.workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionRadioGroup
+                            name="quotype"
+                            customOptionData={customOptionData}
+                            changeData={RadioChange}
+                            type="new"
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="quotype"
+                            value={information.quotype}
+                            bizComponentId="R_quotype"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                          />
+                        )}
+                  </td>
+                  <th>사전협의자</th>
+                  <td>
+                    <Input
+                      name="user_name"
+                      type="text"
+                      value={information.user_name}
+                      onChange={InputChange}
                     />
-                  </ButtonInInput>
-                </td>
-                <th>시료명</th>
-                <td>
-                  <Input
-                    name="samplenm"
-                    type="text"
-                    value={information.samplenm}
-                    onChange={InputChange}
-                    className="required"
-                  />
-                </td>
-                <th>시료수</th>
-                <td>
-                  <Input
-                    name="samplecnt"
-                    type="number"
-                    value={information.samplecnt}
-                    onChange={InputChange}
-                    className="required"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>모델명</th>
-                <td>
-                  <Input
-                    name="modelnm"
-                    type="text"
-                    value={information.modelnm}
-                    onChange={InputChange}
-                    className="required"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onPrsnnumWndClick}
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>시료명</th>
+                  <td>
+                    <Input
+                      name="samplenm"
+                      type="text"
+                      value={information.samplenm}
+                      onChange={InputChange}
+                      className="required"
+                    />
+                  </td>
+                  <th>시료수</th>
+                  <td>
+                    <Input
+                      name="samplecnt"
+                      type="number"
+                      value={information.samplecnt}
+                      onChange={InputChange}
+                      className="required"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>모델명</th>
+                  <td>
+                    <Input
+                      name="modelnm"
+                      type="text"
+                      value={information.modelnm}
+                      onChange={InputChange}
+                      className="required"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FormBox>
+          </FormBoxWrap>
+        </GridContainer>
       </GridContainer>
       {applicationWindowVisible && (
         <ApplicationWindow
