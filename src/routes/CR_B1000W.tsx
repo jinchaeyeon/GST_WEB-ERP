@@ -353,7 +353,6 @@ const App = () => {
                   type="text"
                   value={filters.receiptNumber}
                   onChange={filterInputChange}
-                  className="required"
                 />
               </td>
               <th>프로젝트 번호</th>
@@ -363,7 +362,6 @@ const App = () => {
                   type="text"
                   value={filters.projectNumber}
                   onChange={filterInputChange}
-                  className="required"
                 />
               </td>
               <th>담당자</th>
@@ -373,7 +371,6 @@ const App = () => {
                   type="text"
                   value={filters.name}
                   onChange={filterInputChange}
-                  className="required"
                 />
               </td>
             </tr>
@@ -385,7 +382,6 @@ const App = () => {
                   type="text"
                   value={filters.title}
                   onChange={filterInputChange}
-                  className="required"
                 />
               </td>
               <th>등록일</th>
