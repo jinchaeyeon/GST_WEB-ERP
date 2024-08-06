@@ -5,30 +5,30 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
 } from "../../../CommonStyled";
+import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
+import { isLoading } from "../../../store/atoms";
 import { TPermissions } from "../../../store/types";
 import {
-  UseBizComponent,
   UsePermissions,
-  getBizCom,
   getHeight,
   getWindowDeviceHeight,
 } from "../../CommonFunction";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  GAP,
-  SELECTED_FIELD,
-} from "../../CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import Window from "../WindowComponent/Window";
 
 type IKendoWindow = {
@@ -40,6 +40,7 @@ type IKendoWindow = {
 const DATA_ITEM_KEY = "sub_code";
 const DATA_ITEM_KEY2 = "sub_code";
 var height = 0;
+var height2 = 0;
 var height3 = 0;
 const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -57,13 +58,14 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
 
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar"); //공통 해더
+    height2 = getHeight(".WindowButtonContainer"); //하단 버튼부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
 
     setMobileHeight(
-      getWindowDeviceHeight(false, deviceHeight) - height - height3
+      getWindowDeviceHeight(false, deviceHeight) - height - height3 - height2
     );
     setWebHeight(
-      getWindowDeviceHeight(false, position.height) - height - height3
+      getWindowDeviceHeight(false, position.height) - height - height3 - height2
     );
   }, []);
 
@@ -105,46 +107,169 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
     process([], mainDataState2)
   );
-  let gridRef: any = useRef(null);
 
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_CR130, L_CR131",
-    //사용자
-    setBizComponentData
-  );
-  //공통코드 리스트 조회 ()
-  const [performanceListData, setPerformanceListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [industryListData, setIndustryListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      setPerformanceListData(getBizCom(bizComponentData, "L_CR130"));
-      setIndustryListData(getBizCom(bizComponentData, "L_CR131"));
-    }
-  }, [bizComponentData]);
+  //조회조건 초기값
+  const [filters, setFilters] = useState({
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+    pgSize: PAGE_SIZE,
+  });
+  const [filters2, setFilters2] = useState({
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+    pgSize: PAGE_SIZE,
+  });
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+
+    setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+  const setLoading = useSetRecoilState(isLoading);
+  const processApi = useApi();
+  const fetchMainGrid = async (filters: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+    // //팝업 조회 파라미터
+    // const parameters = {
+    //   para:
+    //     "popup-data?id=" +
+    //     "P_CR130" +
+    //     "&page=" +
+    //     filters.pgNum +
+    //     "&pageSize=" +
+    //     PAGE_SIZE,
+    // };
+    // try {
+    //   data = await processApi<any>("popup-data", parameters);
+    // } catch (error) {
+    //   data = null;
+    // }
+
+    // if (data !== null) {
+    //   const totalRowCnt = data.data.TotalRowCount;
+    //   const rows = data.data.Rows;
+
+    //   setMainDataResult((prev) => {
+    //     return {
+    //       data: rows,
+    //       total: totalRowCnt == -1 ? 0 : totalRowCnt,
+    //     };
+    //   });
+    //   if (totalRowCnt > 0) {
+    //     const selectedRow = rows[0];
+    //     setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+    //   }
+    // } else {
+    //   console.log(data);
+    // }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchMainGrid2 = async (filters: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+    // //팝업 조회 파라미터
+    // const parameters = {
+    //   para:
+    //     "popup-data?id=" +
+    //     "P_CR131" +
+    //     "&page=" +
+    //     filters.pgNum +
+    //     "&pageSize=" +
+    //     PAGE_SIZE,
+    // };
+    // try {
+    //   data = await processApi<any>("popup-data", parameters);
+    // } catch (error) {
+    //   data = null;
+    // }
+
+    // if (data !== null) {
+    //   const totalRowCnt = data.data.TotalRowCount;
+    //   const rows = data.data.Rows;
+
+    //   setMainDataResult2((prev) => {
+    //     return {
+    //       data: rows,
+    //       total: totalRowCnt == -1 ? 0 : totalRowCnt,
+    //     };
+    //   });
+    //   if (totalRowCnt > 0) {
+    //     const selectedRow = rows[0];
+    //     setSelectedState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
+    //   }
+    // } else {
+    //   console.log(data);
+    // }
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
 
   useEffect(() => {
-    if (bizComponentData !== null) {
-      setMainDataResult((prev) => {
-        return {
-          data: performanceListData,
-          total: performanceListData.length,
-        };
-      });
-      setSelectedState({ [performanceListData[0][DATA_ITEM_KEY]]: true });
-      setMainDataResult2((prev) => {
-        return {
-          data: industryListData,
-          total: industryListData.length,
-        };
-      });
-      setSelectedState2({ [industryListData[0][DATA_ITEM_KEY2]]: true });
+    if (filters.isSearch && permissions.view) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
-  }, [permissions, bizComponentData, performanceListData, industryListData]);
+  }, [filters, permissions]);
+
+  useEffect(() => {
+    if (filters2.isSearch && permissions.view) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2, permissions]);
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -231,6 +356,9 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
     >
       <GridContainerWrap>
         <GridContainer width="50%">
+          <GridTitleContainer className="WindowButtonContainer">
+            <GridTitle>성과물활용유형</GridTitle>
+          </GridTitleContainer>
           <Grid
             style={{
               height: isMobile ? mobileheight : webheight,
@@ -255,6 +383,10 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -273,6 +405,9 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
           </Grid>
         </GridContainer>
         <GridContainer width={`calc(50% - ${GAP}px)`}>
+          <GridTitleContainer className="WindowButtonContainer">
+            <GridTitle>산업분류</GridTitle>
+          </GridTitleContainer>
           <Grid
             style={{
               height: isMobile ? mobileheight : webheight,
@@ -297,6 +432,10 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult2.total}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange2}

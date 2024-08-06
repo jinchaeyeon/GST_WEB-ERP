@@ -16,7 +16,7 @@ const CommonDateRangePicker = (props: DateRangePickerProps) => {
 };
 
 const CustomDateInput = (props: DateInputProps) => {
-  return <DateInput {...props} label={undefined} format="yyyy-MM-dd" />;
+  return <DateInput {...props} label={undefined} format="yyyy-MM-dd"  placeholder=""/>;
 };
 
 export default CommonDateRangePicker;
