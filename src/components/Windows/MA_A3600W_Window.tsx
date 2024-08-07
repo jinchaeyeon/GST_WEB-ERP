@@ -104,13 +104,13 @@ var height4 = 0;
 var height5 = 0;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA116_280", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "itemtype" ? "L_BA116_280" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

@@ -33,9 +33,11 @@ const CommonComboBox = ({
   para = "",
 }: TCommonComboBox) => {
   const processApi = useApi();
-  bizComponentData = bizComponentData.find(
-    (item: any) => item.bizComponentId == bizComponentId
-  );
+  if(bizComponentData != null) {
+    bizComponentData = bizComponentData.find(
+      (item: any) => item.bizComponentId == bizComponentId
+    );
+  } 
 
   const [listData, setListData]: any = useState(bizComponentData.data.Rows);
 

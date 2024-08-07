@@ -113,14 +113,14 @@ export const FormContext = createContext<{
 }>({} as any);
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_HU290T", setBizComponentData);
   //상하반기구분
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "Semiannualgb" ? "L_HU290T" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

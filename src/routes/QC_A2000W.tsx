@@ -367,12 +367,12 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_QC002 ", setBizComponentData);
   //불량유형
   const field = props.field ?? "";
   const bizComponentIdVal = field == "badcd" ? "L_QC002" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

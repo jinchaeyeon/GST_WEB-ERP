@@ -161,7 +161,7 @@ let temp5 = 0;
 var index = 0;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_AC910, L_AC911, L_AC080, L_BA061,L_BA005",
     setBizComponentData
@@ -182,7 +182,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_BA005"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -194,12 +194,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_Calc", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "caculationgb" ? "R_Calc" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

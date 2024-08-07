@@ -88,14 +88,14 @@ let deletedRows: object[] = [];
 let deletedRows2: object[] = [];
 let deletedRows3: object[] = [];
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_MA035, L_SA002_603", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
     field == "pgmdiv" ? "L_MA035" : field == "optioncd" ? "L_SA002_603" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

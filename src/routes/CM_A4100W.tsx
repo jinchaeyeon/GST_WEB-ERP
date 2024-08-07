@@ -115,14 +115,14 @@ let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 사용자
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "person" ? "L_sysUserMaster_001" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

@@ -109,7 +109,7 @@ const checkReadField = [
 const CustomRadioField = ["bircd", "sexcd", "houseyn"];
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_HOUSEYN, R_BIRCD, R_SEXCD", setBizComponentData);
 
   const field = props.field ?? "";
@@ -122,7 +122,7 @@ const CustomRadioCell = (props: GridCellProps) => {
       ? "R_HOUSEYN"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -190,7 +190,7 @@ const HU_B1040W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_HU029, L_HU028, L_HU024, L_HU023, L_HU012, L_HU006, L_HU007, L_HU076, L_HU075, L_HU037, L_dptcd_001, L_BA057, L_BA028, L_BA002, L_BA001, L_HU005",
     setBizComponentData

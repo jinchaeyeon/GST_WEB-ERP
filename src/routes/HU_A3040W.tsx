@@ -659,7 +659,7 @@ const HU_A3040W: React.FC = () => {
     }
   };
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001", setBizComponentData);
   //공통코드 리스트 조회 ()
   const [dptcdListData, setdptcdListData] = useState([

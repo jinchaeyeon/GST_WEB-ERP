@@ -179,14 +179,14 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_AC019, L_AC030T", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
     field == "acntcd" ? "L_AC019" : field == "creditcd" ? "L_AC030T" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

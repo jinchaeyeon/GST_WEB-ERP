@@ -88,7 +88,7 @@ let temp3 = 0;
 let targetRowIndex: null | number = null;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA010_GST,L_BA011_GST,L_BA012_GST,L_sysUserMaster_001,L_CM000100_002",
     setBizComponentData
@@ -109,7 +109,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       : field == "level"
       ? "L_CM000100_002"
       : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

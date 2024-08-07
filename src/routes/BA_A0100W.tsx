@@ -77,7 +77,7 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 화폐단위
   UseBizComponent("L_BA006_603, L_BA173, L_BA171", setBizComponentData);
 
@@ -91,7 +91,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_BA171"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

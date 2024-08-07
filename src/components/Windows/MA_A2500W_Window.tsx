@@ -142,13 +142,13 @@ type TdataArr = {
 let deletedMainRows: object[] = [];
 let temp = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA019,L_BA015", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
     field == "unpcalmeth" ? "L_BA019" : field == "qtyunit" ? "L_BA015" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

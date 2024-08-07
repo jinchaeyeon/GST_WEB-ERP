@@ -144,7 +144,7 @@ let deletedPlanRows: object[] = [];
 let deletedMaterialRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_PR010,L_BA011,L_BA015,L_BA041", setBizComponentData);
   // 공정,외주구분,수량단위,자재사용구분
 
@@ -160,7 +160,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_BA041"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

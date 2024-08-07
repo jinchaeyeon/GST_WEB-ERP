@@ -97,14 +97,14 @@ const dateField = ["outdt", "indt"];
 const numberField = ["qty", "cnt"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA015, L_BA061", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
     field == "qtyunit_af" ? "L_BA015" : field == "itemacnt_af" ? "L_BA061" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

@@ -172,7 +172,7 @@ const AC_B5040W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(setMessagesData);
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_AC405, R_Override, R_gubunD, L_AC402, L_AC003, L_AC403, L_AC404",
     setBizComponentData

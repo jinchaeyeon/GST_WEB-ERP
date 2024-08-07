@@ -98,7 +98,7 @@ const comboField = ["paycd", "payitemcd", "dutycd", "dutymngdiv"];
 const checkField = ["cal2s"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_HU028, L_HU130T, L_HU033, L_HU040", setBizComponentData);
   //보고서구분, 그룹구분, 그룹특성, 품목계정, 내수구분
 
@@ -114,7 +114,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_HU040"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
   const textField = field == "payitemcd" ? "payitemnm" : "code_name";

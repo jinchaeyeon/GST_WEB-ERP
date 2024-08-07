@@ -125,13 +125,13 @@ type TdataArr = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "dptcd" ? "L_dptcd_001" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

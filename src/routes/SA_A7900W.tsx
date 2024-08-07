@@ -192,12 +192,12 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_Unpaid", setBizComponentData);
   //합부판정
   const field = props.field ?? "";
   const bizComponentIdVal = field == "inoutdiv" ? "R_Unpaid" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -213,13 +213,13 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA020", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "amtunit" ? "L_BA020" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

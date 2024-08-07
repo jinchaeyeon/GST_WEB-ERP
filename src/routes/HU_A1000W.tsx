@@ -206,7 +206,7 @@ const HU_A1000W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(setMessagesData);
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001,L_HU005", setBizComponentData);
   //공통코드 리스트 조회 ()
   const [dptcdListData, setdptcdListData] = useState([

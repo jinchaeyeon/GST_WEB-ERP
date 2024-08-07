@@ -233,7 +233,7 @@ type TdataArr8 = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_HU020, L_HU009, L_HU700, L_HU062, L_dptcd_001, L_HU017, L_HU090",
     setBizComponentData
@@ -257,7 +257,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_HU090"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -277,12 +277,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_SEXCD", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "sexcd" ? "R_SEXCD" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -3958,7 +3958,7 @@ const CopyWindow = ({
     }
   }, [customOptionData]);
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "R_BIRCD,R_SEXCD,R_dayoffdiv,R_Rtrtype, R_HOUSEYN, R_MARRIAGE, L_BA001",
     setBizComponentData

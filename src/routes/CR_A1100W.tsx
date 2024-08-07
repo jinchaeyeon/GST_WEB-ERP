@@ -68,7 +68,7 @@ const NumberField = ["age"];
 const CenterField = ["att_check"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 반려인, 담당자, 반, 종, 성별
   UseBizComponent(
     "L_USERS_EX, L_USERS_IN, L_BA310, L_BA320, L_SEXCD",
@@ -94,7 +94,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? { valueField: "code", textField: "name" }
       : { valueField: undefined, textField: undefined };
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

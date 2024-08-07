@@ -447,7 +447,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 let deletedMainRows: object[] = [];
 let temp = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA016, L_BA171, L_BA061,L_BA015", setBizComponentData);
 
   const field = props.field ?? "";
@@ -462,7 +462,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_BA061"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

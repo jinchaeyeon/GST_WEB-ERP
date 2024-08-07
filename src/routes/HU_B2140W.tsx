@@ -220,7 +220,7 @@ const HU_B2140W: React.FC = () => {
     }));
   };
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
   //공통코드 리스트 조회 ()
   const [userListData, setUserListData] = useState([

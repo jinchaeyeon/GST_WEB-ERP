@@ -174,7 +174,7 @@ const CopyWindow = ({
 
   const processApi = useApi();
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "R_GRADUTYPE, R_WORKERDIV, R_BIRCD,R_SEXCD, L_dptcd_001",
     setBizComponentData

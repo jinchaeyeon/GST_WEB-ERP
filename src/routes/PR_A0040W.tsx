@@ -97,7 +97,7 @@ const NumberField = ["procseq", "stdtime", "procqty"];
 const NumberField2 = ["procqty"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_PR010,L_BA011,L_sysUserMaster_001,L_BA015",
     // 공정, 외주여부, 사용자, 수량단위, 공정단위
@@ -120,7 +120,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const fieldName = field == "prodemp" ? "user_name" : undefined;
   const filedValue = field == "prodemp" ? "user_id" : undefined;
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

@@ -97,7 +97,7 @@ let deletedRows: object[] = [];
 let custdiv = "";
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_PR010, L_fxcode, L_sysUserMaster_001, L_BA015, L_BA061",
     setBizComponentData
@@ -126,7 +126,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       : undefined;
   const fieldValue =
     field == "prodemp" ? "user_id" : field == "prodmac" ? "fxcode" : undefined;
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
