@@ -60,7 +60,7 @@ import { gridList } from "../store/columns/SA_B1101W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const dateField = ["cotracdt", "strdt", "enddt", "paydt"];
-const numberField = ["totamt"];
+const numberField = ["totamt", "amt"];
 
 var height = 0;
 var height2 = 0;

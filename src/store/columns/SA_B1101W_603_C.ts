@@ -72,6 +72,12 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "amt",
+        field: "amt",
+        caption: "청구예정금액",
+        width: 120,
+      },
+      {
         id: "col_totamt",
         field: "totamt",
         caption: "최종계약금액",
