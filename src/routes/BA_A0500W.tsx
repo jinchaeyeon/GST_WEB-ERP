@@ -346,7 +346,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA500, L_BA502, L_BA503, L_BA504, L_BA505",
     setBizComponentData
@@ -366,7 +366,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_BA505"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -457,7 +457,7 @@ const BA_A0500W: React.FC = () => {
     }
   }, [customOptionData, tabSelected, webheight, webheight2, webheight3]);
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA500", setBizComponentData);
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 

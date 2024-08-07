@@ -92,7 +92,7 @@ type TdataArr = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_HU042, L_HU029", setBizComponentData);
   //수당종류, 세액구분
 
@@ -100,7 +100,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const bizComponentIdVal =
     field == "payitemkind" ? "L_HU042" : field == "taxcd" ? "L_HU029" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -112,13 +112,13 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_fraction", setBizComponentData);
   //끝전처리
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "fraction" ? "R_fraction" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

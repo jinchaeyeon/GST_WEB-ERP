@@ -26,7 +26,7 @@ const RadioGroupCell = (props: CustomCellProps) => {
 
   const value = dataItem[field ?? ""];
   const dataList =
-    bizComponentData !== null ? bizComponentData.data.Rows : null;
+    bizComponentData !== null ? bizComponentData?.data.Rows : null;
 
   let isInEdit = field === dataItem.inEdit;
 

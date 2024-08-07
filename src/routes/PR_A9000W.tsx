@@ -105,7 +105,7 @@ let temp4 = 0;
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 공정,대분류,중분류,소분류,품목계정,단위,중량단위
   UseBizComponent(
     "L_PR010,L_BA171,L_BA172,L_BA173,L_BA015,L_PR300100",
@@ -131,7 +131,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const valueField = field == "div" ? "code" : undefined;
   const textField = field == "div" ? "code_name" : undefined;
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

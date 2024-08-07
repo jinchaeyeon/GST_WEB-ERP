@@ -99,7 +99,7 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_APPOINTMENT_COLOR, L_BA400, L_CUST", setBizComponentData);
 
   const field = props.field ?? "";
@@ -112,7 +112,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_CUST"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
   if (bizComponentIdVal == "L_CUST") {

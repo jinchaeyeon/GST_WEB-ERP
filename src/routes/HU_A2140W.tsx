@@ -73,6 +73,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ApprovalWindow from "../components/Windows/CommonWindows/ApprovalWindow";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
+import HU_A2140W_Window from "../components/Windows/HU_A2140W_Window";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
@@ -97,13 +98,13 @@ const commandField = ["files"];
 const requiredField = ["stddt", "stddiv"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_HU089", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "stddiv" ? "L_HU089" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -204,6 +205,73 @@ const ColumnCommandCell = (props: GridCellProps) => {
             upload: permissions.save,
             download: permissions.view,
             delete: permissions.save,
+          }}
+          modal={true}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell2 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  let isInEdit = field == dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render == undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          para={dataItem.attdatnum}
+          permission={{
+            upload: false,
+            download: permissions.view,
+            delete: false,
           }}
           modal={true}
         />
@@ -338,8 +406,8 @@ const HU_A2140W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_dptcd_001,L_HU005,L_APPSTS", setBizComponentData);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_HU089,L_dptcd_001,L_HU005,L_APPSTS", setBizComponentData);
   //공통코드 리스트 조회 ()
   const [dptcdListData, setdptcdListData] = useState([
     { dptcd: "", dptnm: "" },
@@ -349,12 +417,16 @@ const HU_A2140W: React.FC = () => {
   ]);
 
   const [appynListData, setAppynListData] = useState([{ code: "", name: "" }]);
+  const [stddivListData, setStddivListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
       setpostcdListData(getBizCom(bizComponentData, "L_HU005"));
       setdptcdListData(getBizCom(bizComponentData, "L_dptcd_001"));
       setAppynListData(getBizCom(bizComponentData, "L_APPSTS"));
+      setStddivListData(getBizCom(bizComponentData, "L_HU089"));
     }
   }, [bizComponentData]);
 
@@ -396,6 +468,8 @@ const HU_A2140W: React.FC = () => {
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
+  const [detailWindowVisible2, setDetailWindowVisible2] =
+    useState<boolean>(false);
 
   const onUserWndClick = () => {
     setuserWindowVisible(true);
@@ -433,6 +507,8 @@ const HU_A2140W: React.FC = () => {
     pgNum: 1,
     isSearch: false,
   });
+
+  const [workType, setWorkType] = useState("N");
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -653,7 +729,14 @@ const HU_A2140W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
   const customRowRender = (tr: any, props: any) => (
     <RowRender
       originalProps={props}
@@ -662,7 +745,14 @@ const HU_A2140W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
   const enterEdit = (dataItem: any, field: string) => {
     if (
       field != "rowstatus" &&
@@ -752,6 +842,8 @@ const HU_A2140W: React.FC = () => {
       });
     }
   };
+  const enterEdit2 = (dataItem: any, field: string) => {};
+  const exitEdit2 = () => {};
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -873,6 +965,11 @@ const HU_A2140W: React.FC = () => {
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
+  const onAddClick2 = () => {
+    setWorkType("N");
+    setDetailWindowVisible2(true);
+  };
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
     let Object: any[] = [];
@@ -962,6 +1059,23 @@ const HU_A2140W: React.FC = () => {
         }));
         setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
       });
+    }
+  };
+
+  const onCopyClick2 = () => {
+    if (mainDataResult.total > 0) {
+      const data = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      if (data.prsnnum != userId) {
+        alert("신청자가 달라 복사가 불가능합니다.");
+      } else {
+        setWorkType("C");
+        setDetailWindowVisible2(true);
+      }
+    } else {
+      alert("데이터가 없습니다.");
     }
   };
 
@@ -1453,17 +1567,175 @@ const HU_A2140W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <FormContext.Provider
-        value={{
-          attdatnum,
-          files,
-          setAttdatnum,
-          setFiles,
-          mainDataState,
-          setMainDataState,
-          // fetchGrid,
-        }}
-      >
+      {isMobile ? (
+        <>
+          <FormContext.Provider
+            value={{
+              attdatnum,
+              files,
+              setAttdatnum,
+              setFiles,
+              mainDataState,
+              setMainDataState,
+              // fetchGrid,
+            }}
+          >
+            <GridContainer style={{ width: "100%", overflow: "auto" }}>
+              <GridTitleContainer className="ButtonContainer">
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick2}
+                    themeColor={"primary"}
+                    icon="file-add"
+                    disabled={permissions.save ? false : true}
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onCopyClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="copy"
+                    disabled={permissions.save ? false : true}
+                  >
+                    복사
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName={getMenuName()}
+              >
+                <Grid
+                  style={{
+                    height: mobileheight,
+                  }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
+                      dptcd: dptcdListData.find(
+                        (item: any) => item.dptcd == row.dptcd
+                      )?.dptnm,
+                      postcd: postcdListData.find(
+                        (item: any) => item.sub_code == row.postcd
+                      )?.code_name,
+                      appyn: appynListData.find(
+                        (item: any) => item.code == row.appyn
+                      )?.name,
+                      stddiv: stddivListData.find(
+                        (item: any) => item.sub_code == row.stddiv
+                      )?.code_name,
+                      enddate: row.enddate
+                        ? new Date(dateformat(row.enddate))
+                        : new Date(dateformat("99991231")),
+                      recdt: row.recdt
+                        ? new Date(dateformat(row.recdt))
+                        : new Date(dateformat("99991231")),
+                      startdate: row.startdate
+                        ? new Date(dateformat(row.startdate))
+                        : new Date(dateformat("99991231")),
+                      stddt: row.stddt
+                        ? new Date(dateformat(row.stddt))
+                        : new Date(dateformat("99991231")),
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : commandField.includes(item.fieldName)
+                                  ? ColumnCommandCell2 //추후 작업
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 1
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </FormContext.Provider>
+        </>
+      ) : (
         <GridContainer style={{ width: "100%", overflow: "auto" }}>
           <GridTitleContainer className="ButtonContainer">
             <ButtonContainer>
@@ -1517,7 +1789,7 @@ const HU_A2140W: React.FC = () => {
           >
             <Grid
               style={{
-                height: isMobile ? mobileheight : webheight,
+                height: webheight,
               }}
               data={process(
                 mainDataResult.data.map((row) => ({
@@ -1630,7 +1902,7 @@ const HU_A2140W: React.FC = () => {
             </Grid>
           </ExcelExport>
         </GridContainer>
-      </FormContext.Provider>
+      )}
       {detailWindowVisible && (
         <ApprovalWindow
           setVisible={setDetailWindowVisible}
@@ -1648,13 +1920,38 @@ const HU_A2140W: React.FC = () => {
               : ""
           }
           pgmgb="W"
-          setData={(str) =>
+          setData={(str) => {
+            resetAllGrid();
             setFilters((prev) => ({
               ...prev,
               find_row_value: str,
               isSearch: true,
-            }))
+            }));
+          }}
+          modal={true}
+        />
+      )}
+      {detailWindowVisible2 && (
+        <HU_A2140W_Window
+          workType={workType}
+          setVisible={setDetailWindowVisible2}
+          para={
+            workType == "N"
+              ? null
+              : mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
           }
+          reload={(str) => {
+            resetAllGrid();
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: str,
+              isSearch: true,
+            }));
+          }}
           modal={true}
         />
       )}

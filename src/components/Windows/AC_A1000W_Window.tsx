@@ -87,12 +87,12 @@ type IWindow = {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_DRCR", setBizComponentData);
   //합부판정
   const field = props.field ?? "";
   const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

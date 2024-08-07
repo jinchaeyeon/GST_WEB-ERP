@@ -75,7 +75,7 @@ type TdataArr = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_HU028, L_HU075,L_HU076,L_HU078,L_HU097",
     //급여지급구분, 근무형태, 근무조, 근무구분, 근태구분
@@ -96,7 +96,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_HU078"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

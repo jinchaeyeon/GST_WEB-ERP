@@ -80,14 +80,14 @@ const CustomComboField = ["amtunit"];
 const requiredField = ["basedt", "amtunit"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 화폐단위
   UseBizComponent("L_BA020", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "amtunit" ? "L_BA020" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

@@ -88,14 +88,14 @@ const DATA_ITEM_KEY = "ordseq";
 let temp = 0;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA061,L_BA015", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
     field == "itemacnt" ? "L_BA061" : field == "qtyunit" ? "L_BA015" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -1476,7 +1476,7 @@ const KendoWindow = ({
     });
   };
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_CUST", setBizComponentData);
 
   const [custcdListData, setCustcdListData] = useState([

@@ -86,7 +86,7 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA011, L_fxcode", setBizComponentData);
   //수당종류, 세액구분
 
@@ -96,7 +96,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const fieldName = field == "prodmac" ? "fxfull" : undefined;
   const filedValue = field == "prodmac" ? "fxcode" : undefined;
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

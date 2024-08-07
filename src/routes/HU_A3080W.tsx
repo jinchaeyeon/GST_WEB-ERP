@@ -127,7 +127,7 @@ interface IPrsnnum {
 }
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_HU032, L_HU130T, L_dptcd_001", setBizComponentData);
   //보고서구분, 그룹구분, 그룹특성, 품목계정, 내수구분
 
@@ -141,7 +141,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_dptcd_001"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
   const textField =
@@ -170,12 +170,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_HU038", setBizComponentData);
   //합부판정
   const field = props.field ?? "";
   const bizComponentIdVal = field == "paydeductdiv" ? "R_HU038" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

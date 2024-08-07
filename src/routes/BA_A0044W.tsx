@@ -194,14 +194,14 @@ const defaultItemInfo = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 중분류, 소분류, 품목계정, 대분류, 적재장소, 수량단위
   UseBizComponent("L_BA019", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "unpcalmeth" ? "L_BA019" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -213,12 +213,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_YN4", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "useyn" ? "R_YN4" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

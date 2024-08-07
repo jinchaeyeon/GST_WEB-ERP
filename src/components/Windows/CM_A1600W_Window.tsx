@@ -26,7 +26,7 @@ const ColorColumn: IComboBoxColumns[] = [
 
 export const CustomFormEditor = (props: SchedulerFormEditorProps) => {
   const [colorData, setColorData] = useState([]);
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   //공정코드,외주구분,사용자,설비,자재불출(자재사용)구분_BOM,수량단위
   UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
   const processApi = useApi();

@@ -82,7 +82,7 @@ const comboBoxField = ["mngitemcd", "reportgb"];
 const readOnlyField = ["acntgrpnm"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_AC023T, L_AC062", setBizComponentData);
 
   const field = props.field ?? "";
@@ -105,7 +105,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     tField = "code_name";
   }
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

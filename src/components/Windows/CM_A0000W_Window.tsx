@@ -104,7 +104,7 @@ const KendoWindow = ({
   let isMobile = deviceWidth <= 1200;
   const userId = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001,L_HU005", setBizComponentData);
   //공통코드 리스트 조회 ()
   const [dptcdListData, setdptcdListData] = useState([

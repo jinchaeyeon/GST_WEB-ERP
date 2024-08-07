@@ -80,14 +80,14 @@ const centerField = ["gubun"];
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 화폐단위
   UseBizComponent("L_BA028", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "position" ? "L_BA028" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

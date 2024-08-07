@@ -158,7 +158,7 @@ var height8 = 0;
 var height9 = 0;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_sysUserMaster_001",
     // 구분, 단위, 불량유형
@@ -172,7 +172,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const fieldName = field == "insert_userid" ? "user_name" : undefined;
   const fieldValue = field == "insert_userid" ? "user_id" : undefined;
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

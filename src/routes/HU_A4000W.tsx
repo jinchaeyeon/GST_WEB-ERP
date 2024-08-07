@@ -351,7 +351,7 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_sysUserMaster_001, L_HU115, L_HU110, L_dptcd_001, L_QC002, L_HU017",
     setBizComponentData
@@ -374,7 +374,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_HU115"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
   const textField =
@@ -657,7 +657,7 @@ const HU_A4000W: React.FC = () => {
   const pc = UseGetValueFromSessionItem("pc");
   const userId = UseGetValueFromSessionItem("user_id");
   const location = UseGetValueFromSessionItem("location");
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_HU110, L_dptcd_001, L_HU250T", setBizComponentData);
   const [dptcdListData, setdptcdListData] = useState([
     { dptcd: "", dptnm: "" },

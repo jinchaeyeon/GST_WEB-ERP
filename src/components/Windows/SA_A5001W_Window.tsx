@@ -187,12 +187,12 @@ type Idata = {
 let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA019", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "unpcalmeth" ? "L_BA019" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
   return bizComponent ? (

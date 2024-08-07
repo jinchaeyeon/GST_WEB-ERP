@@ -99,7 +99,7 @@ type TMaterialData = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   //공정코드,외주구분,사용자,설비,자재불출(자재사용)구분_BOM,수량단위
   UseBizComponent(
     "L_PR010,L_BA011,L_sysUserMaster_001,L_fxcode,L_BA041,L_BA015",
@@ -129,7 +129,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "fxfull"
       : undefined;
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

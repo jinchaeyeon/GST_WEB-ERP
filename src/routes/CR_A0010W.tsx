@@ -375,7 +375,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
   UseBizComponent(
     "L_SYS005,L_BA002,L_BA028,L_dptcd_001,L_HU005,L_BA410,L_BA001",
@@ -403,7 +403,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const textField = field == "dptcd" ? "dptnm" : undefined;
   const valueField = field == "dptcd" ? "dptcd" : undefined;
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -420,14 +420,14 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
   UseBizComponent("R_BIRCD", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "bircd" ? "R_BIRCD" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

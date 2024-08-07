@@ -231,14 +231,14 @@ const defaultItemInfo = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA015, L_LOADPLACE", setBizComponentData);
   //수량단위, 적재장소
   const field = props.field ?? "";
   const bizComponentIdVal =
     field == "qtyunit" ? "L_BA015" : field == "load_place" ? "L_LOADPLACE" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

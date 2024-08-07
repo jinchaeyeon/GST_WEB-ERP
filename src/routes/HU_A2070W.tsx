@@ -111,7 +111,7 @@ const customData = [
 ];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA001, L_HU250T", setBizComponentData);
 
   const field = props.field ?? "";
@@ -121,7 +121,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const valueField = field == "prsnnum" ? "prsnnum" : undefined;
   const textField = field == "prsnnum" ? "prsnnm" : undefined;
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

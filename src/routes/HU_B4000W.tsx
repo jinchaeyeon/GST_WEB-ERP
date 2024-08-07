@@ -112,14 +112,14 @@ interface IPrsnnum {
 }
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 조정구분
   UseBizComponent("L_HU092", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "adjdiv" ? "L_HU092" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

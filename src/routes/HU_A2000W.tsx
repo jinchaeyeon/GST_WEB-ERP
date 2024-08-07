@@ -103,12 +103,12 @@ const CustomNumberCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_WORKDIV", setBizComponentData);
   //합부판정
   const field = props.field ?? "";
   const bizComponentIdVal = field == "workdiv" ? "R_WORKDIV" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -127,13 +127,13 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_HU077", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "daygb" ? "L_HU077" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

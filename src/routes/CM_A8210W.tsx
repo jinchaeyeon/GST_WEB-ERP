@@ -88,7 +88,7 @@ const CustomComboField = ["extra_field1", "prodemp", "prodmac"];
 let targetRowIndex: null | number = null;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 화폐단위, 품목계정
   UseBizComponent("L_BA901,L_sysUserMaster_001,L_fxcode", setBizComponentData);
 
@@ -110,7 +110,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       : undefined;
   const filedValue =
     field == "prodemp" ? "user_id" : field == "prodmac" ? "fxcode" : undefined;
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

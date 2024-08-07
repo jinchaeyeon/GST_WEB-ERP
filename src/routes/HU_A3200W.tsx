@@ -97,14 +97,14 @@ type TdataArr = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001", setBizComponentData);
   //보고서구분, 그룹구분, 그룹특성, 품목계정, 내수구분
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "dptcd" ? "L_dptcd_001" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
   const textField = field == "dptcd" ? "dptnm" : "code_name";

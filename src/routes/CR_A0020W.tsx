@@ -70,7 +70,7 @@ const checkField: string[] = [];
 const DateField: string[] = ["birdt"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
   UseBizComponent("L_BA310, L_SEXCD, L_BA320, L_USERS_EX", setBizComponentData);
 
@@ -91,7 +91,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const valueField =
     field == "owner" ? "code" : field == "gender" ? "code" : undefined;
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -574,7 +574,7 @@ const CR_A0020W: React.FC = () => {
     //   }
     // });
 
-    const bizComponent: any = bizComponentData.find(
+    const bizComponent: any = bizComponentData?.find(
       (item: any) => item.bizComponentId == "L_BA310"
     );
 

@@ -165,14 +165,14 @@ const dateField = ["dutydt", "startdate", "enddate"];
 const comboField = ["daydutydiv"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 사용자
   UseBizComponent("L_HU033", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "daydutydiv" ? "L_HU033" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

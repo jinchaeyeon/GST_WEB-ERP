@@ -369,7 +369,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_PR010,L_BA011,L_sysUserMaster_001,L_BA015,L_fxcode,L_BA041",
     // 공정, 외주여부, 사용자, 수량단위, 공정단위
@@ -402,7 +402,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       : undefined;
   const filedValue =
     field == "prodemp" ? "user_id" : field == "prodmac" ? "fxcode" : undefined;
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

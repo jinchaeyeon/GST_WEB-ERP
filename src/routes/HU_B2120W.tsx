@@ -211,7 +211,7 @@ const HU_B2120W: React.FC = () => {
     setuserWindowVisible(true);
   };
 
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001", setBizComponentData);
   //공통코드 리스트 조회 ()
   const [dptcdListData, setdptcdListData] = useState([

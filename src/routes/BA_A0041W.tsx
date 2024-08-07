@@ -86,7 +86,7 @@ const requiredField = ["useyn", "itemnm", "itemacnt"];
 let targetRowIndex: null | number = null;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 중분류, 소분류, 품목계정, 대분류, 적재장소, 수량단위
   UseBizComponent(
     "L_BA172,L_BA173,L_BA061, L_BA171, L_LOADPLACE, L_BA015",
@@ -109,7 +109,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_BA015"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

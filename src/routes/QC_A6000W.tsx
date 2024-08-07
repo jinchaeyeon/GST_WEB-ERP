@@ -97,12 +97,12 @@ type TdataArr = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
   //사용자
   const field = props.field ?? "";
   const bizComponentIdVal = field == "person" ? "L_sysUserMaster_001" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -188,12 +188,12 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_MA034", setBizComponentData);
   //합부판정
   const field = props.field ?? "";
   const bizComponentIdVal = field == "qcdecision" ? "R_MA034" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

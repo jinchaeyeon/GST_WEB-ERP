@@ -33,11 +33,13 @@ const CommonComboBox = ({
   para = "",
 }: TCommonComboBox) => {
   const processApi = useApi();
-  bizComponentData = bizComponentData.find(
-    (item: any) => item.bizComponentId == bizComponentId
-  );
+  if(bizComponentData != null) {
+    bizComponentData = bizComponentData?.find(
+      (item: any) => item.bizComponentId == bizComponentId
+    );
+  } 
 
-  const [listData, setListData]: any = useState(bizComponentData.data.Rows);
+  const [listData, setListData]: any = useState(bizComponentData?.data.Rows);
 
   let required = false;
   if (className.includes("required")) {
@@ -47,7 +49,7 @@ const CommonComboBox = ({
   let newColumns = [];
 
   if (bizComponentData) {
-    const columns = bizComponentData.bizComponentItems;
+    const columns = bizComponentData?.bizComponentItems;
 
     if (columns) {
       newColumns = columns.map((column: any) => ({

@@ -68,7 +68,7 @@ const CustomComboField = ["orgdiv", "location"];
 let targetRowIndex: null | number = null;
 
 const CustomcomboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 회사구분, 사업장
   UseBizComponent("L_BA001, L_BA002", setBizComponentData);
 
@@ -76,7 +76,7 @@ const CustomcomboBoxCell = (props: GridCellProps) => {
   const bizComponentIdVal =
     field == "orgdiv" ? "L_BA001" : field == "location" ? "L_BA002" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

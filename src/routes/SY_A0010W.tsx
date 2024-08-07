@@ -423,7 +423,7 @@ const Page: React.FC = () => {
     if (data.isSuccess == true) {
       // 그룹카테고리 리스트
       const groupCategoryData =
-        bizComponentData.find((item: any) => item.bizComponentId == "L_BA000")
+        bizComponentData?.find((item: any) => item.bizComponentId == "L_BA000")
           ?.data.Rows ?? [];
       const totalRowCnt = data.tables[0].TotalRowCount;
 

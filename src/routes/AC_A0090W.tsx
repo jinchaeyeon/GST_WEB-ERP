@@ -91,14 +91,14 @@ let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 사용자
   UseBizComponent("L_QC006", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "chasu" ? "L_QC006" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -115,7 +115,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const CustomComboBoxCell2 = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 사용자
   UseBizComponent("L_AC070, L_AC071, L_BA020", setBizComponentData);
 
@@ -129,7 +129,7 @@ const CustomComboBoxCell2 = (props: GridCellProps) => {
       ? "L_BA020"
       : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
@@ -141,12 +141,12 @@ const CustomComboBoxCell2 = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_GISU2", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "gisu" ? "R_GISU2" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

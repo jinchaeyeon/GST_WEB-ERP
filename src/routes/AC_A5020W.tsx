@@ -79,12 +79,12 @@ type TdataArr = {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("R_YESNO", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal = field == "taxfinyn" ? "R_YESNO" : "";
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

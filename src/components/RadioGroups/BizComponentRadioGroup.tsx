@@ -29,12 +29,12 @@ const BizComponentRadioGroup = ({
   disabled = false,
 }: TBizComponentRadioGroup) => {
   if (bizComponentData) {
-    bizComponentData = bizComponentData.find(
+    bizComponentData = bizComponentData?.find(
       (item: any) => item.bizComponentId == bizComponentId
     );
   }
 
-  const dataList = bizComponentData ? bizComponentData.data.Rows : null;
+  const dataList = bizComponentData ? bizComponentData?.data.Rows : null;
 
   let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 

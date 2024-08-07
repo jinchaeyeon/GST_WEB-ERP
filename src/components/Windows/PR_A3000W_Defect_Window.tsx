@@ -75,14 +75,14 @@ let deletedRows: object[] = [];
 const idGetter = getter(FORM_DATA_INDEX);
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_QC002", setBizComponentData); // 불량유형
 
   //const field = props.field ?? "";
   // const bizComponentIdVal =
   //   field == "itemacnt" ? "L_BA061" : field == "qtyunit" ? "L_BA015" : "";
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == "L_QC002"
   );
 

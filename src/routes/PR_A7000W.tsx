@@ -148,7 +148,7 @@ type TdataArr2 = {
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 공정,대분류,중분류,소분류,품목계정,단위,중량단위
   UseBizComponent("L_PR010,L_sysUserMaster_001,L_fxcode", setBizComponentData);
 
@@ -171,7 +171,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const filedValue =
     field == "prodemp" ? "user_id" : field == "prodmac" ? "fxcode" : undefined;
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

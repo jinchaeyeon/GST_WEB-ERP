@@ -93,7 +93,7 @@ const centerField = ["name"];
 const customComboField = ["dptcd"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001", setBizComponentData);
 
   const field = props.field ?? "";
@@ -102,7 +102,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const valueField = field == "dptcd" ? "dptcd" : undefined;
   const textField = field == "dptcd" ? "dptnm" : undefined;
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 

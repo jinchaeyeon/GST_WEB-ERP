@@ -133,7 +133,7 @@ const RowRenderForDragging = (properties: any) => {
 };
 
 const CustomComboBoxCell = (props: TreeListCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
   UseBizComponent(
     "L_SYS1205_1,L_BA002,L_BA028,L_dptcd_001,L_HU005,L_BA410",
@@ -161,7 +161,7 @@ const CustomComboBoxCell = (props: TreeListCellProps) => {
       ? { valueField: "code", textField: "name" }
       : { valueField: undefined, textField: undefined };
 
-  const bizComponent = bizComponentData.find(
+  const bizComponent = bizComponentData?.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
