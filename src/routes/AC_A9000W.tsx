@@ -4,6 +4,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import {
   Grid,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
@@ -29,6 +30,7 @@ import {
   getDeviceHeight,
   getHeight,
   GetPropertyValueByName,
+  handleKeyPressSearch,
   setDefaultDate,
   UseBizComponent,
   UseCustomOption,
@@ -40,6 +42,7 @@ import {
   EDIT_FIELD,
   GAP,
   PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
@@ -48,13 +51,24 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A9000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import DateCell from "../components/Cells/DateCell";
+import { getter } from "@progress/kendo-react-common";
 
 const DATA_ITEM_KEY = "num";
 
 const requiredField: string[] = ["mngitemcd"];
 const checkBoxField: string[] = ["rtrchk"];
-const numberField: string[] = ["cbalamt", "dbalamt"];
+const numberField: string[] = [
+  "baseamt",
+  "inamt",
+  "chainamt",
+  "outamt",
+  "chaoutamt",
+  "inoutamt",
+  "adjustamt",
+];
 const readOnlyField: string[] = ["mngdatanm", "mngitemnm"];
+const DateField = [""];
 
 let targetRowIndex: null | number = null;
 
@@ -142,6 +156,8 @@ const AC_A9000W: React.FC = () => {
     }
   }, [customOptionData]);
 
+  const idGetter = getter(DATA_ITEM_KEY);
+
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
@@ -163,10 +179,15 @@ const AC_A9000W: React.FC = () => {
     });
   };
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("R_AC_A9000", setBizComponentData);
+  UseBizComponent("L_AC510", setBizComponentData);
+
+  const [acntcdListData, setAcntcdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
+      setAcntcdListData(getBizCom(bizComponentData, "L_AC510"));
     }
   }, [bizComponentData]);
 
@@ -190,6 +211,10 @@ const AC_A9000W: React.FC = () => {
     pgNum: 1,
     isSearch: false,
   });
+
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -407,7 +432,7 @@ const AC_A9000W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>기준년월</th>
@@ -469,8 +494,22 @@ const AC_A9000W: React.FC = () => {
             </Button>
           </ButtonContainer>
         </GridTitleContainer>
-        <Grid style={{ height: webheight }} data={mainDataResult}>
-          <GridColumn field="rowstatus" title=" " width="50px" />
+        <Grid
+          style={{ height: webheight }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              acntcd: acntcdListData.find(
+                (items: any) => items.sub_code == row.acntcd
+              )?.code_name,
+              [SELECTED_FIELD]: selectedState[idGetter(row)],
+            })),
+            mainDataState
+          )}
+          {...mainDataState}
+          onDataStateChange={onMainDataStateChange}
+        >
+          <GridColumn field="rowstatus" title=" " width="30px" />
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList"]
               ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
@@ -483,8 +522,8 @@ const AC_A9000W: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       cell={
-                        checkBoxField.includes(item.fieldName)
-                          ? CheckBoxCell
+                        DateField.includes(item.fieldName)
+                          ? DateCell
                           : numberField.includes(item.fieldName)
                           ? NumberCell
                           : undefined
@@ -505,6 +544,7 @@ const AC_A9000W: React.FC = () => {
               field="actdt"
               title="일자"
               width="80px"
+              cell={DateCell}
             />
             <GridColumn
               id="col_acseq1"
@@ -519,6 +559,7 @@ const AC_A9000W: React.FC = () => {
               field="tactdt"
               title="일자"
               width="80px"
+              cell={DateCell}
             />
             <GridColumn
               id="col_tacseq1"
@@ -533,6 +574,7 @@ const AC_A9000W: React.FC = () => {
               field="sactdt"
               title="일자"
               width="80px"
+              cell={DateCell}
             />
             <GridColumn
               id="col_sacseq1"
