@@ -161,39 +161,40 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
     if (!permissions.view) return;
     let data: any;
     setLoading(true);
-    // //팝업 조회 파라미터
-    // const parameters = {
-    //   para:
-    //     "popup-data?id=" +
-    //     "P_CR130" +
-    //     "&page=" +
-    //     filters.pgNum +
-    //     "&pageSize=" +
-    //     PAGE_SIZE,
-    // };
-    // try {
-    //   data = await processApi<any>("popup-data", parameters);
-    // } catch (error) {
-    //   data = null;
-    // }
+    //팝업 조회 파라미터
+    const parameters = {
+      para:
+        "popup-data?id=" +
+        "P_CR130" +
+        "&page=" +
+        filters.pgNum +
+        "&pageSize=" +
+        PAGE_SIZE,
+        use_yn: "Y",
+    };
+    try {
+      data = await processApi<any>("popup-data", parameters);
+    } catch (error) {
+      data = null;
+    }
 
-    // if (data !== null) {
-    //   const totalRowCnt = data.data.TotalRowCount;
-    //   const rows = data.data.Rows;
+    if (data !== null) {
+      const totalRowCnt = data.data.TotalRowCount;
+      const rows = data.data.Rows;
 
-    //   setMainDataResult((prev) => {
-    //     return {
-    //       data: rows,
-    //       total: totalRowCnt == -1 ? 0 : totalRowCnt,
-    //     };
-    //   });
-    //   if (totalRowCnt > 0) {
-    //     const selectedRow = rows[0];
-    //     setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-    //   }
-    // } else {
-    //   console.log(data);
-    // }
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow = rows[0];
+        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+      }
+    } else {
+      console.log(data);
+    }
     setFilters((prev) => ({
       ...prev,
       pgNum:
@@ -210,38 +211,39 @@ const KendoWindow = ({ setVisible, setData, modal = false }: IKendoWindow) => {
     let data: any;
     setLoading(true);
     // //팝업 조회 파라미터
-    // const parameters = {
-    //   para:
-    //     "popup-data?id=" +
-    //     "P_CR131" +
-    //     "&page=" +
-    //     filters.pgNum +
-    //     "&pageSize=" +
-    //     PAGE_SIZE,
-    // };
-    // try {
-    //   data = await processApi<any>("popup-data", parameters);
-    // } catch (error) {
-    //   data = null;
-    // }
+    const parameters = {
+      para:
+        "popup-data?id=" +
+        "P_CR131" +
+        "&page=" +
+        filters.pgNum +
+        "&pageSize=" +
+        PAGE_SIZE,
+        use_yn: "Y",
+    };
+    try {
+      data = await processApi<any>("popup-data", parameters);
+    } catch (error) {
+      data = null;
+    }
 
-    // if (data !== null) {
-    //   const totalRowCnt = data.data.TotalRowCount;
-    //   const rows = data.data.Rows;
+    if (data !== null) {
+      const totalRowCnt = data.data.TotalRowCount;
+      const rows = data.data.Rows;
 
-    //   setMainDataResult2((prev) => {
-    //     return {
-    //       data: rows,
-    //       total: totalRowCnt == -1 ? 0 : totalRowCnt,
-    //     };
-    //   });
-    //   if (totalRowCnt > 0) {
-    //     const selectedRow = rows[0];
-    //     setSelectedState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
-    //   }
-    // } else {
-    //   console.log(data);
-    // }
+      setMainDataResult2((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow = rows[0];
+        setSelectedState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
+      }
+    } else {
+      console.log(data);
+    }
     setFilters2((prev) => ({
       ...prev,
       pgNum:
