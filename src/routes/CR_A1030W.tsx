@@ -266,55 +266,6 @@ const App = () => {
     } else {
       console.log(data);
     }
-    // setDataResult((prev) => {
-    //   return {
-    //     data: [
-    //       {
-    //         sub_code: 1,
-    //         code_name: "투과전자현미경(TEM)",
-    //         extra_field1: "FEI",
-    //         extra_field2: "Talos F200X G2",
-    //       },
-    //       {
-    //         sub_code: 2,
-    //         code_name: "집속이온빔시스템(FIB)",
-    //         extra_field1: "FEI",
-    //         extra_field2: "Helios 5 UC",
-    //       },
-    //       {
-    //         sub_code: 3,
-    //         code_name: "고분해능 전계방사형 주사전자현미경(FE-SEM)",
-    //         extra_field1: "Hitachi",
-    //         extra_field2: "SU-8600",
-    //       },
-    //       {
-    //         sub_code: 4,
-    //         code_name: "이온밀링시스템",
-    //         extra_field1: "Hitachi",
-    //         extra_field2: "ArBlade5000 CTC",
-    //       },
-    //       {
-    //         sub_code: 5,
-    //         code_name: "비행시간형 이차이온질량분석기(TOF-SIMS)",
-    //         extra_field1: "IONTOF",
-    //         extra_field2: "M6",
-    //       },
-    //       {
-    //         sub_code: 6,
-    //         code_name: "X선 광전자 분광기(XPS)",
-    //         extra_field1: "Thermofishe Scientific",
-    //         extra_field2: "NEXSA G2",
-    //       },
-    //       {
-    //         sub_code: 7,
-    //         code_name: "원자현미경(AFM)",
-    //         extra_field1: "Anton Paar",
-    //         extra_field2: "TOSCA 400",
-    //       },
-    //     ],
-    //     total: 25,
-    //   };
-    // });
     setFilters((prev) => ({
       ...prev,
       pgNum:
