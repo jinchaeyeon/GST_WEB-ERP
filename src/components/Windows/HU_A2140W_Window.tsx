@@ -790,8 +790,17 @@ const HU_A2140W_Window = ({
             <FormBoxWrap className="FormBoxWrap">
               <FormBox>
                 <tbody>
-                  <tr>
-                    <th>날짜</th>
+                  <tr style={{ flexDirection: "row" }}>
+                    <th
+                      style={{
+                        width: "10%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      날짜
+                    </th>
                     <td>
                       <DatePicker
                         name="stddt"
@@ -800,6 +809,7 @@ const HU_A2140W_Window = ({
                         onChange={InputChange}
                         placeholder=""
                         className="required"
+                        size={"large"}
                       />
                     </td>
                   </tr>
@@ -903,7 +913,16 @@ const HU_A2140W_Window = ({
                 <FormBox>
                   <tbody>
                     <tr style={{ flexDirection: "row" }}>
-                      <th style={{ width: "10%" }}>시작일자</th>
+                      <th
+                        style={{
+                          width: "10%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        시작일자
+                      </th>
                       <td>
                         <DatePicker
                           name="startdate"
@@ -911,11 +930,21 @@ const HU_A2140W_Window = ({
                           format="yyyy-MM-dd"
                           onChange={InputChange}
                           placeholder=""
+                          size={"large"}
                         />
                       </td>
                     </tr>
                     <tr style={{ flexDirection: "row" }}>
-                      <th style={{ width: "10%" }}>시작시간</th>
+                      <th
+                        style={{
+                          width: "10%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        시작시간
+                      </th>
                       <td>
                         <TimePicker
                           name="start"
@@ -923,11 +952,21 @@ const HU_A2140W_Window = ({
                           steps={steps}
                           value={Information.start}
                           onChange={InputChange}
+                          size={"large"}
                         />
                       </td>
                     </tr>
                     <tr style={{ flexDirection: "row" }}>
-                      <th style={{ width: "10%" }}>종료일자</th>
+                      <th
+                        style={{
+                          width: "10%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        종료일자
+                      </th>
                       <td>
                         <DatePicker
                           name="enddate"
@@ -935,11 +974,21 @@ const HU_A2140W_Window = ({
                           format="yyyy-MM-dd"
                           onChange={InputChange}
                           placeholder=""
+                          size={"large"}
                         />
                       </td>
                     </tr>
                     <tr style={{ flexDirection: "row" }}>
-                      <th style={{ width: "10%" }}>종료시간</th>
+                      <th
+                        style={{
+                          width: "10%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        종료시간
+                      </th>
                       <td>
                         <TimePicker
                           name="end"
@@ -947,6 +996,7 @@ const HU_A2140W_Window = ({
                           steps={steps}
                           value={Information.end}
                           onChange={InputChange}
+                          size={"large"}
                         />
                       </td>
                     </tr>
@@ -957,7 +1007,7 @@ const HU_A2140W_Window = ({
                           value={Information.remark}
                           name="remark"
                           onChange={InputChange}
-                          style={{ height: "150px" }}
+                          style={{ height: "200px" }}
                         />
                       </td>
                     </tr>
