@@ -99,10 +99,10 @@ export const getWindowDeviceHeight = (bool: boolean, heights: any) => {
 };
 
 export const getBizCom = (bizComponentData: any, id: string) => {
-  return bizComponentData.find((item: any) => item.bizComponentId == id) ==
+  return bizComponentData?.find((item: any) => item.bizComponentId == id) ==
     undefined
     ? []
-    : bizComponentData.find((item: any) => item.bizComponentId == id).data.Rows;
+    : bizComponentData?.find((item: any) => item.bizComponentId == id).data.Rows;
 };
 
 export const getHeight = (className: string) => {

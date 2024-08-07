@@ -185,7 +185,7 @@ const DefaultValueCell = (props: GridCellProps) => {
   //const useSession = getYn(dataItem["use_session"]);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   if (bcId) UseBizComponent(bcId, setBizComponentData);
-  const bizComponent: any = bizComponentData.find(
+  const bizComponent: any = bizComponentData?.find(
     (item: any) => item.bizComponentId == bcId
   );
 

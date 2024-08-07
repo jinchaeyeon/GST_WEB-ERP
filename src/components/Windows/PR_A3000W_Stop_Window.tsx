@@ -265,12 +265,12 @@ const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
                     label={"비가동유형"}
                     component={FormComboBox}
                     data={
-                      bizComponentData.find(
+                      bizComponentData?.find(
                         (item: any) => item.bizComponentId == "L_PR011"
                       ).data.Rows
                     }
                     columns={
-                      bizComponentData.find(
+                      bizComponentData?.find(
                         (item: any) => item.bizComponentId == "L_PR011"
                       ).bizComponentItems
                     }
@@ -286,13 +286,13 @@ const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
                     label={"작업자"}
                     component={FormComboBox}
                     data={
-                      bizComponentData.find(
+                      bizComponentData?.find(
                         (item: any) =>
                           item.bizComponentId == "L_sysUserMaster_001"
                       ).data.Rows
                     }
                     columns={
-                      bizComponentData.find(
+                      bizComponentData?.find(
                         (item: any) =>
                           item.bizComponentId == "L_sysUserMaster_001"
                       ).bizComponentItems

@@ -156,11 +156,11 @@ const Page: React.FC = () => {
   useEffect(() => {
     if (bizComponentData != null) {
       setUserListData(
-        bizComponentData.find(
+        bizComponentData?.find(
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         ) == undefined
           ? []
-          : bizComponentData.find(
+          : bizComponentData?.find(
               (item: any) => item.bizComponentId == "L_sysUserMaster_001"
             ).bizComponentItems
       );

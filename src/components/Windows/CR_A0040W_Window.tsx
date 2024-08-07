@@ -141,7 +141,7 @@ const KendoWindow = ({
     const { name, value } = e;
 
     if (name == "gubun" && bizComponentData) {
-      const BA330 = bizComponentData.find(
+      const BA330 = bizComponentData?.find(
         (item: any) => item.bizComponentId == "L_BA330"
       );
       const row = BA330.data.Rows.find((item: any) => item.sub_code == value);

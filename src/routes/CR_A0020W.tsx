@@ -574,7 +574,7 @@ const CR_A0020W: React.FC = () => {
     //   }
     // });
 
-    const bizComponent: any = bizComponentData.find(
+    const bizComponent: any = bizComponentData?.find(
       (item: any) => item.bizComponentId == "L_BA310"
     );
 

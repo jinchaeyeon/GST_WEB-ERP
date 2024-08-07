@@ -24,6 +24,7 @@ import {
   getBizCom,
   getFormId,
   getHeight,
+  GetPropertyValueByName,
   getWindowDeviceHeight,
   toDate,
   UseBizComponent,
@@ -100,7 +101,20 @@ const HU_A2140W_Window = ({
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
-
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+      setFilters2((prev) => ({
+        ...prev,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
+        isSearch: true,
+      }));
+    }
+  }, [customOptionData]);
   useLayoutEffect(() => {
     if (customOptionData !== null && bizComponentData !== null) {
       height = getHeight(".k-window-titlebar"); //공통 해더
@@ -128,6 +142,7 @@ const HU_A2140W_Window = ({
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const [loginResult] = useRecoilState(loginResultState);
   const postcd = UseGetValueFromSessionItem("postcd");
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
   const userName = loginResult ? loginResult.userName : "";
   const [Information, setInformation] = useState<{ [name: string]: any }>({
@@ -162,6 +177,8 @@ const HU_A2140W_Window = ({
     appynmobile: "Y",
   });
 
+  const [userdataList, setUserDataList] = useState<any>(undefined);
+
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -169,6 +186,25 @@ const HU_A2140W_Window = ({
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "Y" : "N",
+      }));
+    } else if (name == "stddt") {
+      if (
+        !(
+          convertDateToStr(value).substring(0, 4) < "1997" ||
+          convertDateToStr(value).substring(6, 8) > "31" ||
+          convertDateToStr(value).substring(6, 8) < "01" ||
+          convertDateToStr(value).substring(6, 8).length != 2
+        )
+      ) {
+        setFilters2((prev) => ({
+          ...prev,
+          [name]: value,
+          isSearch: true,
+        }));
+      }
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
       }));
     } else {
       setInformation((prev) => ({
@@ -207,7 +243,13 @@ const HU_A2140W_Window = ({
         shh: para.shh,
         smm: para.smm,
         startdate: toDate(para.startdate),
-        stddiv: para.stddiv,
+        stddiv:
+          userdataList == undefined
+            ? ""
+            : userdataList.find((row: any) => row.stddiv == para.stddiv) !=
+              undefined
+            ? ""
+            : para.stddiv,
         stddt: new Date(),
         appynmobile: "Y",
       });
@@ -225,6 +267,15 @@ const HU_A2140W_Window = ({
 
   const onSaveClick = async () => {
     if (!permissions.save) return;
+
+    if (
+      convertDateToStr(Information.stddt).substring(0, 4) < "1997" ||
+      convertDateToStr(Information.stddt).substring(6, 8) > "31" ||
+      convertDateToStr(Information.stddt).substring(6, 8) < "01" ||
+      convertDateToStr(Information.stddt).substring(6, 8).length != 2
+    ) {
+      alert("필수값을 채워주세요.");
+    }
 
     setParaData({
       workType: "N",
@@ -387,6 +438,78 @@ const HU_A2140W_Window = ({
     isSearch: false,
     pgSize: PAGE_SIZE,
   });
+  const [filters2, setFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "Q",
+    orgdiv: sessionOrgdiv,
+    location: "",
+    dtgb: "",
+    stddt: new Date(),
+    prsnnum: userId,
+    prsnnm: "",
+    stddiv: "",
+    dptcd: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
+  //그리드 데이터 조회
+  const fetchMainGrid2 = async (filters2: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A2140W_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters2.orgdiv,
+        "@p_location": filters2.location,
+        "@p_dtgb": filters2.dtgb,
+        "@p_frdt": convertDateToStr(filters2.stddt),
+        "@p_todt": convertDateToStr(filters2.stddt),
+        "@p_prsnnum": filters2.prsnnum,
+        "@p_prsnnm": filters2.prsnnm,
+        "@p_stddiv": filters2.stddiv,
+        "@p_company_code": companyCode,
+        "@p_dptcd": filters2.dptcd,
+        "@p_find_row_value": filters2.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        expenseno: item.recdt + "-" + item.seq,
+      }));
+
+      setUserDataList(rows);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (
       filters.isSearch &&
@@ -400,6 +523,20 @@ const HU_A2140W_Window = ({
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions, bizComponentData, customOptionData]);
+
+  useEffect(() => {
+    if (
+      filters2.isSearch &&
+      permissions.view &&
+      bizComponentData !== null &&
+      customOptionData !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2, permissions, bizComponentData, customOptionData]);
 
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
@@ -678,18 +815,33 @@ const HU_A2140W_Window = ({
                       variant="outlined"
                       style={{
                         backgroundColor:
-                          Information.stddiv == item.sub_code
+                          userdataList?.find(
+                            (row: any) => row.stddiv == item.sub_code
+                          ) != undefined
+                            ? "#e3e3e3"
+                            : Information.stddiv == item.sub_code
                             ? "#2184bb"
                             : "#2289c340",
                         width: "100%",
-                        cursor: "pointer",
+                        cursor:
+                          userdataList?.find(
+                            (row: any) => row.stddiv == item.sub_code
+                          ) != undefined
+                            ? undefined
+                            : "pointer",
                       }}
-                      onClick={() =>
-                        setInformation((prev) => ({
-                          ...prev,
-                          stddiv: item.sub_code,
-                        }))
-                      }
+                      onClick={() => {
+                        if (
+                          userdataList?.find(
+                            (row: any) => row.stddiv == item.sub_code
+                          ) == undefined
+                        ) {
+                          setInformation((prev) => ({
+                            ...prev,
+                            stddiv: item.sub_code,
+                          }));
+                        }
+                      }}
                     >
                       <CardContent>
                         <Typography
@@ -710,8 +862,23 @@ const HU_A2140W_Window = ({
                 <Button
                   onClick={() => {
                     if (Information.stddiv != "") {
-                      if (swiper) {
-                        swiper.slideTo(1);
+                      if (
+                        !(
+                          convertDateToStr(Information.stddt).substring(0, 4) <
+                            "1997" ||
+                          convertDateToStr(Information.stddt).substring(6, 8) >
+                            "31" ||
+                          convertDateToStr(Information.stddt).substring(6, 8) <
+                            "01" ||
+                          convertDateToStr(Information.stddt).substring(6, 8)
+                            .length != 2
+                        )
+                      ) {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                        }
+                      } else {
+                        alert("필수값을 채워주세요.");
                       }
                     } else {
                       alert("근태구분을 선택해주세요.");
@@ -726,135 +893,139 @@ const HU_A2140W_Window = ({
             </BottomContainer>
           </GridContainer>
         </SwiperSlide>
-        <SwiperSlide key={1}>
-          <GridContainer>
-            <FormBoxWrap style={{ height: mobileheight2 }}>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>시작일자</th>
-                    <td>
-                      <DatePicker
-                        name="startdate"
-                        value={Information.startdate}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>시작시간</th>
-                    <td>
-                      <div style={{ display: "flex" }}>
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="shh"
-                            value={Information.shh}
-                            bizComponentId="L_BA420"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                        &nbsp;:&nbsp;
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="smm"
-                            value={Information.smm}
-                            bizComponentId="L_BA421"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>종료일자</th>
-                    <td>
-                      <DatePicker
-                        name="enddate"
-                        value={Information.enddate}
-                        format="yyyy-MM-dd"
-                        onChange={InputChange}
-                        placeholder=""
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>종료시간</th>
-                    <td>
-                      <div style={{ display: "flex" }}>
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="ehh"
-                            value={Information.ehh}
-                            bizComponentId="L_BA420"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                        &nbsp;:&nbsp;
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="emm"
-                            value={Information.emm}
-                            bizComponentId="L_BA421"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>사유</th>
-                    <td>
-                      <TextArea
-                        value={Information.remark}
-                        name="remark"
-                        onChange={InputChange}
-                        style={{ height: "150px" }}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <Checkbox
-                        name="appynmobile"
-                        value={Information.appynmobile == "Y" ? true : false}
-                        onChange={InputChange}
-                        label={"전자결재 요청"}
-                      />
-                    </th>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
-            <BottomContainer className="BottomContainer">
-              <ButtonContainer>
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(0);
-                    }
-                  }}
-                  themeColor={"primary"}
-                  style={{ width: "48%" }}
-                >
-                  이전
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  style={{ width: "48%" }}
-                  onClick={onSaveClick}
-                >
-                  신청
-                </Button>
-              </ButtonContainer>
-            </BottomContainer>
-          </GridContainer>
-        </SwiperSlide>
+        {Information.stddiv != "" ? (
+          <SwiperSlide key={1}>
+            <GridContainer>
+              <FormBoxWrap style={{ height: mobileheight2 }}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>시작일자</th>
+                      <td>
+                        <DatePicker
+                          name="startdate"
+                          value={Information.startdate}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>시작시간</th>
+                      <td>
+                        <div style={{ display: "flex" }}>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="shh"
+                              value={Information.shh}
+                              bizComponentId="L_BA420"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                          &nbsp;:&nbsp;
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="smm"
+                              value={Information.smm}
+                              bizComponentId="L_BA421"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>종료일자</th>
+                      <td>
+                        <DatePicker
+                          name="enddate"
+                          value={Information.enddate}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>종료시간</th>
+                      <td>
+                        <div style={{ display: "flex" }}>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="ehh"
+                              value={Information.ehh}
+                              bizComponentId="L_BA420"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                          &nbsp;:&nbsp;
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="emm"
+                              value={Information.emm}
+                              bizComponentId="L_BA421"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                            />
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>사유</th>
+                      <td>
+                        <TextArea
+                          value={Information.remark}
+                          name="remark"
+                          onChange={InputChange}
+                          style={{ height: "150px" }}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>
+                        <Checkbox
+                          name="appynmobile"
+                          value={Information.appynmobile == "Y" ? true : false}
+                          onChange={InputChange}
+                          label={"전자결재 요청"}
+                        />
+                      </th>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <BottomContainer className="BottomContainer">
+                <ButtonContainer>
+                  <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(0);
+                      }
+                    }}
+                    themeColor={"primary"}
+                    style={{ width: "48%" }}
+                  >
+                    이전
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    style={{ width: "48%" }}
+                    onClick={onSaveClick}
+                  >
+                    신청
+                  </Button>
+                </ButtonContainer>
+              </BottomContainer>
+            </GridContainer>
+          </SwiperSlide>
+        ) : (
+          ""
+        )}
       </Swiper>
     </Window>
   );
