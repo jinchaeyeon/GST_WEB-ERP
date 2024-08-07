@@ -1,6 +1,6 @@
 import { Card, CardContent, Grid as GridMUI, Typography } from "@mui/material";
 import { Button } from "@progress/kendo-react-buttons";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { DatePicker, TimePicker } from "@progress/kendo-react-dateinputs";
 import { Checkbox, TextArea } from "@progress/kendo-react-inputs";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -18,7 +18,6 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../store/atoms";
 import { Iparameters, TPermissions } from "../../store/types";
-import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import {
   convertDateToStr,
   getBizCom,
@@ -87,7 +86,7 @@ const HU_A2140W_Window = ({
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_HU089, L_BA421, L_BA420", setBizComponentData);
+  UseBizComponent("L_HU089", setBizComponentData);
 
   const [stddivListData, setStddivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -145,6 +144,11 @@ const HU_A2140W_Window = ({
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = loginResult ? loginResult.userId : "";
   const userName = loginResult ? loginResult.userName : "";
+  const steps = {
+    hour: 1,
+    minute: 5,
+    second: 60,
+  };
   const [Information, setInformation] = useState<{ [name: string]: any }>({
     Simbol1: ":",
     Simbol2: "~",
@@ -154,8 +158,7 @@ const HU_A2140W_Window = ({
     attdatnum: "",
     chk: "",
     dptcd: "",
-    ehh: "00",
-    emm: "00",
+    end: new Date(2000, 2, 10, 0, 0),
     enddate: new Date(),
     expenseno: "",
     files: "",
@@ -169,8 +172,7 @@ const HU_A2140W_Window = ({
     resdt: "",
     restime: "",
     seq: 0,
-    shh: "00",
-    smm: "00",
+    start: new Date(2000, 2, 10, 0, 0),
     startdate: new Date(),
     stddiv: "",
     stddt: new Date(),
@@ -225,8 +227,7 @@ const HU_A2140W_Window = ({
         attdatnum: "",
         chk: "",
         dptcd: para.dptcd,
-        ehh: para.ehh,
-        emm: para.emm,
+        end: new Date(2000, 2, 10, parseInt(para.ehh), parseInt(para.emm)),
         enddate: toDate(para.enddate),
         expenseno: para.expenseno,
         files: "",
@@ -240,8 +241,7 @@ const HU_A2140W_Window = ({
         resdt: "99991231",
         restime: para.restime,
         seq: para.seq,
-        shh: para.shh,
-        smm: para.smm,
+        start: new Date(2000, 2, 10, parseInt(para.shh), parseInt(para.smm)),
         startdate: toDate(para.startdate),
         stddiv:
           userdataList == undefined
@@ -255,15 +255,6 @@ const HU_A2140W_Window = ({
       });
     }
   }, [para]);
-
-  const ComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const onSaveClick = async () => {
     if (!permissions.save) return;
@@ -292,10 +283,22 @@ const HU_A2140W_Window = ({
       postcd_s: Information.postcd,
       startdate_s: convertDateToStr(Information.startdate),
       enddate_s: convertDateToStr(Information.enddate),
-      shh_s: Information.shh,
-      smm_s: Information.smm,
-      ehh_s: Information.ehh,
-      emm_s: Information.emm,
+      shh_s:
+        Information.start.getHours() < 10
+          ? "0" + Information.start.getHours()
+          : Information.start.getHours(),
+      smm_s:
+        Information.start.getMinutes() < 10
+          ? "0" + Information.start.getMinutes()
+          : Information.start.getMinutes(),
+      ehh_s:
+        Information.end.getHours() < 10
+          ? "0" + Information.end.getHours()
+          : Information.end.getHours(),
+      emm_s:
+        Information.end.getMinutes() < 10
+          ? "0" + Information.end.getMinutes()
+          : Information.end.getMinutes(),
       remark_s: Information.remark,
       attdatnum_s: "",
       recdt: "",
@@ -899,8 +902,8 @@ const HU_A2140W_Window = ({
               <FormBoxWrap style={{ height: mobileheight2 }}>
                 <FormBox>
                   <tbody>
-                    <tr>
-                      <th>시작일자</th>
+                    <tr style={{ flexDirection: "row" }}>
+                      <th style={{ width: "10%" }}>시작일자</th>
                       <td>
                         <DatePicker
                           name="startdate"
@@ -911,34 +914,20 @@ const HU_A2140W_Window = ({
                         />
                       </td>
                     </tr>
-                    <tr>
-                      <th>시작시간</th>
+                    <tr style={{ flexDirection: "row" }}>
+                      <th style={{ width: "10%" }}>시작시간</th>
                       <td>
-                        <div style={{ display: "flex" }}>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="shh"
-                              value={Information.shh}
-                              bizComponentId="L_BA420"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                            />
-                          )}
-                          &nbsp;:&nbsp;
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="smm"
-                              value={Information.smm}
-                              bizComponentId="L_BA421"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                            />
-                          )}
-                        </div>
+                        <TimePicker
+                          name="start"
+                          format="HH:mm"
+                          steps={steps}
+                          value={Information.start}
+                          onChange={InputChange}
+                        />
                       </td>
                     </tr>
-                    <tr>
-                      <th>종료일자</th>
+                    <tr style={{ flexDirection: "row" }}>
+                      <th style={{ width: "10%" }}>종료일자</th>
                       <td>
                         <DatePicker
                           name="enddate"
@@ -949,34 +938,20 @@ const HU_A2140W_Window = ({
                         />
                       </td>
                     </tr>
-                    <tr>
-                      <th>종료시간</th>
+                    <tr style={{ flexDirection: "row" }}>
+                      <th style={{ width: "10%" }}>종료시간</th>
                       <td>
-                        <div style={{ display: "flex" }}>
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="ehh"
-                              value={Information.ehh}
-                              bizComponentId="L_BA420"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                            />
-                          )}
-                          &nbsp;:&nbsp;
-                          {bizComponentData !== null && (
-                            <BizComponentComboBox
-                              name="emm"
-                              value={Information.emm}
-                              bizComponentId="L_BA421"
-                              bizComponentData={bizComponentData}
-                              changeData={ComboBoxChange}
-                            />
-                          )}
-                        </div>
+                        <TimePicker
+                          name="end"
+                          format="HH:mm"
+                          steps={steps}
+                          value={Information.end}
+                          onChange={InputChange}
+                        />
                       </td>
                     </tr>
-                    <tr>
-                      <th>사유</th>
+                    <tr style={{ flexDirection: "row" }}>
+                      <th style={{ width: "10%" }}>사유</th>
                       <td>
                         <TextArea
                           value={Information.remark}
