@@ -4,9 +4,11 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridHeaderCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
@@ -21,6 +23,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import MonthCalendar from "../components/Calendars/MonthCalendar";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -151,6 +154,7 @@ const SY_A0150: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       [name]: value,
+      isSearch: name == "dutydt" ? true : false,
     }));
   };
 
@@ -170,6 +174,7 @@ const SY_A0150: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       [name]: value,
+      isSearch: name == "workType" ? true : false,
     }));
   };
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -202,7 +207,7 @@ const SY_A0150: React.FC = () => {
       parameters: {
         "@p_workType": filters.workType == "1" ? "TIME_ANALYSIS" : "TOTAL_TIME",
         "@p_orgdiv": filters.orgdiv,
-        "@p_dutydt": convertDateToStr(filters.dutydt),
+        "@p_dutydt": convertDateToStr(filters.dutydt).substring(0, 6),
         "@p_prsnnum": filters.prsnnum,
         "@p_dptcd": filters.dptcd,
         "@p_rtrchk": filters.rtrchk,
@@ -335,7 +340,14 @@ const SY_A0150: React.FC = () => {
           field={`day${i}`}
           title={`${i}(${getDays(day)})`}
           width="120px"
-          // cell={CustomCell}
+          cell={CustomCell}
+          headerCell={
+            getDays(day) == "토"
+              ? CustomHeaderCell
+              : getDays(day) == "일"
+              ? CustomHeaderCell2
+              : undefined
+          }
         />
       );
     }
@@ -346,7 +358,7 @@ const SY_A0150: React.FC = () => {
           field={`totoverday`}
           title={`잔여연장시간`}
           width="120px"
-          // cell={CustomCell}
+          cell={CustomCell2}
         />
       );
       array.push(
@@ -354,11 +366,11 @@ const SY_A0150: React.FC = () => {
           field={`overday`}
           title={`월 연장시간`}
           width="120px"
-          // cell={CustomCell}
+          cell={CustomCell2}
         />
       );
     }
-      
+
     return array;
   };
 
@@ -384,6 +396,90 @@ const SY_A0150: React.FC = () => {
     }
   };
 
+  const CustomHeaderCell = (props: GridHeaderCellProps) => {
+    return (
+      <div style={{ textAlign: "center", color: "blue" }}>{props.title}</div>
+    );
+  };
+
+  const CustomHeaderCell2 = (props: GridHeaderCellProps) => {
+    return (
+      <div style={{ textAlign: "center", color: "red" }}>{props.title}</div>
+    );
+  };
+
+  const CustomCell = (props: GridCellProps) => {
+    const {
+      ariaColumnIndex,
+      columnIndex,
+      dataItem,
+      field = "",
+      render,
+      onChange,
+      className = "",
+    } = props;
+    const value = field && dataItem[field] ? dataItem[field] : "";
+
+    function checkValue(value: string) {
+      if (value != "" && value != "00:00") {
+        const str = value.replace(":", "");
+        if (parseInt(str) < 850) {
+          return "blue";
+        } else if (parseInt(str) < 900 && parseInt(str) >= 850) {
+          return "green";
+        } else {
+          return "red";
+        }
+      } else {
+        return undefined;
+      }
+    }
+
+    return (
+      <td
+        className={className}
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+        style={{
+          backgroundColor: checkValue(value),
+          fontWeight: 600,
+          fontSize: "15px",
+          textAlign: "center",
+        }}
+      >
+        {value}
+      </td>
+    );
+  };
+
+  const CustomCell2 = (props: GridCellProps) => {
+    const {
+      ariaColumnIndex,
+      columnIndex,
+      dataItem,
+      field = "",
+      render,
+      onChange,
+      className = "",
+    } = props;
+    const value = field && dataItem[field] ? dataItem[field] : "";
+
+    return (
+      <td
+        className={className}
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+        style={{
+          fontWeight: 600,
+          fontSize: "15px",
+          textAlign: "center",
+        }}
+      >
+        {value}
+      </td>
+    );
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -407,10 +503,11 @@ const SY_A0150: React.FC = () => {
                 <DatePicker
                   name="dutydt"
                   value={filters.dutydt}
-                  format="yyyy-MM-dd"
+                  format="yyyy-MM"
                   onChange={filterInputChange}
                   placeholder=""
                   className="required"
+                  calendar={MonthCalendar}
                 />
               </td>
               <th>사용자명</th>
@@ -462,7 +559,33 @@ const SY_A0150: React.FC = () => {
                 )}
               </td>
               <th colSpan={6}>
-                <p>※파란색 : ~ 8:20 ※초록색 : 8:20 ~ 8:30 ※빨간색 : 8:30 ~</p>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "5px",
+                  }}
+                >
+                  <p
+                    style={{ color: "blue", fontSize: "17px", fontWeight: 600 }}
+                  >
+                    ※파란색 : ~ 8:50
+                  </p>
+                  <p
+                    style={{
+                      color: "green",
+                      fontSize: "17px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    ※초록색 : 8:50 ~ 9:00
+                  </p>
+                  <p
+                    style={{ color: "red", fontSize: "17px", fontWeight: 600 }}
+                  >
+                    ※빨간색 : 9:00 ~
+                  </p>
+                </div>
               </th>
             </tr>
           </tbody>
