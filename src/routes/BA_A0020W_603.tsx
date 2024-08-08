@@ -2310,7 +2310,7 @@ const BA_A0020W_603: React.FC = () => {
     ) {
       alert("필수값을 입력해주세요.");
     } else {
-      console.log(information.bizregnum);
+
       setParaData((prev) => ({
         ...prev,
         workType: workType,
