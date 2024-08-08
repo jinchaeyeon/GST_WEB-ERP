@@ -1443,7 +1443,7 @@ const CopyWindow = ({
             ? 0
             : Information_ori.spareqty_tk,
         refineperiod_tk:
-          value == true 
+          value == true
             ? Information.refineperiod_base
             : Information_ori.refineperiod_tk,
       }));
@@ -4664,12 +4664,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="tkqty_tk"
                             value={Information.tkqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="totqty_base"
+                            value={Information.totqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -4689,12 +4699,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="experimentqty_tk"
                             value={Information.experimentqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="experimentqty_base"
+                            value={Information.experimentqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -4739,12 +4759,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="maleqty_tk"
                             value={Information.maleqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="maleqty_base"
+                            value={Information.maleqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -4764,12 +4794,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="femaleqty_tk"
                             value={Information.femaleqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="femaleqty_base"
+                            value={Information.femaleqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -4789,12 +4829,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="spareqty_tk"
                             value={Information.spareqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="spareqty_base"
+                            value={Information.spareqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -4805,7 +4855,9 @@ const CopyWindow = ({
                     <tr>
                       <th>순화기간(D)</th>
                       <td>
-                        {save == true && Information.yn_tk == true ? (
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
@@ -4814,12 +4866,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="refineperiod_tk"
                             value={Information.refineperiod_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="refineperiod_base"
+                            value={Information.refineperiod_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -6197,12 +6259,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="tkqty_tk"
                             value={Information.tkqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="totqty_base"
+                            value={Information.totqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -6222,12 +6294,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="experimentqty_tk"
                             value={Information.experimentqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="experimentqty_base"
+                            value={Information.experimentqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -6272,12 +6354,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="maleqty_tk"
                             value={Information.maleqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="maleqty_base"
+                            value={Information.maleqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -6297,12 +6389,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="femaleqty_tk"
                             value={Information.femaleqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="femaleqty_base"
+                            value={Information.femaleqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -6322,12 +6424,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="spareqty_tk"
                             value={Information.spareqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="spareqty_base"
+                            value={Information.spareqty_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -6338,7 +6450,9 @@ const CopyWindow = ({
                     <tr>
                       <th>순화기간(D)</th>
                       <td>
-                        {save == true && Information.yn_tk == true ? (
+                        {save == true &&
+                        Information.yn_tk == true &&
+                        Information.bonyn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
@@ -6347,12 +6461,22 @@ const CopyWindow = ({
                             format="n0"
                             onChange={InputChange}
                           />
-                        ) : (
+                        ) : save == true && Information.yn_tk == false ? (
                           <NumericTextBox
                             spinners={false}
                             min={0}
                             name="refineperiod_tk"
                             value={Information.refineperiod_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="refineperiod_base"
+                            value={Information.refineperiod_base}
                             format="n0"
                             className="readonly"
                             disabled={true}
