@@ -122,7 +122,7 @@ const App = () => {
               <div>
                 <Typography
                   variant="h6"
-                  style={{ fontWeight: 700 }}
+                  style={{ fontWeight: 700,  marginRight: "50px" }}
                   gutterBottom
                 >
                   {item.code_name}
