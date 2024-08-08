@@ -1814,124 +1814,112 @@ const CM_A3000W: React.FC = () => {
                         />
                       </td>
                     </tr>
-                    <tr>
-                      <th>첨부파일</th>
-                      <td colSpan={7}>
-                        <GridContainer>
-                          <Grid
-                            style={{ height: "20vh" }}
-                            data={process(
-                              attDataResult.data.map((row) => ({
-                                ...row,
-                                person: userListData.find(
-                                  (item: any) => item.user_id == row.person
-                                )?.user_name,
-                                insert_time: convertDateToStrWithTime2(
-                                  new Date(row.insert_time)
-                                ),
-                                [SELECTED_FIELD]:
-                                  selectedattDataState[idGetter3(row)],
-                              })),
-                              {}
-                            )}
-                            sortable={true}
-                            groupable={false}
-                            reorderable={true}
-                            //onDataStateChange={dataStateChange}
-                            fixedScroll={true}
-                            total={attDataResult.total}
-                            selectedField={SELECTED_FIELD}
-                            selectable={{
-                              enabled: true,
-                              drag: false,
-                              cell: false,
-                              mode: "single",
-                            }}
-                            onSelectionChange={onAttDataSelectionChange}
-                            onItemChange={onAttItemChange}
-                            cellRender={customCellRender}
-                            rowRender={customRowRender}
-                            editField={EDIT_FIELD}
-                          >
-                            <GridColumn
-                              field="chk"
-                              title=" "
-                              width="10px"
-                              headerCell={CustomCheckBoxCell2}
-                              cell={CheckBoxCell}
-                            />
-                            <GridColumn
-                              field="original_name"
-                              title="파일이름"
-                              width="100px"
-                            />
-                            <GridColumn
-                              field="file_size"
-                              title="파일SIZE"
-                              width="40px"
-                            />
-                            <GridColumn
-                              field="user_name"
-                              title="등록자명"
-                              width="40px"
-                            />
-                            <GridColumn
-                              field="insert_time"
-                              title="입력시간"
-                              width="50px"
-                            />
-                          </Grid>
-                        </GridContainer>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colSpan={2}>
-                        <ButtonContainer
-                          style={{ justifyContent: "flex-start" }}
-                        >
-                          <Button
-                            onClick={upload}
-                            themeColor={"primary"}
-                            icon={"upload"}
-                            disabled={permissions.save ? false : true}
-                          >
-                            업로드
-                            <input
-                              id="uploadAttachment"
-                              style={{ display: "none" }}
-                              type="file"
-                              multiple
-                              ref={excelsInput}
-                              onChange={(
-                                event: React.ChangeEvent<HTMLInputElement>
-                              ) => {
-                                handleFileUpload(event.target.files);
-                              }}
-                            />
-                          </Button>
-                          <Button
-                            onClick={downloadFiles}
-                            themeColor={"primary"}
-                            fillMode={"outline"}
-                            icon={"download"}
-                            disabled={permissions.view ? false : true}
-                          >
-                            다운로드
-                          </Button>
-                          <Button
-                            onClick={deleteFiles}
-                            themeColor={"primary"}
-                            fillMode={"outline"}
-                            icon={"delete"}
-                            disabled={permissions.save ? false : true}
-                          >
-                            삭제
-                          </Button>
-                        </ButtonContainer>
-                      </td>
-                    </tr>
                   </tbody>
                 </FormBox>
+                <GridContainer>
+                  <Grid
+                    style={{ height: "20vh" }}
+                    data={process(
+                      attDataResult.data.map((row) => ({
+                        ...row,
+                        person: userListData.find(
+                          (item: any) => item.user_id == row.person
+                        )?.user_name,
+                        insert_time: convertDateToStrWithTime2(
+                          new Date(row.insert_time)
+                        ),
+                        [SELECTED_FIELD]: selectedattDataState[idGetter3(row)],
+                      })),
+                      {}
+                    )}
+                    sortable={true}
+                    groupable={false}
+                    reorderable={true}
+                    //onDataStateChange={dataStateChange}
+                    fixedScroll={true}
+                    total={attDataResult.total}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      drag: false,
+                      cell: false,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onAttDataSelectionChange}
+                    onItemChange={onAttItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="chk"
+                      title=" "
+                      width="10px"
+                      headerCell={CustomCheckBoxCell2}
+                      cell={CheckBoxCell}
+                    />
+                    <GridColumn
+                      field="original_name"
+                      title="파일이름"
+                      width="100px"
+                    />
+                    <GridColumn
+                      field="file_size"
+                      title="파일SIZE"
+                      width="40px"
+                    />
+                    <GridColumn
+                      field="user_name"
+                      title="등록자명"
+                      width="40px"
+                    />
+                    <GridColumn
+                      field="insert_time"
+                      title="입력시간"
+                      width="50px"
+                    />
+                  </Grid>
+                  <ButtonContainer style={{ justifyContent: "flex-start" }}>
+                    <Button
+                      onClick={upload}
+                      themeColor={"primary"}
+                      icon={"upload"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      업로드
+                      <input
+                        id="uploadAttachment"
+                        style={{ display: "none" }}
+                        type="file"
+                        multiple
+                        ref={excelsInput}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          handleFileUpload(event.target.files);
+                        }}
+                      />
+                    </Button>
+                    <Button
+                      onClick={downloadFiles}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon={"download"}
+                      disabled={permissions.view ? false : true}
+                    >
+                      다운로드
+                    </Button>
+                    <Button
+                      onClick={deleteFiles}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon={"delete"}
+                      disabled={permissions.save ? false : true}
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                </GridContainer>
               </FormBoxWrap>
             </GridContainer>
           </SwiperSlide>
