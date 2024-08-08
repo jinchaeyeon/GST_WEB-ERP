@@ -34,7 +34,6 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import RichEditor from "../components/RichEditor";
-import ApplicationWindow from "../components/Windows/CommonWindows/ApplicationWindow";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
@@ -96,70 +95,13 @@ const App = () => {
   UseCustomOption(setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "R_ACNT, R_quotype, R_YN4",
+    "R_ACNT, R_YN4",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
 
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    // 컴포넌트가 마운트된 후에 상태를 업데이트
-    const timer = setTimeout(() => {
-      setIsMounted(true);
-    }, 100); // 100ms 후에 마운트 상태로 변경
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const MyItemRender = (item: any) => {
-    return (
-      <>
-        {isMounted && item.code_name.length > 20 ? (
-          <>
-            <Marquee delay={1} gradient={false}>
-              <div>
-                <Typography
-                  variant="h6"
-                  style={{ fontWeight: 700 }}
-                  gutterBottom
-                >
-                  {item.code_name}
-                </Typography>
-              </div>
-            </Marquee>
-            <Typography
-              variant="body2"
-              style={{ marginBottom: "0px" }}
-              color="text.secondary"
-            >
-              제조사: {item.extra_field1}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              모델명: {item.extra_field2}
-            </Typography>
-          </>
-        ) : (
-          <>
-            <Typography variant="h6" style={{ fontWeight: 700 }} gutterBottom>
-              {item.code_name}
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{ marginBottom: "0px" }}
-              color="text.secondary"
-            >
-              제조사: {item.extra_field1}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              모델명: {item.extra_field2}
-            </Typography>
-          </>
-        )}
-      </>
-    );
-  };
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
@@ -208,23 +150,15 @@ const App = () => {
     phoneno: "", //전화번호
     telno: "010-3686-7233", //핸드폰번호
     email: "pophyunmin@ctp.or.kr", //이메일
-    discount: "0",
     title: "",
-    applicationType: "", //사용구분
-    applicationTypenm: "", //사용구분명
     acntdiv: "1", //결제구분
-    quotype: "1", //의뢰형태
     user_id: "", //사전협의자
     user_name: "", //사전협의자명
-    samplenm: "", //시료명
     samplecnt: 0, //시료수
-    modelnm: "", //모델명
-    printyn: "N", //시험성적서발급
     frdt: null,
     todt: null,
     files: "",
     attdatnum: "",
-    material: "1",
   });
 
   const InputChange = (e: any) => {
@@ -244,24 +178,12 @@ const App = () => {
       [name]: value,
     }));
   };
-  const [applicationWindowVisible, setApplicationWindowVisible] =
-    useState<boolean>(false);
   const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
     useState<boolean>(false);
-  const onApplicationWndClick = () => {
-    setApplicationWindowVisible(true);
-  };
   const onPrsnnumWndClick = () => {
     setPrsnnumWindowVisible(true);
   };
 
-  const setData = (data: any) => {
-    setInformation((prev) => ({
-      ...prev,
-      applicationType: data.sub_code,
-      applicationTypenm: data.code_name,
-    }));
-  };
   const setUserData = (data: IUser) => {
     setInformation((prev: any) => {
       return {
@@ -272,75 +194,9 @@ const App = () => {
     });
   };
 
-  //조회조건 초기값
-  const [filters, setFilters] = useState({
-    find_row_value: "",
-    pgNum: 1,
-    isSearch: true,
-    pgSize: PAGE_SIZE,
-  });
-
-  useEffect(() => {
-    if (filters.isSearch && permissions.view) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(filters);
-      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      fetchGrid(deepCopiedFilters);
-    }
-  }, [filters, permissions]);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const fetchGrid = async (filters: any) => {
-    if (!permissions.view) return;
-    let data: any;
-    setLoading(true);
-    //팝업 조회 파라미터
-    const parameters = {
-      para:
-        "popup-data?id=" +
-        "P_CR132" +
-        "&page=" +
-        filters.pgNum +
-        "&pageSize=" +
-        PAGE_SIZE,
-      use_yn: "Y",
-    };
-    try {
-      data = await processApi<any>("popup-data", parameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data !== null) {
-      const totalRowCnt = data.data.TotalRowCount;
-      const rows = data.data.Rows;
-
-      setDataResult((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
-    } else {
-      console.log(data);
-    }
-    setFilters((prev) => ({
-      ...prev,
-      pgNum:
-        data && data.hasOwnProperty("pageNumber")
-          ? data.pageNumber
-          : prev.pgNum,
-      isSearch: false,
-    }));
-    setLoading(false);
-  };
-
-  const [DataState, setDataState] = useState<State>({
-    sort: [],
-  });
-  const [DataResult, setDataResult] = useState<DataResult>(
-    process([], DataState)
-  );
+ 
   const refEditorRef = useRef<TEditorHandle>(null);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
@@ -455,15 +311,6 @@ const App = () => {
                             className="readonly"
                           />
                         </td>
-                        <th>할인율</th>
-                        <td>
-                          <Input
-                            name="discount"
-                            type="text"
-                            value={information.discount + "%"}
-                            className="readonly"
-                          />
-                        </td>
                       </tr>
                     </tbody>
                   </FormBox>
@@ -517,26 +364,6 @@ const App = () => {
                         </td>
                       </tr>
                       <tr>
-                        <th>사용 구분</th>
-                        <td>
-                          <Input
-                            name="applicationTypenm"
-                            type="text"
-                            value={information.applicationTypenm}
-                            onChange={InputChange}
-                            className="required"
-                          />
-                          <ButtonInInput>
-                            <Button
-                              type={"button"}
-                              onClick={onApplicationWndClick}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                      </tr>
-                      <tr>
                         <th>결제 구분</th>
                         <td>
                           {information.workType == "N"
@@ -567,7 +394,7 @@ const App = () => {
             <SwiperSlide key={2}>
               <GridContainer>
                 <GridTitleContainer className="ButtonContainer3">
-                  <GridTitle>Wafer 및 시편정보</GridTitle>
+                  <GridTitle>시편정보</GridTitle>
                   <ButtonContainer style={{ justifyContent: "space-between" }}>
                     <Button
                       onClick={() => {
@@ -599,27 +426,6 @@ const App = () => {
                   <FormBox>
                     <tbody>
                       <tr>
-                        <th>의뢰형태</th>
-                        <td>
-                          {information.workType == "N"
-                            ? customOptionData !== null && (
-                                <CustomOptionRadioGroup
-                                  name="quotype"
-                                  customOptionData={customOptionData}
-                                  changeData={RadioChange}
-                                  type="new"
-                                />
-                              )
-                            : bizComponentData !== null && (
-                                <BizComponentRadioGroup
-                                  name="quotype"
-                                  value={information.quotype}
-                                  bizComponentId="R_quotype"
-                                  bizComponentData={bizComponentData}
-                                  changeData={RadioChange}
-                                />
-                              )}
-                        </td>
                         <th>사전협의자</th>
                         <td>
                           <Input
@@ -637,16 +443,6 @@ const App = () => {
                             />
                           </ButtonInInput>
                         </td>
-                        <th>시료명</th>
-                        <td>
-                          <Input
-                            name="samplenm"
-                            type="text"
-                            value={information.samplenm}
-                            onChange={InputChange}
-                            className="required"
-                          />
-                        </td>
                         <th>시료수</th>
                         <td>
                           <NumericTextBox
@@ -656,96 +452,6 @@ const App = () => {
                             className="required"
                             format="n0"
                           />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>모델명</th>
-                        <td>
-                          <Input
-                            name="modelnm"
-                            type="text"
-                            value={information.modelnm}
-                            onChange={InputChange}
-                            className="required"
-                          />
-                        </td>
-                        <th>시험성적서 발급</th>
-                        <td>
-                          {information.workType == "N"
-                            ? customOptionData !== null && (
-                                <CustomOptionRadioGroup
-                                  name="printyn"
-                                  customOptionData={customOptionData}
-                                  changeData={RadioChange}
-                                  type="new"
-                                />
-                              )
-                            : bizComponentData !== null && (
-                                <BizComponentRadioGroup
-                                  name="printyn"
-                                  value={information.printyn}
-                                  bizComponentId="R_YN4"
-                                  bizComponentData={bizComponentData}
-                                  changeData={RadioChange}
-                                />
-                              )}
-                        </td>
-                        <th>시간 예약</th>
-                        <td colSpan={3}>
-                          <CommonDateRangePicker
-                            value={{
-                              start: information.frdt,
-                              end: information.todt,
-                            }}
-                            onChange={(e: {
-                              value: { start: any; end: any };
-                            }) =>
-                              setInformation((prev) => ({
-                                ...prev,
-                                frdt: e.value.start,
-                                todt: e.value.end,
-                              }))
-                            }
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colSpan={8}>
-                          <GridTitleContainer>
-                            <GridTitle>시험 항목</GridTitle>
-                          </GridTitleContainer>
-                          <GridMUI
-                            container
-                            spacing={2}
-                            style={{ height: "350px", overflow: "auto" }}
-                          >
-                            {DataResult.data.map((item: any) => (
-                              <GridMUI item xs={12} sm={6} md={4} lg={4} xl={3}>
-                                <Card
-                                  variant="outlined"
-                                  style={{
-                                    backgroundColor:
-                                      information.material == item.sub_code
-                                        ? "#f1a539"
-                                        : "#fef2e2",
-                                    marginBottom: "5px",
-                                    width: "100%",
-                                    cursor: "pointer",
-                                  }}
-                                  onClick={() =>
-                                    setInformation((prev) => ({
-                                      ...prev,
-                                      material: item.sub_code,
-                                    }))
-                                  }
-                                >
-                                  <CardContent style={{ padding: "10px" }}>
-                                    {MyItemRender(item)}
-                                  </CardContent>
-                                </Card>
-                              </GridMUI>
-                            ))}
-                          </GridMUI>
                         </td>
                       </tr>
                     </tbody>
@@ -807,7 +513,7 @@ const App = () => {
       ) : (
         <GridContainer>
           <GridContainerWrap className="FormBoxWrap">
-            <GridContainer width="50%">
+            <GridContainer width="60%">
               <GridTitleContainer>
                 <GridTitle>신청자 정보</GridTitle>
               </GridTitleContainer>
@@ -833,6 +539,15 @@ const App = () => {
                           className="readonly"
                         />
                       </td>
+                      <th>이메일</th>
+                      <td>
+                        <Input
+                          name="email"
+                          type="text"
+                          value={information.email}
+                          className="readonly"
+                        />
+                      </td>
                     </tr>
                     <tr>
                       <th>전화번호</th>
@@ -854,31 +569,11 @@ const App = () => {
                         />
                       </td>
                     </tr>
-                    <tr>
-                      <th>이메일</th>
-                      <td>
-                        <Input
-                          name="email"
-                          type="text"
-                          value={information.email}
-                          className="readonly"
-                        />
-                      </td>
-                      <th>할인율</th>
-                      <td>
-                        <Input
-                          name="discount"
-                          type="text"
-                          value={information.discount + "%"}
-                          className="readonly"
-                        />
-                      </td>
-                    </tr>
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer width={`calc(50% - ${GAP}px)`}>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>신청 정보</GridTitle>
               </GridTitleContainer>
@@ -895,26 +590,6 @@ const App = () => {
                           onChange={InputChange}
                           className="required"
                         />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>사용 구분</th>
-                      <td>
-                        <Input
-                          name="applicationTypenm"
-                          type="text"
-                          value={information.applicationTypenm}
-                          onChange={InputChange}
-                          className="required"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onApplicationWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
                       </td>
                     </tr>
                     <tr>
@@ -947,34 +622,13 @@ const App = () => {
           </GridContainerWrap>
           <GridContainer className="FormBoxWrap2">
             <GridTitleContainer>
-              <GridTitle>Wafer 및 시편정보</GridTitle>
+              <GridTitle>시편정보</GridTitle>
             </GridTitleContainer>
             <FormBoxWrap border={true}>
               <FormBox>
                 <tbody>
                   <tr>
-                    <th>의뢰형태</th>
-                    <td>
-                      {information.workType == "N"
-                        ? customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="quotype"
-                              customOptionData={customOptionData}
-                              changeData={RadioChange}
-                              type="new"
-                            />
-                          )
-                        : bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="quotype"
-                              value={information.quotype}
-                              bizComponentId="R_quotype"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
-                    </td>
-                    <th>사전협의자</th>
+                    <th style={{width : "10%"}}>사전협의자</th>
                     <td>
                       <Input
                         name="user_name"
@@ -991,17 +645,7 @@ const App = () => {
                         />
                       </ButtonInInput>
                     </td>
-                    <th>시료명</th>
-                    <td>
-                      <Input
-                        name="samplenm"
-                        type="text"
-                        value={information.samplenm}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                    <th>시료수</th>
+                    <th style={{width : "10%"}}>시료수</th>
                     <td>
                       <NumericTextBox
                         name="samplecnt"
@@ -1010,94 +654,6 @@ const App = () => {
                         className="required"
                         format="n0"
                       />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>모델명</th>
-                    <td>
-                      <Input
-                        name="modelnm"
-                        type="text"
-                        value={information.modelnm}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                    <th>시험성적서 발급</th>
-                    <td>
-                      {information.workType == "N"
-                        ? customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="printyn"
-                              customOptionData={customOptionData}
-                              changeData={RadioChange}
-                              type="new"
-                            />
-                          )
-                        : bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="printyn"
-                              value={information.printyn}
-                              bizComponentId="R_YN4"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
-                    </td>
-                    <th>시간 예약</th>
-                    <td colSpan={3}>
-                      <CommonDateRangePicker
-                        value={{
-                          start: information.frdt,
-                          end: information.todt,
-                        }}
-                        onChange={(e: { value: { start: any; end: any } }) =>
-                          setInformation((prev) => ({
-                            ...prev,
-                            frdt: e.value.start,
-                            todt: e.value.end,
-                          }))
-                        }
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colSpan={8}>
-                      <GridTitleContainer>
-                        <GridTitle>시험 항목</GridTitle>
-                      </GridTitleContainer>
-                      <GridMUI
-                        container
-                        spacing={2}
-                        style={{ height: "350px", overflow: "auto" }}
-                      >
-                        {DataResult.data.map((item: any) => (
-                          <GridMUI item xs={12} sm={6} md={4} lg={4} xl={3}>
-                            <Card
-                              variant="outlined"
-                              style={{
-                                backgroundColor:
-                                  information.material == item.sub_code
-                                    ? "#f1a539"
-                                    : "#fef2e2",
-                                marginBottom: "5px",
-                                width: "100%",
-                                cursor: "pointer",
-                              }}
-                              onClick={() =>
-                                setInformation((prev) => ({
-                                  ...prev,
-                                  material: item.sub_code,
-                                }))
-                              }
-                            >
-                              <CardContent style={{ padding: "5px" }}>
-                                {MyItemRender(item)}
-                              </CardContent>
-                            </Card>
-                          </GridMUI>
-                        ))}
-                      </GridMUI>
                     </td>
                   </tr>
                 </tbody>
@@ -1138,13 +694,6 @@ const App = () => {
             </FormBoxWrap>
           </GridContainer>
         </GridContainer>
-      )}
-      {applicationWindowVisible && (
-        <ApplicationWindow
-          setVisible={setApplicationWindowVisible}
-          setData={setData}
-          modal={true}
-        />
       )}
       {attachmentsWindowVisible && (
         <AttachmentsWindow
