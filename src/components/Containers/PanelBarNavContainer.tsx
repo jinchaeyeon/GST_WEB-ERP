@@ -1565,7 +1565,7 @@ const PanelBarNavContainer = (props: any) => {
               )}
               <ButtonContainer
                 flexDirection={"column"}
-                style={{ marginTop: "10px", gap: "5px", marginBottom: "30px" }}
+                style={{ marginTop: "10px", gap: "5px", marginBottom: "70px" }}
               >
                 {/* <Button
                 onClick={onClickChatbot}

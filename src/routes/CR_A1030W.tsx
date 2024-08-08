@@ -122,7 +122,7 @@ const App = () => {
               <div>
                 <Typography
                   variant="h6"
-                  style={{ fontWeight: 700,  marginRight: "50px" }}
+                  style={{ fontWeight: 700, marginRight: "50px" }}
                   gutterBottom
                 >
                   {item.code_name}
@@ -755,7 +755,7 @@ const App = () => {
             </SwiperSlide>
             <SwiperSlide key={3}>
               <GridContainer>
-                <GridTitleContainer className="ButtonContainer">
+                <GridTitleContainer className="ButtonContainer4">
                   <GridTitle>의뢰 정보</GridTitle>
                   <ButtonContainer style={{ justifyContent: "flex-start" }}>
                     <Button
