@@ -2111,7 +2111,7 @@ const BA_A0060W: React.FC = () => {
                                 }
                                 footerCell={
                                   item.sortOrder == 0
-                                    ? mainTotalFooterCell
+                                    ? mainTotalFooterCell2
                                     : undefined
                                 }
                               />
