@@ -6174,9 +6174,7 @@ const SA_A1000W_603: React.FC = () => {
                                   />
                                 )}
                           </td>
-                          <th>
-                            분석법<br></br>제공예정일
-                          </th>
+                          <th>분석법 제공예정일</th>
                           <td>
                             <DatePicker
                               name="assaydt"
@@ -7409,7 +7407,7 @@ const SA_A1000W_603: React.FC = () => {
                             )}
                       </td>
                       <th style={{ width: "5%" }}>
-                        분석법<br></br>제공예정일
+                        분석법 제공예정일
                       </th>
                       <td>
                         <DatePicker
