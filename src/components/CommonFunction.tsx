@@ -695,7 +695,10 @@ export const UsePermissions = (setListData: any) => {
     }
   }, []);
 
-  const pathname = window.location.pathname.replace("/", "");
+  const pathname = window.location.href
+    .split("?")[0]
+    .split("/")[3]
+    .replace("/", "");
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
 
@@ -703,7 +706,15 @@ export const UsePermissions = (setListData: any) => {
   const fetchData = useCallback(async () => {
     let para = {
       para:
-        (pathname == "" ? "Home" : pathname) + "/permissions?userId=" + userId,
+        (loginResult
+          ? pathname == "HOME"
+            ? loginResult.homeMenuWeb == ""
+              ? "HOME"
+              : pathname
+            : pathname
+          : "") +
+        "/permissions?userId=" +
+        userId,
     };
 
     let data: any;
