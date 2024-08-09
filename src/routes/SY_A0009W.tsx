@@ -422,7 +422,7 @@ const SY_A0009W: React.FC = () => {
     } else if (user.tel_no === "" || user.tel_no === undefined) {
       alert("사내전화 번호를 입력해주세요.");
     } else if (
-      convertDateToStr(birdt).substring(0, 4) < "1997" ||
+      convertDateToStr(birdt).substring(0, 4) < "1940" ||
       convertDateToStr(birdt).substring(6, 8) > "31" ||
       convertDateToStr(birdt).substring(6, 8) < "01" ||
       convertDateToStr(birdt).substring(6, 8).length != 2

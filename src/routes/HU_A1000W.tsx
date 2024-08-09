@@ -113,6 +113,41 @@ interface DataItem3 {
   children: DataItem3[];
 }
 
+const nodeTemplate = (node: Node) => {
+  if (node.type === "person") {
+    return (
+      <div className="flex flex-column">
+        <div className="flex flex-column align-items-center">
+          <img
+            alt={node.data.name}
+            src={node.data.image}
+            className="mb-3 w-3rem h-3rem"
+          />
+          <span className="font-bold mb-2">{node.data.name}</span>
+          <span>{node.data.title}</span>
+        </div>
+      </div>
+    );
+  }
+
+  return node.label;
+};
+
+// OrgData 컴포넌트 정의
+const OrgData: React.FC<{
+  transformedData: any;
+  selection: any;
+}> = ({ transformedData, selection }) => {
+  return (
+    <OrganizationChart
+      value={transformedData}
+      selectionMode="multiple"
+      selection={selection}
+      nodeTemplate={nodeTemplate}
+    />
+  );
+};
+
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
@@ -128,6 +163,29 @@ const HU_A1000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
+  const [permissions, setPermissions] = useState<TPermissions>({
+    save: false,
+    print: false,
+    view: false,
+    delete: false,
+  });
+  UsePermissions(setPermissions);
+
+  //조직도
+  const [showOrg, setShowOrg] = useState(false);
+  const [information, setInformation] = useState<
+    Array<{
+      expanded: boolean;
+      type: string;
+      data: {
+        name: string;
+        image: string;
+        title: string;
+      };
+      children: DataItem3[];
+    }>
+  >([]);
+  const [selection, setSelection] = useState([]);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
@@ -148,14 +206,6 @@ const HU_A1000W: React.FC = () => {
     }
   }, [customOptionData, webheight]);
 
-  const [permissions, setPermissions] = useState<TPermissions>({
-    save: false,
-    print: false,
-    view: false,
-    delete: false,
-  });
-  UsePermissions(setPermissions);
-
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -164,22 +214,8 @@ const HU_A1000W: React.FC = () => {
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   const sessionLocation = UseGetValueFromSessionItem("location");
 
-  //조직도
-  const [showOrg, setShowOrg] = useState(false);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  const [information, setInformation] = useState<
-    Array<{
-      expanded: boolean;
-      type: string;
-      data: {
-        name: string;
-        image: string;
-        title: string;
-      };
-      children: DataItem3[];
-    }>
-  >([]);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -793,6 +829,7 @@ const HU_A1000W: React.FC = () => {
     serviceid: companyCode,
     find_row_value: "",
     pgNum: 1,
+    isSearch: true,
   });
 
   // 프로필 사진조회
@@ -810,12 +847,19 @@ const HU_A1000W: React.FC = () => {
     radUsediv: "%",
     find_row_value: "",
     pgNum: 1,
+    isSearch: true,
   });
+
+  useEffect(() => {
+    fetchData2(filters2);
+    fetchData3(picFilters);
+  }, [permissions, bizComponentData, customOptionData, filters2]);
 
   // 부서 조회 후 트리형식으로 변환
   const fetchData2 = async (filters2: any) => {
     if (!permissions.view) return;
     let data: any;
+    setLoading(true);
     const subparameters: Iparameters = {
       procedureName: "P_SY_A0125W_Q",
       pageNumber: filters2.pgNum,
@@ -866,12 +910,14 @@ const HU_A1000W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+    setLoading(false);
   };
 
   // id, 프로필 이미지
   const fetchData3 = async (picFilters: any) => {
     if (!permissions.view) return;
     let data: any;
+    setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_SY_A0012W_Q",
@@ -915,6 +961,7 @@ const HU_A1000W: React.FC = () => {
       }));
       setInformation(informationData);
     }
+    setLoading(false);
   };
 
   const orgData = (data: any[], information: any[]): DataItem[] => {
@@ -1018,61 +1065,48 @@ const HU_A1000W: React.FC = () => {
     transformedData[0].data.image = ceo.data.image;
   }
 
-  useEffect(() => {
-    if (
-      permissions.view &&
-      bizComponentData !== null &&
-      customOptionData !== null
-    ) {
-      fetchData2(filters2);
-      fetchData3(picFilters);
-    }
-  }, [permissions, bizComponentData, customOptionData]);
+  // const nodeTemplate = (node: Node) => {
+  //   if (node.type === "person") {
+  //     return (
+  //       <div className="flex flex-column">
+  //         <div className="flex flex-column align-items-center">
+  //           <img
+  //             alt={node.data.name}
+  //             src={node.data.image}
+  //             className="mb-3 w-3rem h-3rem"
+  //           />
+  //           <span className="font-bold mb-2">{node.data.name}</span>
+  //           <span>{node.data.title}</span>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
 
-  const [selection, setSelection] = useState([]);
+  //   return node.label;
+  // };
+  // const OrgData = () => {
+  //   return (
+  //     <div
+  //       style={{
+  //         overflow: "auto",
+  //         height: isMobile ? mobileheight : webheight,
+  //       }}
+  //     >
+  //       <OrganizationChart
+  //         value={transformedData}
+  //         selectionMode="multiple"
+  //         selection={selection}
+  //         nodeTemplate={nodeTemplate}
+  //       />
+  //     </div>
+  //   );
+  // };
 
-  const nodeTemplate = (node: Node) => {
-    if (node.type === "person") {
-      return (
-        <div className="flex flex-column">
-          <div className="flex flex-column align-items-center">
-            <img
-              alt={node.data.name}
-              src={node.data.image}
-              className="mb-3 w-3rem h-3rem"
-            />
-            <span className="font-bold mb-2">{node.data.name}</span>
-            <span>{node.data.title}</span>
-          </div>
-        </div>
-      );
-    }
-
-    return node.label;
-  };
-  const OrgData = () => {
-    return (
-      <div
-        style={{
-          overflow: "auto",
-          height: isMobile ? mobileheight : webheight,
-        }}
-      >
-        <OrganizationChart
-          value={transformedData}
-          selectionMode="multiple"
-          selection={selection}
-          nodeTemplate={nodeTemplate}
-        />
-      </div>
-    );
-  };
-
-  useEffect(() => {
-    if (showOrg) {
-      OrgData();
-    }
-  }, [showOrg]);
+  // useEffect(() => {
+  //   if (showOrg) {
+  //     OrgData();
+  //   }
+  // }, [showOrg]);
 
   return (
     <>
@@ -1177,9 +1211,166 @@ const HU_A1000W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
 
-          {showOrg ? (
-            OrgData()
-          ) : (
+          <div
+            style={{
+              overflow: "auto",
+              display: showOrg ? "block" : "none",
+              height: isMobile ? mobileheight : webheight,
+            }}
+          >
+            <OrganizationChart
+              value={transformedData}
+              selectionMode="multiple"
+              selection={selection}
+              nodeTemplate={nodeTemplate}
+            />
+          </div>
+
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
+            }}
+            fileName={getMenuName()}
+          >
+            <Grid
+              style={{
+                height: mobileheight,
+                visibility: showOrg ? "hidden" : "visible",
+              }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  dptcd: dptcdListData.find(
+                    (item: any) => item.dptcd == row.dptcd
+                  )?.dptnm,
+                  postcd: postcdListData.find(
+                    (item: any) => item.sub_code == row.postcd
+                  )?.code_name,
+                  perregnum:
+                    row.perregnum == "" ||
+                    row.perregnum == null ||
+                    row.perregnum == undefined
+                      ? ""
+                      : decrypt(row.perregnum, row.salt),
+                  telephon:
+                    row.telephon == "" ||
+                    row.telephon == null ||
+                    row.telephon == undefined
+                      ? ""
+                      : decrypt(row.telephon, row.salt),
+                  phonenum:
+                    row.phonenum == "" ||
+                    row.phonenum == null ||
+                    row.phonenum == undefined
+                      ? ""
+                      : decrypt(row.phonenum, row.salt),
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              <GridColumn cell={CommandCell} width="50px" />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"]
+                  ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  ?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            dateField.includes(item.fieldName)
+                              ? DateCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
+      ) : (
+        <>
+          <GridContainer>
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>{!showOrg ? "기본정보" : "조직도"}</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={() => setShowOrg(!showOrg)}
+                  themeColor={"primary"}
+                  disabled={permissions.view ? false : true}
+                >
+                  {showOrg ? "리스트 보기" : "조직도 보기"}
+                </Button>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="file-add"
+                  disabled={permissions.save ? false : true}
+                >
+                  사용자생성
+                </Button>
+                <Button
+                  onClick={onDeleteClick}
+                  icon="delete"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  disabled={permissions.delete ? false : true}
+                >
+                  사용자삭제
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+
+            <div
+              style={{
+                display: showOrg ? "block" : "none",
+                overflow: "auto",
+                height: isMobile ? mobileheight : webheight,
+              }}
+            >
+              <OrgData
+                transformedData={transformedData}
+                selection={selection}
+              />
+            </div>
+
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
@@ -1189,7 +1380,8 @@ const HU_A1000W: React.FC = () => {
             >
               <Grid
                 style={{
-                  height: mobileheight,
+                  visibility: showOrg ? "hidden" : "visible",
+                  height: webheight,
                 }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -1277,140 +1469,6 @@ const HU_A1000W: React.FC = () => {
                     )}
               </Grid>
             </ExcelExport>
-          )}
-        </GridContainer>
-      ) : (
-        <>
-          <GridContainer>
-            <GridTitleContainer className="ButtonContainer">
-              <GridTitle>{!showOrg ? "기본정보" : "조직도"}</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={() => setShowOrg(!showOrg)}
-                  themeColor={"primary"}
-                  disabled={permissions.view ? false : true}
-                >
-                  {showOrg ? "리스트 보기" : "조직도 보기"}
-                </Button>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="file-add"
-                  disabled={permissions.save ? false : true}
-                >
-                  사용자생성
-                </Button>
-                <Button
-                  onClick={onDeleteClick}
-                  icon="delete"
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  disabled={permissions.delete ? false : true}
-                >
-                  사용자삭제
-                </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-
-            {showOrg ? (
-              OrgData()
-            ) : (
-              <ExcelExport
-                data={mainDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-                fileName={getMenuName()}
-              >
-                <Grid
-                  style={{ height: webheight }}
-                  data={process(
-                    mainDataResult.data.map((row) => ({
-                      ...row,
-                      dptcd: dptcdListData.find(
-                        (item: any) => item.dptcd == row.dptcd
-                      )?.dptnm,
-                      postcd: postcdListData.find(
-                        (item: any) => item.sub_code == row.postcd
-                      )?.code_name,
-                      perregnum:
-                        row.perregnum == "" ||
-                        row.perregnum == null ||
-                        row.perregnum == undefined
-                          ? ""
-                          : decrypt(row.perregnum, row.salt),
-                      telephon:
-                        row.telephon == "" ||
-                        row.telephon == null ||
-                        row.telephon == undefined
-                          ? ""
-                          : decrypt(row.telephon, row.salt),
-                      phonenum:
-                        row.phonenum == "" ||
-                        row.phonenum == null ||
-                        row.phonenum == undefined
-                          ? ""
-                          : decrypt(row.phonenum, row.salt),
-                      [SELECTED_FIELD]: selectedState[idGetter(row)],
-                    })),
-                    mainDataState
-                  )}
-                  {...mainDataState}
-                  onDataStateChange={onMainDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  <GridColumn cell={CommandCell} width="50px" />
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]
-                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      ?.map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            ></GridColumn>
-                          )
-                      )}
-                </Grid>
-              </ExcelExport>
-            )}
           </GridContainer>
         </>
       )}
