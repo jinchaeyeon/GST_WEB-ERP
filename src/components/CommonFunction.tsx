@@ -481,19 +481,9 @@ export const UseCustomOption = (setListData: any) => {
       data = await processApi<any>("custom-option", {
         formId: loginResult
           ? pathname == "HOME"
-            ? (loginResult.homeMenuWeb == "HOME" ||
-                loginResult.homeMenuWeb == "") &&
-              loginResult.companyCode == "2302BA03"
-              ? "MainBIO"
-              : (loginResult.homeMenuWeb == "HOME" ||
-                  loginResult.homeMenuWeb == "") &&
-                (loginResult.companyCode == "2301A110" ||
-                  loginResult.companyCode == "2207A046")
-              ? "Main"
-              : loginResult.homeMenuWeb == "HOME" ||
-                loginResult.homeMenuWeb == ""
-              ? "MainNotApproval"
-              : loginResult.homeMenuWeb
+            ? loginResult.homeMenuWeb == ""
+              ? "HOME"
+              : pathname
             : pathname
           : "",
         para: "custom-option?userId=" + userId,
