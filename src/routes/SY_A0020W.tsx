@@ -931,7 +931,7 @@ const SY_A0020: React.FC = () => {
       orgdiv: sessionOrgdiv,
       location: sessionLocation,
       acntses: "",
-      yyyy: convertDateToStr(filters.frdt).substring(0, 4),
+      yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
       rowstatus_s: "",
       pgmdiv_s: "",
       ymgb_s: "",
