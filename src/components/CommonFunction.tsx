@@ -5,6 +5,7 @@ import { bytesToBase64 } from "byte-base64";
 import calculateSize from "calculate-size";
 import { detect } from "detect-browser";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { loginResultState, menusState, sessionItemState } from "../store/atoms";
@@ -14,29 +15,26 @@ import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 
 export const getColor = () => {
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
 
-  if(currentTheme == "blue") {
+  if (currentTheme == "blue") {
     return "#2289C3";
-  } else if(currentTheme == "yellow") {
+  } else if (currentTheme == "yellow") {
     return "#f5b901";
-  } else if(currentTheme == "navy") {
+  } else if (currentTheme == "navy") {
     return "#303fad";
-  } else if(currentTheme == "orange") {
+  } else if (currentTheme == "orange") {
     return "#f1a539";
-  } 
-}
+  }
+};
 export const getFormId = () => {
-  return (
-    window.location.href
+  return window.location.href
     .split("?")[0]
     .split("/")[3]
     .toUpperCase()
-    .replace("/", "")
-  )
+    .replace("/", "");
 };
 
 export const getMenuName = () => {
@@ -102,7 +100,8 @@ export const getBizCom = (bizComponentData: any, id: string) => {
   return bizComponentData?.find((item: any) => item.bizComponentId == id) ==
     undefined
     ? []
-    : bizComponentData?.find((item: any) => item.bizComponentId == id).data.Rows;
+    : bizComponentData?.find((item: any) => item.bizComponentId == id).data
+        .Rows;
 };
 
 export const getHeight = (className: string) => {
@@ -423,10 +422,10 @@ export const UseMessages = (setListData: any) => {
     try {
       data = await processApi<any>("messages", {
         formId: window.location.href
-        .split("?")[0]
-        .split("/")[3]
-        .toUpperCase()
-        .replace("/", ""),
+          .split("?")[0]
+          .split("/")[3]
+          .toUpperCase()
+          .replace("/", ""),
       });
     } catch (error) {
       data = null;
@@ -466,7 +465,11 @@ export const UseCustomOption = (setListData: any) => {
   //커스텀 옵션 조회
   const fetchCustomOptionData = React.useCallback(async () => {
     let data: any;
-
+    const pathname = window.location.href
+      .split("?")[0]
+      .split("/")[3]
+      .toUpperCase()
+      .replace("/", "");
     let userId = "";
     const userIdObj = sessionItem.find(
       (sessionItem) => sessionItem.code == "user_id"
@@ -476,11 +479,23 @@ export const UseCustomOption = (setListData: any) => {
     }
     try {
       data = await processApi<any>("custom-option", {
-        formId: window.location.href
-          .split("?")[0]
-          .split("/")[3]
-          .toUpperCase()
-          .replace("/", ""),
+        formId: loginResult
+          ? pathname == "HOME"
+            ? (loginResult.homeMenuWeb == "HOME" ||
+                loginResult.homeMenuWeb == "") &&
+              loginResult.companyCode == "2302BA03"
+              ? "MainBIO"
+              : (loginResult.homeMenuWeb == "HOME" ||
+                  loginResult.homeMenuWeb == "") &&
+                (loginResult.companyCode == "2301A110" ||
+                  loginResult.companyCode == "2207A046")
+              ? "Main"
+              : loginResult.homeMenuWeb == "HOME" ||
+                loginResult.homeMenuWeb == ""
+              ? "MainNotApproval"
+              : loginResult.homeMenuWeb
+            : pathname
+          : "",
         para: "custom-option?userId=" + userId,
       });
     } catch (error) {
