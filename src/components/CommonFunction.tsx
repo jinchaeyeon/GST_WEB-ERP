@@ -456,6 +456,7 @@ export const UseCustomOption = (setListData: any) => {
   const processApi = useApi();
   const [sessionItem] = useRecoilState(sessionItemState);
   const [loginResult] = useRecoilState(loginResultState);
+
   useEffect(() => {
     if (loginResult) {
       fetchCustomOptionData();
@@ -464,12 +465,7 @@ export const UseCustomOption = (setListData: any) => {
 
   //커스텀 옵션 조회
   const fetchCustomOptionData = React.useCallback(async () => {
-    let data: any;
-    const pathname = window.location.href
-      .split("?")[0]
-      .split("/")[3]
-      .toUpperCase()
-      .replace("/", "");
+    let menuList: any = [];
     let userId = "";
     const userIdObj = sessionItem.find(
       (sessionItem) => sessionItem.code == "user_id"
@@ -477,13 +473,54 @@ export const UseCustomOption = (setListData: any) => {
     if (userIdObj) {
       userId = userIdObj.value;
     }
+
+    try {
+      let menuPara = {
+        para: "menus?userId=" + userId + "&category=WEB",
+      };
+      const menuResponse = await processApi<any>("menus", menuPara);
+
+      const menu = menuResponse.usableMenu.map((item: any) => {
+        if (item.parentMenuId != "") {
+          if (item.menuCategory == "GROUP") {
+            var valid = true;
+            menuResponse.usableMenu.map((item2: any) => {
+              if (item.menuId == item2.parentMenuId && valid != false) {
+                valid = false;
+              }
+            });
+
+            if (valid != true) {
+              return item;
+            }
+          } else {
+            return item;
+          }
+        } else {
+          return item;
+        }
+      });
+
+      menuList.push(menu.filter((item: any) => item != undefined));
+    } catch (e: any) {
+      console.log("menus error", e);
+    }
+    let data: any;
+    const pathname = window.location.href
+      .split("?")[0]
+      .split("/")[3]
+      .toUpperCase()
+      .replace("/", "");
+
     try {
       data = await processApi<any>("custom-option", {
         formId: loginResult
           ? pathname == "HOME"
             ? loginResult.homeMenuWeb == ""
               ? "HOME"
-              : pathname
+              : menuList[0].filter(
+                  (item: any) => item.formId == loginResult.homeMenuWeb
+                )[0].formId
             : pathname
           : "",
         para: "custom-option?userId=" + userId,
@@ -698,19 +735,64 @@ export const UsePermissions = (setListData: any) => {
   const pathname = window.location.href
     .split("?")[0]
     .split("/")[3]
+    .toUpperCase()
     .replace("/", "");
+
   const [loginResult] = useRecoilState(loginResultState);
-  const userId = loginResult ? loginResult.userId : "";
+  const [sessionItem] = useRecoilState(sessionItemState);
 
   //커스텀 옵션 조회
   const fetchData = useCallback(async () => {
+    let menuList: any = [];
+    let userId = "";
+    const userIdObj = sessionItem.find(
+      (sessionItem) => sessionItem.code == "user_id"
+    );
+    if (userIdObj) {
+      userId = userIdObj.value;
+    }
+
+    try {
+      let menuPara = {
+        para: "menus?userId=" + userId + "&category=WEB",
+      };
+      const menuResponse = await processApi<any>("menus", menuPara);
+
+      const menu = menuResponse.usableMenu.map((item: any) => {
+        if (item.parentMenuId != "") {
+          if (item.menuCategory == "GROUP") {
+            var valid = true;
+            menuResponse.usableMenu.map((item2: any) => {
+              if (item.menuId == item2.parentMenuId && valid != false) {
+                valid = false;
+              }
+            });
+
+            if (valid != true) {
+              return item;
+            }
+          } else {
+            return item;
+          }
+        } else {
+          return item;
+        }
+      });
+
+      menuList.push(menu.filter((item: any) => item != undefined));
+    } catch (e: any) {
+      console.log("menus error", e);
+    }
+
     let para = {
       para:
         (loginResult
           ? pathname == "HOME"
             ? loginResult.homeMenuWeb == ""
               ? "HOME"
-              : pathname
+              : menuList[0].filter(
+                  (item: any) => item.formId == loginResult.homeMenuWeb
+                )[0].formId
             : pathname
           : "") +
         "/permissions?userId=" +
