@@ -1693,7 +1693,6 @@ const PR_A2200W: React.FC = () => {
                           name="custcd"
                           type="text"
                           value={information2.custcd}
-                          onChange={filterInputChange}
                           className="required"
                         />
                         <ButtonInInput>
