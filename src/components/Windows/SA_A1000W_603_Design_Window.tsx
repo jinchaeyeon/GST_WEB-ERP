@@ -163,6 +163,8 @@ type TdataArr = {
   assaytype_s: string[];
   assaytype1_s: string[];
   assaytype2_s: string[];
+  slideqty_s: string[];
+  histopathologyqty_s: string[];
 
   chlditemcd_s: string[];
   column_itemcd_s: string[];
@@ -862,6 +864,8 @@ const CopyWindow = ({
           assaytype1_base: rows2[0].assaytype1,
           assaytype2_base: rows2[0].assaytype2,
           sampleqty_base: rows2[0].sampleqty,
+          slideqty_base: rows2[0].slideqty,
+          histopathologyqty_base: rows2[0].histopathologyqty,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -909,6 +913,8 @@ const CopyWindow = ({
           assaytype1_base: rows2[0].assaytype1,
           assaytype2_base: rows2[0].assaytype2,
           sampleqty_base: rows2[0].sampleqty,
+          slideqty_base: rows2[0].slideqty,
+          histopathologyqty_base: rows2[0].histopathologyqty,
         }));
       }
 
@@ -935,6 +941,8 @@ const CopyWindow = ({
           gunqty_ex: rows3[0].gunqty,
           chasu_ex: rows3[0].chasu,
           testperiod_ex: rows3[0].testperiod,
+          slideqty_ex: rows3[0].slideqty,
+          histopathologyqty_ex: rows3[0].histopathologyqty,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -958,6 +966,8 @@ const CopyWindow = ({
           gunqty_ex: rows3[0].gunqty,
           chasu_ex: rows3[0].chasu,
           testperiod_ex: rows3[0].testperiod,
+          slideqty_ex: rows3[0].slideqty,
+          histopathologyqty_ex: rows3[0].histopathologyqty,
         }));
       }
 
@@ -985,6 +995,8 @@ const CopyWindow = ({
           geomcheqty_tk: rows4[0].geomcheqty,
           geomcheprodqty_tk: rows4[0].geomcheprodqty,
           testperiod_tk: rows4[0].testperiod,
+          slideqty_tk: rows4[0].slideqty,
+          histopathologyqty_tk: rows4[0].histopathologyqty,
         }));
         setInformation_ori((prev) => ({
           ...prev,
@@ -1009,6 +1021,8 @@ const CopyWindow = ({
           geomcheqty_tk: rows4[0].geomcheqty,
           geomcheprodqty_tk: rows4[0].geomcheprodqty,
           testperiod_tk: rows4[0].testperiod,
+          slideqty_tk: rows4[0].slideqty,
+          histopathologyqty_tk: rows4[0].histopathologyqty,
         }));
       }
     } else {
@@ -1078,6 +1092,8 @@ const CopyWindow = ({
     assaytype1_base: 0,
     assaytype2_base: 0,
     sampleqty_base: 0,
+    slideqty_base: 0,
+    histopathologyqty_base: 0,
 
     //회복
     rowstatus_ex: "N",
@@ -1100,6 +1116,8 @@ const CopyWindow = ({
     gunqty_ex: 0,
     chasu_ex: 0,
     testperiod_ex: 0,
+    slideqty_ex: 0,
+    histopathologyqty_ex: 0,
 
     //TK
     rowstatus_tk: "N",
@@ -1123,6 +1141,8 @@ const CopyWindow = ({
     geomcheqty_tk: 0,
     geomcheprodqty_tk: 0,
     testperiod_tk: 0,
+    slideqty_tk: 0,
+    histopathologyqty_tk: 0,
   });
 
   const [Information_ori, setInformation_ori] = useState({
@@ -1179,6 +1199,8 @@ const CopyWindow = ({
     assaytype1_base: 0,
     assaytype2_base: 0,
     sampleqty_base: 0,
+    slideqty_base: 0,
+    histopathologyqty_base: 0,
     //회복
     rowstatus_ex: "N",
     seq_ex: 0,
@@ -1200,7 +1222,8 @@ const CopyWindow = ({
     gunqty_ex: 0,
     chasu_ex: 0,
     testperiod_ex: 0,
-
+    slideqty_ex: 0,
+    histopathologyqty_ex: 0,
     //TK
     rowstatus_tk: "N",
     seq_tk: 0,
@@ -1223,6 +1246,8 @@ const CopyWindow = ({
     geomcheqty_tk: 0,
     geomcheprodqty_tk: 0,
     testperiod_tk: 0,
+    slideqty_tk: 0,
+    histopathologyqty_tk: 0,
   });
 
   const InputChange = (e: any) => {
@@ -1354,6 +1379,14 @@ const CopyWindow = ({
           value == false && Information_ori.rowstatus_ex == "U"
             ? ""
             : Information_ori.remark_ex,
+        slideqty_ex:
+          value == false && Information_ori.rowstatus_ex == "U"
+            ? 0
+            : Information_ori.slideqty_ex,
+        histopathologyqty_ex:
+          value == false && Information_ori.rowstatus_ex == "U"
+            ? 0
+            : Information_ori.histopathologyqty_ex,
       }));
     } else if (name == "yn_tk") {
       setInformation((prev) => ({
@@ -1416,6 +1449,14 @@ const CopyWindow = ({
           value == false && Information_ori.rowstatus_tk == "U"
             ? false
             : Information_ori.bonyn_tk,
+        slideqty_tk:
+          value == false && Information_ori.rowstatus_tk == "U"
+            ? 0
+            : Information_ori.slideqty_tk,
+        histopathologyqty_tk:
+          value == false && Information_ori.rowstatus_tk == "U"
+            ? 0
+            : Information_ori.histopathologyqty_tk,
       }));
     } else if (name == "bonyn_tk") {
       setInformation((prev) => ({
@@ -1508,6 +1549,8 @@ const CopyWindow = ({
       assaytype_s: [],
       assaytype1_s: [],
       assaytype2_s: [],
+      slideqty_s: [],
+      histopathologyqty_s: [],
 
       chlditemcd_s: [],
       column_itemcd_s: [],
@@ -1597,6 +1640,10 @@ const CopyWindow = ({
     dataArr.assaytype_s.push(Information.assaytype_base);
     dataArr.assaytype1_s.push(Information.assaytype1_base.toString());
     dataArr.assaytype2_s.push(Information.assaytype2_base.toString());
+    dataArr.slideqty_s.push(Information.slideqty_base.toString());
+    dataArr.histopathologyqty_s.push(
+      Information.histopathologyqty_base.toString()
+    );
 
     dataArr.chlditemcd_s.push(Information.chlditemcd_base);
     dataArr.column_itemcd_s.push(Information.column_itemcd_base);
@@ -1689,6 +1736,10 @@ const CopyWindow = ({
     dataArr.assaytype_s.push("");
     dataArr.assaytype1_s.push("0");
     dataArr.assaytype2_s.push("0");
+    dataArr.slideqty_s.push(Information.slideqty_ex.toString());
+    dataArr.histopathologyqty_s.push(
+      Information.histopathologyqty_ex.toString()
+    );
 
     dataArr.chlditemcd_s.push("");
     dataArr.column_itemcd_s.push("");
@@ -1781,6 +1832,10 @@ const CopyWindow = ({
     dataArr.assaytype_s.push("");
     dataArr.assaytype1_s.push("0");
     dataArr.assaytype2_s.push("0");
+    dataArr.slideqty_s.push(Information.slideqty_tk.toString());
+    dataArr.histopathologyqty_s.push(
+      Information.histopathologyqty_tk.toString()
+    );
 
     dataArr.chlditemcd_s.push("");
     dataArr.column_itemcd_s.push("");
@@ -1900,6 +1955,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push("");
       dataArr.assaytype1_s.push("0");
       dataArr.assaytype2_s.push("0");
+      dataArr.slideqty_s.push("0");
+      dataArr.histopathologyqty_s.push("0");
 
       dataArr.chlditemcd_s.push(itemcd);
       dataArr.column_itemcd_s.push("");
@@ -2003,6 +2060,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push("");
       dataArr.assaytype1_s.push("0");
       dataArr.assaytype2_s.push("0");
+      dataArr.slideqty_s.push("0");
+      dataArr.histopathologyqty_s.push("0");
 
       dataArr.chlditemcd_s.push(itemcd);
       dataArr.column_itemcd_s.push("");
@@ -2110,6 +2169,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push("");
       dataArr.assaytype1_s.push("0");
       dataArr.assaytype2_s.push("0");
+      dataArr.slideqty_s.push("0");
+      dataArr.histopathologyqty_s.push("0");
 
       dataArr.chlditemcd_s.push("");
       dataArr.column_itemcd_s.push("");
@@ -2208,6 +2269,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push("");
       dataArr.assaytype1_s.push("0");
       dataArr.assaytype2_s.push("0");
+      dataArr.slideqty_s.push("0");
+      dataArr.histopathologyqty_s.push("0");
 
       dataArr.chlditemcd_s.push("");
       dataArr.column_itemcd_s.push("");
@@ -2259,6 +2322,8 @@ const CopyWindow = ({
         assaytype,
         assaytype1,
         assaytype2,
+        slideqty,
+        histopathologyqty,
         autopsyperiod,
         autopsyqty,
         bonqty,
@@ -2374,6 +2439,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push(assaytype);
       dataArr.assaytype1_s.push(assaytype1);
       dataArr.assaytype2_s.push(assaytype2);
+      dataArr.slideqty_s.push(slideqty);
+      dataArr.histopathologyqty_s.push(histopathologyqty);
 
       dataArr.chlditemcd_s.push(chlditemcd);
       dataArr.column_itemcd_s.push(column_itemcd);
@@ -2418,6 +2485,8 @@ const CopyWindow = ({
         assaytype,
         assaytype1,
         assaytype2,
+        slideqty,
+        histopathologyqty,
         autopsyperiod,
         autopsyqty,
         bonqty,
@@ -2533,6 +2602,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push(assaytype);
       dataArr.assaytype1_s.push(assaytype1);
       dataArr.assaytype2_s.push(assaytype2);
+      dataArr.slideqty_s.push(slideqty);
+      dataArr.histopathologyqty_s.push(histopathologyqty);
 
       dataArr.chlditemcd_s.push(chlditemcd);
       dataArr.column_itemcd_s.push(column_itemcd);
@@ -2633,6 +2704,8 @@ const CopyWindow = ({
         "@p_assaytype_s": dataArr.assaytype_s.join("|"),
         "@p_assaytype1_s": dataArr.assaytype1_s.join("|"),
         "@p_assaytype2_s": dataArr.assaytype2_s.join("|"),
+        "@p_slideqty_s": dataArr.slideqty_s.join("|"),
+        "@p_histopathologyqty_s": dataArr.histopathologyqty_s.join("|"),
 
         "@p_chlditemcd_s": dataArr.chlditemcd_s.join("|"),
         "@p_column_itemcd_s": dataArr.column_itemcd_s.join("|"),
@@ -2904,6 +2977,8 @@ const CopyWindow = ({
       assaytype: "",
       assaytype1: 0,
       assaytype2: 0,
+      slideqty: 0,
+      histopathologyqty: 0,
       autopsyperiod: 0,
       autopsyqty: 0,
       bonqty: 0,
@@ -4072,6 +4147,52 @@ const CopyWindow = ({
                           />
                         )}
                       </td>
+                      <th>조직병리마리수</th>
+                      <td>
+                        {save == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_base"
+                            value={Information.histopathologyqty_base}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_base"
+                            value={Information.histopathologyqty_base}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>슬라이드제작수량</th>
+                      <td>
+                        {save == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_base"
+                            value={Information.slideqty_base}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_base"
+                            value={Information.slideqty_base}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
                     </tr>
                     <tr>
                       <th>비고</th>
@@ -4432,6 +4553,52 @@ const CopyWindow = ({
                             min={0}
                             name="refineperiod_ex"
                             value={Information.refineperiod_ex}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>조직병리마리수</th>
+                      <td>
+                        {save == true && Information.yn_ex == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_ex"
+                            value={Information.histopathologyqty_ex}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_ex"
+                            value={Information.histopathologyqty_ex}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>슬라이드제작수량</th>
+                      <td>
+                        {save == true && Information.yn_ex == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_ex"
+                            value={Information.slideqty_ex}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_ex"
+                            value={Information.slideqty_ex}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -4882,6 +5049,52 @@ const CopyWindow = ({
                             min={0}
                             name="refineperiod_base"
                             value={Information.refineperiod_base}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>조직병리마리수</th>
+                      <td>
+                        {save == true && Information.yn_tk == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_tk"
+                            value={Information.histopathologyqty_tk}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_tk"
+                            value={Information.histopathologyqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>슬라이드제작수량</th>
+                      <td>
+                        {save == true && Information.yn_tk == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_tk"
+                            value={Information.slideqty_tk}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_tk"
+                            value={Information.slideqty_tk}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -5725,6 +5938,52 @@ const CopyWindow = ({
                           />
                         )}
                       </td>
+                      <th>조직병리마리수</th>
+                      <td>
+                        {save == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_base"
+                            value={Information.histopathologyqty_base}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_base"
+                            value={Information.histopathologyqty_base}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>슬라이드제작수량</th>
+                      <td>
+                        {save == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_base"
+                            value={Information.slideqty_base}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_base"
+                            value={Information.slideqty_base}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
                     </tr>
                     <tr>
                       <th>비고</th>
@@ -6056,6 +6315,52 @@ const CopyWindow = ({
                             min={0}
                             name="refineperiod_ex"
                             value={Information.refineperiod_ex}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>조직병리마리수</th>
+                      <td>
+                        {save == true && Information.yn_ex == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_ex"
+                            value={Information.histopathologyqty_ex}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_ex"
+                            value={Information.histopathologyqty_ex}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>슬라이드제작수량</th>
+                      <td>
+                        {save == true && Information.yn_ex == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_ex"
+                            value={Information.slideqty_ex}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_ex"
+                            value={Information.slideqty_ex}
                             format="n0"
                             className="readonly"
                             disabled={true}
@@ -6477,6 +6782,52 @@ const CopyWindow = ({
                             min={0}
                             name="refineperiod_base"
                             value={Information.refineperiod_base}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>조직병리마리수</th>
+                      <td>
+                        {save == true && Information.yn_tk == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_tk"
+                            value={Information.histopathologyqty_tk}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="histopathologyqty_tk"
+                            value={Information.histopathologyqty_tk}
+                            format="n0"
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                      <th>슬라이드제작수량</th>
+                      <td>
+                        {save == true && Information.yn_tk == true ? (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_tk"
+                            value={Information.slideqty_tk}
+                            format="n0"
+                            onChange={InputChange}
+                          />
+                        ) : (
+                          <NumericTextBox
+                            spinners={false}
+                            min={0}
+                            name="slideqty_tk"
+                            value={Information.slideqty_tk}
                             format="n0"
                             className="readonly"
                             disabled={true}

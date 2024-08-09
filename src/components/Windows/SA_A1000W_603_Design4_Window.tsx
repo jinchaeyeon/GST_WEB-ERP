@@ -164,6 +164,8 @@ type TdataArr = {
   assaytype_s: string[];
   assaytype1_s: string[];
   assaytype2_s: string[];
+  slideqty_s: string[];
+  histopathologyqty_s: string[];
 
   chlditemcd_s: string[];
   column_itemcd_s: string[];
@@ -837,6 +839,8 @@ const CopyWindow = ({
           assaytype1_base: rows2[0].assaytype1,
           assaytype2_base: rows2[0].assaytype2,
           sampleqty_base: rows2[0].sampleqty,
+          slideqty_base: rows2[0].slideqty,
+          histopathologyqty_base: rows2[0].histopathologyqty,
         }));
       }
     } else {
@@ -907,6 +911,8 @@ const CopyWindow = ({
     assaytype1_base: 0,
     assaytype2_base: 0,
     sampleqty_base: 0,
+    slideqty_base: 0,
+    histopathologyqty_base: 0,
   });
 
   const InputChange = (e: any) => {
@@ -1003,6 +1009,8 @@ const CopyWindow = ({
       assaytype_s: [],
       assaytype1_s: [],
       assaytype2_s: [],
+      slideqty_s: [],
+      histopathologyqty_s: [],
 
       chlditemcd_s: [],
       column_itemcd_s: [],
@@ -1092,6 +1100,10 @@ const CopyWindow = ({
     dataArr.assaytype_s.push(Information.assaytype_base);
     dataArr.assaytype1_s.push(Information.assaytype1_base.toString());
     dataArr.assaytype2_s.push(Information.assaytype2_base.toString());
+    dataArr.slideqty_s.push(Information.slideqty_base.toString());
+    dataArr.histopathologyqty_s.push(
+      Information.histopathologyqty_base.toString()
+    );
 
     dataArr.chlditemcd_s.push(Information.chlditemcd_base);
     dataArr.column_itemcd_s.push(Information.column_itemcd_base);
@@ -1211,6 +1223,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push("");
       dataArr.assaytype1_s.push("0");
       dataArr.assaytype2_s.push("0");
+      dataArr.slideqty_s.push("0");
+      dataArr.histopathologyqty_s.push("0");
 
       dataArr.chlditemcd_s.push(itemcd);
       dataArr.column_itemcd_s.push("");
@@ -1314,6 +1328,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push("");
       dataArr.assaytype1_s.push("0");
       dataArr.assaytype2_s.push("0");
+      dataArr.slideqty_s.push("0");
+      dataArr.histopathologyqty_s.push("0");
 
       dataArr.chlditemcd_s.push(itemcd);
       dataArr.column_itemcd_s.push("");
@@ -1421,6 +1437,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push("");
       dataArr.assaytype1_s.push("0");
       dataArr.assaytype2_s.push("0");
+      dataArr.slideqty_s.push("0");
+      dataArr.histopathologyqty_s.push("0");
 
       dataArr.chlditemcd_s.push("");
       dataArr.column_itemcd_s.push("");
@@ -1519,6 +1537,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push("");
       dataArr.assaytype1_s.push("0");
       dataArr.assaytype2_s.push("0");
+      dataArr.slideqty_s.push("0");
+      dataArr.histopathologyqty_s.push("0");
 
       dataArr.chlditemcd_s.push("");
       dataArr.column_itemcd_s.push("");
@@ -1570,6 +1590,8 @@ const CopyWindow = ({
         assaytype,
         assaytype1,
         assaytype2,
+        slideqty,
+        histopathologyqty,
         autopsyperiod,
         autopsyqty,
         bonqty,
@@ -1685,6 +1707,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push(assaytype);
       dataArr.assaytype1_s.push(assaytype1);
       dataArr.assaytype2_s.push(assaytype2);
+      dataArr.slideqty_s.push(slideqty);
+      dataArr.histopathologyqty_s.push(histopathologyqty);
 
       dataArr.chlditemcd_s.push(chlditemcd);
       dataArr.column_itemcd_s.push(column_itemcd);
@@ -1729,6 +1753,8 @@ const CopyWindow = ({
         assaytype,
         assaytype1,
         assaytype2,
+        slideqty,
+        histopathologyqty,
         autopsyperiod,
         autopsyqty,
         bonqty,
@@ -1844,6 +1870,8 @@ const CopyWindow = ({
       dataArr.assaytype_s.push(assaytype);
       dataArr.assaytype1_s.push(assaytype1);
       dataArr.assaytype2_s.push(assaytype2);
+      dataArr.slideqty_s.push(slideqty);
+      dataArr.histopathologyqty_s.push(histopathologyqty);
 
       dataArr.chlditemcd_s.push(chlditemcd);
       dataArr.column_itemcd_s.push(column_itemcd);
@@ -1944,6 +1972,8 @@ const CopyWindow = ({
         "@p_assaytype_s": dataArr.assaytype_s.join("|"),
         "@p_assaytype1_s": dataArr.assaytype1_s.join("|"),
         "@p_assaytype2_s": dataArr.assaytype2_s.join("|"),
+        "@p_slideqty_s": dataArr.slideqty_s.join("|"),
+        "@p_histopathologyqty_s": dataArr.histopathologyqty_s.join("|"),
 
         "@p_chlditemcd_s": dataArr.chlditemcd_s.join("|"),
         "@p_column_itemcd_s": dataArr.column_itemcd_s.join("|"),
@@ -2215,6 +2245,8 @@ const CopyWindow = ({
       assaytype: "",
       assaytype1: 0,
       assaytype2: 0,
+      slideqty: 0,
+      histopathologyqty: 0,
       autopsyperiod: 0,
       autopsyqty: 0,
       bonqty: 0,
