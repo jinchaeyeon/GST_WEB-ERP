@@ -741,14 +741,14 @@ const CopyWindow = ({
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const totalRowCnt2 = data.tables[1].RowCount;
-      const totalRowCnt3 = data.tables[7].RowCount;
-      const totalRowCnt4 = data.tables[8].RowCount;
-      const totalRowCnt5 = data.tables[9].RowCount;
+      const totalRowCnt3 = data.tables[6].RowCount;
+      const totalRowCnt4 = data.tables[7].RowCount;
+      const totalRowCnt5 = data.tables[8].RowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
-      const rows3 = data.tables[7].Rows;
-      const rows4 = data.tables[8].Rows;
-      const rows5 = data.tables[9].Rows;
+      const rows3 = data.tables[6].Rows;
+      const rows4 = data.tables[7].Rows;
+      const rows5 = data.tables[8].Rows;
 
       setMainDataResult(() => {
         return {

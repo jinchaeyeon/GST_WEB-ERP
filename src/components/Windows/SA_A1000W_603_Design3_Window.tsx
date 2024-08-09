@@ -740,16 +740,16 @@ const CopyWindow = ({
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const totalRowCnt2 = data.tables[1].RowCount;
-      const totalRowCnt3 = data.tables[5].RowCount;
-      const totalRowCnt4 = data.tables[7].RowCount;
-      const totalRowCnt5 = data.tables[8].RowCount;
-      const totalRowCnt6 = data.tables[9].RowCount;
+      const totalRowCnt3 = data.tables[4].RowCount;
+      const totalRowCnt4 = data.tables[6].RowCount;
+      const totalRowCnt5 = data.tables[7].RowCount;
+      const totalRowCnt6 = data.tables[8].RowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
-      const rows3 = data.tables[5].Rows;
-      const rows4 = data.tables[7].Rows;
-      const rows5 = data.tables[8].Rows;
-      const rows6 = data.tables[9].Rows;
+      const rows3 = data.tables[4].Rows;
+      const rows4 = data.tables[6].Rows;
+      const rows5 = data.tables[7].Rows;
+      const rows6 = data.tables[8].Rows;
 
       setMainDataResult(() => {
         return {
@@ -2342,8 +2342,8 @@ const CopyWindow = ({
         "@p_cagetype_s": dataArr.cagetype_s.join("|"),
         "@p_prodmac_s": dataArr.prodmac_s.join("|"),
         "@p_assaytype_s": dataArr.assaytype_s.join("|"),
-        "@p_assaytype1_s": dataArr.assaytype_s.join("|"),
-        "@p_assaytype2_s": dataArr.assaytype_s.join("|"),
+        "@p_assaytype1_s": dataArr.assaytype1_s.join("|"),
+        "@p_assaytype2_s": dataArr.assaytype2_s.join("|"),
         "@p_slideqty_s": dataArr.slideqty_s.join("|"),
         "@p_histopathologyqty_s": dataArr.histopathologyqty_s.join("|"),
 
