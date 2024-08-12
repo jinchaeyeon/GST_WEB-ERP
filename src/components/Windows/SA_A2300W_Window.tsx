@@ -336,6 +336,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    temp = 0;
     if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };

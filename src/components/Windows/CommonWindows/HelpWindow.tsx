@@ -266,6 +266,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const [menulist, setMenuList] = useRecoilState(menuList);
 
   const onClose = () => {
+    temp = 0;
     setVisible(false);
   };
 

@@ -150,6 +150,7 @@ const CR_A1100W = lazy(() => import("./routes/CR_A1100W"));
 const CR_A1101W = lazy(() => import("./routes/CR_A1101W"));
 const CR_B1000W = lazy(() => import("./routes/CR_B1000W"));
 const CT_A0111W = lazy(() => import("./routes/CT_A0111W"));
+const CT_B0010W = lazy(() => import("./routes/CT_B0010W"));
 const EA_A1000W = lazy(() => import("./routes/EA_A1000W"));
 const EA_A2000W = lazy(() => import("./routes/EA_A2000W"));
 const EA_A3000W = lazy(() => import("./routes/EA_A3000W"));
@@ -258,6 +259,7 @@ const SA_A1100W_603 = lazy(() => import("./routes/SA_A1100W_603"));
 const SA_A1200W_603 = lazy(() => import("./routes/SA_A1200W_603"));
 const SA_A2000W = lazy(() => import("./routes/SA_A2000W"));
 const SA_A2010W = lazy(() => import("./routes/SA_A2010W"));
+const SA_A2100W = lazy(() => import("./routes/SA_A2100W"));
 const SA_A2300W = lazy(() => import("./routes/SA_A2300W"));
 const SA_A2300W_PDA = lazy(() => import("./routes/SA_A2300W_PDA"));
 const SA_A3000W = lazy(() => import("./routes/SA_A3000W"));
@@ -284,10 +286,12 @@ const SA_B2226W = lazy(() => import("./routes/SA_B2226W"));
 const SA_B2227W = lazy(() => import("./routes/SA_B2227W"));
 const SA_B2410W = lazy(() => import("./routes/SA_B2410W"));
 const SA_B2410W_290 = lazy(() => import("./routes/SA_B2410W_290"));
+const SA_B2411W = lazy(() => import("./routes/SA_B2411W"));
 const SA_B3000W = lazy(() => import("./routes/SA_B3000W"));
 const SA_B3100W = lazy(() => import("./routes/SA_B3100W"));
 const SA_B3101W = lazy(() => import("./routes/SA_B3101W"));
 const SA_B3600W = lazy(() => import("./routes/SA_B3600W"));
+const SA_B7000W = lazy(() => import("./routes/SA_B7000W"));
 const SY_A0009W = lazy(() => import("./routes/SY_A0009W"));
 const SY_A0010W = lazy(() => import("./routes/SY_A0010W"));
 const SY_A0010W_301 = lazy(() => import("./routes/SY_A0010W_301"));
@@ -832,6 +836,8 @@ const AppInner: React.FC = () => {
       return CR_B1000W;
     } else if (str == "CT_A0111W") {
       return CT_A0111W;
+    } else if (str == "CT_B0010W") {
+      return CT_B0010W;
     } else if (str == "EA_A1000W") {
       return EA_A1000W;
     } else if (str == "EA_A2000W") {
@@ -1048,6 +1054,8 @@ const AppInner: React.FC = () => {
       return SA_A2000W;
     } else if (str == "SA_A2010W") {
       return SA_A2010W;
+    } else if (str == "SA_A2100W") {
+      return SA_A2100W;
     } else if (str == "SA_A2300W") {
       return SA_A2300W;
     } else if (str == "SA_A2300W_PDA") {
@@ -1100,6 +1108,8 @@ const AppInner: React.FC = () => {
       return SA_B2410W;
     } else if (str == "SA_B2410W_290") {
       return SA_B2410W_290;
+    } else if (str == "SA_B2411W") {
+      return SA_B2411W;
     } else if (str == "SA_B3000W") {
       return SA_B3000W;
     } else if (str == "SA_B3100W") {
@@ -1108,6 +1118,8 @@ const AppInner: React.FC = () => {
       return SA_B3101W;
     } else if (str == "SA_B3600W") {
       return SA_B3600W;
+    } else if (str == "SA_B7000W") {
+      return SA_B7000W;
     } else if (str == "SY_A0009W") {
       return SY_A0009W;
     } else if (str == "SY_A0010W") {
@@ -1347,6 +1359,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/CR_B1000W" component={CR_B1000W} exact />
 
                     <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
+                    <AuthRoute path="/CT_B0010W" component={CT_B0010W} exact />
 
                     <AuthRoute path="/EA_A1000W" component={EA_A1000W} exact />
                     <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
@@ -1526,6 +1539,7 @@ const AppInner: React.FC = () => {
                     />
                     <AuthRoute path="/SA_A2000W" component={SA_A2000W} exact />
                     <AuthRoute path="/SA_A2010W" component={SA_A2010W} exact />
+                    <AuthRoute path="/SA_A2100W" component={SA_A2100W} exact />
                     <AuthRoute path="/SA_A2300W" component={SA_A2300W} exact />
                     <AuthRoute
                       path="/SA_A2300W_PDA"
@@ -1587,11 +1601,13 @@ const AppInner: React.FC = () => {
                       component={SA_B2410W_290}
                       exact
                     />
+                    <AuthRoute path="/SA_B2411W" component={SA_B2411W} exact />
                     <AuthRoute path="/SA_B2410W" component={SA_B2410W} exact />
                     <AuthRoute path="/SA_B3000W" component={SA_B3000W} exact />
                     <AuthRoute path="/SA_B3100W" component={SA_B3100W} exact />
                     <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
                     <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
+                    <AuthRoute path="/SA_B7000W" component={SA_B7000W} exact />
 
                     <AuthRoute path="/SY_A0009W" component={SY_A0009W} exact />
                     <AuthRoute path="/SY_A0010W" component={SY_A0010W} exact />

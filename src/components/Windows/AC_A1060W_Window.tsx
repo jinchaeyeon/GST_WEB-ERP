@@ -576,6 +576,7 @@ const CopyWindow = ({
   }, [acntnumnm, acntnum]);
 
   const onClose = () => {
+    temp = 0;
     setVisible(false);
   };
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -794,7 +795,7 @@ const CopyWindow = ({
     let Object2: any[] = [];
     let data;
     mainDataResult.data.forEach((item: any, index: number) => {
-      if (item.chk != true) {
+      if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
         Object2.push(index);
       } else {

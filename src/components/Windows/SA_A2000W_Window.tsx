@@ -528,6 +528,7 @@ const KendoWindow = ({
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   const onClose = () => {
+    temp = 0;
     if (unsavedName.length > 0) setDeletedName(unsavedName);
     getVisible(false);
   };

@@ -576,6 +576,7 @@ const CopyWindow = ({
   }, [acntnumnm, acntnum]);
 
   const onClose = () => {
+    temp = 0;
     setVisible(false);
   };
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");

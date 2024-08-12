@@ -216,6 +216,7 @@ const DetailWindow = ({
   };
 
   const onClose = () => {
+    temp = 0;
     getVisible(false);
   };
 

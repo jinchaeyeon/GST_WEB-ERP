@@ -194,6 +194,7 @@ const CopyWindow = ({
   const [isFilterHideStates2, setisFilterHideStates2] =
     useRecoilState(isFilterHideState2);
   const onClose = () => {
+    temp = 0;
     setisFilterHideStates2(true);
     setVisible(false);
   };

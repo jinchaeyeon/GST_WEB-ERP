@@ -320,6 +320,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    temp = 0;
     setisFilterHideStates2(true);
     setVisible(false);
   };

@@ -127,6 +127,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   }>({});
 
   const onClose = () => {
+    temp = 0;
     deletedMainRows = [];
     setVisible(false);
   };

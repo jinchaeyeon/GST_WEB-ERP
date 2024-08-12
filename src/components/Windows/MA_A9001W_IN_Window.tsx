@@ -265,6 +265,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   };
 
   const onClose = () => {
+    temp = 0;
     setisFilterHideStates2(true);
     setVisible(false);
   };

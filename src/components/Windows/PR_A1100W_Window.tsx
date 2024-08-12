@@ -513,6 +513,8 @@ const KendoWindow = ({
     );
   };
   const onClose = () => {
+    temp = 0;
+    temp2 = 0;
     getVisible(false);
   };
 

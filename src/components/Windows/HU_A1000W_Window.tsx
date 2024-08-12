@@ -1800,6 +1800,14 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    temp = 0;
+    temp2 = 0;
+    temp3 = 0;
+    temp4 = 0;
+    temp5 = 0;
+    temp6 = 0;
+    temp7 = 0;
+    temp8 = 0;
     if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };
@@ -11477,7 +11485,7 @@ const CopyWindow = ({
             upload: permissions.save,
             download: permissions.view,
             delete: permissions.save,
-          }} 
+          }}
         />
       )}
       {attachmentsWindowVisible2 && (
@@ -11489,7 +11497,7 @@ const CopyWindow = ({
             upload: permissions.save,
             download: permissions.view,
             delete: permissions.save,
-          }} 
+          }}
         />
       )}
       {overtimeWindowVisible && (

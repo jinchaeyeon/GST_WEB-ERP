@@ -330,6 +330,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    temp = 0;
     setVisible(false);
   };
 

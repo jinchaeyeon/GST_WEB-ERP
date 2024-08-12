@@ -335,6 +335,9 @@ const CopyWindow = ({
   const processApi = useApi();
 
   const onClose = () => {
+    temp = 0;
+    temp2 = 0;
+    temp3 = 0;
     setisFilterHideStates2(true);
     setVisible(false);
   };

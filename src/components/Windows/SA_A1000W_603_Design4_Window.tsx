@@ -558,6 +558,9 @@ const CopyWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
 
   const onClose = () => {
+    temp = 0;
+    temp2 = 0;
+    temp3 = 0;
     setVisible(false);
   };
 

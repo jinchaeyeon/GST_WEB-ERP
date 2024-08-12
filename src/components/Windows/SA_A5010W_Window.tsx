@@ -1620,6 +1620,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    temp = 0;
     if (unsavedAttadatnums.length > 0)
       setDeletedAttadatnums(unsavedAttadatnums);
 

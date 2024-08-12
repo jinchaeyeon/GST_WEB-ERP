@@ -317,6 +317,8 @@ const KendoWindow = ({
   }>({});
 
   const onClose = () => {
+    temp = 0;
+    temp2 = 0;
     setisFilterHideStates2(true);
     if (unsavedName.length > 0) {
       setDeletedName(unsavedName);

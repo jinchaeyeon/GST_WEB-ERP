@@ -1245,6 +1245,7 @@ const BA_A0025W: React.FC = () => {
           setVisible={setCustWindowVisible}
           workType={"N"}
           setData={setCustData}
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>

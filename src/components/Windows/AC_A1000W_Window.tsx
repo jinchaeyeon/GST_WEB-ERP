@@ -291,8 +291,7 @@ export const FormContext4 = createContext<{
   setMainDataState: (d: any) => void;
   // fetchGrid: (n: number) => any;
 }>({} as any);
-let temp = 0;
-let temp2 = 0;
+
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
     ariaColumnIndex,
@@ -630,6 +629,8 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 var height5 = 0;
+let temp = 0;
+let temp2 = 0;
 
 const CopyWindow = ({
   workType,
@@ -1300,6 +1301,7 @@ const CopyWindow = ({
 
   const onClose = () => {
     if (unsavedName.length > 0) setDeletedName(unsavedName);
+    temp = 0;
     setVisible(false);
   };
 
@@ -2755,7 +2757,7 @@ const CopyWindow = ({
     let Object2: any[] = [];
     let data;
     mainDataResult.data.forEach((item: any, index: number) => {
-      if (item.chk != true) {
+      if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
         Object2.push(index);
       } else {
