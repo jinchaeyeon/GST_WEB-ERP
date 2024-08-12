@@ -108,6 +108,7 @@ const BA_A0050W = lazy(() => import("./routes/BA_A0050W"));
 const BA_A0060W = lazy(() => import("./routes/BA_A0060W"));
 const BA_A0070W = lazy(() => import("./routes/BA_A0070W"));
 const BA_A0080W = lazy(() => import("./routes/BA_A0080W"));
+const BA_A0086W = lazy(() => import("./routes/BA_A0086W"));
 const BA_A0100W = lazy(() => import("./routes/BA_A0100W"));
 const BA_A0200W = lazy(() => import("./routes/BA_A0200W"));
 const BA_A0500W = lazy(() => import("./routes/BA_A0500W"));
@@ -303,6 +304,7 @@ const SY_A0110W = lazy(() => import("./routes/SY_A0110W"));
 const SY_A0120W = lazy(() => import("./routes/SY_A0120W"));
 const SY_A0125W = lazy(() => import("./routes/SY_A0125W"));
 const SY_A0150W = lazy(() => import("./routes/SY_A0150W"));
+const SY_A0430W = lazy(() => import("./routes/SY_A0430W"));
 const SY_A0500W = lazy(() => import("./routes/SY_A0500W"));
 const SY_B0001W = lazy(() => import("./routes/SY_B0001W"));
 const SY_B0060W = lazy(() => import("./routes/SY_B0060W"));
@@ -746,6 +748,8 @@ const AppInner: React.FC = () => {
       return BA_A0070W;
     } else if (str == "BA_A0080W") {
       return BA_A0080W;
+    } else if (str == "BA_A0086W") {
+      return BA_A0086W;
     } else if (str == "BA_A0100W") {
       return BA_A0100W;
     } else if (str == "BA_A0200W") {
@@ -1136,6 +1140,8 @@ const AppInner: React.FC = () => {
       return SY_A0125W;
     } else if (str == "SY_A0150W") {
       return SY_A0150W;
+    } else if (str == "SY_A0430W") {
+      return SY_A0430W;
     } else if (str == "SY_A0500W") {
       return SY_A0500W;
     } else if (str == "SY_B0001W") {
@@ -1279,6 +1285,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/BA_A0060W" component={BA_A0060W} exact />
                     <AuthRoute path="/BA_A0070W" component={BA_A0070W} exact />
                     <AuthRoute path="/BA_A0080W" component={BA_A0080W} exact />
+                    <AuthRoute path="/BA_A0086W" component={BA_A0086W} exact />
                     <AuthRoute path="/BA_A0100W" component={BA_A0100W} exact />
                     <AuthRoute path="/BA_A0200W" component={BA_A0200W} exact />
                     <AuthRoute path="/BA_A0500W" component={BA_A0500W} exact />
@@ -1606,8 +1613,9 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
                     <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
                     <AuthRoute path="/SY_A0150W" component={SY_A0150W} exact />
-                    <AuthRoute path="/SY_B0001W" component={SY_B0001W} exact />
+                    <AuthRoute path="/SY_A0430W" component={SY_A0430W} exact />
                     <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
+                    <AuthRoute path="/SY_B0001W" component={SY_B0001W} exact />
                     <AuthRoute path="/SY_B0060W" component={SY_B0060W} exact />
 
                     <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />

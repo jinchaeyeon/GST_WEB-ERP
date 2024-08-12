@@ -370,7 +370,7 @@ const SY_A0150: React.FC = () => {
               <th>파일명</th>
               <td>
                 <Input
-                  name="materialnm"
+                  name="file_name"
                   type="text"
                   value={filters.file_name}
                   onChange={filterInputChange}

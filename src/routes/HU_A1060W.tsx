@@ -488,7 +488,6 @@ const HU_A1060W: React.FC = () => {
           filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.datnum == filters.find_row_value);
-
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
           setFilters2((prev) => ({
@@ -963,17 +962,12 @@ const HU_A1060W: React.FC = () => {
         if (data != undefined) {
           setFilters2((prev) => ({
             ...prev,
-            datnum: data.datnum,
-            kind: data.kind,
+            datnum: data.datnum == undefined ? "" : data.datnum,
+            kind: data.kind == undefined ? "" : data.kind,
             isSearch: true,
           }));
         } else {
-          setFilters2((prev) => ({
-            ...prev,
-            datnum: newData[0].datnum,
-            kind: newData[0].kind,
-            isSearch: true,
-          }));
+          setUrl("");
         }
       }
     }
@@ -1065,7 +1059,6 @@ const HU_A1060W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       [name]: value,
-      isSearch: true,
     }));
   };
 
