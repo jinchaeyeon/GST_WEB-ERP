@@ -1190,6 +1190,7 @@ export const UseGetValueFromSessionItem = (code: string) => {
     if (
       sessionItem.find((sessionItem) => sessionItem.code == codes) == undefined
     ) {
+      alert(code);
       resetLocalStorage();
       window.location.href = "/";
       return "";
@@ -1206,17 +1207,18 @@ export const UseGetValueFromSessionItem = (code: string) => {
 // ip를 세팅 (hook방식)
 export const UseGetIp = (setListData: any) => {
   useEffect(() => {
-    const fetchIp = async () => {
-      try {
-        const response = await fetch("https://ipapi.co/json/");
-        const data = await response.json();
-        // Set the IP address to the constant `ip`
-        setListData(data.ip);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchIp();
+    fetchData();
+  }, []);
+  const fetchData = useCallback(async () => {
+    let locationIp: any;
+    try {
+      const response = await fetch("https://ipapi.co/json/");
+      const data = await response.json();
+      locationIp = data.ip;
+    } catch (error) {
+      locationIp = "";
+    }
+    setListData(locationIp);
   }, []);
 };
 

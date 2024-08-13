@@ -76,8 +76,9 @@ import {
   menuList,
   menusState,
   passwordExpirationInfoState,
+  sessionItemState,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import {
@@ -113,12 +114,13 @@ const PanelBarNavContainer = (props: any) => {
   const history = useHistory();
   const [Link, setLink] = useRecoilState(linkState);
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
+  const ip = UseGetValueFromSessionItem("ip");
   const [loginResult] = useRecoilState(loginResultState);
   // const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   // const [token] = useState(accessToken);
   const accessToken = localStorage.getItem("accessToken");
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
-
+  const [sessionItem] = useRecoilState(sessionItemState);
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMobileMenuOpend, setIsMobileMenuOpend] = useRecoilState(
     isMobileMenuOpendState
@@ -164,7 +166,6 @@ const PanelBarNavContainer = (props: any) => {
   // 반응형 처리
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
-  const ip = UseGetValueFromSessionItem("ip");
 
   // 새로고침하거나 Path 변경 시
   useEffect(() => {
@@ -452,7 +453,7 @@ const PanelBarNavContainer = (props: any) => {
 
   useEffect(() => {
     // if (token && ip !== null) {
-    if (ip !== null && accessToken) {
+    if (ip !== "" && accessToken && sessionItem) {
       const pathname = location.pathname.replace("/", "");
 
       // 폼 로그 처리
@@ -493,7 +494,7 @@ const PanelBarNavContainer = (props: any) => {
       // 이전 루트 저장
       setPreviousRoute(pathname);
     }
-  }, [location, ip, accessToken]);
+  }, [location, ip, accessToken, sessionItem]);
 
   const fetchToLog = async (logParaVal: TLogParaVal) => {
     let data: any;
@@ -1477,7 +1478,13 @@ const PanelBarNavContainer = (props: any) => {
                 </MenuSearchBox>
               )}
             </div>
-            <GnvPanel height={`calc(100vh - ${webheight}px)`}>
+            <GnvPanel
+              height={`calc(100vh - ${webheight}px)`}
+              isBoolean={
+                !isMobile &&
+                window.location.href.split("/")[2].split(".")[1] == "gsti"
+              }
+            >
               {paths.length > 0 && (
                 <PanelBar
                   selected={selected}
@@ -1541,7 +1548,15 @@ const PanelBarNavContainer = (props: any) => {
               )}
               <ButtonContainer
                 flexDirection={"column"}
-                style={{ marginTop: "10px", gap: "5px", marginBottom: "70px" }}
+                style={{
+                  marginTop: "10px",
+                  gap: "5px",
+                  marginBottom:
+                    !isMobile &&
+                    window.location.href.split("/")[2].split(".")[1] == "gsti"
+                      ? "0px"
+                      : "70px",
+                }}
               >
                 {/* <Button
                 onClick={onClickChatbot}
@@ -1570,154 +1585,154 @@ const PanelBarNavContainer = (props: any) => {
                 >
                   로그아웃
                 </Button>
-                {/* {(!isMobile && window.location.href.includes("localhost")) ||
+                {!isMobile &&
                 window.location.href.split("/")[2].split(".")[1] == "gsti" ? (
                   <>
                     <Divider />
                     <div
                       style={{
-                        clear: "both",
-                        overflow: "hidden",
-                        lineHeight: "1.85",
-                        fontSize: "12px",
-                        letterSpacing: "0",
+                        backgroundColor: "white",
+                        width: "100%",
                       }}
                     >
-                      <address
+                      <div
                         style={{
-                          fontStyle: "normal",
-                          letterSpacing: "-.01em",
-                          display: "flex",
-
-                          flexDirection: "column",
+                          clear: "both",
+                          overflow: "hidden",
+                          lineHeight: "1.2",
+                          fontSize: "10px",
+                          letterSpacing: "0",
+                          backgroundColor: "#white",
+                          padding: "10px",
+                          textAlign: "left",
                         }}
                       >
-                        <a
+                        <address
                           style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "default",
+                            fontStyle: "normal",
+                            letterSpacing: "-.01em",
+                            display: "flex",
+                            flexDirection: "column",
                           }}
                         >
-                          (주)지에스티
-                        </a>
-                        <a
+                          <a
+                            style={{
+                              display: "inline-block",
+                              color: "#cfcfcf",
+                              cursor: "default",
+                            }}
+                          >
+                            (주)지에스티 | 대표: 오준철
+                          </a>
+                          <a
+                            style={{
+                              display: "inline-block",
+                              color: "#cfcfcf",
+                              cursor: "default",
+                            }}
+                          >
+                            사업자등록번호: 606-86-08105
+                          </a>
+                        </address>
+                        <address
                           style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "default",
+                            fontStyle: "normal",
+                            letterSpacing: "-.01em",
+                            display: "flex",
+                            flexDirection: "column",
                           }}
                         >
-                          대표: 오준철
-                        </a>
-                        <a
+                          <a
+                            style={{
+                              display: "inline-block",
+                              color: "#cfcfcf",
+                              cursor: "pointer",
+                            }}
+                          >
+                            전화번호: 070-7017-7373
+                          </a>
+                          <a
+                            style={{
+                              display: "inline-block",
+                              color: "#cfcfcf",
+                              cursor: "default",
+                            }}
+                          >
+                            팩스: 051-831-7372
+                          </a>
+                          <a
+                            style={{
+                              display: "inline-block",
+                              color: "#cfcfcf",
+                              cursor: "pointer",
+                            }}
+                            target="_top"
+                          >
+                            Email: accounting@gsti.co.kr
+                          </a>
+                        </address>
+                        <address
                           style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "default",
+                            fontStyle: "normal",
+                            letterSpacing: "-.01em",
                           }}
                         >
-                          사업자등록번호: 606-86-08105
-                        </a>
-                      </address>
-                      <address
+                          <a
+                            style={{
+                              display: "inline-block",
+                              color: "#cfcfcf",
+                              cursor: "pointer",
+                            }}
+                          >
+                            부산본사: 부산 북구 효열로 111, 부산지식산업센터
+                            302호 (우) 46508
+                          </a>
+                        </address>
+                        <address
+                          style={{
+                            fontStyle: "normal",
+                            letterSpacing: "-.01em",
+                          }}
+                        >
+                          <a
+                            style={{
+                              display: "inline-block",
+                              color: "#cfcfcf",
+                              cursor: "pointer",
+                            }}
+                          >
+                            서울지사: 서울 금천구 범안로 1142 하우스디 더
+                            스카이밸리 가산2차 1119호 (우) 08595
+                          </a>
+                        </address>
+                        <address
+                          style={{
+                            fontStyle: "normal",
+                            letterSpacing: "-.01em",
+                          }}
+                        >
+                          <a
+                            style={{
+                              display: "inline-block",
+                              color: "#cfcfcf",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Copyrights © All Rights Reserved by GST
+                          </a>
+                        </address>
+                      </div>
+                      <div
                         style={{
-                          fontStyle: "normal",
-                          letterSpacing: "-.01em",
-                          display: "flex",
-
-                          flexDirection: "column",
+                          height: "20px",
+                          width: "100%",
                         }}
-                      >
-                        <a
-                          style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "pointer",
-                          }}
-                          href="tel:070-7017-7373"
-                        >
-                          전화번호: 070-7017-7373
-                        </a>
-                        <a
-                          style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "default",
-                          }}
-                        >
-                          팩스: 051-831-7372
-                        </a>
-                        <a
-                          style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "pointer",
-                          }}
-                          href="mailto:accounting@gsti.co.kr?Subject=%EB%AC%B8%EC%9D%98%ED%95%A9%EB%8B%88%EB%8B%A4"
-                          target="_top"
-                        >
-                          Email: accounting@gsti.co.kr
-                        </a>
-                      </address>
-                      <address
-                        style={{
-                          fontStyle: "normal",
-                          letterSpacing: "-.01em",
-                        }}
-                      >
-                        <a
-                          style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "pointer",
-                          }}
-                          href="tel:070-7017-7373"
-                        >
-                          부산본사: 부산 북구 효열로 111, 부산지식산업센터 302호
-                          (우) 46508
-                        </a>
-                      </address>
-                      <address
-                        style={{
-                          fontStyle: "normal",
-                          letterSpacing: "-.01em",
-                        }}
-                      >
-                        <a
-                          style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "pointer",
-                          }}
-                          href="tel:070-7017-7373"
-                        >
-                          서울지사: 서울 금천구 범안로 1142 하우스디 더
-                          스카이밸리 가산2차 1119호 (우) 08595
-                        </a>
-                      </address>
-                      <address
-                        style={{
-                          fontStyle: "normal",
-                          letterSpacing: "-.01em",
-                        }}
-                      >
-                        <a
-                          style={{
-                            display: "inline-block",
-                            color: "black",
-                            cursor: "pointer",
-                          }}
-                          href="tel:070-7017-7373"
-                        >
-                          Copyrights © All Rights Reserved by GST
-                        </a>
-                      </address>
+                      ></div>
                     </div>
                   </>
                 ) : (
                   ""
-                )} */}
+                )}
               </ButtonContainer>
             </GnvPanel>
           </Gnv>

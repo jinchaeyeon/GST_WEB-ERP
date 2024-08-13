@@ -996,6 +996,7 @@ export const Wrapper = styled.div<TWrapper>`
 
 type TGnvPanel = {
   height: string;
+  isBoolean: boolean;
 };
 
 export const GnvPanel = styled.div<TGnvPanel>`
@@ -1003,6 +1004,9 @@ export const GnvPanel = styled.div<TGnvPanel>`
   position: fixed;
   width: ${GNV_WIDTH}px;
   height: ${(props) => props.height};
+  display: ${(props) => props.isBoolean ? "flex" : ""};
+  flex-direction: column;
+  justify-content: space-between;
   ::-webkit-scrollbar {
     display: none;
   }
@@ -1115,7 +1119,6 @@ export const PageWrap = styled.div<FilterType>`
 export const Footer = styled.div`
   width: 100%;
   height: 30px;
-  border-top: solid 1px #ebebeb;
   position: fixed;
   bottom: 0;
   background-color: #656565;

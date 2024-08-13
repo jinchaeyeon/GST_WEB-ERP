@@ -28,6 +28,7 @@ export const DEFAULT_SESSION_ITEM: TSessionItem[] = [
   { code: "position", value: "" },
   { code: "dptcd", value: "" },
   { code: "pc", value : ""},
+  { code: "ip", value : ""},
   { code: "custcd", value: "" },
   { code: "custnm", value: "" }
 ];

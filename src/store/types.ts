@@ -112,6 +112,7 @@ export type TSessionItemCode =
   | "dptcd"
   | "postcd"
   | "pc"
+  | "ip"
   | "custcd"
   | "custnm";
 

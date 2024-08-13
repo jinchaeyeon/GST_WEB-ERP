@@ -423,7 +423,7 @@ const AppInner: React.FC = () => {
   const role = loginResult ? loginResult.role : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const [ip, setIp] = useState<any>(null);
+  const [ip, setIp] = useState("");
   UseGetIp(setIp);
   const isAdmin = role == "ADMIN";
   const [color, setColor] = useRecoilState(colors);

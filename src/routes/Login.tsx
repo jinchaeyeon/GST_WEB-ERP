@@ -498,7 +498,6 @@ const Login: React.FC = () => {
                 color: "#d5d5d5",
                 cursor: "pointer",
               }}
-              href="tel:070-7017-7373"
             >
               부산본사: 부산 북구 효열로 111, 부산지식산업센터 302호 (우) 46508
             </a>
@@ -517,7 +516,6 @@ const Login: React.FC = () => {
                 color: "#d5d5d5",
                 cursor: "pointer",
               }}
-              href="tel:070-7017-7373"
             >
               서울지사: 서울 금천구 범안로 1142 하우스디 더 스카이밸리 가산2차
               1119호 (우) 08595
@@ -537,7 +535,6 @@ const Login: React.FC = () => {
                 color: "#d5d5d5",
                 cursor: "pointer",
               }}
-              href="tel:070-7017-7373"
             >
               Copyrights © All Rights Reserved by GST
             </a>
