@@ -372,6 +372,7 @@ export const FormBox = styled.table`
     padding-left: 7px;
     text-align: right;
     white-space: pre;
+    width: 15%;
   }
   tr td {
     /* background-color: #ffffff;

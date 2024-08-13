@@ -535,7 +535,7 @@ const PanelBarNavContainer = (props: any) => {
         "@p_login_key": logParaVal.form_login_key,
         "@p_parent_login_key": loginKey,
 
-        "@p_ip_address": ip,
+        "@p_ip_address": ip == undefined ? "" : ip,
         "@p_pc": broswer,
         "@p_mac_address": "",
       },
