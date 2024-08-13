@@ -1190,7 +1190,6 @@ export const UseGetValueFromSessionItem = (code: string) => {
     if (
       sessionItem.find((sessionItem) => sessionItem.code == codes) == undefined
     ) {
-      alert(code);
       resetLocalStorage();
       window.location.href = "/";
       return "";
