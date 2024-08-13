@@ -59,6 +59,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -68,11 +69,12 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CM_A3220W_PRINT from "../components/Prints/CM_A3220W_PRINT";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { useApi } from "../hooks/api";
-import { IAttachmentData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { IAttachmentData, IWindowPosition } from "../hooks/interfaces";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A3220W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -188,10 +190,19 @@ const CM_A3220W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
   let deviceWidth = document.documentElement.clientWidth;
+  let deviceHeight = document.documentElement.clientHeight;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
-
+  const [position, setPosition] = useState<IWindowPosition>({
+    left: isMobile == true ? 0 : (deviceWidth - 1200) / 2,
+    top: isMobile == true ? 0 : (deviceHeight - 800) / 2,
+    width: isMobile == true ? deviceWidth : 1200,
+    height: isMobile == true ? deviceHeight : 800,
+  });
+  const onChangePostion = (position: any) => {
+    setPosition(position);
+  };
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".TitleContainer");
@@ -211,6 +222,8 @@ const CM_A3220W: React.FC = () => {
       };
     }
   }, [customOptionData, webheight, webheight2]);
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
@@ -641,6 +654,11 @@ const CM_A3220W: React.FC = () => {
   const exitEdit = () => {};
 
   const onAddClick = () => {
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
+
     setInformation({
       workType: "N",
       appyn: "",
@@ -649,10 +667,176 @@ const CM_A3220W: React.FC = () => {
       draftnum: "",
       files: "",
       orgdiv: sessionOrgdiv,
-      person: userId,
+      person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
       recdt: new Date(),
       title: "",
     });
+  };
+
+  const onSaveClick = () => {
+    if (!permissions.save) return;
+    let valid = true;
+    try {
+      if (
+        convertDateToStr(information.recdt).substring(0, 4) < "1997" ||
+        convertDateToStr(information.recdt).substring(6, 8) > "31" ||
+        convertDateToStr(information.recdt).substring(6, 8) < "01" ||
+        convertDateToStr(information.recdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "CM_A3220W_001");
+      } else if (information.title == "") {
+        throw findMessage(messagesData, "CM_A3220W_001");
+      }
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+
+    if (!valid) return false;
+
+    setParaData({
+      workType: information.workType,
+      orgdiv: information.orgdiv,
+      draftnum: information.draftnum,
+      recdt:
+        information.recdt == null ? "" : convertDateToStr(information.recdt),
+      person: information.person,
+      title: information.title,
+      contents: information.contents,
+      attdatnum: information.attdatnum,
+    });
+  };
+
+  const [paraData, setParaData] = useState({
+    workType: "",
+    orgdiv: "",
+    draftnum: "",
+    recdt: "",
+    person: "",
+    title: "",
+    contents: "",
+    attdatnum: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_CM_A3220W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData.workType,
+      "@p_orgdiv": paraData.orgdiv,
+      "@p_draftnum": paraData.draftnum,
+      "@p_recdt": paraData.recdt,
+      "@p_person": paraData.person,
+      "@p_title": paraData.title,
+      "@p_contents": paraData.contents,
+      "@p_attdatnum": paraData.attdatnum,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "CM_A3220W",
+    },
+  };
+
+  const questionToDelete = useSysMessage("QuestionToDelete");
+  const onDeleteClick = () => {
+    if (!permissions.delete) return;
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      const selectRows = mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "D",
+        orgdiv: information.orgdiv,
+        draftnum: information.draftnum,
+        recdt:
+          information.recdt == null ? "" : convertDateToStr(information.recdt),
+        person: information.person,
+        title: information.title,
+        contents: information.contents,
+        attdatnum: information.attdatnum,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (
+      paraData.workType != "" &&
+      permissions.save &&
+      paraData.workType != "D"
+    ) {
+      fetchTodoGridSaved();
+    }
+    if (paraData.workType == "D" && permissions.delete) {
+      fetchTodoGridSaved();
+    }
+  }, [paraData]);
+
+  const fetchTodoGridSaved = async () => {
+    if (!permissions.save && paraData.workType != "D") return;
+    if (!permissions.delete && paraData.workType == "D") return;
+    let data: any;
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      if (paraData.workType == "D") {
+        if (information.attdatnum != "")
+          setDeletedAttadatnums([information.attdatnum]);
+      }
+      setParaData({
+        workType: "",
+        orgdiv: "",
+        draftnum: "",
+        recdt: "",
+        person: "",
+        title: "",
+        contents: "",
+        attdatnum: "",
+      });
+      resetAllGrid();
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        find_row_value: data.returnString,
+        isSearch: true,
+      }));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      if (data.resultMessage != undefined) {
+        alert(data.resultMessage);
+      }
+    }
+    setLoading(false);
+  };
+
+  const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
+
+  const onPrintWndClick = () => {
+    if (!permissions.print) return;
+    if (mainDataResult.total > 0) {
+      if (information.work_type == "N") {
+        alert("저장 후 조회해주세요.");
+      } else {
+        window.scrollTo(0, 0);
+        setPreviewVisible((prev) => !prev);
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
   };
 
   return (
@@ -822,6 +1006,15 @@ const CM_A3220W: React.FC = () => {
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
               <Button
+                onClick={onPrintWndClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="print"
+                disabled={permissions.print ? false : true}
+              >
+                출력
+              </Button>
+              <Button
                 onClick={onAddClick}
                 themeColor={"primary"}
                 icon="file-add"
@@ -830,7 +1023,7 @@ const CM_A3220W: React.FC = () => {
                 신규
               </Button>
               <Button
-                //onClick={onDeleteClick}
+                onClick={onDeleteClick}
                 themeColor={"primary"}
                 fillMode={"outline"}
                 icon="delete"
@@ -839,10 +1032,10 @@ const CM_A3220W: React.FC = () => {
                 삭제
               </Button>
               <Button
-                //onClick={onDeleteClick}
+                onClick={onSaveClick}
                 themeColor={"primary"}
                 fillMode={"outline"}
-                icon="delete"
+                icon="save"
                 disabled={permissions.delete ? false : true}
               >
                 저장
@@ -885,7 +1078,7 @@ const CM_A3220W: React.FC = () => {
                         {customOptionData !== null && (
                           <CustomOptionComboBox
                             name="person"
-                            value={filters.person}
+                            value={information.person}
                             customOptionData={customOptionData}
                             changeData={ComboBoxChange}
                             valueField="user_id"
@@ -969,6 +1162,25 @@ const CM_A3220W: React.FC = () => {
             download: permissions.view,
             delete: permissions.save,
           }}
+        />
+      )}
+      {previewVisible && (
+        <CM_A3220W_PRINT
+          setVisible={setPreviewVisible}
+          para={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>
