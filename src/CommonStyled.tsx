@@ -155,7 +155,7 @@ export const LoginImgWEBERP = styled.div`
   background-position: center right;
   opacity: 0.9;
   height: ${window.location.href.split("/")[2].split(".")[1] == "gsti"
-    ? `calc(100% - 150px)`
+    ? `calc(100% - 120px)`
     : `100%`};
   width: 50%;
   top: 0;
@@ -1004,7 +1004,7 @@ export const GnvPanel = styled.div<TGnvPanel>`
   position: fixed;
   width: ${GNV_WIDTH}px;
   height: ${(props) => props.height};
-  display: ${(props) => props.isBoolean ? "flex" : ""};
+  display: ${(props) => (props.isBoolean ? "flex" : "")};
   flex-direction: column;
   justify-content: space-between;
   ::-webkit-scrollbar {
@@ -1123,7 +1123,6 @@ export const Footer = styled.div`
   bottom: 0;
   background-color: #656565;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   z-index: 10000;
 
@@ -1136,6 +1135,38 @@ export const Footer = styled.div`
     font-size: 13px;
     font-weight: 100;
   }
+
+  a {
+    width: 100%;
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+  }
+  p {
+    width: 100%;
+    display: flex;
+    height: 100%;
+    justify-content: flex-end;
+  }
+  p > div {
+    line-height: 30px;
+    border-left: solid 1px gray;
+    color: #fff;
+    padding-right: 10px;
+    padding-left: 10px;
+    font-size: 13px;
+    font-weight: 100;
+  }
+  a > p > div {
+    line-height: 30px;
+    border-left: solid 1px gray;
+    color: #fff;
+    padding-right: 10px;
+    padding-left: 10px;
+    font-size: 13px;
+    font-weight: 100;
+  }
+
   @media (max-width: 1200px) {
     display: none;
   }

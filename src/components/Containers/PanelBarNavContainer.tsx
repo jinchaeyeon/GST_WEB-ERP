@@ -1622,7 +1622,8 @@ const PanelBarNavContainer = (props: any) => {
                               cursor: "default",
                             }}
                           >
-                            (주)지에스티 | 대표: 오준철
+                            <a style={{ fontWeight: 600 }}>(주)지에스티</a>{" "}
+                            <a>| 대표: 오준철</a>
                           </a>
                           <a
                             style={{
@@ -1686,39 +1687,6 @@ const PanelBarNavContainer = (props: any) => {
                           >
                             부산본사: 부산 북구 효열로 111, 부산지식산업센터
                             302호 (우) 46508
-                          </a>
-                        </address>
-                        <address
-                          style={{
-                            fontStyle: "normal",
-                            letterSpacing: "-.01em",
-                          }}
-                        >
-                          <a
-                            style={{
-                              display: "inline-block",
-                              color: "#cfcfcf",
-                              cursor: "pointer",
-                            }}
-                          >
-                            서울지사: 서울 금천구 범안로 1142 하우스디 더
-                            스카이밸리 가산2차 1119호 (우) 08595
-                          </a>
-                        </address>
-                        <address
-                          style={{
-                            fontStyle: "normal",
-                            letterSpacing: "-.01em",
-                          }}
-                        >
-                          <a
-                            style={{
-                              display: "inline-block",
-                              color: "#cfcfcf",
-                              cursor: "pointer",
-                            }}
-                          >
-                            Copyrights © All Rights Reserved by GST
                           </a>
                         </address>
                       </div>
@@ -1794,13 +1762,35 @@ const PanelBarNavContainer = (props: any) => {
         <Loading />
       </Wrapper>
       <Footer>
-        <div>
-          {userName}({userId})
-        </div>
-        <div>
-          {customerName}({companyCode})
-        </div>
-        <div>{ip}</div>
+        {!isMobile &&
+        window.location.href.split("/")[2].split(".")[1] == "gsti" ? (
+          <>
+            <a>
+              <div>© GST Co., Ltd. All rights reserved.</div>
+              <p>
+                <div>
+                  {userName}({userId})
+                </div>
+                <div>
+                  {customerName}({companyCode})
+                </div>
+                <div>{ip}</div>
+              </p>
+            </a>
+          </>
+        ) : (
+          <>
+            <p>
+              <div>
+                {userName}({userId})
+              </div>
+              <div>
+                {customerName}({companyCode})
+              </div>
+              <div>{ip}</div>
+            </p>
+          </>
+        )}
       </Footer>
       {helpWindowVisible && (
         <HelpWindow setVisible={setHelpWindowVisible} modal={true} />

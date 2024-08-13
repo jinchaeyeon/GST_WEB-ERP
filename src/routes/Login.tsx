@@ -284,7 +284,7 @@ const Login: React.FC = () => {
           height:
             !isMobile &&
             window.location.href.split("/")[2].split(".")[1] == "gsti"
-              ? `calc(100% - 150px)`
+              ? `calc(100% - 120px)`
               : "100%",
         }}
       >
@@ -359,7 +359,7 @@ const Login: React.FC = () => {
       window.location.href.split("/")[2].split(".")[1] == "gsti" ? (
         <div
           style={{
-            height: "150px",
+            height: "120px",
             backgroundColor: "#333",
             clear: "both",
             overflow: "hidden",
@@ -517,26 +517,7 @@ const Login: React.FC = () => {
                 cursor: "pointer",
               }}
             >
-              서울지사: 서울 금천구 범안로 1142 하우스디 더 스카이밸리 가산2차
-              1119호 (우) 08595
-            </a>
-          </address>
-          <address
-            style={{
-              fontStyle: "normal",
-              letterSpacing: "-.01em",
-              display: "flex",
-              gap: "10px",
-            }}
-          >
-            <a
-              style={{
-                display: "inline-block",
-                color: "#d5d5d5",
-                cursor: "pointer",
-              }}
-            >
-              Copyrights © All Rights Reserved by GST
+              © GST Co., Ltd. All rights reserved.
             </a>
           </address>
         </div>
