@@ -1570,7 +1570,7 @@ const PanelBarNavContainer = (props: any) => {
                 >
                   로그아웃
                 </Button>
-                {(!isMobile && window.location.href.includes("localhost")) ||
+                {/* {(!isMobile && window.location.href.includes("localhost")) ||
                 window.location.href.split("/")[2].split(".")[1] == "gsti" ? (
                   <>
                     <Divider />
@@ -1717,7 +1717,7 @@ const PanelBarNavContainer = (props: any) => {
                   </>
                 ) : (
                   ""
-                )}
+                )} */}
               </ButtonContainer>
             </GnvPanel>
           </Gnv>
