@@ -1206,19 +1206,17 @@ export const UseGetValueFromSessionItem = (code: string) => {
 // ip를 세팅 (hook방식)
 export const UseGetIp = (setListData: any) => {
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = useCallback(async () => {
-    let locationIp: any;
-    try {
-      const ipData = await fetch("https://geolocation-db.com/json/");
-      locationIp = await ipData.json();
-    } catch (error) {
-      locationIp = "";
-    }
-
-    setListData(locationIp.IPv4);
+    const fetchIp = async () => {
+      try {
+        const response = await fetch("https://ipapi.co/json/");
+        const data = await response.json();
+        // Set the IP address to the constant `ip`
+        setListData(data.ip);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchIp();
   }, []);
 };
 
@@ -1238,7 +1236,6 @@ export const getBrowser = () => {
 export const UseParaPc = (setData: any) => {
   const browserInfo = detect();
   let browser = "";
-
   if (browserInfo) {
     browser =
       browserInfo.os + "/" + browserInfo.name + "-" + browserInfo.version;
@@ -1253,13 +1250,13 @@ export const UseParaPc = (setData: any) => {
   const fetchData = useCallback(async () => {
     let locationIp: any;
     try {
-      const ipData = await fetch("https://geolocation-db.com/json/");
-      locationIp = await ipData.json();
+      const response = await fetch("https://ipapi.co/json/");
+      const data = await response.json();
+      locationIp = data.ip;
     } catch (error) {
       locationIp = "";
     }
-
-    setData(locationIp.IPv4 + "/" + browser);
+    setData(locationIp + "/" + browser);
   }, []);
 };
 

@@ -32,6 +32,7 @@ import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import styled, { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
 import {
+  UseGetIp,
   UseGetValueFromSessionItem,
   UseParaPc,
 } from "./components/CommonFunction";
@@ -422,6 +423,8 @@ const AppInner: React.FC = () => {
   const role = loginResult ? loginResult.role : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const [ip, setIp] = useState<any>(null);
+  UseGetIp(setIp);
   const isAdmin = role == "ADMIN";
   const [color, setColor] = useRecoilState(colors);
   const [osstate, setOSState] = useRecoilState(OSState);
@@ -494,6 +497,7 @@ const AppInner: React.FC = () => {
           }))
           .concat([
             { code: "pc", value: pc },
+            { code: "ip", value: ip },
             { code: "custcd", value: loginResult.custcd },
             { code: "custnm", value: loginResult.custnm },
           ]);

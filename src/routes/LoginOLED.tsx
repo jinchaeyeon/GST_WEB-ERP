@@ -183,7 +183,7 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div style={{ backgroundColor: "#f1a539" }}>
+    <div style={{ backgroundColor: "#f1a539", height: "100vh" }}>
       <LoginBox theme={"#f1a539"}>
         <Form
           initialValues={information}

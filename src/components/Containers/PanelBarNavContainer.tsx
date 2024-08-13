@@ -77,11 +77,10 @@ import {
   menusState,
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import {
-  UseGetIp,
   UseGetValueFromSessionItem,
   dateformat2,
   getBrowser,
@@ -159,36 +158,13 @@ const PanelBarNavContainer = (props: any) => {
   const [isFilterheightstates, setIsFilterheightstates] =
     useRecoilState(isFilterheightstate);
 
-  const [ip, setIp] = useState<any>(null);
-  UseGetIp(setIp);
-
   let broswer = getBrowser();
   broswer = broswer.substring(broswer.lastIndexOf("/") + 1);
   const [webheight, setWebHeight] = useState(0);
   // 반응형 처리
   let deviceWidth = document.documentElement.clientWidth;
   let isMobile = deviceWidth <= 1200;
-
-  // useEffect(() => {
-  //   const handleTabClose = (event: BeforeUnloadEvent) => {
-  //     event.preventDefault();
-  //     fetchToLog({
-  //       work_type: "OPEN",
-  //       form_id: previousRoute,
-  //       form_name: "",
-  //       form_login_key: formKey,
-  //       t: "2",
-  //     });
-
-  //     //return (event.returnValue = "true");
-  //   };
-
-  //   window.addEventListener("beforeunload", handleTabClose);
-
-  //   return () => {
-  //     window.removeEventListener("beforeunload", handleTabClose);
-  //   };
-  // }, []);
+  const ip = UseGetValueFromSessionItem("ip");
 
   // 새로고침하거나 Path 변경 시
   useEffect(() => {
@@ -1594,6 +1570,154 @@ const PanelBarNavContainer = (props: any) => {
                 >
                   로그아웃
                 </Button>
+                {(!isMobile && window.location.href.includes("localhost")) ||
+                window.location.href.split("/")[2].split(".")[1] == "gsti" ? (
+                  <>
+                    <Divider />
+                    <div
+                      style={{
+                        clear: "both",
+                        overflow: "hidden",
+                        lineHeight: "1.85",
+                        fontSize: "12px",
+                        letterSpacing: "0",
+                      }}
+                    >
+                      <address
+                        style={{
+                          fontStyle: "normal",
+                          letterSpacing: "-.01em",
+                          display: "flex",
+
+                          flexDirection: "column",
+                        }}
+                      >
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "default",
+                          }}
+                        >
+                          (주)지에스티
+                        </a>
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "default",
+                          }}
+                        >
+                          대표: 오준철
+                        </a>
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "default",
+                          }}
+                        >
+                          사업자등록번호: 606-86-08105
+                        </a>
+                      </address>
+                      <address
+                        style={{
+                          fontStyle: "normal",
+                          letterSpacing: "-.01em",
+                          display: "flex",
+
+                          flexDirection: "column",
+                        }}
+                      >
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "pointer",
+                          }}
+                          href="tel:070-7017-7373"
+                        >
+                          전화번호: 070-7017-7373
+                        </a>
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "default",
+                          }}
+                        >
+                          팩스: 051-831-7372
+                        </a>
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "pointer",
+                          }}
+                          href="mailto:accounting@gsti.co.kr?Subject=%EB%AC%B8%EC%9D%98%ED%95%A9%EB%8B%88%EB%8B%A4"
+                          target="_top"
+                        >
+                          Email: accounting@gsti.co.kr
+                        </a>
+                      </address>
+                      <address
+                        style={{
+                          fontStyle: "normal",
+                          letterSpacing: "-.01em",
+                        }}
+                      >
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "pointer",
+                          }}
+                          href="tel:070-7017-7373"
+                        >
+                          부산본사: 부산 북구 효열로 111, 부산지식산업센터 302호
+                          (우) 46508
+                        </a>
+                      </address>
+                      <address
+                        style={{
+                          fontStyle: "normal",
+                          letterSpacing: "-.01em",
+                        }}
+                      >
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "pointer",
+                          }}
+                          href="tel:070-7017-7373"
+                        >
+                          서울지사: 서울 금천구 범안로 1142 하우스디 더
+                          스카이밸리 가산2차 1119호 (우) 08595
+                        </a>
+                      </address>
+                      <address
+                        style={{
+                          fontStyle: "normal",
+                          letterSpacing: "-.01em",
+                        }}
+                      >
+                        <a
+                          style={{
+                            display: "inline-block",
+                            color: "black",
+                            cursor: "pointer",
+                          }}
+                          href="tel:070-7017-7373"
+                        >
+                          Copyrights © All Rights Reserved by GST
+                        </a>
+                      </address>
+                    </div>
+                  </>
+                ) : (
+                  ""
+                )}
               </ButtonContainer>
             </GnvPanel>
           </Gnv>

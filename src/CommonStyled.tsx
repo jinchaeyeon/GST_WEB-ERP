@@ -148,6 +148,29 @@ export const LoginImg = styled.div`
   }
 `;
 
+export const LoginImgWEBERP = styled.div`
+  background: url(${loginBgSrc});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center right;
+  opacity: 0.9;
+  height: ${window.location.href.split("/")[2].split(".")[1] == "gsti"
+    ? `calc(100% - 150px)`
+    : `100%`};
+  width: 50%;
+  top: 0;
+  right: 0;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 1200px) {
+    display: none;
+    height: 100%;
+  }
+`;
+
 export const MainTopContainer = styled(TitleContainer)`
   padding-top: 20px;
 
@@ -727,7 +750,7 @@ export const LoginBox = styled.div<TColor>`
   align-items: center;
   justify-content: center;
   background-color: ${(props) => props.theme};
-  height: 100vh;
+  height: 100%;
   width: 50%;
   border-top-left-radius: 300px;
   background-color: #fff;

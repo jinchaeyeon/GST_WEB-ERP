@@ -1,9 +1,15 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Field, Form, FormElement } from "@progress/kendo-react-form";
-import { KeyboardEvent, useCallback, useEffect, useState } from "react";
+import {
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import { LoginAppName, LoginBox, LoginImg } from "../CommonStyled";
+import { LoginAppName, LoginBox, LoginImgWEBERP } from "../CommonStyled";
 import { FormCheckBox2, FormComboBox, FormInput } from "../components/Editors";
 import { useApi } from "../hooks/api";
 import { IComboBoxColumns } from "../hooks/interfaces";
@@ -67,6 +73,19 @@ const companyCodesColumns: IComboBoxColumns[] = [
 ];
 
 const Login: React.FC = () => {
+  let deviceWidth = document.documentElement.clientWidth;
+  const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
+  useLayoutEffect(() => {
+    const handleWindowResize = () => {
+      let deviceWidth = document.documentElement.clientWidth;
+      setIsMobile(deviceWidth <= 1200);
+    };
+    handleWindowResize();
+    window.addEventListener("resize", handleWindowResize);
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  });
   const processApi = useApi();
   const location = useLocation();
   const history = useHistory();
@@ -259,69 +278,274 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div style={{ backgroundColor: "#2289c3" }}>
-      <LoginBox theme={"2289c3"}>
-        <Form
-          initialValues={information}
-          onSubmit={handleSubmit}
-          render={() => (
-            <FormElement>
-              <fieldset className={"k-form-fieldset"}>
-                <Field
-                  name={"langCode"}
-                  label={"언어설정"}
-                  component={FormComboBox}
-                  data={culterCodesData}
-                  valueField="code"
-                  textField="name"
-                  columns={langCodesColumns}
-                  defaultValue={DEFAULT_LANG_CODE}
-                  id="langCodes"
-                />
-                {ifShowCompanyList ? (
+    <div style={{ backgroundColor: "#2289c3", height: "100vh" }}>
+      <div
+        style={{
+          height:
+            !isMobile &&
+            window.location.href.split("/")[2].split(".")[1] == "gsti"
+              ? `calc(100% - 150px)`
+              : "100%",
+        }}
+      >
+        <LoginBox theme={"2289c3"}>
+          <Form
+            initialValues={information}
+            onSubmit={handleSubmit}
+            render={() => (
+              <FormElement>
+                <fieldset className={"k-form-fieldset"}>
                   <Field
-                    name={"companyCode"}
-                    label={"회사코드"}
+                    name={"langCode"}
+                    label={"언어설정"}
                     component={FormComboBox}
-                    data={companyCodesData}
-                    valueField="company_code"
+                    data={culterCodesData}
+                    valueField="code"
                     textField="name"
-                    columns={companyCodesColumns}
-                    onKeyDown={companyCodesKeyDown}
-                    id="companyCodes"
+                    columns={langCodesColumns}
+                    defaultValue={DEFAULT_LANG_CODE}
+                    id="langCodes"
                   />
-                ) : (
+                  {ifShowCompanyList ? (
+                    <Field
+                      name={"companyCode"}
+                      label={"회사코드"}
+                      component={FormComboBox}
+                      data={companyCodesData}
+                      valueField="company_code"
+                      textField="name"
+                      columns={companyCodesColumns}
+                      onKeyDown={companyCodesKeyDown}
+                      id="companyCodes"
+                    />
+                  ) : (
+                    <Field
+                      name={"companyCode"}
+                      label={"회사코드"}
+                      component={FormInput}
+                      onKeyDown={companyCodesKeyDown}
+                    />
+                  )}
+                  <Field name={"userId"} label={"ID"} component={FormInput} />
                   <Field
-                    name={"companyCode"}
-                    label={"회사코드"}
+                    name={"password"}
+                    label={"Password"}
+                    type={"password"}
                     component={FormInput}
-                    onKeyDown={companyCodesKeyDown}
                   />
-                )}
-                <Field name={"userId"} label={"ID"} component={FormInput} />
-                <Field
-                  name={"password"}
-                  label={"Password"}
-                  type={"password"}
-                  component={FormInput}
-                />
-                <Field
-                  name={"chk"}
-                  label={"아이디 저장"}
-                  component={FormCheckBox2}
-                />
-              </fieldset>
-              <Button className="login-btn" themeColor={"primary"} size="large">
-                Login
-              </Button>
-            </FormElement>
-          )}
-        ></Form>
-        <Loading />
-      </LoginBox>
-      <LoginImg>
-        <LoginAppName></LoginAppName>
-      </LoginImg>
+                  <Field
+                    name={"chk"}
+                    label={"아이디 저장"}
+                    component={FormCheckBox2}
+                  />
+                </fieldset>
+                <Button
+                  className="login-btn"
+                  themeColor={"primary"}
+                  size="large"
+                >
+                  Login
+                </Button>
+              </FormElement>
+            )}
+          ></Form>
+          <Loading />
+        </LoginBox>
+        <LoginImgWEBERP>
+          <LoginAppName></LoginAppName>
+        </LoginImgWEBERP>
+      </div>
+      {!isMobile &&
+      window.location.href.split("/")[2].split(".")[1] == "gsti" ? (
+        <div
+          style={{
+            height: "150px",
+            backgroundColor: "#333",
+            clear: "both",
+            overflow: "hidden",
+            lineHeight: "1.85",
+            fontSize: "12px",
+            letterSpacing: "0",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start",
+            flexDirection: "column",
+            paddingLeft: "100px",
+          }}
+        >
+          <address
+            style={{
+              fontStyle: "normal",
+              letterSpacing: "-.01em",
+              display: "flex",
+              gap: "10px",
+            }}
+          >
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "default",
+              }}
+            >
+              (주)지에스티
+            </a>
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "default",
+              }}
+            >
+              |
+            </a>
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "default",
+              }}
+            >
+              대표: 오준철
+            </a>
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "default",
+              }}
+            >
+              |
+            </a>
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "default",
+              }}
+            >
+              사업자등록번호: 606-86-08105
+            </a>
+          </address>
+          <address
+            style={{
+              fontStyle: "normal",
+              letterSpacing: "-.01em",
+              display: "flex",
+              gap: "10px",
+            }}
+          >
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "pointer",
+              }}
+              href="tel:070-7017-7373"
+            >
+              전화번호: 070-7017-7373
+            </a>
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "default",
+              }}
+            >
+              |
+            </a>
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "default",
+              }}
+            >
+              팩스: 051-831-7372
+            </a>
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "default",
+              }}
+            >
+              |
+            </a>
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "pointer",
+              }}
+              href="mailto:accounting@gsti.co.kr?Subject=%EB%AC%B8%EC%9D%98%ED%95%A9%EB%8B%88%EB%8B%A4"
+              target="_top"
+            >
+              Email: accounting@gsti.co.kr
+            </a>
+          </address>
+          <address
+            style={{
+              fontStyle: "normal",
+              letterSpacing: "-.01em",
+              display: "flex",
+              gap: "10px",
+            }}
+          >
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "pointer",
+              }}
+              href="tel:070-7017-7373"
+            >
+              부산본사: 부산 북구 효열로 111, 부산지식산업센터 302호 (우) 46508
+            </a>
+          </address>
+          <address
+            style={{
+              fontStyle: "normal",
+              letterSpacing: "-.01em",
+              display: "flex",
+              gap: "10px",
+            }}
+          >
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "pointer",
+              }}
+              href="tel:070-7017-7373"
+            >
+              서울지사: 서울 금천구 범안로 1142 하우스디 더 스카이밸리 가산2차
+              1119호 (우) 08595
+            </a>
+          </address>
+          <address
+            style={{
+              fontStyle: "normal",
+              letterSpacing: "-.01em",
+              display: "flex",
+              gap: "10px",
+            }}
+          >
+            <a
+              style={{
+                display: "inline-block",
+                color: "#d5d5d5",
+                cursor: "pointer",
+              }}
+              href="tel:070-7017-7373"
+            >
+              Copyrights © All Rights Reserved by GST
+            </a>
+          </address>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

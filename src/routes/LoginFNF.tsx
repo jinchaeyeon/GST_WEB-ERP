@@ -3,8 +3,8 @@ import { Field, Form, FormElement } from "@progress/kendo-react-form";
 import { KeyboardEvent, useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import { LoginAppName, LoginBoxFNF, LoginImg } from "../CommonStyled";
-import { FormCheckBox2, FormComboBox, FormInput } from "../components/Editors";
+import { LoginBoxFNF } from "../CommonStyled";
+import { FormCheckBox2, FormInput } from "../components/Editors";
 import { useApi } from "../hooks/api";
 import { IComboBoxColumns } from "../hooks/interfaces";
 import {
@@ -291,7 +291,7 @@ const Login: React.FC = () => {
           render={() => (
             <FormElement>
               <fieldset className={"k-form-fieldset"}>
-                <img src={`/fnf_main_logo.jpg`} style={{width: "100%"}}/>
+                <img src={`/fnf_main_logo.jpg`} style={{ width: "100%" }} />
                 <Field name={"userId"} label={"ID"} component={FormInput} />
                 <Field
                   name={"password"}
