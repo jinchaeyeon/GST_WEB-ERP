@@ -223,6 +223,7 @@ const MA_B7000W_606 = lazy(() => import("./routes/MA_B7000W_606"));
 const MA_B7200W = lazy(() => import("./routes/MA_B7200W"));
 const MA_B7201W = lazy(() => import("./routes/MA_B7201W"));
 const MA_B7300W = lazy(() => import("./routes/MA_B7300W"));
+const MA_B8000W = lazy(() => import("./routes/MA_B8000W"));
 const PR_A0030W = lazy(() => import("./routes/PR_A0030W"));
 const PR_A0040W = lazy(() => import("./routes/PR_A0040W"));
 const PR_A0060W = lazy(() => import("./routes/PR_A0060W"));
@@ -251,6 +252,8 @@ const QC_A2500W = lazy(() => import("./routes/QC_A2500W"));
 const QC_A2500W_603 = lazy(() => import("./routes/QC_A2500W_603"));
 const QC_A3000W = lazy(() => import("./routes/QC_A3000W"));
 const QC_A6000W = lazy(() => import("./routes/QC_A6000W"));
+const QC_A6050W = lazy(() => import("./routes/QC_A6050W"));
+const QC_B0020W = lazy(() => import("./routes/QC_B0020W"));
 const QC_B0030W = lazy(() => import("./routes/QC_B0030W"));
 const QC_B0040W = lazy(() => import("./routes/QC_B0040W"));
 const QC_B0100W = lazy(() => import("./routes/QC_B0100W"));
@@ -987,6 +990,8 @@ const AppInner: React.FC = () => {
       return MA_B7201W;
     } else if (str == "MA_B7300W") {
       return MA_B7300W;
+    } else if (str == "MA_B8000W") {
+      return MA_B8000W;
     } else if (str == "PR_A2200W") {
       return PR_A2200W;
     } else if (str == "PR_A0030W") {
@@ -1043,6 +1048,10 @@ const AppInner: React.FC = () => {
       return QC_A3000W;
     } else if (str == "QC_A6000W") {
       return QC_A6000W;
+    } else if (str == "QC_A6050W") {
+      return QC_A6050W;
+    } else if (str == "QC_B0020W") {
+      return QC_B0020W;
     } else if (str == "QC_B0030W") {
       return QC_B0030W;
     } else if (str == "QC_B0040W") {
@@ -1479,6 +1488,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/MA_B7200W" component={MA_B7200W} exact />
                     <AuthRoute path="/MA_B7201W" component={MA_B7201W} exact />
                     <AuthRoute path="/MA_B7300W" component={MA_B7300W} exact />
+                    <AuthRoute path="/MA_B8000W" component={MA_B8000W} exact />
 
                     <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />
                     <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />
@@ -1522,6 +1532,8 @@ const AppInner: React.FC = () => {
                     />
                     <AuthRoute path="/QC_A3000W" component={QC_A3000W} exact />
                     <AuthRoute path="/QC_A6000W" component={QC_A6000W} exact />
+                    <AuthRoute path="/QC_A6050W" component={QC_A6050W} exact />
+                    <AuthRoute path="/QC_B0020W" component={QC_B0020W} exact />
                     <AuthRoute path="/QC_B0030W" component={QC_B0030W} exact />
                     <AuthRoute path="/QC_B0040W" component={QC_B0040W} exact />
                     <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
