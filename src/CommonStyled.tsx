@@ -1126,21 +1126,17 @@ export const Footer = styled.div`
   align-items: center;
   z-index: 10000;
 
-  div {
-    line-height: 30px;
-    border-left: solid 1px gray;
-    color: #fff;
-    padding-right: 10px;
-    padding-left: 10px;
-    font-size: 13px;
-    font-weight: 100;
-  }
-
   a {
     width: 100%;
     display: flex;
     height: 100%;
     justify-content: space-between;
+    line-height: 30px;
+    color: #fff;
+    padding-right: 10px;
+    font-size: 13px;
+    font-weight: 100;
+    padding-left: 10px;
   }
   p {
     width: 100%;

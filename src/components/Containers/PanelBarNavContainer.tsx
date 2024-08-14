@@ -1766,7 +1766,7 @@ const PanelBarNavContainer = (props: any) => {
         window.location.href.split("/")[2].split(".")[1] == "gsti" ? (
           <>
             <a>
-              <div>© GST Co., Ltd. All rights reserved.</div>
+              <a>© GST Co., Ltd. All rights reserved.</a>
               <p>
                 <div>
                   {userName}({userId})

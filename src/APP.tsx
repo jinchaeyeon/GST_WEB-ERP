@@ -211,6 +211,7 @@ const MA_A9001W = lazy(() => import("./routes/MA_A9001W"));
 const MA_B2000W = lazy(() => import("./routes/MA_B2000W"));
 const MA_B2020W_628 = lazy(() => import("./routes/MA_B2020W_628"));
 const MA_B2100W = lazy(() => import("./routes/MA_B2100W"));
+const MA_B2101W = lazy(() => import("./routes/MA_B2101W"));
 const MA_B2500W = lazy(() => import("./routes/MA_B2500W"));
 const MA_B2500W_628 = lazy(() => import("./routes/MA_B2500W_628"));
 const MA_B2700W = lazy(() => import("./routes/MA_B2700W"));
@@ -221,6 +222,7 @@ const MA_B7000W = lazy(() => import("./routes/MA_B7000W"));
 const MA_B7000W_606 = lazy(() => import("./routes/MA_B7000W_606"));
 const MA_B7200W = lazy(() => import("./routes/MA_B7200W"));
 const MA_B7201W = lazy(() => import("./routes/MA_B7201W"));
+const MA_B7300W = lazy(() => import("./routes/MA_B7300W"));
 const PR_A0030W = lazy(() => import("./routes/PR_A0030W"));
 const PR_A0040W = lazy(() => import("./routes/PR_A0040W"));
 const PR_A0060W = lazy(() => import("./routes/PR_A0060W"));
@@ -961,6 +963,8 @@ const AppInner: React.FC = () => {
       return MA_B2020W_628;
     } else if (str == "MA_B2100W") {
       return MA_B2100W;
+    } else if (str == "MA_B2101W") {
+      return MA_B2101W;
     } else if (str == "MA_B2500W") {
       return MA_B2500W;
     } else if (str == "MA_B2500W_628") {
@@ -981,6 +985,8 @@ const AppInner: React.FC = () => {
       return MA_B7200W;
     } else if (str == "MA_B7201W") {
       return MA_B7201W;
+    } else if (str == "MA_B7300W") {
+      return MA_B7300W;
     } else if (str == "PR_A2200W") {
       return PR_A2200W;
     } else if (str == "PR_A0030W") {
@@ -1453,6 +1459,7 @@ const AppInner: React.FC = () => {
                       exact
                     />
                     <AuthRoute path="/MA_B2100W" component={MA_B2100W} exact />
+                    <AuthRoute path="/MA_B2101W" component={MA_B2101W} exact />
                     <AuthRoute path="/MA_B2500W" component={MA_B2500W} exact />
                     <AuthRoute
                       path="/MA_B2500W_628"
@@ -1471,6 +1478,7 @@ const AppInner: React.FC = () => {
                     />
                     <AuthRoute path="/MA_B7200W" component={MA_B7200W} exact />
                     <AuthRoute path="/MA_B7201W" component={MA_B7201W} exact />
+                    <AuthRoute path="/MA_B7300W" component={MA_B7300W} exact />
 
                     <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />
                     <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />
