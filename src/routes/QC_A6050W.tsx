@@ -527,7 +527,7 @@ const AC_B5000W: React.FC = () => {
       "@p_title": "",
       "@p_remark": "",
 
-      "@p_row_status_s": "",
+      "@p_rowstatus_s": "",
       "@p_inrecdt_s": "",
       "@p_inseq1_s": "",
       "@p_inseq2_s": "",

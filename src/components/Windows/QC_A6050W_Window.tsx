@@ -3,6 +3,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -13,7 +14,7 @@ import {
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -29,8 +30,9 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { isLoading, loginResultState } from "../../store/atoms";
+import { isLoading } from "../../store/atoms";
 import { Iparameters, TPermissions } from "../../store/types";
+import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -41,6 +43,7 @@ import {
   UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   getBizCom,
   getGridItemChangedData,
   getHeight,
@@ -55,8 +58,8 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import CopyWindow2 from "./BA_A0080W_Copy_Window";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import CopyWindow2 from "./QC_A6050W_Orders_Window";
 import Window from "./WindowComponent/Window";
 
 type IWindow = {
@@ -67,59 +70,41 @@ type IWindow = {
   modal?: boolean;
 };
 
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_QC061, L_QC062, L_sysUserMaster_001", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field == "person"
+      ? "L_sysUserMaster_001"
+      : field == "extra_field5"
+      ? "L_QC061"
+      : field == "proccd"
+      ? "L_QC062"
+      : "";
+
+  const bizComponent = bizComponentData?.find(
+    (item: any) => item.bizComponentId == bizComponentIdVal
+  );
+
+  const textField = field == "person" ? "user_name" : "code_name";
+  const valueField = field == "person" ? "user_id" : "sub_code";
+
+  return bizComponent ? (
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      textField={textField}
+      valueField={valueField}
+      {...props}
+    />
+  ) : (
+    <td />
+  );
+};
+
 let deletedMainRows: object[] = [];
 let temp = 0;
-
-type TdataArr = {
-  rowstatus_s: string[];
-  seq2_s: string[];
-  rtnyn_s: string[];
-  rtntype_s: string[];
-  ordnum_s: string[];
-  ordseq_s: string[];
-  itemgrade_s: string[];
-  itemcd_s: string[];
-  itemnm_s: string[];
-  itemacnt_s: string[];
-  pacmeth_s: string[];
-  qty_s: string[];
-  qtyunit_s: string[];
-  lenunit_s: string[];
-  totlen_s: string[];
-  unitwgt_s: string[];
-  wgtunit_s: string[];
-  totwgt_s: string[];
-  len_s: string[];
-  itemthick_s: string[];
-  width_s: string[];
-  unpcalmeth_s: string[];
-  unp_s: string[];
-  amt_s: string[];
-  dlramt_s: string[];
-  wonamt_s: string[];
-  taxamt_s: string[];
-  lotnum_s: string[];
-  orglot_s: string[];
-  heatno_s: string[];
-  pcncd_s: string[];
-  remark_s: string[];
-  inrecdt_s: string[];
-  inseq1_s: string[];
-  inseq2_s: string[];
-  gonum_s: string[];
-  goseq_s: string[];
-  connum_s: string[];
-  conseq_s: string[];
-  spno_s: string[];
-  boxno_s: string[];
-  endyn_s: string[];
-  reqnum_s: string[];
-  reqseq_s: string[];
-  serialno_s: string[];
-  load_place_s: string[];
-  outdt_s: string[];
-  person_s: string[];
-};
 
 var height = 0;
 var height2 = 0;
@@ -189,9 +174,7 @@ const CopyWindow = ({
         height4
     );
   };
-  const [loginResult] = useRecoilState(loginResultState);
-  const companyCode = loginResult ? loginResult.companyCode : "";
-  const userId = loginResult ? loginResult.userId : "";
+  const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
   const DATA_ITEM_KEY = "num";
 
@@ -199,7 +182,6 @@ const CopyWindow = ({
   const setLoading = useSetRecoilState(isLoading);
 
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
-  const sessionLocation = UseGetValueFromSessionItem("location");
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -316,7 +298,7 @@ const CopyWindow = ({
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
       ...prev,
-      custcd: data.custcd,
+      extra_field1: data.custcd,
       custnm: data.custnm,
     }));
   };
@@ -325,17 +307,14 @@ const CopyWindow = ({
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    custnm: "",
     extra_field1: "",
+    custnm: "",
     extra_field2: "",
-    inrecdt: "",
-    n: 0,
-    orgdiv: sessionOrgdiv,
     person: "",
-    pgmdiv: "I",
-    qcdt: new Date(),
     qcnum: "",
+    qcdt: new Date(),
     remark: "",
+    orgdiv: sessionOrgdiv,
     pgNum: 1,
     isSearch: false,
   });
@@ -353,15 +332,15 @@ const CopyWindow = ({
         "@p_orgdiv": filters.orgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.extra_field1,
         "@p_custnm": filters.custnm,
-        "@p_poregnum": filters.poregnum,
-        "@p_itemcd": filters.itemcd,
-        "@p_itemnm": filters.itemnm,
+        "@p_poregnum": "",
+        "@p_itemcd": "",
+        "@p_itemnm": "",
         "@p_person": filters.person,
-        "@p_ordkey": filters.ordkey,
+        "@p_ordkey": "",
         "@p_qcnum": filters.qcnum,
-        "@p_find_row_value": filters.find_row_value,
+        "@p_find_row_value": "",
       },
     };
     setLoading(true);
@@ -431,16 +410,13 @@ const CopyWindow = ({
     ) {
       setFilters((prev) => ({
         ...prev,
-        custnm: data.custnm,
         extra_field1: data.extra_field1,
+        custnm: data.custnm,
         extra_field2: data.extra_field2,
-        inrecdt: data.inrecdt,
-        n: data.n,
         orgdiv: data.orgdiv,
         person: data.person,
-        pgmdiv: data.pgmdiv,
-        qcdt: toDate(data.qcdt),
         qcnum: data.qcnum,
+        qcdt: toDate(data.qcdt),
         remark: data.remark,
         isSearch: true,
         pgNum: 1,
@@ -481,34 +457,6 @@ const CopyWindow = ({
         temp = item.num;
       }
     });
-
-    if (data[0].now_qty != undefined) {
-      let valid = true;
-      for (var i = 1; i < data.length; i++) {
-        if (
-          data[0].itemcd == data[i].itemcd &&
-          data[0].lotnum == data[i].lotnum &&
-          valid == true
-        ) {
-          alert("중복되는 품목이있습니다.");
-          data[i].num = ++temp;
-          data[i].type = "재고";
-          valid = false;
-          return false;
-        }
-      }
-    } else {
-      let valid = true;
-      for (var i = 1; i < data.length; i++) {
-        if (data[0].itemcd == data[i].itemcd && valid == true) {
-          alert("중복되는 품목이있습니다.");
-          data[i].num = ++temp;
-          data[i].type = "품목";
-          valid = false;
-          return false;
-        }
-      }
-    }
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
@@ -571,12 +519,8 @@ const CopyWindow = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     if (!permissions.save) return;
-    let valid = true;
 
-    if (mainDataResult.data.length == 0) {
-      alert("데이터가 없습니다.");
-      return false;
-    } else if (
+    if (
       convertDateToStr(filters.qcdt).substring(0, 4) < "1997" ||
       convertDateToStr(filters.qcdt).substring(6, 8) > "31" ||
       convertDateToStr(filters.qcdt).substring(6, 8) < "01" ||
@@ -584,488 +528,260 @@ const CopyWindow = ({
     ) {
       alert("날짜를 선택해주세요.");
       return false;
+    } else if (
+      filters.extra_field1 == "" ||
+      filters.extra_field1 == null ||
+      filters.extra_field1 == undefined
+    ) {
+      alert("업체를 선택해주세요.");
+      return false;
     }
-    // for (var i = 0; i < mainDataResult.data.length; i++) {
-    //   if (mainDataResult.data[i].qty == 0 && valid == true) {
-    //     alert("수량은 필수입니다.");
-    //     valid = false;
-    //     return false;
-    //   }
-    // }
 
-    // if (valid == true) {
-    //   const dataItem = mainDataResult.data.filter((item: any) => {
-    //     return (
-    //       (item.rowstatus == "N" || item.rowstatus == "U") &&
-    //       item.rowstatus !== undefined
-    //     );
-    //   });
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
 
-    //   setParaData((prev) => ({
-    //     ...prev,
-    //     pgSize: PAGE_SIZE,
-    //     workType: workType,
-    //     recdt: filters.recdt,
-    //     seq1: filters.seq1,
-    //     cboLocation: filters.cboLocation,
-    //     outdt: filters.outdt,
-    //     cboPerson: filters.cboPerson,
-    //     custcd: filters.custcd,
-    //     custnm: filters.custnm,
-    //     remark: filters.remark,
-    //     attdatnum: filters.attdatnum,
-    //     outuse: filters.outuse,
-    //     reckey: filters.reckey,
-    //   }));
-    //   if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) {
+      setParaData((prev: any) => ({
+        ...prev,
+        pgSize: PAGE_SIZE,
+        workType: workType,
+        qcnum: filters.qcnum,
+        qcdt: convertDateToStr(filters.qcdt),
+        custcd: filters.extra_field1,
+        person: filters.person,
+        remark: filters.remark,
+        title: filters.extra_field2,
+      }));
+    } else {
+      let dataArr: any = {
+        rowstatus_s: [],
+        inrecdt_s: [],
+        inseq1_s: [],
+        inseq2_s: [],
+        indt_s: [],
+        custnm_s: [],
+        extra_field5_s: [],
+        itemcd_s: [],
+        itemnm_s: [],
+        person_s: [],
+        extra_field6_s: [],
+        amt_s: [],
+        wonamt_s: [],
+        taxamt_s: [],
+        qty_s: [],
+        extra_field7_s: [],
+        proccd_s: [],
+        poregnum_s: [],
+        ordnum_s: [],
+        ordseq_s: [],
+      };
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          recdt = "",
+          seq1 = "",
+          seq2 = "",
+          indt = "",
+          custnm = "",
+          extra_field5 = "",
+          itemcd = "",
+          itemnm = "",
+          person = "",
+          extra_field6 = "",
+          amt = "",
+          wonamt = "",
+          taxamt = "",
+          qty = "",
+          extra_field7 = "",
+          proccd = "",
+          poregnum = "",
+          ordnum = "",
+          ordseq = "",
+        } = item;
 
-    //   let dataArr: TdataArr = {
-    //     rowstatus_s: [],
-    //     seq2_s: [],
-    //     rtnyn_s: [],
-    //     rtntype_s: [],
-    //     ordnum_s: [],
-    //     ordseq_s: [],
-    //     itemgrade_s: [],
-    //     itemcd_s: [],
-    //     itemnm_s: [],
-    //     itemacnt_s: [],
-    //     pacmeth_s: [],
-    //     qty_s: [],
-    //     qtyunit_s: [],
-    //     lenunit_s: [],
-    //     totlen_s: [],
-    //     unitwgt_s: [],
-    //     wgtunit_s: [],
-    //     totwgt_s: [],
-    //     len_s: [],
-    //     itemthick_s: [],
-    //     width_s: [],
-    //     unpcalmeth_s: [],
-    //     unp_s: [],
-    //     amt_s: [],
-    //     dlramt_s: [],
-    //     wonamt_s: [],
-    //     taxamt_s: [],
-    //     lotnum_s: [],
-    //     orglot_s: [],
-    //     heatno_s: [],
-    //     pcncd_s: [],
-    //     remark_s: [],
-    //     inrecdt_s: [],
-    //     inseq1_s: [],
-    //     inseq2_s: [],
-    //     gonum_s: [],
-    //     goseq_s: [],
-    //     connum_s: [],
-    //     conseq_s: [],
-    //     spno_s: [],
-    //     boxno_s: [],
-    //     endyn_s: [],
-    //     reqnum_s: [],
-    //     reqseq_s: [],
-    //     serialno_s: [],
-    //     load_place_s: [],
-    //     outdt_s: [],
-    //     person_s: [],
-    //   };
-    //   dataItem.forEach((item: any, idx: number) => {
-    //     const {
-    //       rowstatus = "",
-    //       seq2 = "",
-    //       rtnyn = "",
-    //       rtntype = "",
-    //       ordnum = "",
-    //       ordseq = "",
-    //       itemgrade = "",
-    //       itemcd = "",
-    //       itemnm = "",
-    //       itemacnt = "",
-    //       pacmeth = "",
-    //       qty = "",
-    //       qtyunit = "",
-    //       lenunit = "",
-    //       totlen = "",
-    //       unitwgt = "",
-    //       wgtunit = "",
-    //       totwgt = "",
-    //       len = "",
-    //       itemthick = "",
-    //       width = "",
-    //       unpcalmeth = "",
-    //       unp = "",
-    //       amt = "",
-    //       dlramt = "",
-    //       wonamt = "",
-    //       taxamt = "",
-    //       lotnum = "",
-    //       orglot = "",
-    //       heatno = "",
-    //       pcncd = "",
-    //       remark = "",
-    //       inrecdt = "",
-    //       inseq1 = "",
-    //       inseq2 = "",
-    //       gonum = "",
-    //       goseq = "",
-    //       connum = "",
-    //       conseq = "",
-    //       spno = "",
-    //       boxno = "",
-    //       endyn = "",
-    //       reqnum = "",
-    //       reqseq = "",
-    //       serialno = "",
-    //       load_place = "",
-    //       outdt = "",
-    //       person = "",
-    //     } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.inrecdt_s.push(
+          recdt == "99991231" || recdt == undefined ? "" : recdt
+        );
+        dataArr.inseq1_s.push(seq1 == "" ? 0 : seq1);
+        dataArr.inseq2_s.push(seq2 == "" ? 0 : seq2);
+        dataArr.indt_s.push(
+          indt == "99991231" || indt == undefined ? "" : indt
+        );
+        dataArr.custnm_s.push(custnm);
+        dataArr.extra_field5_s.push(extra_field5);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.itemnm_s.push(itemnm);
+        dataArr.person_s.push(person);
+        dataArr.extra_field6_s.push(extra_field6);
+        dataArr.amt_s.push(amt == "" ? 0 : amt);
+        dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+        dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+        dataArr.qty_s.push(qty == "" ? 0 : qty);
+        dataArr.extra_field7_s.push(extra_field7);
+        dataArr.proccd_s.push(proccd);
+        dataArr.poregnum_s.push(poregnum);
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
+      });
 
-    //     dataArr.rowstatus_s.push(rowstatus);
-    //     dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-    //     dataArr.rtnyn_s.push(rtnyn == "" ? "N" : rtnyn);
-    //     dataArr.rtntype_s.push(rtntype);
-    //     dataArr.ordnum_s.push(ordnum);
-    //     dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
-    //     dataArr.itemgrade_s.push(itemgrade);
-    //     dataArr.itemcd_s.push(itemcd);
-    //     dataArr.itemnm_s.push(itemnm);
-    //     dataArr.itemacnt_s.push(itemacnt);
-    //     dataArr.pacmeth_s.push(pacmeth);
-    //     dataArr.qty_s.push(qty == "" ? 0 : qty);
-    //     dataArr.qtyunit_s.push(qtyunit);
-    //     dataArr.lenunit_s.push(lenunit);
-    //     dataArr.totlen_s.push(totlen == "" ? 0 : totlen);
-    //     dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-    //     dataArr.wgtunit_s.push(wgtunit);
-    //     dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
-    //     dataArr.len_s.push(len == "" ? 0 : len);
-    //     dataArr.itemthick_s.push(itemthick == "" ? 0 : itemthick);
-    //     dataArr.width_s.push(width == "" ? 0 : width);
-    //     dataArr.unpcalmeth_s.push(unpcalmeth);
-    //     dataArr.unp_s.push(unp == "" ? 0 : unp);
-    //     dataArr.amt_s.push(amt == "" ? 0 : amt);
-    //     dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
-    //     dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-    //     dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-    //     dataArr.lotnum_s.push(lotnum);
-    //     dataArr.orglot_s.push(orglot);
-    //     dataArr.heatno_s.push(heatno);
-    //     dataArr.pcncd_s.push(pcncd);
-    //     dataArr.remark_s.push(remark);
-    //     dataArr.inrecdt_s.push(inrecdt);
-    //     dataArr.inseq1_s.push(inseq1 == "" ? 0 : inseq1);
-    //     dataArr.inseq2_s.push(inseq2 == "" ? 0 : inseq2);
-    //     dataArr.gonum_s.push(gonum);
-    //     dataArr.goseq_s.push(goseq == "" ? 0 : goseq);
-    //     dataArr.connum_s.push(connum);
-    //     dataArr.conseq_s.push(conseq == "" ? 0 : conseq);
-    //     dataArr.spno_s.push(spno == "" ? 0 : spno);
-    //     dataArr.boxno_s.push(boxno);
-    //     dataArr.endyn_s.push(endyn);
-    //     dataArr.reqnum_s.push(reqnum);
-    //     dataArr.reqseq_s.push(reqseq == "" ? 0 : reqseq);
-    //     dataArr.serialno_s.push(serialno);
-    //     dataArr.load_place_s.push(load_place);
-    //     dataArr.outdt_s.push(outdt);
-    //     dataArr.person_s.push(person);
-    //   });
+      deletedMainRows.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          recdt = "",
+          seq1 = "",
+          seq2 = "",
+          indt = "",
+          custnm = "",
+          extra_field5 = "",
+          itemcd = "",
+          itemnm = "",
+          person = "",
+          extra_field6 = "",
+          amt = "",
+          wonamt = "",
+          taxamt = "",
+          qty = "",
+          extra_field7 = "",
+          proccd = "",
+          poregnum = "",
+          ordnum = "",
+          ordseq = "",
+        } = item;
 
-    //   deletedMainRows.forEach((item: any, idx: number) => {
-    //     const {
-    //       rowstatus = "",
-    //       seq2 = "",
-    //       rtnyn = "",
-    //       rtntype = "",
-    //       ordnum = "",
-    //       ordseq = "",
-    //       itemgrade = "",
-    //       itemcd = "",
-    //       itemnm = "",
-    //       itemacnt = "",
-    //       pacmeth = "",
-    //       qty = "",
-    //       qtyunit = "",
-    //       lenunit = "",
-    //       totlen = "",
-    //       unitwgt = "",
-    //       wgtunit = "",
-    //       totwgt = "",
-    //       len = "",
-    //       itemthick = "",
-    //       width = "",
-    //       unpcalmeth = "",
-    //       unp = "",
-    //       amt = "",
-    //       dlramt = "",
-    //       wonamt = "",
-    //       taxamt = "",
-    //       lotnum = "",
-    //       orglot = "",
-    //       heatno = "",
-    //       pcncd = "",
-    //       remark = "",
-    //       inrecdt = "",
-    //       inseq1 = "",
-    //       inseq2 = "",
-    //       gonum = "",
-    //       goseq = "",
-    //       connum = "",
-    //       conseq = "",
-    //       spno = "",
-    //       boxno = "",
-    //       endyn = "",
-    //       reqnum = "",
-    //       reqseq = "",
-    //       serialno = "",
-    //       load_place = "",
-    //       outdt = "",
-    //       person = "",
-    //     } = item;
-
-    //     dataArr.rowstatus_s.push(rowstatus);
-    //     dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-    //     dataArr.rtnyn_s.push(rtnyn == "" ? "N" : rtnyn);
-    //     dataArr.rtntype_s.push(rtntype);
-    //     dataArr.ordnum_s.push(ordnum);
-    //     dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
-    //     dataArr.itemgrade_s.push(itemgrade);
-    //     dataArr.itemcd_s.push(itemcd);
-    //     dataArr.itemnm_s.push(itemnm);
-    //     dataArr.itemacnt_s.push(itemacnt);
-    //     dataArr.pacmeth_s.push(pacmeth);
-    //     dataArr.qty_s.push(qty == "" ? 0 : qty);
-    //     dataArr.qtyunit_s.push(qtyunit);
-    //     dataArr.lenunit_s.push(lenunit);
-    //     dataArr.totlen_s.push(totlen == "" ? 0 : totlen);
-    //     dataArr.unitwgt_s.push(unitwgt == "" ? 0 : unitwgt);
-    //     dataArr.wgtunit_s.push(wgtunit);
-    //     dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
-    //     dataArr.len_s.push(len == "" ? 0 : len);
-    //     dataArr.itemthick_s.push(itemthick == "" ? 0 : itemthick);
-    //     dataArr.width_s.push(width == "" ? 0 : width);
-    //     dataArr.unpcalmeth_s.push(unpcalmeth);
-    //     dataArr.unp_s.push(unp == "" ? 0 : unp);
-    //     dataArr.amt_s.push(amt == "" ? 0 : amt);
-    //     dataArr.dlramt_s.push(dlramt == "" ? 0 : dlramt);
-    //     dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
-    //     dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-    //     dataArr.lotnum_s.push(lotnum);
-    //     dataArr.orglot_s.push(orglot);
-    //     dataArr.heatno_s.push(heatno);
-    //     dataArr.pcncd_s.push(pcncd);
-    //     dataArr.remark_s.push(remark);
-    //     dataArr.inrecdt_s.push(inrecdt);
-    //     dataArr.inseq1_s.push(inseq1 == "" ? 0 : inseq1);
-    //     dataArr.inseq2_s.push(inseq2 == "" ? 0 : inseq2);
-    //     dataArr.gonum_s.push(gonum);
-    //     dataArr.goseq_s.push(goseq == "" ? 0 : goseq);
-    //     dataArr.connum_s.push(connum);
-    //     dataArr.conseq_s.push(conseq == "" ? 0 : conseq);
-    //     dataArr.spno_s.push(spno == "" ? 0 : spno);
-    //     dataArr.boxno_s.push(boxno);
-    //     dataArr.endyn_s.push(endyn);
-    //     dataArr.reqnum_s.push(reqnum);
-    //     dataArr.reqseq_s.push(reqseq == "" ? 0 : reqseq);
-    //     dataArr.serialno_s.push(serialno);
-    //     dataArr.load_place_s.push(load_place);
-    //     dataArr.outdt_s.push(outdt);
-    //     dataArr.person_s.push(person);
-    //   });
-    //   setParaData((prev) => ({
-    //     ...prev,
-    //     workType: workType,
-    //     outdt: filters.outdt,
-    //     rowstatus_s: dataArr.rowstatus_s.join("|"),
-    //     seq2_s: dataArr.seq2_s.join("|"),
-    //     rtnyn_s: dataArr.rtnyn_s.join("|"),
-    //     rtntype_s: dataArr.rtntype_s.join("|"),
-    //     ordnum_s: dataArr.ordnum_s.join("|"),
-    //     ordseq_s: dataArr.ordseq_s.join("|"),
-    //     itemgrade_s: dataArr.itemgrade_s.join("|"),
-    //     itemcd_s: dataArr.itemcd_s.join("|"),
-    //     itemnm_s: dataArr.itemnm_s.join("|"),
-    //     itemacnt_s: dataArr.itemacnt_s.join("|"),
-    //     pacmeth_s: dataArr.pacmeth_s.join("|"),
-    //     qty_s: dataArr.qty_s.join("|"),
-    //     qtyunit_s: dataArr.qtyunit_s.join("|"),
-    //     lenunit_s: dataArr.lenunit_s.join("|"),
-    //     totlen_s: dataArr.totlen_s.join("|"),
-    //     unitwgt_s: dataArr.unitwgt_s.join("|"),
-    //     wgtunit_s: dataArr.wgtunit_s.join("|"),
-    //     totwgt_s: dataArr.totwgt_s.join("|"),
-    //     len_s: dataArr.len_s.join("|"),
-    //     itemthick_s: dataArr.itemthick_s.join("|"),
-    //     width_s: dataArr.width_s.join("|"),
-    //     unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
-    //     unp_s: dataArr.unp_s.join("|"),
-    //     amt_s: dataArr.amt_s.join("|"),
-    //     dlramt_s: dataArr.dlramt_s.join("|"),
-    //     wonamt_s: dataArr.wonamt_s.join("|"),
-    //     taxamt_s: dataArr.taxamt_s.join("|"),
-    //     lotnum_s: dataArr.lotnum_s.join("|"),
-    //     orglot_s: dataArr.orglot_s.join("|"),
-    //     heatno_s: dataArr.heatno_s.join("|"),
-    //     pcncd_s: dataArr.pcncd_s.join("|"),
-    //     remark_s: dataArr.remark_s.join("|"),
-    //     inrecdt_s: dataArr.inrecdt_s.join("|"),
-    //     inseq1_s: dataArr.inseq1_s.join("|"),
-    //     inseq2_s: dataArr.inseq2_s.join("|"),
-    //     gonum_s: dataArr.gonum_s.join("|"),
-    //     goseq_s: dataArr.goseq_s.join("|"),
-    //     connum_s: dataArr.connum_s.join("|"),
-    //     conseq_s: dataArr.conseq_s.join("|"),
-    //     spno_s: dataArr.spno_s.join("|"),
-    //     boxno_s: dataArr.boxno_s.join("|"),
-    //     endyn_s: dataArr.endyn_s.join("|"),
-    //     reqnum_s: dataArr.reqnum_s.join("|"),
-    //     reqseq_s: dataArr.reqseq_s.join("|"),
-    //     serialno_s: dataArr.serialno_s.join("|"),
-    //     load_place_s: dataArr.load_place_s.join("|"),
-    //     outdt_s: dataArr.outdt_s.join("|"),
-    //     person_s: dataArr.person_s.join("|"),
-    //   }));
-    // }
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.inrecdt_s.push(
+          recdt == "99991231" || recdt == undefined ? "" : recdt
+        );
+        dataArr.inseq1_s.push(seq1 == "" ? 0 : seq1);
+        dataArr.inseq2_s.push(seq2 == "" ? 0 : seq2);
+        dataArr.indt_s.push(
+          indt == "99991231" || indt == undefined ? "" : indt
+        );
+        dataArr.custnm_s.push(custnm);
+        dataArr.extra_field5_s.push(extra_field5);
+        dataArr.itemcd_s.push(itemcd);
+        dataArr.itemnm_s.push(itemnm);
+        dataArr.person_s.push(person);
+        dataArr.extra_field6_s.push(extra_field6);
+        dataArr.amt_s.push(amt == "" ? 0 : amt);
+        dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+        dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+        dataArr.qty_s.push(qty == "" ? 0 : qty);
+        dataArr.extra_field7_s.push(extra_field7);
+        dataArr.proccd_s.push(proccd);
+        dataArr.poregnum_s.push(poregnum);
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq == "" ? 0 : ordseq);
+      });
+      setParaData((prev: any) => ({
+        ...prev,
+        workType: workType,
+        qcnum: filters.qcnum,
+        qcdt: convertDateToStr(filters.qcdt),
+        custcd: filters.extra_field1,
+        person: filters.person,
+        remark: filters.remark,
+        title: filters.extra_field2,
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        inrecdt_s: dataArr.inrecdt_s.join("|"),
+        inseq1_s: dataArr.inseq1_s.join("|"),
+        inseq2_s: dataArr.inseq2_s.join("|"),
+        indt_s: dataArr.indt_s.join("|"),
+        custnm_s: dataArr.custnm_s.join("|"),
+        extra_field5_s: dataArr.extra_field5_s.join("|"),
+        itemcd_s: dataArr.itemcd_s.join("|"),
+        itemnm_s: dataArr.itemnm_s.join("|"),
+        person_s: dataArr.person_s.join("|"),
+        extra_field6_s: dataArr.extra_field6_s.join("|"),
+        amt_s: dataArr.amt_s.join("|"),
+        wonamt_s: dataArr.wonamt_s.join("|"),
+        taxamt_s: dataArr.taxamt_s.join("|"),
+        qty_s: dataArr.qty_s.join("|"),
+        extra_field7_s: dataArr.extra_field7_s.join("|"),
+        proccd_s: dataArr.proccd_s.join("|"),
+        poregnum_s: dataArr.poregnum_s.join("|"),
+        ordnum_s: dataArr.ordnum_s.join("|"),
+        ordseq_s: dataArr.ordseq_s.join("|"),
+      }));
+    }
   };
 
-  const [ParaData, setParaData] = useState<{ [name: string]: any }>({
+  const [ParaData, setParaData] = useState<any>({
     pgSize: PAGE_SIZE,
-    workType: "N",
+    workType: "",
     orgdiv: sessionOrgdiv,
-    recdt: "",
-    seq1: 0,
-    cboLocation: sessionLocation,
-    outdt: null,
-    cboPerson: "admin",
+    qcnum: "",
+    qcdt: "",
     custcd: "",
-    custnm: "",
+    person: "",
     remark: "",
-    attdatnum: "",
-    outuse: "",
+    title: "",
     rowstatus_s: "",
-    seq2_s: "",
-    rtnyn_s: "",
-    rtntype_s: "",
-    ordnum_s: "",
-    ordseq_s: "",
-    itemgrade_s: "",
-    itemcd_s: "",
-    itemnm_s: "",
-    itemacnt_s: "",
-    pacmeth_s: "",
-    qty_s: "",
-    qtyunit_s: "",
-    lenunit_s: "",
-    totlen_s: "",
-    unitwgt_s: "",
-    wgtunit_s: "",
-    totwgt_s: "",
-    len_s: "",
-    itemthick_s: "",
-    width_s: "",
-    unpcalmeth_s: "",
-    unp_s: "",
-    amt_s: "",
-    dlramt_s: "",
-    wonamt_s: "",
-    taxamt_s: "",
-    lotnum_s: "",
-    orglot_s: "",
-    heatno_s: "",
-    pcncd_s: "",
-    remark_s: "",
     inrecdt_s: "",
     inseq1_s: "",
     inseq2_s: "",
-    gonum_s: "",
-    goseq_s: "",
-    connum_s: "",
-    conseq_s: "",
-    spno_s: "",
-    boxno_s: "",
-    endyn_s: "",
-    reqnum_s: "",
-    reqseq_s: "",
-    serialno_s: "",
-    load_place_s: "",
-    outdt_s: "",
+    indt_s: "",
+    custnm_s: "",
+    extra_field5_s: "",
+    itemcd_s: "",
+    itemnm_s: "",
     person_s: "",
+    extra_field6_s: "",
+    amt_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+    qty_s: "",
+    extra_field7_s: "",
+    proccd_s: "",
+    poregnum_s: "",
+    ordnum_s: "",
+    ordseq_s: "",
     userid: userId,
     pc: pc,
-    form_id: "MA_A3400",
-    serviceid: companyCode,
-    reckey: "",
+    form_id: "QC_A6050W",
   });
 
   const para: Iparameters = {
-    procedureName: "P_MA_A3400W_S",
+    procedureName: "P_QC_A6050W_S",
     pageNumber: 0,
     pageSize: ParaData.pgSize,
     parameters: {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": ParaData.orgdiv,
-      "@p_recdt": ParaData.recdt,
-      "@p_seq1": ParaData.seq1,
-      "@p_location": ParaData.cboLocation,
-      "@p_outdt": convertDateToStr(ParaData.outdt),
-      "@p_person": ParaData.cboPerson,
+      "@p_qcnum": ParaData.qcnum,
+      "@p_qcdt": ParaData.qcdt,
       "@p_custcd": ParaData.custcd,
-      "@p_custnm": ParaData.custnm,
+      "@p_person": ParaData.person,
       "@p_remark": ParaData.remark,
-      "@p_attdatnum": ParaData.attdatnum,
-      "@p_outuse": ParaData.outuse,
+      "@p_title": ParaData.title,
       "@p_rowstatus_s": ParaData.rowstatus_s,
-      "@p_seq2_s": ParaData.seq2_s,
-      "@p_rtnyn_s": ParaData.rtnyn_s,
-      "@p_rtntype_s": ParaData.rtntype_s,
-      "@p_ordnum_s": ParaData.ordnum_s,
-      "@p_ordseq_s": ParaData.ordseq_s,
-      "@p_itemgrade_s": ParaData.itemgrade_s,
-      "@p_itemcd_s": ParaData.itemcd_s,
-      "@p_itemnm_s": ParaData.itemnm_s,
-      "@p_itemacnt_s": ParaData.itemacnt_s,
-      "@p_pacmeth_s": ParaData.pacmeth_s,
-      "@p_qty_s": ParaData.qty_s,
-      "@p_qtyunit_s": ParaData.qtyunit_s,
-      "@p_lenunit_s": ParaData.lenunit_s,
-      "@p_totlen_s": ParaData.totlen_s,
-      "@p_unitwgt_s": ParaData.unitwgt_s,
-      "@p_wgtunit_s": ParaData.wgtunit_s,
-      "@p_totwgt_s": ParaData.totwgt_s,
-      "@p_len_s": ParaData.len_s,
-      "@p_itemthick_s": ParaData.itemthick_s,
-      "@p_width_s": ParaData.width_s,
-      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
-      "@p_unp_s": ParaData.unp_s,
-      "@p_amt_s": ParaData.amt_s,
-      "@p_dlramt_s": ParaData.dlramt_s,
-      "@p_wonamt_s": ParaData.wonamt_s,
-      "@p_taxamt_s": ParaData.taxamt_s,
-      "@p_lotnum_s": ParaData.lotnum_s,
-      "@p_orglot_s": ParaData.orglot_s,
-      "@p_heatno_s": ParaData.heatno_s,
-      "@p_pcncd_s": ParaData.pcncd_s,
-      "@p_remark_s": ParaData.remark_s,
       "@p_inrecdt_s": ParaData.inrecdt_s,
       "@p_inseq1_s": ParaData.inseq1_s,
       "@p_inseq2_s": ParaData.inseq2_s,
-      "@p_gonum_s": ParaData.gonum_s,
-      "@p_goseq_s": ParaData.goseq_s,
-      "@p_connum_s": ParaData.connum_s,
-      "@p_conseq_s": ParaData.conseq_s,
-      "@p_spno_s": ParaData.spno_s,
-      "@p_boxno_s": ParaData.boxno_s,
-      "@p_endyn_s": ParaData.endyn_s,
-      "@p_reqnum_s": ParaData.reqnum_s,
-      "@p_reqseq_s": ParaData.reqseq_s,
-      "@p_serialno_s": ParaData.serialno_s,
-      "@p_load_place_s": ParaData.load_place_s,
-      "@p_outdt_s": ParaData.outdt_s,
+      "@p_indt_s": ParaData.indt_s,
+      "@p_custnm_s": ParaData.custnm_s,
+      "@p_extra_field5_s": ParaData.extra_field5_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemnm_s": ParaData.itemnm_s,
       "@p_person_s": ParaData.person_s,
+      "@p_extra_field6_s": ParaData.extra_field6_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_qty_s": ParaData.qty_s,
+      "@p_extra_field7_s": ParaData.extra_field7_s,
+      "@p_proccd_s": ParaData.proccd_s,
+      "@p_poregnum_s": ParaData.poregnum_s,
+      "@p_ordnum_s": ParaData.ordnum_s,
+      "@p_ordseq_s": ParaData.ordseq_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "MA_A3400",
-      "@p_serviceid": companyCode,
+      "@p_form_id": "QC_A6050W",
     },
   };
 
@@ -1094,71 +810,37 @@ const CopyWindow = ({
       }
       setParaData({
         pgSize: PAGE_SIZE,
-        workType: "N",
         orgdiv: sessionOrgdiv,
-        recdt: "",
-        seq1: 0,
-        cboLocation: sessionLocation,
-        outdt: null,
-        cboPerson: "admin",
+        workType: "",
+        qcnum: "",
+        qcdt: "",
         custcd: "",
-        custnm: "",
+        person: "",
         remark: "",
-        attdatnum: "",
-        outuse: "",
+        title: "",
         rowstatus_s: "",
-        seq2_s: "",
-        rtnyn_s: "",
-        rtntype_s: "",
-        ordnum_s: "",
-        ordseq_s: "",
-        itemgrade_s: "",
-        itemcd_s: "",
-        itemnm_s: "",
-        itemacnt_s: "",
-        pacmeth_s: "",
-        qty_s: "",
-        qtyunit_s: "",
-        lenunit_s: "",
-        totlen_s: "",
-        unitwgt_s: "",
-        wgtunit_s: "",
-        totwgt_s: "",
-        len_s: "",
-        itemthick_s: "",
-        width_s: "",
-        unpcalmeth_s: "",
-        unp_s: "",
-        amt_s: "",
-        dlramt_s: "",
-        wonamt_s: "",
-        taxamt_s: "",
-        lotnum_s: "",
-        orglot_s: "",
-        heatno_s: "",
-        pcncd_s: "",
-        remark_s: "",
         inrecdt_s: "",
         inseq1_s: "",
         inseq2_s: "",
-        gonum_s: "",
-        goseq_s: "",
-        connum_s: "",
-        conseq_s: "",
-        spno_s: "",
-        boxno_s: "",
-        endyn_s: "",
-        reqnum_s: "",
-        reqseq_s: "",
-        serialno_s: "",
-        load_place_s: "",
-        outdt_s: "",
+        indt_s: "",
+        custnm_s: "",
+        extra_field5_s: "",
+        itemcd_s: "",
+        itemnm_s: "",
         person_s: "",
+        extra_field6_s: "",
+        amt_s: "",
+        wonamt_s: "",
+        taxamt_s: "",
+        qty_s: "",
+        extra_field7_s: "",
+        proccd_s: "",
+        poregnum_s: "",
+        ordnum_s: "",
+        ordseq_s: "",
         userid: userId,
         pc: pc,
-        form_id: "MA_A3400",
-        serviceid: companyCode,
-        reckey: "",
+        form_id: "QC_A6050W",
       });
     } else {
       console.log("[오류 발생]");
@@ -1169,7 +851,7 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (ParaData.outdt != null && permissions.save) {
+    if (ParaData.workType != "" && permissions.save) {
       fetchTodoGridSaved();
     }
   }, [ParaData, permissions]);
@@ -1237,7 +919,14 @@ const CopyWindow = ({
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "itemcd" && field != "itemnm" && field != "rowstatus") {
+    if (
+      field != "custnm" &&
+      field != "itemnm" &&
+      field != "rowstatus" &&
+      field != "itemcd" &&
+      field != "ordnum" &&
+      field != "ordseq"
+    ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
@@ -1278,8 +967,7 @@ const CopyWindow = ({
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
-              amt: item.qty * item.unp,
-              taxamt: Math.round(item.qty * item.unp * 0.1),
+              taxamt: Math.round(item.amt * 0.1),
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -1410,7 +1098,6 @@ const CopyWindow = ({
                     <tr>
                       <th>제목</th>
                       <td colSpan={5}>
-                        {" "}
                         <Input
                           name="extra_field2"
                           type="text"
@@ -1508,6 +1195,9 @@ const CopyWindow = ({
                         row.rowstatus == undefined
                           ? ""
                           : row.rowstatus,
+                      indt: row.indt
+                        ? new Date(dateformat(row.indt))
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
                     mainDataState
@@ -1550,11 +1240,22 @@ const CopyWindow = ({
                     field="extra_field5"
                     title="검사항목"
                     width="120px"
+                    cell={CustomComboBoxCell}
                   />
-                  <GridColumn field="proccd" title="검사내역" width="120px" />
+                  <GridColumn
+                    field="proccd"
+                    title="검사내역"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                  />
                   <GridColumn field="itemcd" title="품목코드" width="120px" />
                   <GridColumn field="itemnm" title="품목명" width="150px" />
-                  <GridColumn field="person" title="검사담당자" width="120px" />
+                  <GridColumn
+                    field="person"
+                    title="검사담당자"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                  />
                   <GridColumn
                     field="extra_field6"
                     title="검사관"
@@ -1751,6 +1452,9 @@ const CopyWindow = ({
                       row.rowstatus == undefined
                         ? ""
                         : row.rowstatus,
+                    indt: row.indt
+                      ? new Date(dateformat(row.indt))
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState
@@ -1793,11 +1497,22 @@ const CopyWindow = ({
                   field="extra_field5"
                   title="검사항목"
                   width="120px"
+                  cell={CustomComboBoxCell}
                 />
-                <GridColumn field="proccd" title="검사내역" width="120px" />
+                <GridColumn
+                  field="proccd"
+                  title="검사내역"
+                  width="120px"
+                  cell={CustomComboBoxCell}
+                />
                 <GridColumn field="itemcd" title="품목코드" width="120px" />
                 <GridColumn field="itemnm" title="품목명" width="150px" />
-                <GridColumn field="person" title="검사담당자" width="120px" />
+                <GridColumn
+                  field="person"
+                  title="검사담당자"
+                  width="120px"
+                  cell={CustomComboBoxCell}
+                />
                 <GridColumn field="extra_field6" title="검사관" width="120px" />
                 <GridColumn
                   field="qty"
@@ -1857,11 +1572,7 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow2
-          setVisible={setCopyWindowVisible}
-          setData={setCopyData}
-          itemacnt={""}
-        />
+        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}
     </>
   );
