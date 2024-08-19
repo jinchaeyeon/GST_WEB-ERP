@@ -251,7 +251,9 @@ const QC_A2000W = lazy(() => import("./routes/QC_A2000W"));
 const QC_A2500W = lazy(() => import("./routes/QC_A2500W"));
 const QC_A2500W_603 = lazy(() => import("./routes/QC_A2500W_603"));
 const QC_A3000W = lazy(() => import("./routes/QC_A3000W"));
+const QC_A3400W = lazy(() => import("./routes/QC_A3400W"));
 const QC_A6000W = lazy(() => import("./routes/QC_A6000W"));
+const QC_A6010W = lazy(() => import("./routes/QC_A6010W"));
 const QC_A6050W = lazy(() => import("./routes/QC_A6050W"));
 const QC_B0020W = lazy(() => import("./routes/QC_B0020W"));
 const QC_B0030W = lazy(() => import("./routes/QC_B0030W"));
@@ -1046,8 +1048,12 @@ const AppInner: React.FC = () => {
       return QC_A2500W_603;
     } else if (str == "QC_A3000W") {
       return QC_A3000W;
+    } else if (str == "QC_A3400W") {
+      return QC_A3400W;
     } else if (str == "QC_A6000W") {
       return QC_A6000W;
+    } else if (str == "QC_A6010W") {
+      return QC_A6010W;
     } else if (str == "QC_A6050W") {
       return QC_A6050W;
     } else if (str == "QC_B0020W") {
@@ -1531,7 +1537,9 @@ const AppInner: React.FC = () => {
                       exact
                     />
                     <AuthRoute path="/QC_A3000W" component={QC_A3000W} exact />
+                    <AuthRoute path="/QC_A3400W" component={QC_A3400W} exact />
                     <AuthRoute path="/QC_A6000W" component={QC_A6000W} exact />
+                    <AuthRoute path="/QC_A6010W" component={QC_A6010W} exact />
                     <AuthRoute path="/QC_A6050W" component={QC_A6050W} exact />
                     <AuthRoute path="/QC_B0020W" component={QC_B0020W} exact />
                     <AuthRoute path="/QC_B0030W" component={QC_B0030W} exact />

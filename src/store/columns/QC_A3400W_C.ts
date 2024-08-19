@@ -1,0 +1,235 @@
+import { TGrid } from "../types";
+
+export const gridList: Array<TGrid> = [
+  {
+    gridName: "grdList",
+    columns: [
+      {
+        id: "col_recdt",
+        field: "recdt",
+        caption: "일자",
+        width: 120,
+      },
+      {
+        id: "col_person",
+        field: "person",
+        caption: "작성자",
+        width: 120,
+      },
+      {
+        id: "col_location",
+        field: "location",
+        caption: "사업장",
+        width: 120,
+      },
+      {
+        id: "col_position",
+        field: "position",
+        caption: "사업부",
+        width: 120,
+      },
+      {
+        id: "col_project",
+        field: "project",
+        caption: "프로젝트",
+        width: 120,
+      },
+      {
+        id: "col_custcd",
+        field: "custcd",
+        caption: "업체코드",
+        width: 120,
+      },
+      {
+        id: "col_custnm",
+        field: "custnm",
+        caption: "업체명",
+        width: 150,
+      },
+      {
+        id: "col_usegb",
+        field: "usegb",
+        caption: "구분",
+        width: 120,
+      },
+      {
+        id: "col_use_yn",
+        field: "use_yn",
+        caption: "사용여부",
+        width: 100,
+      },
+      {
+        id: "col_storenddt",
+        field: "storenddt",
+        caption: "보관종료일",
+        width: 120,
+      },
+      {
+        id: "col_ordnum",
+        field: "ordnum",
+        caption: "수주번호",
+        width: 150,
+      },
+      {
+        id: "col_testnum",
+        field: "testnum",
+        caption: "시험번호",
+        width: 150,
+      },
+      {
+        id: "col_datnum",
+        field: "datnum",
+        caption: "자료번호",
+        width: 150,
+      },
+      {
+        id: "col_qty",
+        field: "qty",
+        caption: "수량",
+        width: 100,
+      },
+      {
+        id: "col_itemnm",
+        field: "itemnm",
+        caption: "품목명",
+        width: 150,
+      },
+      {
+        id: "col_chkperson",
+        field: "chkperson",
+        caption: "시험책임자",
+        width: 120,
+      },
+      {
+        id: "col_remark",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+    ],
+  },
+  {
+    gridName: "grdList2",
+    columns: [
+      {
+        id: "col_recdt2",
+        field: "recdt",
+        caption: "입고일자",
+        width: 120,
+      },
+      {
+        id: "col_div2",
+        field: "div",
+        caption: "입출고구분",
+        width: 120,
+      },
+      {
+        id: "col_datnum2",
+        field: "datnum",
+        caption: "자료번호",
+        width: 150,
+      },
+      {
+        id: "col_load_place2",
+        field: "load_place",
+        caption: "적재장소",
+        width: 120,
+      },
+      {
+        id: "col_qty2",
+        field: "qty",
+        caption: "수량",
+        width: 100,
+      },
+      {
+        id: "col_remark2",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+      {
+        id: "col_reckey2",
+        field: "reckey",
+        caption: "입고번호",
+        width: 150,
+      },
+      {
+        id: "col_usegb2",
+        field: "usegb",
+        caption: "구분",
+        width: 120,
+      },
+    ],
+  },
+  {
+    gridName: "grdList3",
+    columns: [
+      {
+        id: "col_recdt3",
+        field: "recdt",
+        caption: "출고일자",
+        width: 120,
+      },
+      {
+        id: "col_div3",
+        field: "div",
+        caption: "입출고구분",
+        width: 120,
+      },
+      {
+        id: "col_datnum3",
+        field: "datnum",
+        caption: "자료번호",
+        width: 150,
+      },
+      {
+        id: "col_load_place3",
+        field: "load_place",
+        caption: "적재장소",
+        width: 120,
+      },
+      {
+        id: "col_qty3",
+        field: "qty",
+        caption: "수량",
+        width: 100,
+      },
+      {
+        id: "col_remark3",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
+      {
+        id: "col_reckey3",
+        field: "reckey",
+        caption: "출고번호",
+        width: 150,
+      },
+      {
+        id: "col_outuse3",
+        field: "outuse",
+        caption: "출고유형",
+        width: 120,
+      },
+      {
+        id: "col_custcd3",
+        field: "custcd",
+        caption: "출고처코드",
+        width: 120,
+      },
+      {
+        id: "col_custnm3",
+        field: "custnm",
+        caption: "출고처명",
+        width: 150,
+      },
+      {
+        id: "col_usegb3",
+        field: "usegb",
+        caption: "구분",
+        width: 120,
+      },
+    ],
+  },
+];
