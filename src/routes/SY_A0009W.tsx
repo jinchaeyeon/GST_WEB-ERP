@@ -302,7 +302,7 @@ const SY_A0009W: React.FC = () => {
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log(rows);
+
       if (totalRowCnt > 0) {
         setPto(rows[0]);
       } else {
@@ -1263,8 +1263,7 @@ const SY_A0009W: React.FC = () => {
                         width: 80,
                         height: 80,
                         border: "2px solid #ddd",
-                        padding: "4px",
-                        boxSizing: "border-box",
+                        boxSizing: "border-box",                        
                       }}
                       src={user.profile_image ? imgBase64 : "GST"}
                     ></AvatarMUI>
