@@ -400,12 +400,12 @@ export const FormBox = styled.table`
   tr td {
     /* background-color: #ffffff;
     border: solid 1px #d7d7d7; */
-    width: 270px;
     text-align: center;
     padding: 5px;
     position: relative;
     vertical-align: middle;
     white-space: pre;
+    width: auto;
   }
   .filter-item-wrap {
     display: flex;
