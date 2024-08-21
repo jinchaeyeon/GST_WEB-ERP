@@ -884,7 +884,7 @@ const FlowChart = (props) => {
 
   return (
     <>
-      <GridContainerWrap>
+      <GridContainerWrap height={"100%"}>
         <GridContainer
           width="65%"
           height={"100%"}

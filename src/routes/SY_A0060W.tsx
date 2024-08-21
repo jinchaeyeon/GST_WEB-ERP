@@ -16,6 +16,7 @@ import "swiper/css";
 import {
   ButtonContainer,
   FilterBox,
+  GridContainer,
   GridTitle,
   GridTitleContainer,
   Title,
@@ -63,6 +64,7 @@ const SY_A0060W: React.FC = () => {
 
   const [mobileheight, setMobileHeight] = useState(0);
   const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
   const [tabSelected, setTabSelected] = useState(0);
 
   useLayoutEffect(() => {
@@ -76,6 +78,7 @@ const SY_A0060W: React.FC = () => {
         setIsMobile(deviceWidth <= 1200);
         setMobileHeight(getDeviceHeight(true) - height - height2);
         setWebHeight(getDeviceHeight(true) - height - height2 - height3);
+        setWebHeight2(getDeviceHeight(false) - height - height2);
 
         if (deviceWidth <= 1200) {
           setTabSelected(0);
@@ -87,7 +90,7 @@ const SY_A0060W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, webheight, tabSelected]);
+  }, [customOptionData, webheight, tabSelected, webheight2]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -106,7 +109,6 @@ const SY_A0060W: React.FC = () => {
   }, [customOptionData]);
 
   const search = () => {
-    setTabSelected(0);
     setClicks(true);
     setWorkType("U");
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
@@ -114,6 +116,13 @@ const SY_A0060W: React.FC = () => {
 
   const [clicks, setClicks] = useState(true);
 
+  useEffect(() => {
+    if(clicks == false) {
+      setTabSelected(1);
+    } else {
+      setTabSelected(0);
+    }
+  }, [clicks])
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
 
@@ -267,7 +276,6 @@ const SY_A0060W: React.FC = () => {
           attdatnum: item.attdatnum,
         }));
         setClicks(false);
-        setTabSelected(1);
         setWorkType("U");
       }
     }
@@ -283,7 +291,6 @@ const SY_A0060W: React.FC = () => {
       attdatnum: "",
     }));
     setClicks(false);
-    setTabSelected(1);
     setWorkType("N");
   };
 
@@ -401,7 +408,6 @@ const SY_A0060W: React.FC = () => {
                       isSearch: true,
                     }));
                   } else {
-                    setTabSelected(0);
                     setClicks(true);
                     setWorkType("U");
                     setFilters((prev) => ({
@@ -532,27 +538,28 @@ const SY_A0060W: React.FC = () => {
               title="레이아웃 설정"
               disabled={clicks ? true : permissions.view ? false : true}
             >
-              <FlowChart
-                data={mainDataResult2.data}
-                filters={filters2}
-                workType={workType}
-                setData={(bool: any) => {
-                  if (bool == true) {
-                    setFilters((prev) => ({
-                      ...prev,
-                      isSearch: true,
-                    }));
-                  } else {
-                    setTabSelected(0);
-                    setClicks(true);
-                    setWorkType("U");
-                    setFilters((prev) => ({
-                      ...prev,
-                      isSearch: true,
-                    }));
-                  }
-                }}
-              />
+              <GridContainer style={{ height: webheight2 }}>
+                <FlowChart
+                  data={mainDataResult2.data}
+                  filters={filters2}
+                  workType={workType}
+                  setData={(bool: any) => {
+                    if (bool == true) {
+                      setFilters((prev) => ({
+                        ...prev,
+                        isSearch: true,
+                      }));
+                    } else {
+                      setClicks(true);
+                      setWorkType("U");
+                      setFilters((prev) => ({
+                        ...prev,
+                        isSearch: true,
+                      }));
+                    }
+                  }}
+                />
+              </GridContainer>
             </TabStripTab>
           </TabStrip>
         </>
