@@ -3154,7 +3154,7 @@ const CopyWindow = ({
                         value={filters.files}
                         className="readonly"
                       />
-                      <ButtonInInput style={{ top: "35px" }}>
+                      <ButtonInInput>
                         <Button
                           type={"button"}
                           onClick={onAttachmentsWndClick}

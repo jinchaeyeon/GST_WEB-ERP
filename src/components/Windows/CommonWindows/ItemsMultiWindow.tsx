@@ -256,7 +256,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       itemnm: filters.itemnm,
       insiz: filters.insiz,
       useyn:
-        filters.useyn == "Y" ? "사용" : filters.useyn == "N" ? "미사용" : "",
+        filters.useyn == "Y" ? "Y" : filters.useyn == "N" ? "N" : "",
     };
     try {
       data = await processApi<any>("popup-data", parameters);
