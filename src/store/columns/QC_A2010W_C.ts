@@ -119,4 +119,39 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList3",
+    columns: [
+      {
+        id: "col_qc_sort",
+        field: "qc_sort",
+        caption: "검사순번",
+        width: 100,
+      },
+      {
+        id: "col_inspeccd",
+        field: "inspeccd",
+        caption: "검사항목",
+        width: 120,
+      },
+      {
+        id: "col_qc_spec",
+        field: "qc_spec",
+        caption: "측정기준명",
+        width: 120,
+      },
+      {
+        id: "col_qcvalue1",
+        field: "qcvalue1",
+        caption: "측정값",
+        width: 100,
+      },
+      {
+        id: "col_qcresult1",
+        field: "qcresult1",
+        caption: "측정결과",
+        width: 120,
+      },
+    ],
+  },
 ];

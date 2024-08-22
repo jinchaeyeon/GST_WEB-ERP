@@ -4,9 +4,11 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
@@ -29,6 +31,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -45,16 +48,24 @@ import {
   findMessage,
   getBizCom,
   getDeviceHeight,
+  getGridItemChangedData,
   getHeight,
   getMenuName,
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
 } from "../components/CommonFunction";
-import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
@@ -65,17 +76,41 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
+const DATA_ITEM_KEY3 = "num";
 const dateField = ["indt", "qcdt"];
-const numberField = ["qty", "qcqty", "badqty"];
+const numberField = ["qty", "qcqty", "badqty", "qcvalue1", "qc_sort"];
+const comboField = ["qcresult1"];
+
 let targetRowIndex: null | number = null;
 var height = 0;
 var height2 = 0;
 var height3 = 0;
+var height4 = 0;
+var height5 = 0;
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_MA034 ", setBizComponentData);
+  //합부판정
+  const field = props.field ?? "";
+  const bizComponentIdVal = field == "qcresult1" ? "L_MA034" : "";
+  const bizComponent = bizComponentData?.find(
+    (item: any) => item.bizComponentId == bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
+};
+
 const QC_A2000: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
+  const idGetter3 = getter(DATA_ITEM_KEY3);
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -91,23 +126,29 @@ const QC_A2000: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(setCustomOptionData);
-
+  const pc = UseGetValueFromSessionItem("pc");
+  const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
 
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
+  const [webheight3, setWebHeight3] = useState(0);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".TitleContainer");
       height2 = getHeight(".ButtonContainer");
       height3 = getHeight(".ButtonContainer2");
+      height4 = getHeight(".FormBoxWrap");
+      height5 = getHeight(".ButtonContainer3");
+
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
         setWebHeight((getDeviceHeight(true) - height) / 2 - height2);
         setWebHeight2((getDeviceHeight(true) - height) / 2 - height3);
+        setWebHeight3(getDeviceHeight(true) - height - height4 - height5);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
@@ -118,17 +159,20 @@ const QC_A2000: React.FC = () => {
   }, [customOptionData, webheight, webheight2]);
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_sysUserMaster_001, L_QC006", setBizComponentData);
+  UseBizComponent("L_sysUserMaster_001, L_QC006, L_QC100", setBizComponentData);
   const [qcnoListData, setQcnoListData] = useState([{ code: "", name: "" }]);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-
+  const [inspeccdListData, setInspeccdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   // 그룹 카테고리 조회
   useEffect(() => {
     if (bizComponentData !== null) {
       setUserListData(getBizCom(bizComponentData, "L_sysUserMaster_001"));
       setQcnoListData(getBizCom(bizComponentData, "L_QC006"));
+      setInspeccdListData(getBizCom(bizComponentData, "L_QC100"));
     }
   }, [bizComponentData]);
   //customOptionData 조회 후 디폴트 값 세팅
@@ -185,13 +229,17 @@ const QC_A2000: React.FC = () => {
   //엑셀 내보내기
   let _export: any;
   let _export2: any;
+  let _export3: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       const optionsGridOne = _export.workbookOptions();
       const optionsGridTwo = _export2.workbookOptions();
+      const optionsGridThree = _export3.workbookOptions();
       optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[2] = optionsGridThree.sheets[0];
       optionsGridOne.sheets[0].title = "입고상세정보";
       optionsGridOne.sheets[1].title = "검사실적정보";
+      optionsGridOne.sheets[2].title = "검사상세정보";
       _export.save(optionsGridOne);
     }
   };
@@ -226,7 +274,14 @@ const QC_A2000: React.FC = () => {
     recdt: "",
     seq1: 0,
     seq2: 0,
-    qcyn: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
+  const [filters3, setFilters3] = useState({
+    pgSize: PAGE_SIZE,
+    qcnum: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -235,6 +290,7 @@ const QC_A2000: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
+  const [page3, setPage3] = useState(initialPageState);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -258,6 +314,11 @@ const QC_A2000: React.FC = () => {
 
   const pageChange2 = (event: GridPageChangeEvent) => {
     const { page } = event;
+    setPage3(initialPageState);
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
 
     setFilters2((prev) => ({
       ...prev,
@@ -269,11 +330,32 @@ const QC_A2000: React.FC = () => {
       ...event.page,
     });
   };
+
+  const pageChange3 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+    setPage3({
+      ...event.page,
+    });
+  };
+
   let gridRef: any = useRef(null);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
   const [mainDataState2, setMainDataState2] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState3, setMainDataState3] = useState<State>({
+    sort: [],
+  });
+  const [tempState3, setTempState3] = useState<State>({
     sort: [],
   });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
@@ -282,13 +364,21 @@ const QC_A2000: React.FC = () => {
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
     process([], mainDataState2)
   );
+  const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
+    process([], mainDataState3)
+  );
+  const [tempResult3, setTempResult3] = useState<DataResult>(
+    process([], tempState3)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
   const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const [selectedState3, setSelectedState3] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
   const [information, setInformation] = useState({
     workType: "N",
     attdatnum: "",
@@ -399,6 +489,30 @@ const QC_A2000: React.FC = () => {
             isSearch: true,
           }));
         }
+      } else {
+        setPage2(initialPageState);
+        setPage3(initialPageState);
+        setMainDataResult2(process([], mainDataState2));
+        setMainDataResult3(process([], mainDataState3));
+        setInformation({
+          workType: "N",
+          attdatnum: "",
+          badqty: 0,
+          endtime: "",
+          files: "",
+          itemcd: "",
+          itemnm: "",
+          orgdiv: "",
+          person: "",
+          qcdecision: "",
+          qcdt: new Date(),
+          qcno: "",
+          qcnum: "",
+          qcqty: 0,
+          remark: "",
+          result1: "",
+          strtime: "",
+        });
       }
     } else {
       console.log("[오류 발생]");
@@ -463,6 +577,12 @@ const QC_A2000: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+        setFilters3((prev) => ({
+          ...prev,
+          qcnum: rows[0].qcnum,
+          pgNum: 1,
+          isSearch: true,
+        }));
         setInformation({
           workType: "U",
           attdatnum: rows[0].attdatnum,
@@ -483,6 +603,8 @@ const QC_A2000: React.FC = () => {
           strtime: rows[0].strtime,
         });
       } else {
+        setPage3(initialPageState);
+        setMainDataResult3(process([], mainDataState3));
         setInformation({
           workType: "N",
           attdatnum: "",
@@ -518,6 +640,71 @@ const QC_A2000: React.FC = () => {
     }));
     setLoading(false);
   };
+
+  //그리드 데이터 조회
+  const fetchMainGrid3 = async (filters3: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_QC_A2010W_Q",
+      pageNumber: filters3.pgNum,
+      pageSize: filters3.pgSize,
+      parameters: {
+        "@p_work_type": "QCDETAIL",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_person": filters.prodemp,
+        "@p_qcyn": filters.qcyn,
+        "@p_lotnum": filters.lotnum,
+        "@p_reckey": filters.reckey,
+        "@p_recdt": filters2.recdt,
+        "@p_seq1": filters2.seq1,
+        "@p_seq2": filters2.seq2,
+        "@p_qcnum": filters3.qcnum,
+        "@p_company_code": companyCode,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult3({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+      if (totalRowCnt > 0) {
+        setSelectedState3({ [rows[0][DATA_ITEM_KEY3]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -579,6 +766,19 @@ const QC_A2000: React.FC = () => {
   }, [filters2, permissions, customOptionData]);
 
   useEffect(() => {
+    if (filters3.isSearch && permissions.view && customOptionData !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3);
+      setFilters3((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid3(deepCopiedFilters);
+    }
+  }, [filters3, permissions, customOptionData]);
+
+  useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex !== null && gridRef.current) {
       gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
@@ -590,8 +790,10 @@ const QC_A2000: React.FC = () => {
   const resetAllGrid = () => {
     setPage(initialPageState);
     setPage2(initialPageState);
+    setPage3(initialPageState);
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
+    setMainDataResult3(process([], mainDataState3));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -644,7 +846,7 @@ const QC_A2000: React.FC = () => {
       orgdiv: selectedRowData.orgdiv,
       person: person == undefined ? "" : person,
       qcdecision: selectedRowData.qcdecision,
-      qcdt: selectedRowData.qcdt,
+      qcdt: toDate(selectedRowData.qcdt),
       qcno: qcno == undefined ? "" : qcno,
       qcnum: selectedRowData.qcnum,
       qcqty: selectedRowData.qcqty,
@@ -652,6 +854,21 @@ const QC_A2000: React.FC = () => {
       result1: selectedRowData.result1,
       strtime: selectedRowData.strtime,
     });
+    setFilters3((prev) => ({
+      ...prev,
+      qcnum: selectedRowData.qcnum,
+      pgNum: 1,
+      isSearch: true,
+    }));
+  };
+
+  const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState3,
+      dataItemKey: DATA_ITEM_KEY3,
+    });
+    setSelectedState3(newSelectedState);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -659,6 +876,9 @@ const QC_A2000: React.FC = () => {
   };
   const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
     setMainDataState2(event.dataState);
+  };
+  const onMainDataStateChange3 = (event: GridDataStateChangeEvent) => {
+    setMainDataState3(event.dataState);
   };
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -682,7 +902,17 @@ const QC_A2000: React.FC = () => {
       </td>
     );
   };
-
+  const mainTotalFooterCell3 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult3.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = "";
     mainDataResult.data.forEach((item) =>
@@ -721,7 +951,9 @@ const QC_A2000: React.FC = () => {
   const onMainSortChange2 = (e: any) => {
     setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
   };
-
+  const onMainSortChange3 = (e: any) => {
+    setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
+  };
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
@@ -770,6 +1002,191 @@ const QC_A2000: React.FC = () => {
       };
     });
   };
+
+  const onMainItemChange3 = (event: GridItemChangeEvent) => {
+    setMainDataState3((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult3,
+      setMainDataResult3,
+      DATA_ITEM_KEY3
+    );
+  };
+
+  const customCellRender3 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender3 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const enterEdit3 = (dataItem: any, field: string) => {
+    if (field == "qcvalue1" || field == "qcresult1") {
+      const newData = mainDataResult3.data.map((item) =>
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult3((prev) => {
+        return {
+          data: mainDataResult3.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit3 = () => {
+    if (tempResult3.data != mainDataResult3.data) {
+      const newData = mainDataResult3.data.map((item) =>
+        item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult3.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const onNewClick = async () => {
+    if (mainDataResult.total > 0) {
+      let data: any;
+      const datas = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      //조회조건 파라미터
+      const parameters: Iparameters = {
+        procedureName: "P_QC_A2010W_Q",
+        pageNumber: filters2.pgNum,
+        pageSize: filters2.pgSize,
+        parameters: {
+          "@p_work_type": datas.qcnum == "" ? "QCDETAIL_NEW" : "QCDETAIL_LAST",
+          "@p_orgdiv": filters.orgdiv,
+          "@p_location": filters.location,
+          "@p_frdt": convertDateToStr(filters.frdt),
+          "@p_todt": convertDateToStr(filters.todt),
+          "@p_itemcd": datas.itemcd,
+          "@p_itemnm": filters.itemnm,
+          "@p_person": filters.prodemp,
+          "@p_qcyn": filters.qcyn,
+          "@p_lotnum": filters.lotnum,
+          "@p_reckey": filters.reckey,
+          "@p_recdt": filters2.recdt,
+          "@p_seq1": filters2.seq1,
+          "@p_seq2": filters2.seq2,
+          "@p_qcnum": datas.qcnum,
+          "@p_company_code": companyCode,
+          "@p_find_row_value": filters.find_row_value,
+        },
+      };
+
+      try {
+        data = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess == true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows;
+
+        setMainDataResult3({
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        });
+
+        if (totalRowCnt > 0) {
+          setSelectedState3({ [rows[0][DATA_ITEM_KEY3]]: true });
+        }
+      }
+      setInformation({
+        workType: "N",
+        attdatnum: "",
+        badqty: 0,
+        endtime: convertDateToStrWithTime2(new Date()),
+        files: datas.files,
+        itemcd: datas.itemcd,
+        itemnm: datas.itemnm,
+        orgdiv: datas.orgdiv,
+        person: userId,
+        qcdecision: datas.qcdecision,
+        qcdt: new Date(),
+        qcno: "01",
+        qcnum: datas.qcnum,
+        qcqty: datas.qty,
+        remark: "",
+        result1: datas.result1,
+        strtime: convertDateToStrWithTime2(new Date()),
+      });
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -1060,9 +1477,38 @@ const QC_A2000: React.FC = () => {
           </GridContainer>
         </GridContainer>
         <GridContainer width={`calc(50% - ${GAP}px)`}>
-          <FormBoxWrap border={true}>
+          <FormBoxWrap border={true} className="FormBoxWrap">
             <GridTitleContainer>
               <GridTitle>검사실적상세정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onNewClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="file-add"
+                  disabled={permissions.save ? false : true}
+                >
+                  신규
+                </Button>
+                <Button
+                  //onClick={saveList}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  disabled={permissions.save ? false : true}
+                >
+                  저장
+                </Button>
+                <Button
+                  //onClick={deleteList}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                  disabled={permissions.delete ? false : true}
+                >
+                  삭제
+                </Button>
+              </ButtonContainer>
             </GridTitleContainer>
             <FormBox>
               <tbody>
@@ -1238,6 +1684,91 @@ const QC_A2000: React.FC = () => {
               </tbody>
             </FormBox>
           </FormBoxWrap>
+          <GridContainer>
+            <GridTitleContainer className="ButtonContainer3">
+              <GridTitle>검사상세정보</GridTitle>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult3.data}
+              ref={(exporter) => {
+                _export3 = exporter;
+              }}
+              fileName={getMenuName()}
+            >
+              <Grid
+                style={{
+                  height: webheight3,
+                }}
+                data={process(
+                  mainDataResult3.data.map((row) => ({
+                    ...row,
+                    inspeccd: inspeccdListData.find(
+                      (items: any) => items.sub_code == row.inspeccd
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                  })),
+                  mainDataState3
+                )}
+                {...mainDataState3}
+                onDataStateChange={onMainDataStateChange3}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY3}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange3}
+                fixedScroll={true}
+                total={mainDataResult3.total}
+                skip={page3.skip}
+                take={page3.take}
+                pageable={true}
+                onPageChange={pageChange3}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange3}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange3}
+                cellRender={customCellRender3}
+                rowRender={customRowRender3}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList3"]
+                    ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                    ?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : comboField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell3
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
         </GridContainer>
       </GridContainerWrap>
       {itemWindowVisible && (
