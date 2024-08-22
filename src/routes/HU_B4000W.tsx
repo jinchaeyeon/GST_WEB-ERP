@@ -2077,7 +2077,7 @@ const HU_B4000W: React.FC = () => {
     return array;
   };
 
-  const [horizontalPanes, setHorizontalPanes] = React.useState<Array<any>([
+  const [horizontalPanes, setHorizontalPanes] = React.useState<Array<any>>([
     { size: "35%", min: "20%" },
     {},
     { size: "50%", min: "20%" },

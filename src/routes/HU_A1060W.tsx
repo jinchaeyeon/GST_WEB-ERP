@@ -643,7 +643,7 @@ const HU_A1060W: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const [horizontalPanes, setHorizontalPanes] = React.useState<Array<any>([
+  const [horizontalPanes, setHorizontalPanes] = React.useState<Array<any>>([
     { size: "50%", min: "20%" },
     {},
   ]);
