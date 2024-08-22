@@ -55,6 +55,35 @@ export const gridList: Array<TGrid> = [
     ],
   },
   {
+    gridName: "grdList2",
+    columns: [
+      {
+        id: "col_acntcd2",
+        field: "acntcd",
+        caption: "계정코드",
+        width: 100,
+      },
+      {
+        id: "col_acntnm2",
+        field: "acntnm",
+        caption: "계정과목명",
+        width: 100,
+      },
+      {
+        id: "col_slipamt2",
+        field: "slipamt",
+        caption: "누적금액",
+        width: 100,
+      },
+      {
+        id: "col_stdamt2",
+        field: "stdamt",
+        caption: "당월금액",
+        width: 100,
+      },
+    ],
+  },
+  {
     gridName: "grdList3",
     columns: [
       {
@@ -70,8 +99,8 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_slipmat3",
-        field: "slipmat",
+        id: "col_slipamt3",
+        field: "slipamt",
         caption: "누적금액",
         width: 100,
       },
@@ -99,8 +128,8 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_slipmat4",
-        field: "slipmat",
+        id: "col_slipamt4",
+        field: "slipamt",
         caption: "누적금액",
         width: 100,
       },
@@ -128,8 +157,8 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_slipmat5",
-        field: "slipmat",
+        id: "col_slipamt5",
+        field: "slipamt",
         caption: "누적금액",
         width: 100,
       },
@@ -157,8 +186,8 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_slipmat6",
-        field: "slipmat",
+        id: "col_slipamt6",
+        field: "slipamt",
         caption: "누적금액",
         width: 100,
       },
