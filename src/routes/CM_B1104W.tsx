@@ -23,7 +23,9 @@ import {
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
 import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -70,8 +72,13 @@ var height = 0;
 var height2 = 0;
 var height3 = 0;
 var height4 = 0;
+var height5 = 0;
+var height6 = 0;
+
+let index = 0;
 
 const CM_B1000W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = document.documentElement.clientWidth;
   const [isMobile, setIsMobile] = useState(deviceWidth <= 1200);
   const [checked, setChecked] = useState(true);
@@ -88,6 +95,10 @@ const CM_B1000W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(setMessagesData);
+  const [mobileheight, setMobileHeight] = useState(0);
+  const [mobileheight2, setMobileHeight2] = useState(0);
+  const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
   const [webheight3, setWebHeight3] = useState(0);
@@ -97,10 +108,16 @@ const CM_B1000W: React.FC = () => {
       height2 = getHeight(".ButtonContainer");
       height3 = getHeight(".Chart");
       height4 = getHeight(".ButtonContainer2");
+      height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
 
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
+        setMobileHeight(getDeviceHeight(true) - height - height2);
+        setMobileHeight2(getDeviceHeight(true) - height - height5);
+        setMobileHeight3(getDeviceHeight(true) - height - height4);
+        setMobileHeight4(getDeviceHeight(true) - height - height6);
         setWebHeight((getDeviceHeight(true) - height) / 2 - height2);
         setWebHeight2(height3 - height4);
         setWebHeight3(height3);
@@ -744,196 +761,498 @@ const CM_B1000W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <GridTitleContainer className="ButtonContainer">
-          <GridTitle>업체별월별원가</GridTitle>
-        </GridTitleContainer>
-        <Grid
-          style={{ height: webheight }}
-          data={process(
-            mainDataResult.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-            })),
-            mainDataState
-          )}
-          onDataStateChange={onMainDataStateChange}
-          {...mainDataState}
-          //선택 subDataState
-          dataItemKey={DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
-          }}
-          onSelectionChange={onSelectionChange}
-          //스크롤 조회기능
-          fixedScroll={true}
-          total={mainDataResult.total}
-          skip={page.skip}
-          take={page.take}
-          pageable={true}
-          onPageChange={pageChange}
-          //정렬기능
-          sortable={true}
-          onSortChange={onMainSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-        >
-          <GridColumn
-            field="custcd"
-            title="업체코드"
-            width="120px"
-            locked={isMobile ? false : true}
-            footerCell={mainTotalFooterCell}
-          />
-          <GridColumn
-            field="custnm"
-            title="업체명"
-            width="150px"
-            locked={isMobile ? false : true}
-          />
-          <GridColumn title="합계">{createColumn(0)}</GridColumn>
-          <GridColumn title="1월">{createColumn(1)}</GridColumn>
-          <GridColumn title="2월">{createColumn(2)}</GridColumn>
-          <GridColumn title="3월">{createColumn(3)}</GridColumn>
-          <GridColumn title="4월">{createColumn(4)}</GridColumn>
-          <GridColumn title="5월">{createColumn(5)}</GridColumn>
-          <GridColumn title="6월">{createColumn(6)}</GridColumn>
-          <GridColumn title="7월">{createColumn(7)}</GridColumn>
-          <GridColumn title="8월">{createColumn(8)}</GridColumn>
-          <GridColumn title="9월">{createColumn(9)}</GridColumn>
-          <GridColumn title="10월">{createColumn(10)}</GridColumn>
-          <GridColumn title="11월">{createColumn(11)}</GridColumn>
-          <GridColumn title="12월">{createColumn(12)}</GridColumn>
-        </Grid>
-      </GridContainer>
-      <GridContainerWrap>
-        <GridContainer width="40%">
-          <Chart className="Chart">
-            <ChartValueAxis>
-              <ChartValueAxisItem
-                labels={{
-                  visible: true,
-                  content: (e) => numberWithCommas(e.value) + "",
-                }}
-              />
-            </ChartValueAxis>
-            <ChartCategoryAxis>
-              <ChartCategoryAxisItem
-                categories={[
-                  ...new Set(chartDataResult.map((item: any) => item.mm)),
-                ]}
-              ></ChartCategoryAxisItem>
-            </ChartCategoryAxis>
-            <ChartLegend position="bottom" orientation="horizontal" />
-            <ChartSeries>
-              <ChartSeriesItem
-                name="원가"
-                labels={{
-                  visible: true,
-                }}
-                type="column"
-                data={chartDataResult2}
-                field="amt"
-                categoryField="mm"
-              />
-              {checked == true ? (
-                <ChartSeriesItem
-                  name="판매"
-                  labels={{
-                    visible: true,
-                  }}
-                  type="column"
-                  data={chartDataResult}
-                  field="sale"
-                  categoryField="mm"
-                />
-              ) : (
-                ""
-              )}
-            </ChartSeries>
-          </Chart>
-        </GridContainer>
-        <GridContainer width={`calc(30% - ${GAP}px)`}>
-          <GridTitleContainer className="ButtonContainer2">
-            <GridTitle>업무일지상세</GridTitle>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: webheight2 }}
-            data={process(
-              mainDataResult2.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-              })),
-              mainDataState2
-            )}
-            onDataStateChange={onMainDataStateChange2}
-            {...mainDataState2}
-            //선택 subDataState
-            dataItemKey={DATA_ITEM_KEY2}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+      {isMobile ? (
+        <>
+          <Swiper
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
             }}
-            onSelectionChange={onSelectionChange2}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult2.total}
-            skip={page2.skip}
-            take={page2.take}
-            pageable={true}
-            onPageChange={pageChange2}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange2}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
           >
-            <GridColumn
-              field="strday"
-              title="작성일자"
-              width="120px"
-              cell={DateCell}
-              footerCell={mainTotalFooterCell2}
-            />
-            <GridColumn field="user_name" title="작성자" width="120px" />
-            <GridColumn field="title" title="제목" width="200px" />
-            <GridColumn
-              field="usetime"
-              title="소요시간"
-              width="120px"
-              footerCell={gridSumQtyFooterCell2}
-            />
-            <GridColumn
-              field="rate"
-              title="시간당 임률"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="amt"
-              title="투입원가"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell2}
-            />
-          </Grid>
-        </GridContainer>
-        <GridContainer width={`calc(30% - ${GAP}px)`}>
-          <TextArea
-            value={contents}
-            name="remark"
-            style={{ height: webheight3 }}
-            className="readonly"
-          />
-        </GridContainer>
-      </GridContainerWrap>
+            <SwiperSlide key={0}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>업체별월별원가</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="arrow-right"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      다음
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState
+                  )}
+                  onDataStateChange={onMainDataStateChange}
+                  {...mainDataState}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="custcd"
+                    title="업체코드"
+                    width="120px"
+                    locked={isMobile ? false : true}
+                    footerCell={mainTotalFooterCell}
+                  />
+                  <GridColumn
+                    field="custnm"
+                    title="업체명"
+                    width="150px"
+                    locked={isMobile ? false : true}
+                  />
+                  <GridColumn title="합계">{createColumn(0)}</GridColumn>
+                  <GridColumn title="1월">{createColumn(1)}</GridColumn>
+                  <GridColumn title="2월">{createColumn(2)}</GridColumn>
+                  <GridColumn title="3월">{createColumn(3)}</GridColumn>
+                  <GridColumn title="4월">{createColumn(4)}</GridColumn>
+                  <GridColumn title="5월">{createColumn(5)}</GridColumn>
+                  <GridColumn title="6월">{createColumn(6)}</GridColumn>
+                  <GridColumn title="7월">{createColumn(7)}</GridColumn>
+                  <GridColumn title="8월">{createColumn(8)}</GridColumn>
+                  <GridColumn title="9월">{createColumn(9)}</GridColumn>
+                  <GridColumn title="10월">{createColumn(10)}</GridColumn>
+                  <GridColumn title="11월">{createColumn(11)}</GridColumn>
+                  <GridColumn title="12월">{createColumn(12)}</GridColumn>
+                </Grid>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={1}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer3">
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(2);
+                        }
+                      }}
+                      icon="arrow-right"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      다음
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Chart
+                  style={{
+                    width: "100%",
+                    height: mobileheight2,
+                  }}
+                >
+                  <ChartValueAxis>
+                    <ChartValueAxisItem
+                      labels={{
+                        visible: true,
+                        content: (e) => numberWithCommas(e.value) + "",
+                      }}
+                    />
+                  </ChartValueAxis>
+                  <ChartCategoryAxis>
+                    <ChartCategoryAxisItem
+                      categories={[
+                        ...new Set(chartDataResult.map((item: any) => item.mm)),
+                      ]}
+                    ></ChartCategoryAxisItem>
+                  </ChartCategoryAxis>
+                  <ChartLegend position="bottom" orientation="horizontal" />
+                  <ChartSeries>
+                    <ChartSeriesItem
+                      name="원가"
+                      labels={{
+                        visible: true,
+                      }}
+                      type="column"
+                      data={chartDataResult2}
+                      field="amt"
+                      categoryField="mm"
+                    />
+                    {checked == true ? (
+                      <ChartSeriesItem
+                        name="판매"
+                        labels={{
+                          visible: true,
+                        }}
+                        type="column"
+                        data={chartDataResult}
+                        field="sale"
+                        categoryField="mm"
+                      />
+                    ) : (
+                      ""
+                    )}
+                  </ChartSeries>
+                </Chart>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={2}>
+              <GridContainer>
+                <GridTitleContainer className="ButtonContainer2">
+                  <GridTitle>업무일지상세</GridTitle>
+                  <ButtonContainer style={{ justifyContent: "space-between" }}>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(1);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (swiper && isMobile) {
+                          swiper.slideTo(3);
+                        }
+                      }}
+                      icon="arrow-right"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      다음
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: mobileheight3 }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
+                  )}
+                  onDataStateChange={onMainDataStateChange2}
+                  {...mainDataState2}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="strday"
+                    title="작성일자"
+                    width="120px"
+                    cell={DateCell}
+                    footerCell={mainTotalFooterCell2}
+                  />
+                  <GridColumn field="user_name" title="작성자" width="120px" />
+                  <GridColumn field="title" title="제목" width="200px" />
+                  <GridColumn
+                    field="usetime"
+                    title="소요시간"
+                    width="120px"
+                    footerCell={gridSumQtyFooterCell2}
+                  />
+                  <GridColumn
+                    field="rate"
+                    title="시간당 임률"
+                    width="100px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn
+                    field="amt"
+                    title="투입원가"
+                    width="100px"
+                    cell={NumberCell}
+                    footerCell={gridSumQtyFooterCell2}
+                  />
+                </Grid>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide key={3}>
+              <GridContainer>
+                <ButtonContainer
+                  style={{ justifyContent: "space-between" }}
+                  className="ButtonContainer4"
+                >
+                  <Button
+                    onClick={() => {
+                      if (swiper && isMobile) {
+                        swiper.slideTo(2);
+                      }
+                    }}
+                    icon="arrow-left"
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                  >
+                    이전
+                  </Button>
+                </ButtonContainer>
+                <TextArea
+                  value={contents}
+                  name="remark"
+                  style={{ height: mobileheight4 }}
+                  className="readonly"
+                />
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </>
+      ) : (
+        <>
+          <GridContainer>
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>업체별월별원가</GridTitle>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: webheight }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                })),
+                mainDataState
+              )}
+              onDataStateChange={onMainDataStateChange}
+              {...mainDataState}
+              //선택 subDataState
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              <GridColumn
+                field="custcd"
+                title="업체코드"
+                width="120px"
+                locked={isMobile ? false : true}
+                footerCell={mainTotalFooterCell}
+              />
+              <GridColumn
+                field="custnm"
+                title="업체명"
+                width="150px"
+                locked={isMobile ? false : true}
+              />
+              <GridColumn title="합계">{createColumn(0)}</GridColumn>
+              <GridColumn title="1월">{createColumn(1)}</GridColumn>
+              <GridColumn title="2월">{createColumn(2)}</GridColumn>
+              <GridColumn title="3월">{createColumn(3)}</GridColumn>
+              <GridColumn title="4월">{createColumn(4)}</GridColumn>
+              <GridColumn title="5월">{createColumn(5)}</GridColumn>
+              <GridColumn title="6월">{createColumn(6)}</GridColumn>
+              <GridColumn title="7월">{createColumn(7)}</GridColumn>
+              <GridColumn title="8월">{createColumn(8)}</GridColumn>
+              <GridColumn title="9월">{createColumn(9)}</GridColumn>
+              <GridColumn title="10월">{createColumn(10)}</GridColumn>
+              <GridColumn title="11월">{createColumn(11)}</GridColumn>
+              <GridColumn title="12월">{createColumn(12)}</GridColumn>
+            </Grid>
+          </GridContainer>
+          <GridContainerWrap>
+            <GridContainer width="40%">
+              <Chart className="Chart">
+                <ChartValueAxis>
+                  <ChartValueAxisItem
+                    labels={{
+                      visible: true,
+                      content: (e) => numberWithCommas(e.value) + "",
+                    }}
+                  />
+                </ChartValueAxis>
+                <ChartCategoryAxis>
+                  <ChartCategoryAxisItem
+                    categories={[
+                      ...new Set(chartDataResult.map((item: any) => item.mm)),
+                    ]}
+                  ></ChartCategoryAxisItem>
+                </ChartCategoryAxis>
+                <ChartLegend position="bottom" orientation="horizontal" />
+                <ChartSeries>
+                  <ChartSeriesItem
+                    name="원가"
+                    labels={{
+                      visible: true,
+                    }}
+                    type="column"
+                    data={chartDataResult2}
+                    field="amt"
+                    categoryField="mm"
+                  />
+                  {checked == true ? (
+                    <ChartSeriesItem
+                      name="판매"
+                      labels={{
+                        visible: true,
+                      }}
+                      type="column"
+                      data={chartDataResult}
+                      field="sale"
+                      categoryField="mm"
+                    />
+                  ) : (
+                    ""
+                  )}
+                </ChartSeries>
+              </Chart>
+            </GridContainer>
+            <GridContainer width={`calc(30% - ${GAP}px)`}>
+              <GridTitleContainer className="ButtonContainer2">
+                <GridTitle>업무일지상세</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: webheight2 }}
+                data={process(
+                  mainDataResult2.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                  })),
+                  mainDataState2
+                )}
+                onDataStateChange={onMainDataStateChange2}
+                {...mainDataState2}
+                //선택 subDataState
+                dataItemKey={DATA_ITEM_KEY2}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange2}
+                //스크롤 조회기능
+                fixedScroll={true}
+                total={mainDataResult2.total}
+                skip={page2.skip}
+                take={page2.take}
+                pageable={true}
+                onPageChange={pageChange2}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange2}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="strday"
+                  title="작성일자"
+                  width="120px"
+                  cell={DateCell}
+                  footerCell={mainTotalFooterCell2}
+                />
+                <GridColumn field="user_name" title="작성자" width="120px" />
+                <GridColumn field="title" title="제목" width="200px" />
+                <GridColumn
+                  field="usetime"
+                  title="소요시간"
+                  width="120px"
+                  footerCell={gridSumQtyFooterCell2}
+                />
+                <GridColumn
+                  field="rate"
+                  title="시간당 임률"
+                  width="100px"
+                  cell={NumberCell}
+                />
+                <GridColumn
+                  field="amt"
+                  title="투입원가"
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell2}
+                />
+              </Grid>
+            </GridContainer>
+            <GridContainer width={`calc(30% - ${GAP}px)`}>
+              <TextArea
+                value={contents}
+                name="remark"
+                style={{ height: webheight3 }}
+                className="readonly"
+              />
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
