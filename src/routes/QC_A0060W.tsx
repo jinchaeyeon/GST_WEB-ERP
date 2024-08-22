@@ -720,7 +720,7 @@ const QC_A0060W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult.total == -1
           ? 0
@@ -734,7 +734,7 @@ const QC_A0060W: React.FC = () => {
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = detailDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {detailDataResult.total == -1
           ? 0

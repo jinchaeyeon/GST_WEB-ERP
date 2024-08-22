@@ -471,7 +471,7 @@ const App = () => {
   const TotalFooterCell = (props: GridFooterCellProps) => {
     var parts = DataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {DataResult.total == -1
           ? 0
@@ -485,7 +485,7 @@ const App = () => {
   const TotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = DataResult2.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {DataResult2.total == -1
           ? 0
@@ -499,7 +499,7 @@ const App = () => {
   const TotalFooterCell3 = (props: GridFooterCellProps) => {
     var parts = DataResult3.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {DataResult3.total == -1
           ? 0
@@ -512,7 +512,7 @@ const App = () => {
   const MainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult.total == -1
           ? 0

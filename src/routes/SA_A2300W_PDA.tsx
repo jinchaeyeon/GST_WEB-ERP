@@ -425,7 +425,7 @@ const SA_A2300_PDA: React.FC = () => {
   const customerTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = customerDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {customerDataResult.total == -1
           ? 0
@@ -761,7 +761,7 @@ const SA_A2300_PDA: React.FC = () => {
   const orderTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = orderDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {orderDataResult.total == -1
           ? 0
@@ -1166,7 +1166,7 @@ const SA_A2300_PDA: React.FC = () => {
   const lotTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = lotDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {lotDataResult.total == -1
           ? 0

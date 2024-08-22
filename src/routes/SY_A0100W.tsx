@@ -429,7 +429,7 @@ const App: React.FC = () => {
   const TotalFooterCell = (props: GridFooterCellProps) => {
     var parts = total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {total == -1
           ? 0
@@ -442,7 +442,7 @@ const App: React.FC = () => {
 
   const TitleFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         합계
         <br />
         사용자 계<br />
@@ -452,7 +452,7 @@ const App: React.FC = () => {
   };
   const UsedUserFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         기준사용자 {usedUserCnt}명
       </td>
     );
@@ -461,7 +461,7 @@ const App: React.FC = () => {
   const DateFooterCell = (props: GridFooterCellProps) => {
     if (props.field != undefined && newData[0] != undefined) {
       return (
-        <td colSpan={props.colSpan} style={props.style}>
+        <td colSpan={props.colSpan} style={props.style} {...props}>
           {newData[0].items[0].useTotalRow[0]["tt"]} <br />
           {newData[0].items[0].useTotalRow[1]["tt"]} <br />
           {newData[0].items[0].useTotalRow[2]["tt"]} <br />
@@ -642,7 +642,7 @@ const App: React.FC = () => {
 
     if (props.field != undefined && newData[0] != undefined) {
       return (
-        <td colSpan={props.colSpan} style={props.style}>
+        <td colSpan={props.colSpan} style={props.style} {...props}>
           {newData[0].items[0].useTotalRow[0][title]} <br />
           {newData[0].items[0].useTotalRow[1][title]} <br />
           {newData[0].items[0].useTotalRow[2][title]} <br />

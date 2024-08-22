@@ -1091,7 +1091,7 @@ const SA_A6000W: React.FC = () => {
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         합계
       </td>
     );

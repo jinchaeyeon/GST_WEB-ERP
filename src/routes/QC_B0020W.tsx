@@ -936,7 +936,7 @@ const QC_B0020W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult.total == -1
           ? 0
@@ -949,7 +949,7 @@ const QC_B0020W: React.FC = () => {
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = mainDataResult2.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult2.total == -1
           ? 0
@@ -963,7 +963,7 @@ const QC_B0020W: React.FC = () => {
   const mainTotalFooterCell3 = (props: GridFooterCellProps) => {
     var parts = mainDataResult3.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult3.total == -1
           ? 0
@@ -977,7 +977,7 @@ const QC_B0020W: React.FC = () => {
   const mainTotalFooterCell4 = (props: GridFooterCellProps) => {
     var parts = mainDataResult4.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult4.total == -1
           ? 0
@@ -991,7 +991,7 @@ const QC_B0020W: React.FC = () => {
   const mainTotalFooterCell5 = (props: GridFooterCellProps) => {
     var parts = mainDataResult5.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult5.total == -1
           ? 0

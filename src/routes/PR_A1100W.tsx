@@ -1163,7 +1163,7 @@ const PR_A1100W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {total == -1
           ? 0
@@ -1240,7 +1240,7 @@ const PR_A1100W: React.FC = () => {
   const planTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = total2.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {total2 == -1
           ? 0
@@ -1254,7 +1254,7 @@ const PR_A1100W: React.FC = () => {
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = materialDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {materialDataResult.total == -1
           ? 0

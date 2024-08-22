@@ -763,7 +763,7 @@ const MA_B7000: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult.total == -1
           ? 0
@@ -828,7 +828,7 @@ const MA_B7000: React.FC = () => {
   const detail1TotalFooterCell = (props: GridFooterCellProps) => {
     var parts = detail1DataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {detail1DataResult.total == -1
           ? 0
@@ -842,7 +842,7 @@ const MA_B7000: React.FC = () => {
   const detail2TotalFooterCell = (props: GridFooterCellProps) => {
     var parts = detail2DataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {detail2DataResult.total == -1
           ? 0

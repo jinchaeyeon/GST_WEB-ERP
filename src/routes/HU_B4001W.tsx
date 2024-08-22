@@ -658,7 +658,7 @@ const HU_B4001W: React.FC = () => {
 
     if (props.field == "yyyymm" || props.field == "startdate") {
       return (
-        <td colSpan={props.colSpan} style={props.style}>
+        <td colSpan={props.colSpan} style={props.style} {...props}>
           총 {dataResult.total}건
         </td>
       );
@@ -674,7 +674,7 @@ const HU_B4001W: React.FC = () => {
         </td>
       );
     } else {
-      return <td colSpan={props.colSpan} style={props.style}></td>;
+      return <td colSpan={props.colSpan} style={props.style} {...props}></td>;
     }
   };
 

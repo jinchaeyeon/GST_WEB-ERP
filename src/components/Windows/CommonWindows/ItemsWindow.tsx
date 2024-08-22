@@ -227,7 +227,7 @@ const ItemsWindow = ({
       insiz: filters.insiz,
       itemacnt: filters.itemacnt,
       useyn:
-        filters.useyn == "Y" ? "사용" : filters.useyn == "N" ? "미사용" : "",
+        filters.useyn == "Y" ? "Y" : filters.useyn == "N" ? "N" : "",
     };
     try {
       data = await processApi<any>("popup-data", parameters);
@@ -314,7 +314,7 @@ const ItemsWindow = ({
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult.total == -1
           ? 0

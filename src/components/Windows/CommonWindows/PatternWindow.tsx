@@ -486,7 +486,7 @@ const KendoWindow = ({
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = detailDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {detailDataResult.total == -1
           ? 0
@@ -500,7 +500,7 @@ const KendoWindow = ({
   const detailTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = detailDataResult2.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {detailDataResult2.total == -1
           ? 0
