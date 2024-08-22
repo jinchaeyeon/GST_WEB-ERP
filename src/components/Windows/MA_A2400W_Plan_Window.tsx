@@ -717,7 +717,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult.total == -1
           ? 0
@@ -731,7 +731,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = detailDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {detailDataResult.total == -1
           ? 0
@@ -745,7 +745,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const subTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = subDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {subDataResult.total == -1
           ? 0

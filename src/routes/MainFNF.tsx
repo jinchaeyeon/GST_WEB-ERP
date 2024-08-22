@@ -110,14 +110,14 @@ const Main: React.FC = () => {
   };
   const noticeTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총 {noticeDataResult.total}건
       </td>
     );
   };
   const orderTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총 {orderDataResult.total}건
       </td>
     );

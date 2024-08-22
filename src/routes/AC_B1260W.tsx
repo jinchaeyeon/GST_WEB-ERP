@@ -681,7 +681,7 @@ const AC_B1260W: React.FC = () => {
 
   const gridTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총 {gridDataResult.total}건
       </td>
     );

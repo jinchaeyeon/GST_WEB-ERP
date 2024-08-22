@@ -416,7 +416,7 @@ const QC_A0120: React.FC = () => {
   const detail1TotalFooterCell = (props: GridFooterCellProps) => {
     var parts = detail1DataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {detail1DataResult.total == -1
           ? 0

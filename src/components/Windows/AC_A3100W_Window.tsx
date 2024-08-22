@@ -1661,7 +1661,7 @@ const CopyWindow = ({
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult.total == -1
           ? 0
@@ -1674,7 +1674,7 @@ const CopyWindow = ({
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = mainDataResult2.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult2.total == -1
           ? 0
@@ -1687,7 +1687,7 @@ const CopyWindow = ({
   const mainTotalFooterCell3 = (props: GridFooterCellProps) => {
     var parts = mainDataResult3.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {mainDataResult3.total == -1
           ? 0
@@ -1759,7 +1759,7 @@ const CopyWindow = ({
 
     if (props.field != undefined) {
       return (
-        <td colSpan={props.colSpan} style={props.style}>
+        <td colSpan={props.colSpan} style={props.style} {...props}>
           자본적지출 계:&nbsp;
           {mainDataResult.total == 0 ? 0 : gubun1.length}
           건

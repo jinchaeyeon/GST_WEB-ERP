@@ -1254,7 +1254,7 @@ const HU_B4000W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = userAdjDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1266,7 +1266,7 @@ const HU_B4000W: React.FC = () => {
   const subTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = adjDetailDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1278,7 +1278,7 @@ const HU_B4000W: React.FC = () => {
   const subTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = commuteDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1290,7 +1290,7 @@ const HU_B4000W: React.FC = () => {
   const subTotalFooterCell3 = (props: GridFooterCellProps) => {
     var parts = journalDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -1302,7 +1302,7 @@ const HU_B4000W: React.FC = () => {
   const AdjTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = adjDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -2077,7 +2077,7 @@ const HU_B4000W: React.FC = () => {
     return array;
   };
 
-  const [horizontalPanes, setHorizontalPanes] = React.useState<Array<any>>([
+  const [horizontalPanes, setHorizontalPanes] = React.useState<Array<any>([
     { size: "35%", min: "20%" },
     {},
     { size: "50%", min: "20%" },

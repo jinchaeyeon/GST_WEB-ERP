@@ -665,7 +665,7 @@ const Main: React.FC = () => {
   //그리드 푸터
   const noticeTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총 {noticeDataResult.total}건
       </td>
     );
@@ -673,7 +673,7 @@ const Main: React.FC = () => {
 
   const workOrderTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총 {workOrderDataResult.total}건
       </td>
     );

@@ -893,7 +893,7 @@ const CM_A1600: React.FC = () => {
   //그리드 푸터
   const todoTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총 {todoDataResult.total}건
       </td>
     );
@@ -902,7 +902,7 @@ const CM_A1600: React.FC = () => {
   //그리드 푸터
   const userTotalFooterCell = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총 {userDataResult.total}건
       </td>
     );

@@ -543,7 +543,7 @@ const SA_B2221: React.FC = () => {
   const gridTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = gridDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {gridDataResult.total == -1
           ? 0

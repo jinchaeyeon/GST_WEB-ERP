@@ -548,7 +548,7 @@ const CM_B1000W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -560,7 +560,7 @@ const CM_B1000W: React.FC = () => {
   const subTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = subDataResult.total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -571,7 +571,7 @@ const CM_B1000W: React.FC = () => {
 
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         <div style={{ textAlign: "center" }}>{infomation.total_usetime}</div>
       </td>
     );

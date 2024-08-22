@@ -518,7 +518,7 @@ const HU_B2120W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = total.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {total == -1
           ? 0
@@ -532,7 +532,7 @@ const HU_B2120W: React.FC = () => {
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = total2.toString().split(".");
     return (
-      <td colSpan={props.colSpan} style={props.style}>
+      <td colSpan={props.colSpan} style={props.style} {...props}>
         총
         {total2 == -1
           ? 0
