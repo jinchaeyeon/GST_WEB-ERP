@@ -129,6 +129,7 @@ const CM_A3100W = lazy(() => import("./routes/CM_A3100W"));
 const CM_A3220W = lazy(() => import("./routes/CM_A3220W"));
 const CM_A4000W = lazy(() => import("./routes/CM_A4000W"));
 const CM_A4100W = lazy(() => import("./routes/CM_A4100W"));
+const CM_A4500W = lazy(() => import("./routes/CM_A4500W"));
 const CM_A5000W = lazy(() => import("./routes/CM_A5000W"));
 const CM_A7000W = lazy(() => import("./routes/CM_A7000W"));
 const CM_A7010W = lazy(() => import("./routes/CM_A7010W"));
@@ -807,6 +808,8 @@ const AppInner: React.FC = () => {
       return CM_A4000W;
     } else if (str == "CM_A4100W") {
       return CM_A4100W;
+    } else if (str == "CM_A4500W") {
+      return CM_A4500W;
     } else if (str == "CM_A5000W") {
       return CM_A5000W;
     } else if (str == "CM_A7000W") {
@@ -1372,6 +1375,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/CM_A3220W" component={CM_A3220W} exact />
                     <AuthRoute path="/CM_A4000W" component={CM_A4000W} exact />
                     <AuthRoute path="/CM_A4100W" component={CM_A4100W} exact />
+                    <AuthRoute path="/CM_A4500W" component={CM_A4500W} exact />
                     <AuthRoute path="/CM_A5000W" component={CM_A5000W} exact />
                     <AuthRoute path="/CM_A7000W" component={CM_A7000W} exact />
                     <AuthRoute path="/CM_A7010W" component={CM_A7010W} exact />
