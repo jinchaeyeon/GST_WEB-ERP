@@ -932,6 +932,16 @@ export const getItemQuery = (para: any) => {
   );
 };
 
+export const getBookQuery = (para: any) => {
+  return (
+    "SELECT * FROM CR070T WHERE bookcd = '" +
+    para.bookcd +
+    "' AND booknm LIKE '" +
+    para.booknm +
+    "%'"
+  );
+};
+
 export const getAcntQuery = (para: any) => {
   return "SELECT acntcd, acntnm FROM AC019T WHERE acntcd = '" + para + "'";
 };

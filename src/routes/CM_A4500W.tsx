@@ -4,6 +4,7 @@ import { getter } from "@progress/kendo-react-common";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -13,16 +14,30 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  Input,
+  InputChangeEvent,
+} from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { Buffer } from "buffer";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { bytesToBase64 } from "byte-base64";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
+  ButtonInGridInput,
+  ButtonInInput,
   FilterBox,
   FormBox,
   FormBoxWrap,
@@ -35,6 +50,8 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -44,12 +61,16 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UsePermissions,
+  convertDateToStr,
+  dateformat,
   getBizCom,
+  getBookQuery,
   getDeviceHeight,
   getGridItemChangedData,
   getHeight,
   getMenuName,
   handleKeyPressSearch,
+  setDefaultDate,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -60,8 +81,11 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CM_A4500W_Window from "../components/Windows/CM_A4500W_Window";
+import BookWindow from "../components/Windows/CommonWindows/BookWindow";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A4500W_C";
@@ -74,12 +98,148 @@ var height5 = 0;
 var height6 = 0;
 const IMAGE_MAX_SIZE = 500 * 1024 * 1024;
 const DATA_ITEM_KEY = "num";
+const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
 const NumberField = ["amt"];
+let deletedMainRows2: object[] = [];
+let temp2 = 0;
+const dateField = ["date"];
+const comboField = ["inoutdiv", "person"];
+const customField = ["bookcd"];
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent("L_inoutdiv_001, L_sysUserMaster_001", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field == "inoutdiv"
+      ? "L_inoutdiv_001"
+      : field == "person"
+      ? "L_sysUserMaster_001"
+      : "";
+
+  const bizComponent = bizComponentData?.find(
+    (item: any) => item.bizComponentId == bizComponentIdVal
+  );
+
+  const textField =
+    field == "person"
+      ? "user_name"
+      : field == "inoutdiv"
+      ? "name"
+      : "code_name";
+  const valueField =
+    field == "person" ? "user_id" : field == "inoutdiv" ? "code" : "sub_code";
+
+  return bizComponent ? (
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      textField={textField}
+      valueField={valueField}
+      {...props}
+    />
+  ) : (
+    <td />
+  );
+};
+
+const defaultBookInfo = {
+  bookcd: "",
+  booknm: "",
+  bookacnt: "",
+};
+
+export const FormContext = createContext<{
+  bookInfo: any;
+  setBookInfo: (d: React.SetStateAction<any>) => void;
+}>({} as any);
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setBookInfo } = useContext(FormContext);
+  let isInEdit = field == dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [bookWindowVisible, setBookWindowVisible] = useState<boolean>(false);
+
+  const onBookWndClick = () => {
+    setBookWindowVisible(true);
+  };
+
+  const setBookData = (data: any) => {
+    const { bookcd, booknm, bookacnt } = data;
+    setBookInfo({
+      bookcd,
+      booknm,
+      bookacnt,
+    });
+  };
+  //BA_A0080W에만 사용
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInGridInput>
+        <Button
+          name="bookcd"
+          onClick={onBookWndClick}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render == undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {bookWindowVisible && (
+        <BookWindow
+          setVisible={setBookWindowVisible}
+          setData={setBookData}
+          modal={true}
+        />
+      )}
+    </>
+  );
+};
+
 const CM_A4100W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const excelInput: any = React.useRef();
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(DATA_ITEM_KEY2);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
   const pc = UseGetValueFromSessionItem("pc");
@@ -101,7 +261,10 @@ const CM_A4100W: React.FC = () => {
   const [mobileheight, setMobileHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [mobileheight3, setMobileHeight3] = useState(0);
+  const [mobileheight4, setMobileHeight4] = useState(0);
   const [webheight, setWebHeight] = useState(0);
+  const [webheight2, setWebHeight2] = useState(0);
+
   useLayoutEffect(() => {
     if (customOptionData !== null) {
       height = getHeight(".ButtonContainer");
@@ -119,9 +282,11 @@ const CM_A4100W: React.FC = () => {
         setMobileHeight(getDeviceHeight(true) - height - height2 - height3);
         setMobileHeight2(getDeviceHeight(true) - height5 - height2 - height3);
         setMobileHeight3(getDeviceHeight(true) - height6 - height2 - height3);
+        setMobileHeight4(getDeviceHeight(true) - height - height2 - height3);
         setWebHeight(
           getDeviceHeight(true) - height - height2 - height3 - height4
         );
+        setWebHeight2(getDeviceHeight(true) - height - height2 - height3);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
@@ -129,7 +294,8 @@ const CM_A4100W: React.FC = () => {
         window.removeEventListener("resize", handleWindowResize);
       };
     }
-  }, [customOptionData, webheight]);
+  }, [customOptionData, webheight, webheight2]);
+
   //엑셀 내보내기
   let _export: any;
   let _export2: any;
@@ -149,7 +315,9 @@ const CM_A4100W: React.FC = () => {
       }
     }
   };
-
+  const [bookInfo, setBookInfo] = useState<any>(defaultBookInfo);
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA002,L_CR070, L_sysUserMaster_001, L_dptcd_001",
@@ -186,7 +354,11 @@ const CM_A4100W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
         bookacnt: defaultOption.find((item: any) => item.id == "bookacnt")
+          ?.valueCode,
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           ?.valueCode,
         isSearch: true,
       }));
@@ -201,18 +373,53 @@ const CM_A4100W: React.FC = () => {
       isSearch: true,
     }));
   };
+
+  useEffect(() => {
+    console.log(bookInfo);
+    const newData = mainDataResult2.data.map((item) =>
+      item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+        ? {
+            ...item,
+            bookcd: bookInfo.bookcd,
+            booknm: bookInfo.booknm,
+            bookacnt: bookInfo.bookacnt,
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+
+    setMainDataResult2((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [bookInfo]);
+
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: true,
+      pgNum: 1,
+      find_row_value: "",
+    }));
   };
   const sessionOrgdiv = UseGetValueFromSessionItem("orgdiv");
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    workType: "BOOK",
     orgdiv: sessionOrgdiv,
     bookcd: "",
     booknm: "",
     bookacnt: "",
+    frdt: new Date(),
+    todt: new Date(),
+    inoutdiv: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -241,6 +448,15 @@ const CM_A4100W: React.FC = () => {
     }));
   };
 
+  const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -254,15 +470,27 @@ const CM_A4100W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const [mainDataState2, setMainDataState2] = useState<State>({
+    sort: [],
+  });
+  const [tempState2, setTempState2] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
+    process([], mainDataState2)
+  );
+  const [tempResult2, setTempResult2] = useState<DataResult>(
+    process([], tempState2)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const [selectedState2, setSelectedState2] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
   let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -282,6 +510,20 @@ const CM_A4100W: React.FC = () => {
     });
   };
 
+  const [bookcdWindowVisible, setBookcdWindowVisible] =
+    useState<boolean>(false);
+  const onBookcdWndClick = () => {
+    setBookcdWindowVisible(true);
+  };
+  const getbookcdData = (data: any) => {
+    setFilters((prev) => {
+      return {
+        ...prev,
+        bookcd: data.bookcd,
+        booknm: data.booknm,
+      };
+    });
+  };
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     if (!permissions.view) return;
@@ -293,7 +535,7 @@ const CM_A4100W: React.FC = () => {
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
-        "@p_work_type": filters.workType,
+        "@p_work_type": "BOOK",
         "@p_orgdiv": filters.orgdiv,
         "@p_bookcd": filters.bookcd,
         "@p_frdt": "",
@@ -408,6 +650,67 @@ const CM_A4100W: React.FC = () => {
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchMainGrid2 = async (filters: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_CM_A4500W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "INOUT",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_bookcd": filters.bookcd,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_booknm": filters.booknm,
+        "@p_inoutdiv": filters.inoutdiv,
+        "@p_bookacnt": "",
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map(
+        (item: { date: string | number | Date }) => ({
+          ...item,
+          date: convertDateToStr(new Date(item.date)),
+        })
+      );
+
+      setMainDataResult2({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+
+      if (totalRowCnt > 0) {
+        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (
       filters.isSearch &&
@@ -423,7 +726,7 @@ const CM_A4100W: React.FC = () => {
       if (tabSelected == 0) {
         fetchMainGrid(deepCopiedFilters);
       } else {
-        //fetchMainGrid2(deepCopiedFilters);
+        fetchMainGrid2(deepCopiedFilters);
       }
     }
   }, [filters, permissions, bizComponentData, customOptionData]);
@@ -440,6 +743,7 @@ const CM_A4100W: React.FC = () => {
   const resetAllGrid = () => {
     setPage(initialPageState);
     setMainDataResult(process([], mainDataState));
+    setMainDataResult2(process([], mainDataState2));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -482,10 +786,22 @@ const CM_A4100W: React.FC = () => {
     });
   };
 
+  const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+
+    setSelectedState2(newSelectedState);
+  };
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
-
+  const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
+    setMainDataState2(event.dataState);
+  };
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -499,8 +815,24 @@ const CM_A4100W: React.FC = () => {
     );
   };
 
+  const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult2.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style} {...props}>
+        총
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const onMainSortChange2 = (e: any) => {
+    setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const [values2, setValues2] = React.useState<boolean>(false);
@@ -538,11 +870,30 @@ const CM_A4100W: React.FC = () => {
     );
   };
 
+  const onMainItemChange2 = (event: GridItemChangeEvent) => {
+    setMainDataState2((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult2,
+      setMainDataResult2,
+      DATA_ITEM_KEY2
+    );
+  };
+
   const customCellRender = (td: any, props: any) => (
     <CellRender
       originalProps={props}
       td={td}
       enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
       editField={EDIT_FIELD}
     />
   );
@@ -555,6 +906,16 @@ const CM_A4100W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
+
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
@@ -576,6 +937,43 @@ const CM_A4100W: React.FC = () => {
       });
     }
   };
+
+  const enterEdit2 = (dataItem: any, field: string) => {
+    if (field != "rowstatus" && field != "booknm" && field != "bookacnt") {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+      setEditIndex(dataItem[DATA_ITEM_KEY2]);
+      if (field) {
+        setEditedField(field);
+      }
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult2((prev) => {
+        return {
+          data: mainDataResult2.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
   const exitEdit = () => {
     const newData = mainDataResult.data.map((item: any) => ({
       ...item,
@@ -587,6 +985,61 @@ const CM_A4100W: React.FC = () => {
         total: prev.total,
       };
     });
+  };
+
+  const exitEdit2 = () => {
+    if (tempResult2.data != mainDataResult2.data) {
+      if (editedField !== "bookcd") {
+        const newData = mainDataResult2.data.map((item) =>
+          item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult2((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult2((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        mainDataResult2.data.map((item: { [x: string]: any; bookcd: any }) => {
+          if (editIndex == item[DATA_ITEM_KEY2]) {
+            fetchBookData(item.bookcd);
+          }
+        });
+      }
+    } else {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const InputChange = (e: any) => {
@@ -647,6 +1100,73 @@ const CM_A4100W: React.FC = () => {
         .replace(information.attdatnum_img.split(",")[0], "")
         .replace(",", ""),
       remark: information.remark,
+    }));
+  };
+
+  const onSaveClick2 = () => {
+    if (!permissions.save) return;
+    const dataItem = mainDataResult2.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+    let dataArr: any = {
+      rowstatus_s: [],
+      datnum_s: [],
+      date_s: [],
+      person_s: [],
+      inoutdiv_s: [],
+      bookcd_s: [],
+      remark_s: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        datnum = "",
+        date = "",
+        person = "",
+        inoutdiv = "",
+        bookcd = "",
+        remark = "",
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.datnum_s.push(datnum);
+      dataArr.date_s.push(date == "99991231" ? "" : date);
+      dataArr.person_s.push(person);
+      dataArr.inoutdiv_s.push(inoutdiv);
+      dataArr.bookcd_s.push(bookcd);
+      dataArr.remark_s.push(remark);
+    });
+    deletedMainRows2.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        datnum = "",
+        date = "",
+        person = "",
+        inoutdiv = "",
+        bookcd = "",
+        remark = "",
+      } = item;
+      dataArr.rowstatus_s.push("D");
+      dataArr.datnum_s.push(datnum);
+      dataArr.date_s.push(date == "99991231" ? "" : date);
+      dataArr.person_s.push(person);
+      dataArr.inoutdiv_s.push(inoutdiv);
+      dataArr.bookcd_s.push(bookcd);
+      dataArr.remark_s.push(remark);
+    });
+    setParaData((prev) => ({
+      ...prev,
+      workType: "INOUT",
+      orgdiv: sessionOrgdiv,
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      person_s: dataArr.person_s.join("|"),
+      inoutdiv_s: dataArr.inoutdiv_s.join("|"),
+      bookcd_s: dataArr.bookcd_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      datnum_s: dataArr.datnum_s.join("|"),
+      date_s: dataArr.date_s.join("|"),
     }));
   };
 
@@ -849,6 +1369,127 @@ const CM_A4100W: React.FC = () => {
     setDetailWindowVisible(true);
   };
 
+  const onDeleteClick2 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult2.data.forEach((item: any, index: number) => {
+      if (!selectedState2[item[DATA_ITEM_KEY2]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedMainRows2.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult2.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult2.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult2((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState2({
+        [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
+      });
+    }
+  };
+
+  const onAddClick2 = () => {
+    mainDataResult2.data.map((item) => {
+      if (item.num > temp2) {
+        temp2 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY]: ++temp2,
+      bookacnt: "",
+      bookcd: "",
+      booknm: "",
+      date: convertDateToStr(new Date()),
+      datnum: "",
+      inoutdiv: "",
+      person: userId,
+      remark: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+    setMainDataResult2((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const fetchBookData = React.useCallback(
+    async (bookcd: string) => {
+      if (!permissions.view) return;
+      let data: any;
+      const queryStr = getBookQuery({ bookcd: bookcd, booknm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess == true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const { bookcd, booknm, bookanct } = rows[0];
+          setBookInfo({
+            bookcd,
+            booknm,
+            bookanct,
+          });
+        } else {
+          const newData = mainDataResult2.data.map((item: any) =>
+            item[DATA_ITEM_KEY2] ==
+            Object.getOwnPropertyNames(selectedState2)[0]
+              ? {
+                  ...item,
+                  bookcd: item.bookcd,
+                  booknm: "",
+                  bookanct: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult2((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult2]
+  );
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -1673,7 +2314,186 @@ const CM_A4100W: React.FC = () => {
         <TabStripTab
           title="입출고내역"
           disabled={permissions.view ? false : true}
-        ></TabStripTab>
+        >
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tr>
+                <th>날짜</th>
+                <td>
+                  <CommonDateRangePicker
+                    value={{
+                      start: filters.frdt,
+                      end: filters.todt,
+                    }}
+                    onChange={(e: { value: { start: any; end: any } }) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        frdt: e.value.start,
+                        todt: e.value.end,
+                      }))
+                    }
+                  />
+                </td>
+                <th>도서코드</th>
+                <td>
+                  <Input
+                    name="bookcd"
+                    type="text"
+                    value={filters.bookcd}
+                    onChange={filterInputChange}
+                  />
+                  <ButtonInInput>
+                    <Button
+                      type={"button"}
+                      onClick={onBookcdWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
+                </td>
+                <th>도서명</th>
+                <td>
+                  <Input
+                    name="booknm"
+                    type="text"
+                    value={filters.booknm}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>입출구분</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="inoutdiv"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
+                </td>
+              </tr>
+            </FilterBox>
+          </FilterContainer>
+          <GridContainer>
+            <GridTitleContainer className="ButtonContainer">
+              <GridTitle>요약정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick2}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onDeleteClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+                <Button
+                  onClick={onSaveClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="저장"
+                  disabled={permissions.save ? false : true}
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <FormContext.Provider
+              value={{
+                bookInfo,
+                setBookInfo,
+              }}
+            >
+              <ExcelExport
+                data={mainDataResult2.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
+                }}
+                fileName={getMenuName()}
+              >
+                <Grid
+                  style={{ height: isMobile ? mobileheight4 : webheight2 }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      bookacnt: bookacntListData.find(
+                        (item: any) => item.sub_code == row.bookacnt
+                      )?.code_name,
+                      date: row.date
+                        ? new Date(dateformat(row.date))
+                        : new Date(dateformat("99991231")),
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                    })),
+                    mainDataState2
+                  )}
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : customField.includes(item.fieldName)
+                                  ? ColumnCommandCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </FormContext.Provider>
+          </GridContainer>
+        </TabStripTab>
       </TabStrip>
       {detailWindowVisible && (
         <CM_A4500W_Window
@@ -1687,6 +2507,13 @@ const CM_A4100W: React.FC = () => {
             }));
             setValues2(false);
           }}
+          modal={true}
+        />
+      )}
+      {bookcdWindowVisible && (
+        <BookWindow
+          setVisible={setBookcdWindowVisible}
+          setData={getbookcdData}
           modal={true}
         />
       )}
