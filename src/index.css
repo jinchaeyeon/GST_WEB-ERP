@@ -67,6 +67,7 @@ body {
 
 html {
   height: -webkit-fill-available !important;
+  touch-action: pan-y;
 }
 
 code {
