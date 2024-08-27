@@ -100,7 +100,7 @@ const CM_B1105W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        recdt: setDefaultDate(customOptionData, "frdt"),
+        recdt: setDefaultDate(customOptionData, "recdt"),
         isSearch: true,
       }));
     }
