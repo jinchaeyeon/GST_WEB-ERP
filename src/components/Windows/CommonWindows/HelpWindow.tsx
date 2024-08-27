@@ -214,20 +214,26 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const [webheight, setWebHeight] = useState(0);
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
+  const [isVisibleDetail, setIsVisableDetail] = useState(true);
   useLayoutEffect(() => {
     height = getHeight(".k-window-titlebar");
     height2 = getHeight(".WindowTitleContainer"); //FormBox부분
     height3 = getHeight(".BottomContainer"); //하단 버튼부분
-    height4 = getHeight(".WindowButtonContainer");
+    height4 = getHeight(".ButtonContainer");
     setMobileHeight(
       getWindowDeviceHeight(false, deviceHeight) - height - height2 - height3
     );
     setWebHeight(
-      (getWindowDeviceHeight(false, position.height) -
-        height -
-        height2 -
-        height3) /
-        2
+      isVisibleDetail
+        ? (getWindowDeviceHeight(false, position.height) -
+            height -
+            height2 -
+            height3) /
+            2
+        : getWindowDeviceHeight(false, position.height) -
+            height -
+            height2 -
+            height3
     );
     setMobileHeight2(
       getWindowDeviceHeight(false, deviceHeight) -
@@ -244,7 +250,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
         2 -
         height4
     );
-  }, []);
+  }, [isVisibleDetail]);
   const onChangePostion = (position: any) => {
     setPosition(position);
     setWebHeight(
@@ -1068,6 +1074,12 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
         <>
           <TitleContainer className="WindowTitleContainer">
             <Title>메뉴얼</Title>
+            <Button
+              themeColor={"primary"}
+              fillMode={"flat"}
+              icon={isVisibleDetail ? "chevron-down" : "chevron-up"}
+              onClick={() => setIsVisableDetail((prev) => !prev)}
+            />
           </TitleContainer>
           <div
             style={{
@@ -1076,118 +1088,120 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
           >
             {url != "" ? <FileViewers fileUrl={url} isMobile={isMobile} /> : ""}
           </div>
-          <FormContext.Provider
-            value={{
-              attdatnum,
-              is_attached,
-              setAttdatnum,
-              setIs_attached,
-              mainDataState,
-              setMainDataState,
-              // fetchGrid,
-            }}
-          >
-            <GridContainer
-              style={{
-                overflow: "auto",
+          {isVisibleDetail && (
+            <FormContext.Provider
+              value={{
+                attdatnum,
+                is_attached,
+                setAttdatnum,
+                setIs_attached,
+                mainDataState,
+                setMainDataState,
+                // fetchGrid,
               }}
             >
-              <GridTitleContainer className="WindowButtonContainer">
-                <GridTitle>코멘트</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <Grid
+              <GridContainer
                 style={{
-                  height: webheight2,
+                  overflow: "auto",
                 }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    update_userid: userListData.find(
-                      (items: any) => items.user_id == row.update_userid
-                    )?.user_name,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)],
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="contents"
-                  title="내용"
-                  width="250px"
-                  footerCell={mainTotalFooterCell}
-                />
-                <GridColumn
-                  field="is_attached"
-                  title="첨부"
-                  width="120px"
-                  cell={ColumnCommandCell}
-                />
-                <GridColumn
-                  field="update_userid"
-                  title="마지막 수정자"
-                  width="120px"
-                />
-                <GridColumn
-                  field="update_time"
-                  title="마지막 수정일시"
-                  width="150px"
-                />
-              </Grid>
-            </GridContainer>
-          </FormContext.Provider>
+                <GridTitleContainer className="ButtonContainer">
+                  <GridTitle>코멘트</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{
+                    height: webheight2,
+                  }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      update_userid: userListData.find(
+                        (items: any) => items.user_id == row.update_userid
+                      )?.user_name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="contents"
+                    title="내용"
+                    width="250px"
+                    footerCell={mainTotalFooterCell}
+                  />
+                  <GridColumn
+                    field="is_attached"
+                    title="첨부"
+                    width="120px"
+                    cell={ColumnCommandCell}
+                  />
+                  <GridColumn
+                    field="update_userid"
+                    title="마지막 수정자"
+                    width="120px"
+                  />
+                  <GridColumn
+                    field="update_time"
+                    title="마지막 수정일시"
+                    width="150px"
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext.Provider>
+          )}
         </>
       )}
 
