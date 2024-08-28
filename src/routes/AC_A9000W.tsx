@@ -776,17 +776,10 @@ const AC_A9000W: React.FC = () => {
             if (selectedRow !== undefined) {
               setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
 
-              if (gridRef.current) {
-                const findRowIndex = mainDataResult.data.length;
-                targetRowIndex = findRowIndex;
-
-                // 스크롤 이동
-                gridRef.current.scrollToIndex(findRowIndex);
-              }
             }
           }
         }
-      } 
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -808,13 +801,13 @@ const AC_A9000W: React.FC = () => {
   };
 
   //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (targetRowIndex !== null && gridRef.current) {
-      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
-      targetRowIndex = null;
-    }
-    setLoading(false);
-  }, [mainDataResult]);
+  // useEffect(() => {
+  //   if (targetRowIndex !== null && gridRef.current) {
+  //     gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+  //     targetRowIndex = null;
+  //   }
+  //   setLoading(false);
+  // }, [mainDataResult]);
 
   const [paraData, setParaData] = useState({
     workType: "",
@@ -1298,7 +1291,7 @@ const AC_A9000W: React.FC = () => {
         (data2.inamt || 0) -
         (data2.inoutamt || 0) -
         (data2.chaoutamt || 0);
-      data2.rowstatus = "U";
+      data2.rowstatus = "N" ? "N" : "U";
     }
     if (data3) {
       data3.inamt =
@@ -1313,7 +1306,7 @@ const AC_A9000W: React.FC = () => {
         (data3.chaoutamt || 0) -
         (data3.inoutamt || 0) +
         (data3.chainamt || 0);
-      data3.rowstatus = "U";
+      data3.rowstatus = "N" ? "N" : "U";
     }
     const updateData = (data: any) => {
       if (
@@ -1329,7 +1322,7 @@ const AC_A9000W: React.FC = () => {
           data.chainamt -
           data.outamt -
           (data.baseamt + data.inamt + data.chainamt);
-        data.rowstatus = "U";
+        data.rowstatus = "N" ? "N" : "U";
       } else {
         data.adjustamt =
           data.baseamt +
@@ -1338,7 +1331,7 @@ const AC_A9000W: React.FC = () => {
           data.outamt -
           data.chaoutamt -
           data.inoutamt;
-        data.rowstatus = "U";
+        data.rowstatus = "N" ? "N" : "U";
       }
     };
     [data, data1, data2, data3, data4].forEach((data) => {
@@ -1645,7 +1638,7 @@ const AC_A9000W: React.FC = () => {
       return item.rowstatus === "U" || item.rowstatus === "N";
     });
     if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
-    if (paraData.workType != "D" && mainDataResult.total > 0) {
+    if (paraData.workType != "D") {
       let dataArr: any = {
         rowstatus_s: [],
         yyyymm_s: [],
@@ -1761,11 +1754,7 @@ const AC_A9000W: React.FC = () => {
   }, [paraData, permissions]);
 
   const onAddClick = () => {
-    setSubFilters2((prev) => ({
-      ...prev,
-      work_type: "SUM",
-      isSearch: true,
-    }));
+    fetchMainGrid(subFilters2);
   };
 
   return (
