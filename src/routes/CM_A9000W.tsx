@@ -322,6 +322,22 @@ const CM_A9000W: React.FC = () => {
         dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         isSearch: true,
       }));
+      setFilters4((prev) => ({
+        ...prev,
+        yyyy: setDefaultDate(customOptionData, "yyyy"),
+        orgdiv: defaultOption.find((item: any) => item.id == "orgdiv")
+          ?.valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        userid: defaultOption.find((item: any) => item.id == "userid")
+          ?.valueCode,
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
+          ?.valueCode,
+        viewyn: defaultOption.find((item: any) => item.id == "viewyn")
+          ?.valueCode,
+        isSearch: true,
+      }));
     }
   }, [customOptionData]);
 
@@ -496,6 +512,20 @@ const CM_A9000W: React.FC = () => {
     isSearch: false,
   });
 
+  const [filters4, setFilters4] = useState({
+    pgSize: PAGE_SIZE,
+    orgdiv: sessionOrgdiv,
+    location: sessionLocation,
+    yyyy: new Date(),
+    dptcd: "",
+    viewyn: "",
+    userid: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -509,6 +539,15 @@ const CM_A9000W: React.FC = () => {
     const { value, name } = e.target;
 
     setFilters3((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterInputChange4 = (e: any) => {
+    const { value, name } = e.target;
+
+    setFilters4((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -532,10 +571,28 @@ const CM_A9000W: React.FC = () => {
     }));
   };
 
+  const filterComboBoxChange4 = (e: any) => {
+    const { name, value } = e;
+
+    setFilters4((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterRadioChange4 = (e: any) => {
+    const { name, value } = e;
+
+    setFilters4((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -2825,7 +2882,99 @@ const CM_A9000W: React.FC = () => {
         <TabStripTab
           title="MBO_PLAN"
           disabled={permissions.view ? false : true}
-        ></TabStripTab>
+        >
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>기준년도</th>
+                  <td>
+                    <DatePicker
+                      name="yyyy"
+                      value={filters4.yyyy}
+                      format="yyyy"
+                      onChange={filterInputChange4}
+                      placeholder=""
+                      calendar={YearCalendar}
+                      className="required"
+                    />
+                  </td>
+                  <th>회사구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="orgdiv"
+                        value={filters4.orgdiv}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange4}
+                      />
+                    )}
+                  </td>
+                  <th>사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="location"
+                        value={filters4.location}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange4}
+                      />
+                    )}
+                  </td>
+                  <th>현황조회여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="viewyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange4}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>사원명</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="userid"
+                        value={filters4.userid}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange4}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
+                  </td>
+                  <th>재직구분</th>
+                  <td>
+                    {" "}
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="rtrchk"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange4}
+                      />
+                    )}
+                  </td>
+                  <th>부서</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="dptcd"
+                        value={filters4.dptcd}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange4}
+                        textField="dptnm"
+                        valueField="dptcd"
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+        </TabStripTab>
       </TabStrip>
       {custWindowVisible && (
         <CustomersWindow
