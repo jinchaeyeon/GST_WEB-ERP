@@ -149,4 +149,93 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList3",
+    columns: [
+      {
+        id: "col_title",
+        field: "title",
+        caption: "구분",
+        width: 120,
+      },
+      {
+        id: "col_amt01",
+        field: "amt01",
+        caption: "1월",
+        width: 100,
+      },
+      {
+        id: "col_amt02",
+        field: "amt02",
+        caption: "2월",
+        width: 100,
+      },
+      {
+        id: "col_amt03",
+        field: "amt03",
+        caption: "3월",
+        width: 100,
+      },
+      {
+        id: "col_amt04",
+        field: "amt04",
+        caption: "4월",
+        width: 100,
+      },
+      {
+        id: "col_amt05",
+        field: "amt05",
+        caption: "5월",
+        width: 100,
+      },
+      {
+        id: "col_amt06",
+        field: "amt06",
+        caption: "6월",
+        width: 100,
+      },
+      {
+        id: "col_amt07",
+        field: "amt07",
+        caption: "7월",
+        width: 100,
+      },
+      {
+        id: "col_amt08",
+        field: "amt08",
+        caption: "8월",
+        width: 100,
+      },
+      {
+        id: "col_amt09",
+        field: "amt09",
+        caption: "9월",
+        width: 100,
+      },
+      {
+        id: "col_amt10",
+        field: "amt10",
+        caption: "10월",
+        width: 100,
+      },
+      {
+        id: "col_amt11",
+        field: "amt11",
+        caption: "11월",
+        width: 100,
+      },
+      {
+        id: "col_amt12",
+        field: "amt12",
+        caption: "12월",
+        width: 100,
+      },
+      {
+        id: "col_totamt",
+        field: "totamt",
+        caption: "합계",
+        width: 100,
+      },
+    ],
+  },
 ];
