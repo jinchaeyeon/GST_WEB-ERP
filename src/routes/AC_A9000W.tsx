@@ -786,11 +786,7 @@ const AC_A9000W: React.FC = () => {
             }
           }
         }
-      } else if (filters.work_type == "SUM_LIST1") {
-        if (data.returnString != "") {
-          rtnamt = parseFloat(data.returnString);
-        }
-      } else rtnamt = null;
+      } 
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1292,8 +1288,7 @@ const AC_A9000W: React.FC = () => {
     if (mainDataResult2.total == 0) {
       sumamt = 0;
     } else {
-     
-      sumamt = rtnamt ?? 0;
+      sumamt = mainDataResult2.data[0].total_slipamt;
     }
     if (data2) {
       data2.inamt = (data?.outamt || 0) + (data1?.outamt || 0) + sumamt;
@@ -1628,24 +1623,11 @@ const AC_A9000W: React.FC = () => {
 
   const onRecalClick = () => {
     if (mainDataResult.total < 1) {
-      setFilters((prev) => ({
+      setSubFilters((prev) => ({
         ...prev,
-        work_type: "SUM",
         isSearch: true,
       }));
-      return;
     }
-    setSubFilters((prev) => ({
-      ...prev,
-      isSearch: true,
-    }));
-    setSubFilters2((prev: any) => ({
-      ...prev,
-      work_type: "SUB_LIST1",
-      pgNum: 1,
-      find_row_value: "",
-      isSearch: true,
-    }));
   };
 
   const onSaveClick = (workType: string) => {
