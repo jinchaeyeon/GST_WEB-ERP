@@ -95,10 +95,12 @@ var height2 = 0;
 var height3 = 0;
 var height4 = 0;
 var height5 = 0;
+var height6 = 0;
 let temp2 = 0;
 const DATA_ITEM_KEY = "dptcd";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
+const DATA_ITEM_KEY4 = "num";
 let targetRowIndex: null | number = null;
 const NumberField = [
   "totdircost",
@@ -127,6 +129,46 @@ const NumberField = [
   "amt10",
   "amt11",
   "amt12",
+  "dircost",
+  "indircost",
+  "royalty",
+  "totcost",
+  "indircost01",
+  "indircost02",
+  "indircost03",
+  "indircost04",
+  "indircost05",
+  "indircost06",
+  "indircost07",
+  "indircost08",
+  "indircost09",
+  "indircost10",
+  "indircost11",
+  "indircost12",
+  "royalty01",
+  "royalty02",
+  "royalty03",
+  "royalty04",
+  "royalty05",
+  "royalty06",
+  "royalty07",
+  "royalty08",
+  "royalty09",
+  "royalty10",
+  "royalty11",
+  "royalty12",
+  "totcost01",
+  "totcost02",
+  "totcost03",
+  "totcost04",
+  "totcost05",
+  "totcost06",
+  "totcost07",
+  "totcost08",
+  "totcost09",
+  "totcost10",
+  "totcost11",
+  "totcost12",
 ];
 const CustomComboField = ["user_id", "pgmdiv", "devdiv"];
 const commandField = ["custcd"];
@@ -281,6 +323,7 @@ const CM_A9000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
+  const idGetter4 = getter(DATA_ITEM_KEY4);
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
   };
@@ -345,10 +388,12 @@ const CM_A9000W: React.FC = () => {
   const [mobileheight2, setMobileHeight2] = useState(0);
   const [mobileheight3, setMobileHeight3] = useState(0);
   const [mobileheight4, setMobileHeight4] = useState(0);
+  const [mobileheight5, setMobileHeight5] = useState(0);
   const [webheight, setWebHeight] = useState(0);
   const [webheight2, setWebHeight2] = useState(0);
   const [webheight3, setWebHeight3] = useState(0);
   const [webheight4, setWebHeight4] = useState(0);
+  const [webheight5, setWebHeight5] = useState(0);
 
   useLayoutEffect(() => {
     if (customOptionData !== null) {
@@ -357,6 +402,7 @@ const CM_A9000W: React.FC = () => {
       height3 = getHeight(".ButtonContainer");
       height4 = getHeight(".ButtonContainer2");
       height5 = getHeight(".ButtonContainer3");
+      height6 = getHeight(".ButtonContainer4");
       const handleWindowResize = () => {
         let deviceWidth = document.documentElement.clientWidth;
         setIsMobile(deviceWidth <= 1200);
@@ -364,10 +410,12 @@ const CM_A9000W: React.FC = () => {
         setMobileHeight2(getDeviceHeight(true) - height - height2 - height4);
         setMobileHeight3(getDeviceHeight(true) - height - height2);
         setMobileHeight4(getDeviceHeight(true) - height - height2 - height5);
+        setMobileHeight5(getDeviceHeight(true) - height - height2 - height6);
         setWebHeight(getDeviceHeight(true) - height - height2 - height3);
         setWebHeight2(getDeviceHeight(true) - height - height2 - height4);
         setWebHeight3((getDeviceHeight(true) - height - height2) / 2);
         setWebHeight4((getDeviceHeight(true) - height - height2) / 2 - height5);
+        setWebHeight5(getDeviceHeight(true) - height - height2 - height6);
       };
       handleWindowResize();
       window.addEventListener("resize", handleWindowResize);
@@ -382,10 +430,12 @@ const CM_A9000W: React.FC = () => {
     webheight2,
     webheight3,
     webheight4,
+    webheight5,
   ]);
   let _export: any;
   let _export2: any;
   let _export3: any;
+  let _export4: any;
   const exportExcel = () => {
     if (tabSelected == 0) {
       if (_export !== null && _export !== undefined) {
@@ -401,6 +451,12 @@ const CM_A9000W: React.FC = () => {
         const optionsGridThree = _export3.workbookOptions();
         optionsGridThree.sheets[0].title = "상세정보";
         _export3.save(optionsGridThree);
+      }
+    } else if (tabSelected == 2) {
+      if (_export4 !== null && _export4 !== undefined) {
+        const optionsGridFour = _export4.workbookOptions();
+        optionsGridFour.sheets[0].title = "요약정보";
+        _export4.save(optionsGridFour);
       }
     }
   };
@@ -456,6 +512,25 @@ const CM_A9000W: React.FC = () => {
         } else {
           resetAllGrid();
           setFilters3((prev) => ({
+            ...prev,
+            pgNum: 1,
+            find_row_value: "",
+            isSearch: true,
+          }));
+          if (isMobile && swiper) {
+            swiper.slideTo(0);
+          }
+        }
+      } catch (e) {
+        alert(e);
+      }
+    } else if (tabSelected == 2) {
+      try {
+        if (convertDateToStr(filters3.yyyy).substring(0, 4) < "1997") {
+          throw findMessage(messagesData, "CM_A9000W_001");
+        } else {
+          resetAllGrid();
+          setFilters4((prev) => ({
             ...prev,
             pgNum: 1,
             find_row_value: "",
@@ -620,7 +695,13 @@ const CM_A9000W: React.FC = () => {
   const [mainDataState3, setMainDataState3] = useState<State>({
     sort: [],
   });
+  const [mainDataState4, setMainDataState4] = useState<State>({
+    sort: [],
+  });
   const [tempState2, setTempState2] = useState<State>({
+    sort: [],
+  });
+  const [tempState4, setTempState4] = useState<State>({
     sort: [],
   });
   const [allChartDataResult, setAllChartDataResult] = useState({
@@ -636,8 +717,14 @@ const CM_A9000W: React.FC = () => {
   const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
     process([], mainDataState)
   );
+  const [mainDataResult4, setMainDataResult4] = useState<DataResult>(
+    process([], mainDataState4)
+  );
   const [tempResult2, setTempResult2] = useState<DataResult>(
     process([], tempState2)
+  );
+  const [tempResult4, setTempResult4] = useState<DataResult>(
+    process([], tempState4)
   );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -648,10 +735,14 @@ const CM_A9000W: React.FC = () => {
   const [selectedState3, setSelectedState3] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const [selectedState4, setSelectedState4] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
+  const [page4, setPage4] = useState(initialPageState);
   let gridRef: any = useRef(null);
 
   //그리드 데이터 조회
@@ -964,6 +1055,63 @@ const CM_A9000W: React.FC = () => {
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchMainGrid4 = async (filters4: any) => {
+    if (!permissions.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_CM_A9000W_Q",
+      pageNumber: filters4.pgNum,
+      pageSize: filters4.pgSize,
+      parameters: {
+        "@p_work_type": "PLAN",
+        "@p_orgdiv": filters4.orgdiv,
+        "@p_location": filters4.location,
+        "@p_yyyy": convertDateToStr(filters4.yyyy).substring(0, 4),
+        "@p_dptcd": filters4.dptcd,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_pgmdiv": filters.pgmdiv,
+        "@p_rtrchk": filters4.rtrchk,
+        "@p_viewyn": filters4.viewyn,
+        "@p_devdiv": filters.devdiv,
+        "@p_userid": filters4.userid,
+        "@p_find_row_value": filters4.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult4({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+
+      if (totalRowCnt > 0) {
+        setSelectedState4({ [rows[0][DATA_ITEM_KEY4]]: true });
+      }
+    }
+    setFilters4((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (filters.isSearch && permissions.view && customOptionData !== null) {
       const _ = require("lodash");
@@ -995,6 +1143,16 @@ const CM_A9000W: React.FC = () => {
   }, [filters3, permissions, customOptionData]);
 
   useEffect(() => {
+    if (filters4.isSearch && permissions.view && customOptionData !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters4);
+
+      setFilters4((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      fetchMainGrid4(deepCopiedFilters);
+    }
+  }, [filters4, permissions, customOptionData]);
+
+  useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex !== null && gridRef.current) {
       gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
@@ -1006,9 +1164,11 @@ const CM_A9000W: React.FC = () => {
     setPage(initialPageState);
     setPage2(initialPageState);
     setPage3(initialPageState);
+    setPage4(initialPageState);
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
     setMainDataResult3(process([], mainDataState3));
+    setMainDataResult4(process([], mainDataState4));
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -1054,6 +1214,17 @@ const CM_A9000W: React.FC = () => {
     setSelectedState3(newSelectedState);
   };
 
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange4 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState4,
+      dataItemKey: DATA_ITEM_KEY4,
+    });
+
+    setSelectedState4(newSelectedState);
+  };
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
@@ -1064,6 +1235,9 @@ const CM_A9000W: React.FC = () => {
 
   const onMainDataStateChange3 = (event: GridDataStateChangeEvent) => {
     setMainDataState3(event.dataState);
+  };
+  const onMainDataStateChange4 = (event: GridDataStateChangeEvent) => {
+    setMainDataState4(event.dataState);
   };
 
   //그리드 푸터
@@ -1104,7 +1278,18 @@ const CM_A9000W: React.FC = () => {
       </td>
     );
   };
-
+  //그리드 푸터
+  const mainTotalFooterCell4 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult4.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style} {...props}>
+        총
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1114,7 +1299,9 @@ const CM_A9000W: React.FC = () => {
   const onMainSortChange3 = (e: any) => {
     setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
   };
-
+  const onMainSortChange4 = (e: any) => {
+    setMainDataState4((prev) => ({ ...prev, sort: e.sort }));
+  };
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -1159,9 +1346,42 @@ const CM_A9000W: React.FC = () => {
       ...event.page,
     });
   };
+
+  const pageChange4 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    setFilters4((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+    setPage4({
+      ...event.page,
+    });
+  };
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
+  const gridSumQtyFooterCell4 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult4.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
     if (sum != undefined) {
@@ -1188,11 +1408,28 @@ const CM_A9000W: React.FC = () => {
       DATA_ITEM_KEY2
     );
   };
+  const onMainItemChange4 = (event: GridItemChangeEvent) => {
+    setMainDataState4((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult4,
+      setMainDataResult4,
+      DATA_ITEM_KEY4
+    );
+  };
   const customCellRender2 = (td: any, props: any) => (
     <CellRender
       originalProps={props}
       td={td}
       enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender4 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit4}
       editField={EDIT_FIELD}
     />
   );
@@ -1204,7 +1441,14 @@ const CM_A9000W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-
+  const customRowRender4 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit4}
+      editField={EDIT_FIELD}
+    />
+  );
   const enterEdit2 = (dataItem: any, field: string) => {
     if (
       field != "rowstatus" &&
@@ -1241,6 +1485,49 @@ const CM_A9000W: React.FC = () => {
       setTempResult2((prev) => {
         return {
           data: mainDataResult2.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit4 = (dataItem: any, field: string) => {
+    if (
+      field != "rowstatus" &&
+      field != "dptcd" &&
+      field != "dircost" &&
+      field != "indircost" &&
+      field != "royalty" &&
+      field != "totcost"
+    ) {
+      const newData = mainDataResult4.data.map((item) =>
+        item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+      setEditIndex(dataItem[DATA_ITEM_KEY4]);
+      if (field) {
+        setEditedField(field);
+      }
+      setTempResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult4((prev) => {
+        return {
+          data: mainDataResult4.data,
           total: prev.total,
         };
       });
@@ -1443,6 +1730,294 @@ const CM_A9000W: React.FC = () => {
     }
   };
 
+  const exitEdit4 = () => {
+    if (tempResult4.data != mainDataResult4.data) {
+      if (
+        editedField == "dircost01" ||
+        editedField == "dircost02" ||
+        editedField == "dircost03" ||
+        editedField == "dircost04" ||
+        editedField == "dircost05" ||
+        editedField == "dircost06" ||
+        editedField == "dircost07" ||
+        editedField == "dircost08" ||
+        editedField == "dircost09" ||
+        editedField == "dircost10" ||
+        editedField == "dircost11" ||
+        editedField == "dircost12"
+      ) {
+        const newData = mainDataResult4.data.map((item) =>
+          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                dircost:
+                  item.dircost01 +
+                  item.dircost02 +
+                  item.dircost03 +
+                  item.dircost04 +
+                  item.dircost05 +
+                  item.dircost06 +
+                  item.dircost07 +
+                  item.dircost08 +
+                  item.dircost09 +
+                  item.dircost10 +
+                  item.dircost11 +
+                  item.dircost12,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (
+        editedField == "indircost01" ||
+        editedField == "indircost02" ||
+        editedField == "indircost03" ||
+        editedField == "indircost04" ||
+        editedField == "indircost05" ||
+        editedField == "indircost06" ||
+        editedField == "indircost07" ||
+        editedField == "indircost08" ||
+        editedField == "indircost09" ||
+        editedField == "indircost10" ||
+        editedField == "indircost11" ||
+        editedField == "indircost12"
+      ) {
+        const newData = mainDataResult4.data.map((item) =>
+          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                indircost:
+                  item.indircost01 +
+                  item.indircost02 +
+                  item.indircost03 +
+                  item.indircost04 +
+                  item.indircost05 +
+                  item.indircost06 +
+                  item.indircost07 +
+                  item.indircost08 +
+                  item.indircost09 +
+                  item.indircost10 +
+                  item.indircost11 +
+                  item.indircost12,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (
+        editedField == "royalty01" ||
+        editedField == "royalty02" ||
+        editedField == "royalty03" ||
+        editedField == "royalty04" ||
+        editedField == "royalty05" ||
+        editedField == "royalty06" ||
+        editedField == "royalty07" ||
+        editedField == "royalty08" ||
+        editedField == "royalty09" ||
+        editedField == "royalty10" ||
+        editedField == "royalty11" ||
+        editedField == "royalty12"
+      ) {
+        const newData = mainDataResult4.data.map((item) =>
+          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                royalty:
+                  item.royalty01 +
+                  item.royalty02 +
+                  item.royalty03 +
+                  item.royalty04 +
+                  item.royalty05 +
+                  item.royalty06 +
+                  item.royalty07 +
+                  item.royalty08 +
+                  item.royalty09 +
+                  item.royalty10 +
+                  item.royalty11 +
+                  item.royalty12,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (
+        editedField == "totcost01" ||
+        editedField == "totcost02" ||
+        editedField == "totcost03" ||
+        editedField == "totcost04" ||
+        editedField == "totcost05" ||
+        editedField == "totcost06" ||
+        editedField == "totcost07" ||
+        editedField == "totcost08" ||
+        editedField == "totcost09" ||
+        editedField == "totcost10" ||
+        editedField == "totcost11" ||
+        editedField == "totcost12"
+      ) {
+        const newData = mainDataResult4.data.map((item) =>
+          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                totcost:
+                  item.totcost01 +
+                  item.totcost02 +
+                  item.totcost03 +
+                  item.totcost04 +
+                  item.totcost05 +
+                  item.totcost06 +
+                  item.totcost07 +
+                  item.totcost08 +
+                  item.totcost09 +
+                  item.totcost10 +
+                  item.totcost11 +
+                  item.totcost12,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (editedField == "user_id") {
+        const newData = mainDataResult4.data.map((item) =>
+          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                postcd: userListData.find(
+                  (items: any) => items.user_id == item.user_id
+                )?.postcd,
+                dptcd: userListData.find(
+                  (items: any) => items.user_id == item.user_id
+                )?.dptcd,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        const newData = mainDataResult4.data.map((item) =>
+          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setTempResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult4((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
+    } else {
+      const newData = mainDataResult4.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
   const fetchCustInfo = async (custcd: string) => {
     if (!permissions.view) return;
     if (custcd == "") return;
@@ -1537,6 +2112,156 @@ const CM_A9000W: React.FC = () => {
         [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
       });
     }
+  };
+
+  const onDeleteClick4 = (e: any) => {
+    if (!permissions.save) return;
+    const dataItem = mainDataResult4.data.filter(
+      (item: any) =>
+        item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+    );
+
+    if (dataItem.length == 0) return false;
+
+    let dataArr: any = {
+      rowstatus_s: [],
+      pgmdiv_s: [],
+      custcd_s: [],
+      devdiv_s: [],
+      userid_s: [],
+      remark_s: [],
+
+      seq01_s: [],
+      seq02_s: [],
+      seq03_s: [],
+      seq04_s: [],
+      seq05_s: [],
+      seq06_s: [],
+      seq07_s: [],
+      seq08_s: [],
+      seq09_s: [],
+      seq10_s: [],
+      seq11_s: [],
+      seq12_s: [],
+
+      dircost01_s: [],
+      dircost02_s: [],
+      dircost03_s: [],
+      dircost04_s: [],
+      dircost05_s: [],
+      dircost06_s: [],
+      dircost07_s: [],
+      dircost08_s: [],
+      dircost09_s: [],
+      dircost10_s: [],
+      dircost11_s: [],
+      dircost12_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        pgmdiv = "",
+        custcd = "",
+        devdiv = "",
+        user_id = "",
+        remark = "",
+
+        seq01 = "",
+        seq02 = "",
+        seq03 = "",
+        seq04 = "",
+        seq05 = "",
+        seq06 = "",
+        seq07 = "",
+        seq08 = "",
+        seq09 = "",
+        seq10 = "",
+        seq11 = "",
+        seq12 = "",
+
+        dircost01 = "",
+        dircost02 = "",
+        dircost03 = "",
+        dircost04 = "",
+        dircost05 = "",
+        dircost06 = "",
+        dircost07 = "",
+        dircost08 = "",
+        dircost09 = "",
+        dircost10 = "",
+        dircost11 = "",
+        dircost12 = "",
+      } = item;
+      dataArr.rowstatus_s.push("D");
+      dataArr.pgmdiv_s.push("Z");
+      dataArr.custcd_s.push(custcd);
+      dataArr.devdiv_s.push(devdiv);
+      dataArr.userid_s.push(user_id);
+      dataArr.remark_s.push(remark);
+      dataArr.seq01_s.push(seq01);
+      dataArr.seq02_s.push(seq02);
+      dataArr.seq03_s.push(seq03);
+      dataArr.seq04_s.push(seq04);
+      dataArr.seq05_s.push(seq05);
+      dataArr.seq06_s.push(seq06);
+      dataArr.seq07_s.push(seq07);
+      dataArr.seq08_s.push(seq08);
+      dataArr.seq09_s.push(seq09);
+      dataArr.seq10_s.push(seq10);
+      dataArr.seq11_s.push(seq11);
+      dataArr.seq12_s.push(seq12);
+      dataArr.dircost01_s.push(dircost01);
+      dataArr.dircost02_s.push(dircost02);
+      dataArr.dircost03_s.push(dircost03);
+      dataArr.dircost04_s.push(dircost04);
+      dataArr.dircost05_s.push(dircost05);
+      dataArr.dircost06_s.push(dircost06);
+      dataArr.dircost07_s.push(dircost07);
+      dataArr.dircost08_s.push(dircost08);
+      dataArr.dircost09_s.push(dircost09);
+      dataArr.dircost10_s.push(dircost10);
+      dataArr.dircost11_s.push(dircost11);
+      dataArr.dircost12_s.push(dircost12);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "PLAN",
+      orgdiv: sessionOrgdiv,
+      yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+      dptcd: "",
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      pgmdiv_s: dataArr.pgmdiv_s.join("|"),
+      custcd_s: dataArr.custcd_s.join("|"),
+      devdiv_s: dataArr.devdiv_s.join("|"),
+      userid_s: dataArr.userid_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      seq01_s: dataArr.seq01_s.join("|"),
+      seq02_s: dataArr.seq02_s.join("|"),
+      seq03_s: dataArr.seq03_s.join("|"),
+      seq04_s: dataArr.seq04_s.join("|"),
+      seq05_s: dataArr.seq05_s.join("|"),
+      seq06_s: dataArr.seq06_s.join("|"),
+      seq07_s: dataArr.seq07_s.join("|"),
+      seq08_s: dataArr.seq08_s.join("|"),
+      seq09_s: dataArr.seq09_s.join("|"),
+      seq10_s: dataArr.seq10_s.join("|"),
+      seq11_s: dataArr.seq11_s.join("|"),
+      seq12_s: dataArr.seq12_s.join("|"),
+      dircost01_s: dataArr.dircost01_s.join("|"),
+      dircost02_s: dataArr.dircost02_s.join("|"),
+      dircost03_s: dataArr.dircost03_s.join("|"),
+      dircost04_s: dataArr.dircost04_s.join("|"),
+      dircost05_s: dataArr.dircost05_s.join("|"),
+      dircost06_s: dataArr.dircost06_s.join("|"),
+      dircost07_s: dataArr.dircost07_s.join("|"),
+      dircost08_s: dataArr.dircost08_s.join("|"),
+      dircost09_s: dataArr.dircost09_s.join("|"),
+      dircost10_s: dataArr.dircost10_s.join("|"),
+      dircost11_s: dataArr.dircost11_s.join("|"),
+      dircost12_s: dataArr.dircost12_s.join("|"),
+    }));
   };
 
   const onAddClick2 = () => {
@@ -1932,12 +2657,22 @@ const CM_A9000W: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
-      setFilters((prev: any) => ({
-        ...prev,
-        find_row_value: data.returnString,
-        pgNum: prev.pgNum,
-        isSearch: true,
-      }));
+      if (tabSelected == 0) {
+        setFilters((prev: any) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          pgNum: prev.pgNum,
+          isSearch: true,
+        }));
+      } else if (tabSelected == 2) {
+        setFilters4((prev: any) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: prev.pgNum,
+          isSearch: true,
+        }));
+      }
+
       setParaData({
         workType: "",
         orgdiv: sessionOrgdiv,
@@ -1981,6 +2716,157 @@ const CM_A9000W: React.FC = () => {
       alert(data.resultMessage);
     }
     setLoading(false);
+  };
+
+  const onSaveClick4 = () => {
+    if (!permissions.save) return;
+    const dataItem = mainDataResult4.data.filter((item: any) => {
+      return (
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+    if (dataItem.length == 0) return false;
+
+    let dataArr: any = {
+      rowstatus_s: [],
+      pgmdiv_s: [],
+      custcd_s: [],
+      devdiv_s: [],
+      userid_s: [],
+      remark_s: [],
+
+      seq01_s: [],
+      seq02_s: [],
+      seq03_s: [],
+      seq04_s: [],
+      seq05_s: [],
+      seq06_s: [],
+      seq07_s: [],
+      seq08_s: [],
+      seq09_s: [],
+      seq10_s: [],
+      seq11_s: [],
+      seq12_s: [],
+
+      dircost01_s: [],
+      dircost02_s: [],
+      dircost03_s: [],
+      dircost04_s: [],
+      dircost05_s: [],
+      dircost06_s: [],
+      dircost07_s: [],
+      dircost08_s: [],
+      dircost09_s: [],
+      dircost10_s: [],
+      dircost11_s: [],
+      dircost12_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        pgmdiv = "",
+        custcd = "",
+        devdiv = "",
+        user_id = "",
+        remark = "",
+
+        seq01 = "",
+        seq02 = "",
+        seq03 = "",
+        seq04 = "",
+        seq05 = "",
+        seq06 = "",
+        seq07 = "",
+        seq08 = "",
+        seq09 = "",
+        seq10 = "",
+        seq11 = "",
+        seq12 = "",
+
+        dircost01 = "",
+        dircost02 = "",
+        dircost03 = "",
+        dircost04 = "",
+        dircost05 = "",
+        dircost06 = "",
+        dircost07 = "",
+        dircost08 = "",
+        dircost09 = "",
+        dircost10 = "",
+        dircost11 = "",
+        dircost12 = "",
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.pgmdiv_s.push("Z");
+      dataArr.custcd_s.push(custcd);
+      dataArr.devdiv_s.push(devdiv);
+      dataArr.userid_s.push(user_id);
+      dataArr.remark_s.push(remark);
+      dataArr.seq01_s.push(seq01);
+      dataArr.seq02_s.push(seq02);
+      dataArr.seq03_s.push(seq03);
+      dataArr.seq04_s.push(seq04);
+      dataArr.seq05_s.push(seq05);
+      dataArr.seq06_s.push(seq06);
+      dataArr.seq07_s.push(seq07);
+      dataArr.seq08_s.push(seq08);
+      dataArr.seq09_s.push(seq09);
+      dataArr.seq10_s.push(seq10);
+      dataArr.seq11_s.push(seq11);
+      dataArr.seq12_s.push(seq12);
+      dataArr.dircost01_s.push(dircost01);
+      dataArr.dircost02_s.push(dircost02);
+      dataArr.dircost03_s.push(dircost03);
+      dataArr.dircost04_s.push(dircost04);
+      dataArr.dircost05_s.push(dircost05);
+      dataArr.dircost06_s.push(dircost06);
+      dataArr.dircost07_s.push(dircost07);
+      dataArr.dircost08_s.push(dircost08);
+      dataArr.dircost09_s.push(dircost09);
+      dataArr.dircost10_s.push(dircost10);
+      dataArr.dircost11_s.push(dircost11);
+      dataArr.dircost12_s.push(dircost12);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "PLAN",
+      orgdiv: sessionOrgdiv,
+      yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+      dptcd: "",
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      pgmdiv_s: dataArr.pgmdiv_s.join("|"),
+      custcd_s: dataArr.custcd_s.join("|"),
+      devdiv_s: dataArr.devdiv_s.join("|"),
+      userid_s: dataArr.userid_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      seq01_s: dataArr.seq01_s.join("|"),
+      seq02_s: dataArr.seq02_s.join("|"),
+      seq03_s: dataArr.seq03_s.join("|"),
+      seq04_s: dataArr.seq04_s.join("|"),
+      seq05_s: dataArr.seq05_s.join("|"),
+      seq06_s: dataArr.seq06_s.join("|"),
+      seq07_s: dataArr.seq07_s.join("|"),
+      seq08_s: dataArr.seq08_s.join("|"),
+      seq09_s: dataArr.seq09_s.join("|"),
+      seq10_s: dataArr.seq10_s.join("|"),
+      seq11_s: dataArr.seq11_s.join("|"),
+      seq12_s: dataArr.seq12_s.join("|"),
+      dircost01_s: dataArr.dircost01_s.join("|"),
+      dircost02_s: dataArr.dircost02_s.join("|"),
+      dircost03_s: dataArr.dircost03_s.join("|"),
+      dircost04_s: dataArr.dircost04_s.join("|"),
+      dircost05_s: dataArr.dircost05_s.join("|"),
+      dircost06_s: dataArr.dircost06_s.join("|"),
+      dircost07_s: dataArr.dircost07_s.join("|"),
+      dircost08_s: dataArr.dircost08_s.join("|"),
+      dircost09_s: dataArr.dircost09_s.join("|"),
+      dircost10_s: dataArr.dircost10_s.join("|"),
+      dircost11_s: dataArr.dircost11_s.join("|"),
+      dircost12_s: dataArr.dircost12_s.join("|"),
+    }));
   };
 
   return (
@@ -2974,6 +3860,115 @@ const CM_A9000W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
+          {isMobile ? (
+            <></>
+          ) : (
+            <GridContainer>
+              <GridTitleContainer className="ButtonContainer4">
+                <GridTitle>기준목표금액</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onDeleteClick4}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="reset"
+                    title="초기화"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick4}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                    disabled={permissions.save ? false : true}
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult4.data}
+                ref={(exporter) => {
+                  _export4 = exporter;
+                }}
+                fileName={getMenuName()}
+              >
+                <Grid
+                  style={{
+                    height: webheight5,
+                  }}
+                  data={process(
+                    mainDataResult4.data.map((row) => ({
+                      ...row,
+                      dptcd: dptcdListData.find(
+                        (item: any) => item.dptcd == row.dptcd
+                      )?.dptnm,
+                      [SELECTED_FIELD]: selectedState4[idGetter4(row)],
+                    })),
+                    mainDataState4
+                  )}
+                  {...mainDataState4}
+                  onDataStateChange={onMainDataStateChange4}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY4}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange4}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult4.total}
+                  skip={page4.skip}
+                  take={page4.take}
+                  pageable={true}
+                  onPageChange={pageChange4}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange4}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange4}
+                  cellRender={customCellRender4}
+                  rowRender={customRowRender4}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList4"]
+                      ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                      ?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                CustomComboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell4
+                                  : NumberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell4
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          )}
         </TabStripTab>
       </TabStrip>
       {custWindowVisible && (
