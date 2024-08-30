@@ -382,7 +382,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const { files } = event.target;
               if (files && files.length === 1) {
-                console.log(files[0].size)
                 const limitsize = 1024 ** 2 * 3; // 3MB
                 if (files[0].size > limitsize) {
                   alert("Please add file that is 3MB or less");
