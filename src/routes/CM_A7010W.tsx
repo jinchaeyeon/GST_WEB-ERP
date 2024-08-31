@@ -64,7 +64,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1305,30 +1305,32 @@ const CM_A7010W: React.FC = () => {
                     editField={EDIT_FIELD}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                DateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : attdatnumField.includes(item.fieldName)
-                                  ? ColumnCommandCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 0
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        ?.sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        ?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                id={item.id}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  DateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : attdatnumField.includes(item.fieldName)
+                                    ? ColumnCommandCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              />
+                            )
+                        )}
                   </Grid>
                 </ExcelExport>
               </GridContainer>
@@ -1832,32 +1834,36 @@ const CM_A7010W: React.FC = () => {
                         editField={EDIT_FIELD}
                       >
                         {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdList"
-                          ].map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    DateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : attdatnumField.includes(item.fieldName)
-                                      ? ColumnCommandCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder === 0
-                                      ? mainTotalFooterCell
-                                      : undefined
-                                  }
-                                />
-                              )
-                          )}
+                          customOptionData.menuCustomColumnOptions["grdList"]
+                            ?.sort(
+                              (a: any, b: any) => a.sortOrder - b.sortOrder
+                            )
+                            ?.map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    id={item.id}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      DateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : attdatnumField.includes(
+                                            item.fieldName
+                                          )
+                                        ? ColumnCommandCell
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder === 0
+                                        ? mainTotalFooterCell
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
                       </Grid>
                     </ExcelExport>
                   </GridContainer>
