@@ -1,9 +1,10 @@
 import { Redirect, Route, RouteProps } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { menusState } from "../store/atoms";
+import  secureLocalStorage  from  "react-secure-storage";
 
 function AuthRoute({ component, ...rest }: RouteProps) {
-  const token = localStorage.getItem("accessToken");
+  const token = secureLocalStorage.getItem("accessToken");
   const [menus, setMenus] = useRecoilState(menusState);
 
   const isLoggedIn = !!token;

@@ -14,11 +14,10 @@ import {
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Buffer } from "buffer";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   convertDateToStr,
   dateformat3,
@@ -38,8 +37,6 @@ import MenuWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 type TItemInfo = {
   files: string;
@@ -590,6 +587,14 @@ const SY_A0009W: React.FC = () => {
                       onChange={(
                         event: React.ChangeEvent<HTMLInputElement>
                       ) => {
+                        const { files } = event.target;
+                        if (files && files.length === 1) {
+                          const limitsize = 1024 ** 2 * 3; // 3MB
+                          if (files[0].size > limitsize) {
+                            alert("Please add file that is 3MB or less");
+                            return false;
+                          }
+                        }
                         getAttachmentsData(event.target.files);
                       }}
                     />
@@ -1252,6 +1257,14 @@ const SY_A0009W: React.FC = () => {
                           onChange={(
                             event: React.ChangeEvent<HTMLInputElement>
                           ) => {
+                            const { files } = event.target;
+                            if (files && files.length === 1) {
+                              const limitsize = 1024 ** 2 * 3; // 3MB
+                              if (files[0].size > limitsize) {
+                                alert("Please add file that is 3MB or less");
+                                return false;
+                              }
+                            }
                             getAttachmentsData(event.target.files);
                           }}
                         />
@@ -1263,7 +1276,7 @@ const SY_A0009W: React.FC = () => {
                         width: 80,
                         height: 80,
                         border: "2px solid #ddd",
-                        boxSizing: "border-box",                        
+                        boxSizing: "border-box",
                       }}
                       src={user.profile_image ? imgBase64 : "GST"}
                     ></AvatarMUI>
@@ -1742,7 +1755,7 @@ const SY_A0009W: React.FC = () => {
                                   name="mobile_no"
                                   value={user.mobile_no}
                                   onChange={filterInputChange}
-                                  onBlur={() => handleBlur('mobile_no')}
+                                  onBlur={() => handleBlur("mobile_no")}
                                   InputProps={{
                                     sx: {
                                       height: "32px",
@@ -1799,7 +1812,7 @@ const SY_A0009W: React.FC = () => {
                                 name="tel_no"
                                 value={user.tel_no}
                                 onChange={filterInputChange}
-                                onBlur={() => handleBlur('tel_no')}
+                                onBlur={() => handleBlur("tel_no")}
                                 InputProps={{
                                   sx: {
                                     height: "32px",

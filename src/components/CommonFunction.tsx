@@ -15,6 +15,7 @@ import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
+import  secureLocalStorage  from  "react-secure-storage";
 
 export const getColor = () => {
   const { switcher, themes, currentTheme = "" } = useThemeSwitcher();
@@ -1371,12 +1372,19 @@ export const useSysCaption = (key: TSysCaptionKey) => {
 
 // 로컬 스토리지 아이템 삭제
 export const resetLocalStorage = () => {
+  //변경전 스토리지 삭제
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("passwordExpirationInfo");
   localStorage.removeItem("loginResult");
   localStorage.removeItem("sessionItem");
   localStorage.removeItem("recoil-persist");
+  secureLocalStorage.removeItem("accessToken");
+  secureLocalStorage.removeItem("refreshToken");
+  secureLocalStorage.removeItem("passwordExpirationInfo");
+  secureLocalStorage.removeItem("loginResult");
+  secureLocalStorage.removeItem("sessionItem");
+  secureLocalStorage.removeItem("recoil-persist");
 };
 
 // Grouped된 DataResult 데이터를 selectedState를 포함해서 일반적인 Array 형태로 변환하여 반환

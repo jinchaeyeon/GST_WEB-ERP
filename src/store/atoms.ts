@@ -9,27 +9,27 @@ import {
   TpointsItem,
   TSessionItem,
 } from "./types";
-
+import  secureLocalStorage  from  "react-secure-storage";
 const { persistAtom } = recoilPersist();
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
   ({ setSelf, onSet }) => {
-    const savedValue = localStorage.getItem(key);
+    const savedValue: any = secureLocalStorage.getItem(key);
 
     if (savedValue != null) {
       try {
         setSelf(JSON.parse(savedValue));
       } catch (e) {
-        localStorage.removeItem(key);
+        secureLocalStorage.removeItem(key);
         setSelf(new DefaultValue());
       }
     }
     onSet((newValue: any) => {
       if (newValue instanceof DefaultValue || newValue == null) {
-        localStorage.removeItem(key);
+        secureLocalStorage.removeItem(key);
       } else {
-        localStorage.setItem(key, JSON.stringify(newValue));
+        secureLocalStorage.setItem(key, JSON.stringify(newValue));
       }
     });
   };
@@ -47,7 +47,7 @@ export const loginResultState = atom<TLoginResult>({
 export const menusState = atom<Array<TMenu>>({
   key: "menusState",
   default: null as any,
-  effects_UNSTABLE: [persistAtom],
+  effects_UNSTABLE: [localStorageEffect("menusState")],
 });
 
 export const clickedState = atom<string>({
@@ -58,7 +58,7 @@ export const clickedState = atom<string>({
 export const linkState = atom<any>({
   key: "linkState",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  effects_UNSTABLE: [localStorageEffect("linkState")],
 });
 
 export const infoState = atom<TInfoItem>({
@@ -137,7 +137,7 @@ export const unsavedNameState = atom<string[]>({
 export const menuList = atom<any[]>({
   key: "menuList",
   default: [],
-  effects_UNSTABLE: [persistAtom],
+  effects_UNSTABLE: [localStorageEffect("menuList")],
 });
 export const colors = atom<string[]>({
   key: "colors",
@@ -152,7 +152,7 @@ export const colorsName = atom<string>({
 export const OSState = atom<boolean>({
   key: "OSState",
   default: false,
-  effects_UNSTABLE: [persistAtom],
+  effects_UNSTABLE: [localStorageEffect("OSState")],
 });
 
 export const isFilterheightstate = atom<number>({

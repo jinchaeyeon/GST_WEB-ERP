@@ -12,6 +12,7 @@ import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loader from "../components/Loader";
 import Loading from "../components/Loading";
 import { isLoading } from "../store/atoms";
+import  secureLocalStorage  from  "react-secure-storage";
 
 interface IFormData {
   langCode: string;
@@ -27,11 +28,11 @@ const Login: React.FC = () => {
   const setLoginResult = useSetRecoilState(loginResultState);
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = secureLocalStorage.getItem("accessToken");
   const [isLoaded, setIsLoaded] = useState(accessToken ? false : true);
   const [information, setInformation] = useState({
-    userId: localStorage.getItem("userId")
-      ? localStorage.getItem("userId")
+    userId: secureLocalStorage.getItem("userId")
+      ? secureLocalStorage.getItem("userId")
       : "",
     password: "",
     chk: "Y",
@@ -104,8 +105,8 @@ const Login: React.FC = () => {
           defaultCulture,
         } = response;
 
-        localStorage.setItem("accessToken", token);
-        localStorage.setItem("refreshToken", refreshToken);
+        secureLocalStorage.setItem("accessToken", token);
+        secureLocalStorage.setItem("refreshToken", refreshToken);
 
         const response2 = await processApi<any>("profile");
 
@@ -128,10 +129,10 @@ const Login: React.FC = () => {
         } = response2;
 
         if (formData.chk == "Y") {
-          localStorage.setItem("userId", userId);
+          secureLocalStorage.setItem("userId", userId);
         } else {
-          if (localStorage.getItem("userId")) {
-            localStorage.removeItem("userId");
+          if (secureLocalStorage.getItem("userId")) {
+            secureLocalStorage.removeItem("userId");
           }
         }
 

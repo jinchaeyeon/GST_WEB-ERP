@@ -18,7 +18,7 @@ import {
   loginResultState,
   passwordExpirationInfoState,
 } from "../store/atoms";
-
+import  secureLocalStorage  from  "react-secure-storage";
 import { resetLocalStorage } from "../components/CommonFunction";
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loader from "../components/Loader";
@@ -93,7 +93,7 @@ const Login: React.FC = () => {
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
   const setAccessToken = useSetRecoilState(accessTokenState);
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = secureLocalStorage.getItem("accessToken");
   const [ifShowCompanyList, setIfShowCompanyList] = useState(false);
   const [isLoaded, setIsLoaded] = useState(
     new URLSearchParams(location.search).has("cust")
@@ -107,8 +107,8 @@ const Login: React.FC = () => {
       ? (new URLSearchParams(location.search).get("cust") as string)
       : "",
     langCode: "ko-KR",
-    userId: localStorage.getItem("userId")
-      ? localStorage.getItem("userId")
+    userId: secureLocalStorage.getItem("userId")
+      ? secureLocalStorage.getItem("userId")
       : "",
     password: "",
     chk: "Y",
@@ -160,42 +160,45 @@ const Login: React.FC = () => {
         const {
           token,
           refreshToken,
-          userId,
-          userName,
-          role,
           companyCode,
           serviceName,
           customerName,
           loginKey,
-          passwordExpirationInfo,
           webTitle,
-          homeMenuWeb,
-          profileImage,
-          userConfig,
           serviceCategory,
           defaultCulture,
+        } = response;
+
+        secureLocalStorage.setItem("accessToken", token);
+        secureLocalStorage.setItem("refreshToken", refreshToken);
+
+        const response2 = await processApi<any>("profile");
+
+        const {
           custcd,
           custnm,
-        } = response;
+          dptcd,
+          dptnm,
+          homeMenuWeb,
+          location,
+          orgdiv,
+          passwordExpirationInfo,
+          position,
+          postcd,
+          postnm,
+          profileImage,
+          role,
+          userId,
+          userName,
+        } = response2;
+
         if (formData.chk == "Y") {
-          localStorage.setItem("userId", userId);
+          secureLocalStorage.setItem("userId", userId);
         } else {
-          if (localStorage.getItem("userId")) {
-            localStorage.removeItem("userId");
+          if (secureLocalStorage.getItem("userId")) {
+            secureLocalStorage.removeItem("userId");
           }
         }
-        localStorage.setItem("accessToken", token);
-        localStorage.setItem("refreshToken", refreshToken);
-        // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
-        // setAccessToken(token);
-        // const expires = new Date();
-        // expires.setMinutes(expires.getMinutes() + 60);
-        // cookie.save("refreshToken", refreshToken, {
-        //   path: "/",
-        //   expires,
-        //   // secure: true,
-        //   // httpOnly: true,
-        // });
 
         setLoginResult({
           langCode: formData.langCode
@@ -209,15 +212,15 @@ const Login: React.FC = () => {
           customerName,
           loginKey,
           webTitle,
-          homeMenuWeb,
+          homeMenuWeb: homeMenuWeb == undefined ? "" : homeMenuWeb.web,
           profileImage,
-          dptnm: userConfig.Rows[6].value,
+          dptnm,
           serviceCategory,
           defaultCulture,
-          dptcd: userConfig == undefined ? "" : userConfig.Rows[5].value,
-          position: userConfig == undefined ? "" : userConfig.Rows[4].value,
-          custcd: "",
-          custnm: "",
+          dptcd,
+          position,
+          custcd,
+          custnm,
         });
 
         setPwExpInfo(passwordExpirationInfo);
