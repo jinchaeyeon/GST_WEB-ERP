@@ -31,6 +31,7 @@ import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import styled, { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
+import  secureLocalStorage  from  "react-secure-storage";
 import {
   UseGetIp,
   UseGetValueFromSessionItem,
@@ -469,7 +470,7 @@ const AppInner: React.FC = () => {
     setThemeColor(color);
   }, [color]);
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
-  const token = localStorage.getItem("accessToken");
+  const token = secureLocalStorage.getItem("accessToken");
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   useEffect(() => {

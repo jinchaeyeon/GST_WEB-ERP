@@ -96,6 +96,7 @@ import HelpWindow from "../Windows/CommonWindows/HelpWindow";
 import MessengerWindow from "../Windows/CommonWindows/MessengerWindow";
 import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
 import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
 
@@ -118,7 +119,7 @@ const PanelBarNavContainer = (props: any) => {
   const [loginResult] = useRecoilState(loginResultState);
   // const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   // const [token] = useState(accessToken);
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = secureLocalStorage.getItem("accessToken");
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
   const [sessionItem] = useRecoilState(sessionItemState);
   const [menus, setMenus] = useRecoilState(menusState);

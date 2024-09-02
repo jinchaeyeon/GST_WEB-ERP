@@ -16,6 +16,7 @@ import {
 } from "@progress/kendo-react-grid";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import  secureLocalStorage  from  "react-secure-storage";
 import {
   ButtonContainer,
   FilterBox,
@@ -910,7 +911,7 @@ const PS_A0060W_301: React.FC = () => {
 
   useEffect(() => {
     if (holidays.length == 0) {
-      const storageHolidays = localStorage.getItem(storageKey);
+      const storageHolidays: any = secureLocalStorage.getItem(storageKey);
       if (storageHolidays) {
         /** localStorage에 저장되어 있다면 그 값을 사용 */
         const newHolidays = JSON.parse(storageHolidays);
@@ -930,7 +931,7 @@ const PS_A0060W_301: React.FC = () => {
               convertDateToStr(new Date(item.start.date))
             );
             setHolidays(newHolidays);
-            localStorage.setItem(storageKey, JSON.stringify(newHolidays));
+            secureLocalStorage.setItem(storageKey, JSON.stringify(newHolidays));
           });
         });
       }

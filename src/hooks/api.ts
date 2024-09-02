@@ -7,6 +7,7 @@ import {
 import { linkState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 import { useEffect, useState } from "react";
+import  secureLocalStorage  from  "react-secure-storage";
 
 const cachios = require("cachios");
 const domain: any = {
@@ -140,7 +141,7 @@ const generateUrl = (url: string, params: any) => {
 };
 
 export const useApi = () => {
-  const token = localStorage.getItem("accessToken");
+  const token = secureLocalStorage.getItem("accessToken");
   
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
@@ -153,7 +154,7 @@ export const useApi = () => {
   }
   const pc = UseGetValueFromSessionItem("pc");
   const [sessionItemFetched, setSessionItemFetched] = useState(false); // 세션 아이템을 가져왔는지 여부
-  const sessionItemCheck = localStorage.getItem("sessionItem");
+  const sessionItemCheck = secureLocalStorage.getItem("sessionItem");
   const isSessionValid = !!sessionItemCheck;
   
   const fetchSessionItem = async () => {
@@ -269,7 +270,7 @@ export const useApi = () => {
           }
 
           if(info.url.includes("user/profile")) {
-            headers = { ...headers, Authorization: `Bearer ${localStorage.getItem("accessToken")}` };
+            headers = { ...headers, Authorization: `Bearer ${secureLocalStorage.getItem("accessToken")}` };
           }
 
           if (info.action != "get") {
@@ -355,8 +356,8 @@ export const useApi = () => {
                       !errResponseURL.includes("auth/login")
                     ) {
                       if (!isTokenRefreshing) {
-                        let token = localStorage.getItem("accessToken");
-                        let refreshToken = localStorage.getItem("refreshToken");
+                        let token = secureLocalStorage.getItem("accessToken");
+                        let refreshToken = secureLocalStorage.getItem("refreshToken");
                         // const [token, setAccessToken] = useRecoilState(accessTokenState);
                         // let refreshToken = cookie.load("refreshToken");
 
@@ -375,8 +376,8 @@ export const useApi = () => {
                         p.then((res: any) => {
                           const { token, refreshToken } = res.data;
 
-                          localStorage.setItem("accessToken", token);
-                          localStorage.setItem("refreshToken", refreshToken);
+                          secureLocalStorage.setItem("accessToken", token);
+                          secureLocalStorage.setItem("refreshToken", refreshToken);
                           // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
                           /*setAccessToken(token);
                         const expires = new Date();
@@ -462,7 +463,7 @@ export const useApi = () => {
         }
 
         if(info.url.includes("user/profile")) {
-          headers = { ...headers, Authorization: `Bearer ${localStorage.getItem("accessToken")}` };
+          headers = { ...headers, Authorization: `Bearer ${secureLocalStorage.getItem("accessToken")}` };
         }
         
         if (info.action != "get") {
@@ -548,8 +549,8 @@ export const useApi = () => {
                     !errResponseURL.includes("auth/login")
                   ) {
                     if (!isTokenRefreshing) {
-                      let token = localStorage.getItem("accessToken");
-                      let refreshToken = localStorage.getItem("refreshToken");
+                      let token = secureLocalStorage.getItem("accessToken");
+                      let refreshToken = secureLocalStorage.getItem("refreshToken");
                       // const [token, setAccessToken] = useRecoilState(accessTokenState);
                       // let refreshToken = cookie.load("refreshToken");
 
@@ -568,8 +569,8 @@ export const useApi = () => {
                       p.then((res: any) => {
                         const { token, refreshToken } = res.data;
 
-                        localStorage.setItem("accessToken", token);
-                        localStorage.setItem("refreshToken", refreshToken);
+                        secureLocalStorage.setItem("accessToken", token);
+                        secureLocalStorage.setItem("refreshToken", refreshToken);
                         // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
                         /*setAccessToken(token);
                         const expires = new Date();

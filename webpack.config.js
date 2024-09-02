@@ -5,6 +5,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const { EsbuildPlugin } = require("esbuild-loader");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin')
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -121,6 +122,13 @@ module.exports = {
       new EsbuildPlugin({
         target: "es2015", // Syntax to transpile to (see options below for possible values)
         css: true,
+      }),
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: isDevelopment ? false : true, // 콘솔 로그를 제거한다
+          },
+        },
       }),
     ],
   },
