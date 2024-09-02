@@ -1372,6 +1372,13 @@ export const useSysCaption = (key: TSysCaptionKey) => {
 
 // 로컬 스토리지 아이템 삭제
 export const resetLocalStorage = () => {
+  //변경전 스토리지 삭제
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("passwordExpirationInfo");
+  localStorage.removeItem("loginResult");
+  localStorage.removeItem("sessionItem");
+  localStorage.removeItem("recoil-persist");
   secureLocalStorage.removeItem("accessToken");
   secureLocalStorage.removeItem("refreshToken");
   secureLocalStorage.removeItem("passwordExpirationInfo");
