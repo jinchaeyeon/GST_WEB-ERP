@@ -1,0 +1,269 @@
+@media print {
+
+    @page {
+        size: 21cm 29.7cm;
+        margin-top: 1cm;
+        margin-right: 1cm;
+        margin-bottom: 0cm;
+        margin-left: 1cm;
+    }
+
+    html,
+    body {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        margin-top: 0px;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    .printable {
+        display: block;
+    }
+
+    .non-printable {
+        display: none;
+    }
+
+}
+
+body {
+    -webkit-print-color-adjust: exact;
+}
+
+.display-none {
+    /*감추기*/
+    display: none;
+}
+
+.printable {
+    .tg {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+    
+    .tb_at_bottom {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-style: hidden;
+    }
+    
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 1em;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+        border: solid 1px #000;
+        height: 0.75cm;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: table-cell;
+        vertical-align: middle;
+        padding-left: 3px;
+    }
+    
+    td.tg-baqh.number {
+        text-align: right;
+        padding-right: 5px;
+    }
+    
+    td.tg-baqh.bottom_dot {
+        border-bottom: 2px dotted;
+    }
+    
+    td.tg-baqh.foot_1 {
+        text-align: right;
+    }
+    
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 1em;
+        font-weight: normal;
+        border: solid 1px #000;
+        overflow: hidden;
+        word-break: normal;
+        height: 0.75cm;
+        display: table-cell;
+        vertical-align: middle;
+    }
+    
+    tr.contents .tg-baqh {
+        font-size: 0.8em;
+    }
+    
+    .printable {
+        height: 100%;
+    
+    }
+    
+    .page-break {
+        page-break-before: always;
+    }
+    
+    .tg .tg-baqh {
+        text-align: center;
+        vertical-align: middle;
+        height: 44px;
+        font-size: 0.83em;
+    }
+    
+    
+    .tg .tg-qj3h {
+        font-size: 1.4em;
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    /*.tg .tg-lqy6{text-align:right;vertical-align:top}*/
+    .tg .tg-13pz {
+        /*등록번호*/
+        font-size: 1.1em;
+        text-align: center;
+        vertical-align: middle;
+        height: 23.2px;
+    }
+    
+    .span1 {
+        letter-spacing: 10px;
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    
+    .span2 {
+        font-size: 0.5em;
+    }
+    
+    .span3 {
+        /*font-size:0.5em;*/
+    }
+    
+    #btn_print {
+        width: 100%;
+        height: 35px;
+        font-size: 1.1em;
+        top: 0;
+        margin-bottom: 10px;
+    }
+    
+    .qc {
+        background-color: #ffff73;
+    }
+    
+    caption {
+        caption-side: bottom;
+    }
+    
+    .qc caption {
+        background-color: #ffff73;
+    
+    }
+    
+    span.cap1 {
+        float: left;
+        font-size: 0.8em;
+    }
+    
+    span.cap2 {
+        /*float:right;*/
+        font-size: 0.8em;
+        font-weight: bold;
+    }
+    
+    /*loading화면*/
+    #mask {
+        z-index: 9998;
+        position: absolute;
+        background-color: black;
+        opacity: 0.4;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: -1px;
+        /*없으면 인쇄버튼 들이 안가려짐*/
+    }
+    
+    .important-cell {
+        background-color: rgb(235, 235, 235);
+        font-weight: 600;
+    }
+    
+    
+    .important-cell2 {
+        background-color: rgb(255, 247, 175);
+        font-weight: 600;
+    }
+    
+    .tb_at_bottom .tg-baqh {
+        height: 50px
+    }
+    
+    .header_wrap {
+        display: flex;
+        width: 100%;
+        align-items: flex-start;
+        justify-content: center;
+        text-align: center; 
+    }
+    
+    .left {
+        text-align: left;
+        font-size: 1.2em;
+        vertical-align: top;
+    }
+    
+    .center {
+        text-align: center;
+        width: 100%; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 0 30px;
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;      
+    }
+
+    .noBorderRow td {
+        border-bottom: none !important; 
+        border-top: none !important; 
+    }
+    
+    .right {
+        text-align: right;
+    }
+    
+    h1 {
+        margin: .2cm;
+        font-size: 22px;
+        text-align: center;
+        font-weight: bold;
+        letter-spacing: 10px;
+        text-decoration: underline;
+    }
+    
+    p {
+        margin: .2cm;
+        font-size: 16px;
+    }
+    
+    .sum-row td {
+        text-align: center;
+        background-color: #e6e6e6;
+    }
+    
+    .empty-row {
+        border-bottom: hidden;
+    }
+}
