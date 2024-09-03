@@ -1,30 +1,28 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
+import { useRecoilState } from "recoil";
 import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
+import { loginResultState } from "../../store/atoms";
 import { Iparameters, TPermissions } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
   UsePermissions,
   convertDateToStr,
-  convertDateToStrWithTime2,
   dateformat2,
   dateformat3,
-  numberWithCommas,
+  numberWithCommas
 } from "../CommonFunction";
-import styles from "./AC_B2060W_PRINT.module.css";
-import { DataResult } from "@progress/kendo-data-query";
 import { PAGE_SIZE } from "../CommonString";
-import { useRecoilState } from "recoil";
-import { loginResultState } from "../../store/atoms";
+import styles from "./AC_B2060W_PRINT.module.css";
 
 function getDayOfWeek(date: Date) {
   const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
   return daysOfWeek[date.getDay()];
 }
 
-const AC_B2060W_PRINT = (data: any) => {
+const AC_B2060W_SUM_PRINT = (data: any) => {
   const [permissions, setPermissions] = useState<TPermissions>({
     save: false,
     print: false,
@@ -134,8 +132,6 @@ const AC_B2060W_PRINT = (data: any) => {
     acntnm: string;
   }
 
-  // 합계 계산
-
   // 숫자 변환 함수: 콤마 제거 후 숫자형으로 변환
   const parseNumber = (value: string): number => {
     return parseFloat(value.replace(/,/g, ""));
@@ -228,12 +224,11 @@ const AC_B2060W_PRINT = (data: any) => {
                   </p>
                   <div className={styles.row}>
                     <div className={styles.left}>
-                      <p>회사명:{" "}{mainDataResult[0].compnm}</p>
+                      <p>회사명: {mainDataResult[0].compnm}</p>
                     </div>
                     <div className={styles.right}>
                       <p>
-                        출력일자:{" "}
-                        {dateformat3(convertDateToStr(new Date()))}{" "}
+                        출력일자: {dateformat3(convertDateToStr(new Date()))}{" "}
                         {getDayOfWeek(new Date())}요일
                       </p>
                     </div>
@@ -331,4 +326,4 @@ const AC_B2060W_PRINT = (data: any) => {
   );
 };
 
-export default AC_B2060W_PRINT;
+export default AC_B2060W_SUM_PRINT;
