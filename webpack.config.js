@@ -6,6 +6,7 @@ const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"
 const { EsbuildPlugin } = require("esbuild-loader");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin')
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -153,6 +154,12 @@ module.exports = {
     }),
     new ForkTsCheckerWebpackPlugin(),
     new webpack.ProvidePlugin({ React: "react" }),
+    new BrowserSyncPlugin({
+      host: 'localhost',
+      port: 3000,		
+      files: ['./build/*.html'],
+      server: {baseDir: ['build']} 
+    })
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx", ".scss", ".css"],
