@@ -432,10 +432,34 @@ const AC_B2060W: React.FC = () => {
   let _export: any;
   let _export2: any;
   let _export3: any;
-  let _export4: any;
-  let _export5: any;
-  let _export6: any;
-  const exportExcel = () => {};
+  const exportExcel = () => {
+    if (_export !== null && _export !== undefined) {
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      const optionsGridThree = _export3.workbookOptions();
+      optionsGridOne.sheets[0].title = getTitle();
+      if (tabSelected != 5) {
+        optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+        optionsGridOne.sheets[2] = optionsGridThree.sheets[0];
+        optionsGridOne.sheets[1].title = "재무제표 상세";
+        optionsGridOne.sheets[2].title = "전표 상세정보";
+      }
+      _export.save(optionsGridOne);
+    }
+  };
+
+  // 엑셀 시트 제목 설정
+  const getTitle = () => {
+    const titles = [
+      "합계잔액시산표",
+      "손익계산서",
+      "제조원가명세서",
+      "이익잉여금처분계산서",
+      "재무상태표",
+      "월차손익분석표",
+    ];
+    return titles[tabSelected] || titles[0];
+  };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -1860,7 +1884,7 @@ const AC_B2060W: React.FC = () => {
               <ExcelExport
                 data={detailDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export2 = exporter;
                 }}
                 fileName={getMenuName()}
               >
@@ -1943,9 +1967,9 @@ const AC_B2060W: React.FC = () => {
                 </GridTitle>
               </GridTitleContainer>
               <ExcelExport
-                data={detailDataResult.data}
+                data={detailDataResult2.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export3 = exporter;
                 }}
                 fileName={getMenuName()}
               >
@@ -2657,7 +2681,7 @@ const AC_B2060W: React.FC = () => {
                 <ExcelExport
                   data={detailDataResult.data}
                   ref={(exporter) => {
-                    _export = exporter;
+                    _export2 = exporter;
                   }}
                   fileName={getMenuName()}
                 >
@@ -2726,9 +2750,9 @@ const AC_B2060W: React.FC = () => {
                   <GridTitle>전표 상세정보</GridTitle>
                 </GridTitleContainer>
                 <ExcelExport
-                  data={detailDataResult.data}
+                  data={detailDataResult2.data}
                   ref={(exporter) => {
-                    _export = exporter;
+                    _export3 = exporter;
                   }}
                   fileName={getMenuName()}
                 >
@@ -2781,6 +2805,11 @@ const AC_B2060W: React.FC = () => {
                                 field={item.fieldName}
                                 title={item.caption}
                                 width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
                                 footerCell={
                                   item.sortOrder == 0
                                     ? mainTotalFooterCell3
