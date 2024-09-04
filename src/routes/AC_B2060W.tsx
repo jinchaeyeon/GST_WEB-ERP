@@ -1189,7 +1189,19 @@ const AC_B2060W: React.FC = () => {
               >
                 <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
-                    <GridTitle>합계잔액시산표</GridTitle>
+                    <GridTitle>
+                      합계잔액시산표
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                        icon={"chevron-right"}
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      ></Button>
+                    </GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onPrintWndClick}
