@@ -103,6 +103,7 @@ type TdataArr = {
   quonum_s: string[];
   quorev_s: string[];
   quoseq_s: string[];
+  itemcd_s: string[];
 };
 
 type TdataArr2 = {
@@ -1998,6 +1999,7 @@ const SA_A1100W_603: React.FC = () => {
     payment_s: "",
     paydt_s: "",
     remark_s: "",
+    itemcd_s: "",
   });
 
   const infopara: Iparameters = {
@@ -2036,7 +2038,7 @@ const SA_A1100W_603: React.FC = () => {
       "@p_quonum_s": ParaData.quonum_s,
       "@p_quorev_s": ParaData.quorev_s,
       "@p_quoseq_s": ParaData.quoseq_s,
-
+      "@p_itemcd_s": ParaData.itemcd_s,
       "@p_payment_s": ParaData.payment_s,
       "@p_paydt_s": ParaData.paydt_s,
       "@p_remark_s": ParaData.remark_s,
@@ -2106,6 +2108,7 @@ const SA_A1100W_603: React.FC = () => {
         quonum_s: [],
         quorev_s: [],
         quoseq_s: [],
+        itemcd_s: [],
       };
 
       dataItem.forEach((item: any, idx: number) => {
@@ -2118,6 +2121,7 @@ const SA_A1100W_603: React.FC = () => {
           quonum = "",
           quorev = "",
           quoseq = "",
+          itemcd = ""
         } = item;
 
         dataArr.rowstatus_s.push(rowstatus);
@@ -2128,6 +2132,7 @@ const SA_A1100W_603: React.FC = () => {
         dataArr.quonum_s.push(quonum);
         dataArr.quorev_s.push(quorev);
         dataArr.quoseq_s.push(quoseq);
+        dataArr.itemcd_s.push(itemcd);
       });
 
       deletedMainRows2.forEach((item: any, idx: number) => {
@@ -2140,6 +2145,7 @@ const SA_A1100W_603: React.FC = () => {
           quonum = "",
           quorev = "",
           quoseq = "",
+          itemcd = ""
         } = item;
 
         dataArr.rowstatus_s.push("D");
@@ -2150,6 +2156,7 @@ const SA_A1100W_603: React.FC = () => {
         dataArr.quonum_s.push(quonum);
         dataArr.quorev_s.push(quorev);
         dataArr.quoseq_s.push(quoseq);
+        dataArr.itemcd_s.push(itemcd);
       });
 
       setParaData((prev) => ({
@@ -2165,6 +2172,7 @@ const SA_A1100W_603: React.FC = () => {
         quonum_s: dataArr.quonum_s.join("|"),
         quorev_s: dataArr.quorev_s.join("|"),
         quoseq_s: dataArr.quoseq_s.join("|"),
+        itemcd_s: dataArr.itemcd_s.join("|"),
       }));
     }
   };
@@ -2342,6 +2350,7 @@ const SA_A1100W_603: React.FC = () => {
         payment_s: "",
         paydt_s: "",
         remark_s: "",
+        itemcd_s: "",
       });
     } else {
       console.log("[오류 발생]");
