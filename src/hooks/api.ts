@@ -1,4 +1,6 @@
 import axios from "axios";
+import { useEffect, useState } from "react";
+import secureLocalStorage from "react-secure-storage";
 import { useRecoilState } from "recoil";
 import {
   UseGetValueFromSessionItem,
@@ -6,8 +8,6 @@ import {
 } from "../components/CommonFunction";
 import { linkState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
-import { useEffect, useState } from "react";
-import  secureLocalStorage  from  "react-secure-storage";
 
 const cachios = require("cachios");
 const domain: any = {
@@ -142,7 +142,7 @@ const generateUrl = (url: string, params: any) => {
 
 export const useApi = () => {
   const token = secureLocalStorage.getItem("accessToken");
-  
+
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -156,7 +156,7 @@ export const useApi = () => {
   const [sessionItemFetched, setSessionItemFetched] = useState(false); // 세션 아이템을 가져왔는지 여부
   const sessionItemCheck = secureLocalStorage.getItem("sessionItem");
   const isSessionValid = !!sessionItemCheck;
-  
+
   const fetchSessionItem = async () => {
     let data;
     try {
@@ -186,12 +186,14 @@ export const useApi = () => {
     } catch (e: any) {
       console.log("menus error", e);
     }
-  }
+  };
 
   useEffect(() => {
     const checkSessionAndFetchItem = async () => {
-      if (window.location.pathname !== "/" && 
-        window.location.pathname !== "/Home") {
+      if (
+        window.location.pathname !== "/" &&
+        window.location.pathname !== "/Home"
+      ) {
         if (!isSessionValid && !sessionItemFetched) {
           if (token && loginResult) {
             setSessionItemFetched(true); // 세션 아이템을 가져온다고 표시
@@ -207,19 +209,24 @@ export const useApi = () => {
         }
       }
     };
-  
+
     checkSessionAndFetchItem();
   }, [isSessionValid, sessionItemFetched, token, loginResult]);
 
-  const processApi = async <T>(name: string, params: any = null): Promise<T> => {    
-    if (window.location.pathname !== "/" &&
-      window.location.pathname !== "/Home") {
+  const processApi = async <T>(
+    name: string,
+    params: any = null
+  ): Promise<T> => {
+    if (
+      window.location.pathname !== "/" &&
+      window.location.pathname !== "/Home"
+    ) {
       if (!token || !loginResult) {
         resetLocalStorage(); // 토큰, 로그인결과가 없을시
         window.location.href = "/"; // 리다이렉션 처리
       }
     }
-    
+
     return new Promise((resolve, reject) => {
       let info: any = domain[name];
       let url: string | string[] | null = null;
@@ -269,8 +276,13 @@ export const useApi = () => {
             headers = { ...headers, Authorization: `Bearer ${token}` };
           }
 
-          if(info.url.includes("user/profile")) {
-            headers = { ...headers, Authorization: `Bearer ${secureLocalStorage.getItem("accessToken")}` };
+          if (info.url.includes("user/profile")) {
+            headers = {
+              ...headers,
+              Authorization: `Bearer ${secureLocalStorage.getItem(
+                "accessToken"
+              )}`,
+            };
           }
 
           if (info.action != "get") {
@@ -326,98 +338,6 @@ export const useApi = () => {
                     "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
                   )
                 );
-              } else {
-                axiosInstance.interceptors.response.use(
-                  (response: any) => {
-                    return response;
-                  },
-                  async (error: {
-                    config: any;
-                    request: { responseURL: string };
-                    response: { status: any };
-                    message: string;
-                  }) => {
-                    let errResponseStatus = null;
-                    let errResponseURL = "";
-                    const originalRequest = error.config;
-
-                    try {
-                      errResponseStatus = error.response.status;
-                      errResponseURL = error.request.responseURL;
-                    } catch (e) {}
-
-                    // 로그인 페이지에서는 토큰 만료 로직을 실행하지 않음
-                    if (errResponseURL.includes("auth/login")) {
-                      return reject(error);
-                    }
-
-                    if (
-                      errResponseStatus == 401 &&
-                      !errResponseURL.includes("auth/login")
-                    ) {
-                      if (!isTokenRefreshing) {
-                        let token = secureLocalStorage.getItem("accessToken");
-                        let refreshToken = secureLocalStorage.getItem("refreshToken");
-                        // const [token, setAccessToken] = useRecoilState(accessTokenState);
-                        // let refreshToken = cookie.load("refreshToken");
-
-                        isTokenRefreshing = true;
-
-                        const url = `${res.data[0].url}api/auth/refresh`;
-                        let p;
-
-                        // refresh token을 이용하여 access token 재발행 받기
-                        p = axios.post(url, {
-                          accessToken: token,
-                          // accessToken: token ?? refreshToken,
-                          refreshToken: refreshToken,
-                        });
-
-                        p.then((res: any) => {
-                          const { token, refreshToken } = res.data;
-
-                          secureLocalStorage.setItem("accessToken", token);
-                          secureLocalStorage.setItem("refreshToken", refreshToken);
-                          // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
-                          /*setAccessToken(token);
-                        const expires = new Date();
-                        expires.setMinutes(expires.getMinutes() + 60);
-                        cookie.save("refreshToken", refreshToken, {
-                          path: "/",
-                          expires,
-                          // secure: true,
-                          // httpOnly: true,
-                        });*/
-
-                          isTokenRefreshing = false;
-                          originalRequest.headers.Authorization = `Bearer ${token}`;
-
-                          // 새로운 토큰으로 재요청 진행
-                          onTokenRefreshed(token);
-                        }).catch((err: any) => {
-                          // access token을 받아오지 못하는 오류 발생시 logout 처리
-                          resetLocalStorage();
-                          window.location.href = "/";
-
-                          return false;
-                        });
-                      }
-
-                      // token이 재발급 되는 동안의 요청은 refreshSubscribers에 저장
-                      const retryOriginalRequest = new Promise((resolve) => {
-                        addRefreshSubscriber((accessToken: any) => {
-                          originalRequest.headers.Authorization =
-                            "Bearer " + accessToken;
-                          // axios(originalRequest);
-                          resolve(axios(originalRequest));
-                        });
-                      });
-                      return retryOriginalRequest;
-                    }
-                    // 오류 발생 시 오류 내용 출력 후 요청 거절
-                    return reject(error);
-                  }
-                );
               }
             });
         });
@@ -462,10 +382,15 @@ export const useApi = () => {
           headers = { ...headers, Authorization: `Bearer ${token}` };
         }
 
-        if(info.url.includes("user/profile")) {
-          headers = { ...headers, Authorization: `Bearer ${secureLocalStorage.getItem("accessToken")}` };
+        if (info.url.includes("user/profile")) {
+          headers = {
+            ...headers,
+            Authorization: `Bearer ${secureLocalStorage.getItem(
+              "accessToken"
+            )}`,
+          };
         }
-        
+
         if (info.action != "get") {
           initCache();
         }
@@ -519,98 +444,6 @@ export const useApi = () => {
                   "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
                 )
               );
-            } else {
-              axiosInstance.interceptors.response.use(
-                (response: any) => {
-                  return response;
-                },
-                async (error: {
-                  config: any;
-                  request: { responseURL: string };
-                  response: { status: any };
-                  message: string;
-                }) => {
-                  let errResponseStatus = null;
-                  let errResponseURL = "";
-                  const originalRequest = error.config;
-
-                  try {
-                    errResponseStatus = error.response.status;
-                    errResponseURL = error.request.responseURL;
-                  } catch (e) {}
-
-                  // 로그인 페이지에서는 토큰 만료 로직을 실행하지 않음
-                  if (errResponseURL.includes("auth/login")) {
-                    return reject(error);
-                  }
-
-                  if (
-                    errResponseStatus == 401 &&
-                    !errResponseURL.includes("auth/login")
-                  ) {
-                    if (!isTokenRefreshing) {
-                      let token = secureLocalStorage.getItem("accessToken");
-                      let refreshToken = secureLocalStorage.getItem("refreshToken");
-                      // const [token, setAccessToken] = useRecoilState(accessTokenState);
-                      // let refreshToken = cookie.load("refreshToken");
-
-                      isTokenRefreshing = true;
-
-                      const url = `${Link}api/auth/refresh`;
-                      let p;
-
-                      // refresh token을 이용하여 access token 재발행 받기
-                      p = axios.post(url, {
-                        accessToken: token,
-                        // accessToken: token ?? refreshToken,
-                        refreshToken: refreshToken,
-                      });
-
-                      p.then((res: any) => {
-                        const { token, refreshToken } = res.data;
-
-                        secureLocalStorage.setItem("accessToken", token);
-                        secureLocalStorage.setItem("refreshToken", refreshToken);
-                        // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
-                        /*setAccessToken(token);
-                        const expires = new Date();
-                        expires.setMinutes(expires.getMinutes() + 60);
-                        cookie.save("refreshToken", refreshToken, {
-                          path: "/",
-                          expires,
-                          // secure: true,
-                          // httpOnly: true,
-                        });*/
-
-                        isTokenRefreshing = false;
-                        originalRequest.headers.Authorization = `Bearer ${token}`;
-
-                        // 새로운 토큰으로 재요청 진행
-                        onTokenRefreshed(token);
-                      }).catch((err: any) => {
-                        // access token을 받아오지 못하는 오류 발생시 logout 처리
-                        resetLocalStorage();
-                        window.location.href = "/";
-
-                        return false;
-                      });
-                    }
-
-                    // token이 재발급 되는 동안의 요청은 refreshSubscribers에 저장
-                    const retryOriginalRequest = new Promise((resolve) => {
-                      addRefreshSubscriber((accessToken: any) => {
-                        originalRequest.headers.Authorization =
-                          "Bearer " + accessToken;
-                        // axios(originalRequest);
-                        resolve(axios(originalRequest));
-                      });
-                    });
-                    return retryOriginalRequest;
-                  }
-                  // 오류 발생 시 오류 내용 출력 후 요청 거절
-                  return reject(error);
-                }
-              );
             }
           });
       }
@@ -619,3 +452,75 @@ export const useApi = () => {
 
   return processApi;
 };
+
+axiosInstance.interceptors.response.use(
+  (response: any) => {
+    return response;
+  },
+  async (error: {
+    config: any;
+    request: { responseURL: string };
+    response: { status: any };
+    message: string;
+  }) => {
+    const [Link, setLink] = useRecoilState(linkState);
+    // res에서 error가 발생했을 경우 catch로 넘어가기 전에 처리하는 부분
+    let errResponseStatus = null;
+    let errResponseURL = "";
+    const originalRequest = error.config;
+
+    try {
+      errResponseStatus = error.response.status;
+      errResponseURL = error.request.responseURL;
+    } catch (e) {}
+
+    if (errResponseStatus === 401 && !errResponseURL.includes("auth/login")) {
+      if (!isTokenRefreshing) {
+        let token = localStorage.getItem("accessToken");
+        let refreshToken = localStorage.getItem("refreshToken");
+
+        isTokenRefreshing = true;
+
+        const url = `${Link}api/auth/refresh`;
+        let p;
+
+        // refresh token을 이용하여 access token 재발행 받기
+        p = axios.post(url, {
+          accessToken: token,
+          refreshToken: refreshToken,
+        });
+
+        p.then((res: any) => {
+          const { token, refreshToken } = res.data;
+
+          localStorage.setItem("accessToken", token);
+          localStorage.setItem("refreshToken", refreshToken);
+
+          isTokenRefreshing = false;
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+
+          // 새로운 토큰으로 재요청 진행
+          onTokenRefreshed(token);
+        }).catch((err: any) => {
+          // access token을 받아오지 못하는 오류 발생시 logout 처리
+          resetLocalStorage();
+          window.location.href = "/";
+
+          return false;
+        });
+      }
+
+      // token이 재발급 되는 동안의 요청은 refreshSubscribers에 저장
+      const retryOriginalRequest = new Promise((resolve) => {
+        addRefreshSubscriber((accessToken: any) => {
+          originalRequest.headers.Authorization = "Bearer " + accessToken;
+          // axios(originalRequest);
+          resolve(axios(originalRequest));
+        });
+      });
+      return retryOriginalRequest;
+    }
+    // 오류 발생 시 오류 내용 출력 후 요청 거절
+    return Promise.reject(error);
+  }
+);
