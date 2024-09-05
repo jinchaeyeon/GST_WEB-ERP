@@ -42,7 +42,12 @@ import {
   UseMessages,
   UsePermissions,
 } from "../components/CommonFunction";
-import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import {
+  EDIT_FIELD,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import AC_B2060W_INCOME_PRINT from "../components/Prints/AC_B2060W_INCOME_PRINT";
 import AC_B2060W_MONTH_PRINT from "../components/Prints/AC_B2060W_MONTH_PRINT";
@@ -56,6 +61,7 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -414,7 +420,7 @@ const AC_B2060W: React.FC = () => {
           isSearch: true,
         }));
       }
-      if (tabSelected == 0 && isMobile && swiper) {
+      if (isMobile && swiper) {
         swiper.slideTo(0);
       }
     } catch (e) {
@@ -549,16 +555,30 @@ const AC_B2060W: React.FC = () => {
         };
       });
       if (totalRowCnt > 0) {
-        if (tabSelected == 0) {
+        if (tabSelected != 5) {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          const reportgbValue =
+            tabSelected === 0
+              ? "01"
+              : tabSelected === 1
+              ? "04"
+              : tabSelected === 2
+              ? "05"
+              : tabSelected === 3
+              ? "06"
+              : tabSelected === 4
+              ? "03"
+              : rows[0].reportgb;
           setSubFilters((prev) => ({
             ...prev,
+            reportgb: reportgbValue,
             acntgrpcd: rows[0].acntcd,
             isSearch: true,
             pgNum: 1,
           }));
           setSubFilters2((prev) => ({
             ...prev,
+            reportgb: reportgbValue,
             acntgrpcd: rows[0].acntcd,
             isSearch: true,
             pgNum: 1,
@@ -616,7 +636,7 @@ const AC_B2060W: React.FC = () => {
         "@p_stddt": convertDateToStr(filters.stddt).substring(0, 6),
         "@p_acntdt": "",
         "@p_acseq1": "",
-        "@p_reportgb": "01",
+        "@p_reportgb": filters.reportgb,
         "@p_acntgrpcd": filters.acntgrpcd,
         "@p_position": "",
         "@p_company_code": filters.companyCode,
@@ -799,7 +819,7 @@ const AC_B2060W: React.FC = () => {
 
     if (data && data.isSuccess) {
       const dataItem = data.tables[0].Rows;
-
+      if (!dataItem) return;
       let dataArr: TdataArr = {
         reportgb_s: [],
         acntses_s: [],
@@ -984,6 +1004,7 @@ const AC_B2060W: React.FC = () => {
     setSubFilters((prev) => ({
       ...prev,
       acntgrpcd: selectedRowData.acntcd,
+      reportgb: "01",
       pgNum: 1,
       find_row_value: "",
       isSearch: true,
@@ -991,6 +1012,7 @@ const AC_B2060W: React.FC = () => {
     setSubFilters2((prev) => ({
       ...prev,
       acntgrpcd: selectedRowData.acntcd,
+      reportgb: "01",
       pgNum: 1,
       find_row_value: "",
       isSearch: true,
@@ -1005,7 +1027,43 @@ const AC_B2060W: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY4,
     });
+
     setSelectedState(newSelectedState);
+
+    if (tabSelected != 5) {
+      const selectedIdx = event.startRowIndex;
+      const selectedRowData = event.dataItems[selectedIdx];
+      const reportgbValue =
+        tabSelected === 1
+          ? "04"
+          : tabSelected === 2
+          ? "05"
+          : tabSelected === 3
+          ? "06"
+          : tabSelected === 4
+          ? "03"
+          : selectedRowData.reportgb;
+
+      setSubFilters((prev) => ({
+        ...prev,
+        acntgrpcd: selectedRowData.acntgrpcd,
+        reportgb: reportgbValue,
+        pgNum: 1,
+        find_row_value: "",
+        isSearch: true,
+      }));
+      setSubFilters2((prev) => ({
+        ...prev,
+        acntgrpcd: selectedRowData.acntgrpcd,
+        reportgb: reportgbValue,
+        pgNum: 1,
+        find_row_value: "",
+        isSearch: true,
+      }));
+      if (isMobile && swiper) {
+        swiper.slideTo(1);
+      }
+    }
   };
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -1126,6 +1184,28 @@ const AC_B2060W: React.FC = () => {
     } else {
       return <td></td>;
     }
+  };
+
+  // cell 배경색 변경
+  const customCellRender = (td: any, props: any) => {
+    const backgroundColor = props.dataItem.p_color == "Y" ? "#d9d9d9" : "";
+    const fontWeight = props.dataItem.p_border == "Y" ? "bold" : "";
+    const textDecoration = props.dataItem.p_line == "Y" ? "underline" : "";
+    return (
+      <CellRender
+        originalProps={props}
+        td={React.cloneElement(td, {
+          style: {
+            ...td.props.style,
+            backgroundColor,
+            fontWeight,
+            textDecoration,
+          },
+        })}
+        enterEdit={() => {}}
+        editField={EDIT_FIELD}
+      />
+    );
   };
 
   return (
@@ -1352,7 +1432,19 @@ const AC_B2060W: React.FC = () => {
               >
                 <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
-                    <GridTitle>손익계산서</GridTitle>
+                    <GridTitle>
+                      손익계산서{" "}
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                        icon={"chevron-right"}
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      ></Button>
+                    </GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onPrintWndClick}
@@ -1458,7 +1550,19 @@ const AC_B2060W: React.FC = () => {
               >
                 <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
-                    <GridTitle>제조원가명세서</GridTitle>
+                    <GridTitle>
+                      제조원가명세서{" "}
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                        icon={"chevron-right"}
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      ></Button>
+                    </GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onPrintWndClick}
@@ -1564,7 +1668,19 @@ const AC_B2060W: React.FC = () => {
               >
                 <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
-                    <GridTitle>이익잉여금처분계산서</GridTitle>
+                    <GridTitle>
+                      이익잉여금처분계산서{" "}
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                        icon={"chevron-right"}
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      ></Button>
+                    </GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onPrintWndClick}
@@ -1670,7 +1786,19 @@ const AC_B2060W: React.FC = () => {
               >
                 <GridContainer>
                   <GridTitleContainer className="ButtonContainer2">
-                    <GridTitle>재무상태표</GridTitle>
+                    <GridTitle>
+                      재무상태표{" "}
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"flat"}
+                        icon={"chevron-right"}
+                        onClick={() => {
+                          if (swiper) {
+                            swiper.slideTo(1);
+                          }
+                        }}
+                      ></Button>
+                    </GridTitle>
                     <ButtonContainer>
                       <Button
                         onClick={onPrintWndClick}
@@ -2106,6 +2234,7 @@ const AC_B2060W: React.FC = () => {
                       reorderable={true}
                       //컬럼너비조정
                       resizable={true}
+                      cellRender={customCellRender}
                     >
                       <GridColumn title="차변" width={150}>
                         <GridColumn

@@ -193,10 +193,12 @@ const AC_B2060W_MONTH_PRINT = (data: any) => {
                       <th>合 計</th>
                     </tr>
                     {mainDataResult.map((item: any, index: number) => (
-                      <tr
+                      <tr                      
                         style={
                           item.p_border === "Y"
                             ? { backgroundColor: "#d9d9d9", fontWeight: "bold" }
+                            : item.p_border === "Z"
+                            ? { backgroundColor: "transparent", fontWeight: "bold" }
                             : {}
                         }
                       >

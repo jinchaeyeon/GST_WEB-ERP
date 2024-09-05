@@ -12,7 +12,7 @@ import {
   convertDateToStr,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
-import styles from "./AC_B2060W_PRINT.module.css";
+import styles from "./AC_B2060W_INCOME_PRINT.module.css";
 
 const AC_B2060W_INCOME_PRINT = (data: any) => {
   const [permissions, setPermissions] = useState<TPermissions>({
@@ -115,13 +115,13 @@ const AC_B2060W_INCOME_PRINT = (data: any) => {
   const getTitle = () => {
     switch (data.workType) {
       case "TAB2":
-        return "손익계산서";
+        return "손익계산서";  // report_inconme
       case "TAB3":
-        return "제조원가명세서";
+        return "제조원가명세서";  // report_cost
       case "TAB4":
-        return "이익잉여금처분계산서";
+        return "이익잉여금처분계산서";  // report_appr
       case "TAB5":
-        return "재무상태표";
+        return "재무상태표";  // report_fin
       default:
         return "손익계산서";
     }
@@ -185,7 +185,16 @@ const AC_B2060W_INCOME_PRINT = (data: any) => {
                       </td>
                     </tr>
                     {mainDataResult.map((item: any) => (
-                      <tr>
+                      <tr
+                        className={styles.noBorderRow}
+                        style={
+                          item.p_border === "Y"
+                            ? { backgroundColor: "#d9d9d9", fontWeight: "bold" }
+                            : item.p_color && item.p_color!== ""
+                            ? { color: item.p_color, fontWeight: "bold" }
+                            : {}
+                        }
+                      >
                         <td
                           style={{ textAlign: "center", paddingRight: "3px" }}
                         >

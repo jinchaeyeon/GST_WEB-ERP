@@ -12,10 +12,19 @@ import {
   convertDateToStr,
   dateformat2,
   dateformat3,
-  numberWithCommas
+  numberWithCommas,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
-import styles from "./AC_B2060W_PRINT.module.css";
+import styles from "./AC_B2060W_SUM_PRINT.module.css";
+
+interface Totals {
+  total_Drbalamt: string;
+  total_Drtotamt: string;
+  total_Drmonamt: string;
+  total_Crmonamt: string;
+  total_Crtotamt: string;
+  total_Crbalamt: string;
+}
 
 function getDayOfWeek(date: Date) {
   const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
@@ -53,6 +62,15 @@ const AC_B2060W_SUM_PRINT = (data: any) => {
     pgNum: 1,
     pgSize: PAGE_SIZE,
     isSearch: false,
+  });
+
+  const [totals, setTotals] = useState<Totals>({
+    total_Drbalamt: "",
+    total_Drtotamt: "",
+    total_Drmonamt: "",
+    total_Crmonamt: "",
+    total_Crtotamt: "",
+    total_Crbalamt: "",
   });
 
   useEffect(() => {
@@ -104,10 +122,20 @@ const AC_B2060W_SUM_PRINT = (data: any) => {
       //요약
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
-
+      const rows2 = data.tables[1].Rows[0];
+      console.log(rows2);
       if (totalRowCnt > 0) {
         setMainDataResult(rows);
         setTotal(totalRowCnt);
+        setTotals((prevTotals) => ({
+          ...prevTotals,
+          total_Drbalamt: rows2.drbalamt,
+          total_Drtotamt: rows2.drtotamt,
+          total_Drmonamt: rows2.drmonamt,
+          total_Crmonamt: rows2.crmonamt,
+          total_Crtotamt: rows2.crtotamt,
+          total_Crbalamt: rows2.crbalamt,
+        }));
       }
     } else {
       console.log("[에러발생]");
@@ -120,78 +148,6 @@ const AC_B2060W_SUM_PRINT = (data: any) => {
     }));
   };
   const componentRef = useRef(null);
-
-  // 데이터 아이템의 타입 정의
-  interface MainDataItem {
-    drbalamt: string;
-    drtotamt: string;
-    drmonamt: string;
-    crmonamt: string;
-    crtotamt: string;
-    crbalamt: string;
-    acntnm: string;
-  }
-
-  // 숫자 변환 함수: 콤마 제거 후 숫자형으로 변환
-  const parseNumber = (value: string): number => {
-    return parseFloat(value.replace(/,/g, ""));
-  };
-
-  // 합계 계산
-  const totalDrbalamt: number =
-    mainDataResult && mainDataResult.length > 0
-      ? mainDataResult.reduce(
-          (acc: number, item: MainDataItem) => acc + parseNumber(item.drbalamt),
-          0
-        )
-      : 0;
-
-  const totalDrtotamt: number =
-    mainDataResult && mainDataResult.length > 0
-      ? mainDataResult.reduce(
-          (acc: number, item: MainDataItem) => acc + parseNumber(item.drtotamt),
-          0
-        )
-      : 0;
-
-  const totalDrmonamt: number =
-    mainDataResult && mainDataResult.length > 0
-      ? mainDataResult.reduce(
-          (acc: number, item: MainDataItem) => acc + parseNumber(item.drmonamt),
-          0
-        )
-      : 0;
-
-  const totalCrmonamt: number =
-    mainDataResult && mainDataResult.length > 0
-      ? mainDataResult.reduce(
-          (acc: number, item: MainDataItem) => acc + parseNumber(item.crmonamt),
-          0
-        )
-      : 0;
-
-  const totalCrtotamt: number =
-    mainDataResult && mainDataResult.length > 0
-      ? mainDataResult.reduce(
-          (acc: number, item: MainDataItem) => acc + parseNumber(item.crtotamt),
-          0
-        )
-      : 0;
-
-  const totalCrbalamt: number =
-    mainDataResult && mainDataResult.length > 0
-      ? mainDataResult.reduce(
-          (acc: number, item: MainDataItem) => acc + parseNumber(item.crbalamt),
-          0
-        )
-      : 0;
-
-  const total_Drbalamt: string = numberWithCommas(totalDrbalamt);
-  const total_Drtotamt: string = numberWithCommas(totalDrtotamt);
-  const total_Drmonamt: string = numberWithCommas(totalDrmonamt);
-  const total_Crmonamt: string = numberWithCommas(totalCrmonamt);
-  const total_Crtotamt: string = numberWithCommas(totalCrtotamt);
-  const total_Crbalamt: string = numberWithCommas(totalCrbalamt);
 
   return (
     <LandscapePrint>
@@ -219,8 +175,7 @@ const AC_B2060W_SUM_PRINT = (data: any) => {
                   <h1>합계잔액시산표</h1>
                   <p>
                     [ 기간{"  "}
-                    {dateformat2(convertDateToStr(data.stddt))} -{" "}
-                    {dateformat2(convertDateToStr(data.stddt))} ]
+                    {mainDataResult[0].frdt} - {mainDataResult[0].todt} ]
                   </p>
                   <div className={styles.row}>
                     <div className={styles.left}>
@@ -257,7 +212,16 @@ const AC_B2060W_SUM_PRINT = (data: any) => {
                       <th>대변잔액</th>
                     </tr>
                     {mainDataResult.map((item: any) => (
-                      <tr className={styles.noBorderRow}>
+                      <tr
+                        className={styles.noBorderRow}
+                        style={
+                          item.p_border === "Y"
+                            ? { backgroundColor: "#d9d9d9", fontWeight: "bold" }
+                            : item.color !== ""
+                            ? { color: item.color, fontWeight: "bold" }
+                            : {}
+                        }
+                      >
                         <td style={{ textAlign: "right", paddingRight: "3px" }}>
                           {item.drbalamt}
                         </td>
@@ -290,13 +254,13 @@ const AC_B2060W_SUM_PRINT = (data: any) => {
                       }}
                     >
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total_Drbalamt}
+                        {totals.total_Drbalamt}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total_Drtotamt}
+                        {totals.total_Drtotamt}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total_Drmonamt}
+                        {totals.total_Drmonamt}
                       </td>
                       <td
                         style={{
@@ -306,13 +270,13 @@ const AC_B2060W_SUM_PRINT = (data: any) => {
                         합&nbsp;&nbsp;계
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total_Crmonamt}
+                        {totals.total_Crmonamt}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total_Crtotamt}
+                        {totals.total_Crtotamt}
                       </td>
                       <td style={{ textAlign: "right", paddingRight: "3px" }}>
-                        {total_Crbalamt}
+                        {totals.total_Crbalamt}
                       </td>
                     </tr>
                   </>
