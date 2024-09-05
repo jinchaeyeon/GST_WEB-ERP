@@ -143,9 +143,6 @@ const customField = ["insert_userid"];
 const centerField = ["num"];
 const centerField2 = ["seq", "tkyn", "wgtyn"];
 const requiredField = ["paydt", "amt"];
-let temp = 0;
-let temp2 = 0;
-let temp6 = 0;
 
 var height = 0;
 var height2 = 0;
@@ -192,6 +189,9 @@ let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
 let deletedMainRows6: any[] = [];
 const SA_A1100W_603: React.FC = () => {
+  let temp = 0;
+  let temp2 = 0;
+  let temp6 = 0;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -806,6 +806,9 @@ const SA_A1100W_603: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    temp = 0;
+    temp2 = 0;
+    temp6 = 0;
     deletedMainRows = [];
     deletedMainRows2 = [];
     deletedMainRows6 = [];
@@ -2302,6 +2305,9 @@ const SA_A1100W_603: React.FC = () => {
         if (unsavedAttadatnums.length > 0) {
           setDeletedAttadatnums([]);
         }
+        deletedMainRows = [];
+        deletedMainRows2 = [];
+        deletedMainRows6 = [];
         setSubFilters((prev) => ({
           ...prev,
           workType: "DETAIL",
@@ -2455,6 +2461,9 @@ const SA_A1100W_603: React.FC = () => {
       data = null;
     }
     if (data.isSuccess == true) {
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows6 = [];
       setSubFilters((prev) => ({
         ...prev,
         workType: "DETAIL",

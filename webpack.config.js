@@ -156,7 +156,7 @@ module.exports = {
     new webpack.ProvidePlugin({ React: "react" }),
     new BrowserSyncPlugin({
       host: 'localhost',
-      port: 3000,		
+      port: 3030,		
       files: ['./build/*.html'],
       server: {baseDir: ['build']} 
     })
