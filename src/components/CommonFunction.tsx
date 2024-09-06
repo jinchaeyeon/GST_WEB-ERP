@@ -1379,12 +1379,18 @@ export const resetLocalStorage = () => {
   localStorage.removeItem("loginResult");
   localStorage.removeItem("sessionItem");
   localStorage.removeItem("recoil-persist");
+  localStorage.removeItem("menuList");
+  localStorage.removeItem("menusState");
+  localStorage.removeItem("userId");
   secureLocalStorage.removeItem("accessToken");
   secureLocalStorage.removeItem("refreshToken");
   secureLocalStorage.removeItem("passwordExpirationInfo");
   secureLocalStorage.removeItem("loginResult");
   secureLocalStorage.removeItem("sessionItem");
   secureLocalStorage.removeItem("recoil-persist");
+  secureLocalStorage.removeItem("menuList");
+  secureLocalStorage.removeItem("menusState");
+  secureLocalStorage.removeItem("userId");
 };
 
 // Grouped된 DataResult 데이터를 selectedState를 포함해서 일반적인 Array 형태로 변환하여 반환
