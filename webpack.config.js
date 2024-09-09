@@ -5,8 +5,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const { EsbuildPlugin } = require("esbuild-loader");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
-const TerserPlugin = require('terser-webpack-plugin')
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -33,7 +32,10 @@ module.exports = {
     compress: true,
     port: 3000,
   },
-
+  watchOptions: {
+    poll: true,
+    ignored: '/node_modules/',
+  },
   // swc 연동을 위한 swc-loader 장착.
   module: {
     rules: [
@@ -154,12 +156,6 @@ module.exports = {
     }),
     new ForkTsCheckerWebpackPlugin(),
     new webpack.ProvidePlugin({ React: "react" }),
-    new BrowserSyncPlugin({
-      host: 'localhost',
-      port: 3030,		
-      files: ['./build/*.html'],
-      server: {baseDir: ['build']} 
-    })
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx", ".scss", ".css"],
