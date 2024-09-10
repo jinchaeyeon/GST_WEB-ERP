@@ -149,12 +149,13 @@ export default function TodoAddModal({
           >
             <DateTimePicker
               value={filters.start}
-              onChange={(e) =>
+              onChange={(e) => {
                 setFilters((prev) => ({
                   ...prev,
                   start: e.value,
-                }))
-              }
+                }));
+                filters.end.setHours(e.value.getHours() + 1);
+              }}
               steps={{
                 hour: 1,
                 minute: 5,

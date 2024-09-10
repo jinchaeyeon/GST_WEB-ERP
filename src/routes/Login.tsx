@@ -8,22 +8,22 @@ import {
   useState,
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 import { useSetRecoilState } from "recoil";
 import { LoginAppName, LoginBox, LoginImgWEBERP } from "../CommonStyled";
+import { resetLocalStorage } from "../components/CommonFunction";
+import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import { FormCheckBox2, FormComboBox, FormInput } from "../components/Editors";
+import Loader from "../components/Loader";
+import Loading from "../components/Loading";
 import { useApi } from "../hooks/api";
 import { IComboBoxColumns } from "../hooks/interfaces";
 import {
   accessTokenState,
+  isLoading,
   loginResultState,
   passwordExpirationInfoState,
 } from "../store/atoms";
-import  secureLocalStorage  from  "react-secure-storage";
-import { resetLocalStorage } from "../components/CommonFunction";
-import { DEFAULT_LANG_CODE } from "../components/CommonString";
-import Loader from "../components/Loader";
-import Loading from "../components/Loading";
-import { isLoading } from "../store/atoms";
 
 interface IFormData {
   langCode: string;
@@ -103,7 +103,9 @@ const Login: React.FC = () => {
       : true
   );
   const [information, setInformation] = useState({
-    companyCode: new URLSearchParams(location.search).has("cust")
+    companyCode: secureLocalStorage.getItem("companyCode")
+      ? secureLocalStorage.getItem("companyCode")
+      : new URLSearchParams(location.search).has("cust")
       ? (new URLSearchParams(location.search).get("cust") as string)
       : "",
     langCode: "ko-KR",
@@ -194,9 +196,14 @@ const Login: React.FC = () => {
 
         if (formData.chk == "Y") {
           secureLocalStorage.setItem("userId", userId);
+          secureLocalStorage.setItem("companyCode", companyCode);
+
         } else {
           if (secureLocalStorage.getItem("userId")) {
             secureLocalStorage.removeItem("userId");
+          }
+          if (secureLocalStorage.getItem("companyCode")) {
+            secureLocalStorage.removeItem("companyCode");
           }
         }
 

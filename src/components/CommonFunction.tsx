@@ -1390,7 +1390,6 @@ export const resetLocalStorage = () => {
   secureLocalStorage.removeItem("recoil-persist");
   secureLocalStorage.removeItem("menuList");
   secureLocalStorage.removeItem("menusState");
-  secureLocalStorage.removeItem("userId");
 };
 
 // Grouped된 DataResult 데이터를 selectedState를 포함해서 일반적인 Array 형태로 변환하여 반환
