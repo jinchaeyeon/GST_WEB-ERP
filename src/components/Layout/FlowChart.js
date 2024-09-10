@@ -36,6 +36,7 @@ import "reactflow/dist/style.css";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
+  ButtonInInput,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -44,10 +45,7 @@ import {
   GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import {
-  deletedAttadatnumsState,
-  isLoading
-} from "../../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../../store/atoms";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -55,9 +53,10 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UsePermissions,
-  useSysMessage
+  useSysMessage,
 } from "../CommonFunction";
 import { GAP } from "../CommonString";
+import MenuWindow from "../Windows/CommonWindows/MenuWindow";
 import CustomNode from "./CustomNode";
 import GroupNode from "./GroupNode";
 import ImageNode from "./ImageNode";
@@ -154,6 +153,41 @@ const FlowChart = (props) => {
         y: info.view.y,
         zoom: info.view.zoom,
       });
+    } else if (workType == "C" && permissions.view) {
+      const data = props.data;
+      const idList = data.map((item) => parseInt(item.id));
+      id = Math.max.apply(null, idList);
+      const info = data.filter((item) => item.type == "data")[0];
+      const nodeList = data.filter((item) => item.type == "node");
+      const edgeList = data.filter((item) => item.type == "edge");
+      if (nodeList.length > 0) {
+        const nodeData = nodeList.map((item) => {
+          return item.config_json_s;
+        });
+        setNodes(nodeData);
+      }
+      if (edgeList.length > 0) {
+        const edgeData = edgeList.map((item) => {
+          return item.config_json_s;
+        });
+        setEdges(edgeData);
+      }
+      setInformation({
+        orgdiv: props.filters.orgdiv,
+        location: props.filters.location,
+        layout_key: "",
+        layout_id: "",
+        layout_name: "",
+        attdatnum: "",
+        background_image: info.background_image,
+        view: info.view,
+      });
+      setViewport({
+        x: info.view.x,
+        y: info.view.y,
+        zoom: info.view.zoom,
+      });
+      setWorkType("N");
     } else {
       setInformation({
         orgdiv: props.filters.orgdiv,
@@ -882,6 +916,31 @@ const FlowChart = (props) => {
     setType("B");
   };
 
+  const [menuWindowVisible, setMenuWindowVisible] = useState(false);
+
+  const onMenuWindowClick = () => {
+    setMenuWindowVisible(true);
+  };
+
+  const setMenuData = (data) => {
+    const origin = window.location.origin;
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.selected == true) {
+          // it's important that you create a new object here
+          // in order to notify react flow about the change
+          node.data = {
+            ...node.data,
+            label: data.menu_name,
+            link: origin + "/" + data.form_id,
+          };
+        }
+
+        return node;
+      })
+    );
+  };
+
   return (
     <>
       <GridContainerWrap height={"100%"}>
@@ -943,11 +1002,7 @@ const FlowChart = (props) => {
             </ReactFlow>
           </div>
         </GridContainer>
-        <GridContainer
-          width={`calc(35% - ${GAP}px)`}
-          style={{ overflowY: "scroll" }}
-          height={"100%"}
-        >
+        <GridContainer width={`calc(35% - ${GAP}px)`} height={"100%"}>
           <GridTitleContainer style={{ paddingRight: "5px" }}>
             <GridTitle>편집</GridTitle>
             <ButtonContainer style={{ paddingBottom: "5px" }}>
@@ -971,7 +1026,13 @@ const FlowChart = (props) => {
               </ButtonKendo>
             </ButtonContainer>
           </GridTitleContainer>
-          <GridContainer style={{ paddingRight: "5px" }}>
+          <GridContainer
+            style={{
+              paddingRight: "5px",
+              overflowY: "scroll",
+              height: `calc(100% - 50px)`,
+            }}
+          >
             <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -1608,6 +1669,13 @@ const FlowChart = (props) => {
                                   }
                                   onChange={InputChange}
                                 />
+                                <ButtonInInput>
+                                  <ButtonKendo
+                                    onClick={onMenuWindowClick}
+                                    icon="more-horizontal"
+                                    fillMode="flat"
+                                  />
+                                </ButtonInInput>
                               </td>
                             </tr>
                           ) : (
@@ -1677,6 +1745,13 @@ const FlowChart = (props) => {
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>
+      {menuWindowVisible && (
+        <MenuWindow
+          setVisible={setMenuWindowVisible}
+          reloadData={(data) => setMenuData(data)}
+          modal={true}
+        />
+      )}
     </>
   );
 };

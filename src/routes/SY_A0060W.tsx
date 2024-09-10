@@ -112,17 +112,28 @@ const SY_A0060W: React.FC = () => {
     setClicks(true);
     setWorkType("U");
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setFilters2({
+      orgdiv: sessionOrgdiv,
+      location: "",
+      layout_key: "",
+      layout_id: "",
+      layout_name: "",
+      attdatnum: "",
+    })
+    setMainDataResult2(process([], mainDataState2));
+    setClicks(true);
+    setWorkType("N");
   };
 
   const [clicks, setClicks] = useState(true);
 
   useEffect(() => {
-    if(clicks == false) {
+    if (clicks == false) {
       setTabSelected(1);
     } else {
       setTabSelected(0);
     }
-  }, [clicks])
+  }, [clicks]);
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
 
@@ -234,7 +245,7 @@ const SY_A0060W: React.FC = () => {
   );
   const [workType, setWorkType] = useState("U");
 
-  const DetailView = async (item: any) => {
+  const DetailView = async (item: any, yn: boolean) => {
     if (!permissions.view) return;
 
     let response: any;
@@ -275,7 +286,9 @@ const SY_A0060W: React.FC = () => {
           layout_name: item.layout_name,
           attdatnum: item.attdatnum,
         }));
-        setClicks(false);
+        if (yn == false) {
+          setClicks(false);
+        }
         setWorkType("U");
       }
     }
@@ -292,6 +305,19 @@ const SY_A0060W: React.FC = () => {
     }));
     setClicks(false);
     setWorkType("N");
+  };
+
+  const onCopyClick = () => {
+    setFilters2((prev) => ({
+      ...prev,
+      orgdiv: sessionOrgdiv,
+      layout_key: "",
+      layout_id: "",
+      layout_name: "",
+      attdatnum: "",
+    }));
+    setClicks(false);
+    setWorkType("C");
   };
 
   return (
@@ -353,7 +379,9 @@ const SY_A0060W: React.FC = () => {
                     md={4}
                     lg={3}
                     xl={3}
-                    onClick={(e) => alert("모바일에서는 수정이 불가능합니다.")}
+                    onDoubleClick={(e) =>
+                      alert("모바일에서는 수정이 불가능합니다.")
+                    }
                   >
                     <Card>
                       <CardActionArea>
@@ -470,6 +498,15 @@ const SY_A0060W: React.FC = () => {
                   <GridTitle></GridTitle>
                   <ButtonContainer>
                     <Button
+                      onClick={onCopyClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="copy"
+                      disabled={permissions.save ? false : true}
+                    >
+                      복사
+                    </Button>
+                    <Button
                       onClick={onNewClick}
                       fillMode="outline"
                       themeColor={"primary"}
@@ -493,7 +530,8 @@ const SY_A0060W: React.FC = () => {
                       md={4}
                       lg={3}
                       xl={3}
-                      onClick={(e) => DetailView(item)}
+                      onClick={(e) => DetailView(item, true)}
+                      onDoubleClick={(e) => DetailView(item, false)}
                     >
                       <Card>
                         <CardActionArea>
@@ -509,7 +547,14 @@ const SY_A0060W: React.FC = () => {
                               alt="layout"
                             />
                           )}
-                          <CardContent style={{ backgroundColor: "#f0f5fa" }}>
+                          <CardContent
+                            style={{
+                              backgroundColor:
+                                filters2.layout_key == item.layout_key
+                                  ? "#a7c6e4"
+                                  : "#f0f5fa",
+                            }}
+                          >
                             <Typography
                               gutterBottom
                               variant="subtitle1"
